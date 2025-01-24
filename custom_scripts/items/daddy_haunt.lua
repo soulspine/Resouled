@@ -1,0 +1,1 @@
+DADDY_HAUNT = Isaac.GetItemIdByName("Daddy Haunt")

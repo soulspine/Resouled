@@ -1,7 +1,5 @@
 <items gfxroot="gfx/items/" deathanim2="gfx/custom_death_items.anm2" version="1">
     <passive id="0" name="Daddy Haunt" gfx="daddyhaunt.png" description="Menace hanging over your enemies" quality="3" cache="damage" />
-    <passive id="1" name="Isaac's last will" gfx="isaacs_last_will.png" description="To my dearest friend" quality="1"/>
+    <passive id="1" name="Isaac's last will" gfx="isaacs_last_will.png" description="I leave all that I own to my cat Guppy" quality="2"/>
     <passive id="2" name="Soulbound" gfx="soulbound.png" description="Forever together" quality="3"/>
-    
-    <passive id="3" name="unlockCheck474" gfx="collectibles_408_athame.png" achievement="474" quality="0" tags="nodaily noeden nocantrip nochallenge nokeeper nolostbr hidden nogreed">
 </items>

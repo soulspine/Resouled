@@ -36,6 +36,19 @@ local function onPlayerDeath(player, playerID)
 
     player:RemoveCollectible(ISAACS_LAST_WILL)
     sfx:Play(SoundEffect.SOUND_LAZARUS_FLIP_ALIVE, 1, 10)
+    local MAX_BLOOD_GIB_SUBTYPE = 3
+    Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.BLOOD_EXPLOSION, 0, player.Position, Vector.Zero, player)
+    Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF02, 3, player.Position, Vector.Zero, player)
+    Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF02, 4, player.Position, Vector.Zero, player)
+    SFXManager():Play(SoundEffect.SOUND_DEATH_BURST_LARGE)
+    local explosionRng = RNG()
+    explosionRng:SetSeed(math.max(Random(), 1), 32)
+    local MIN_GIBS = 30 -- max is double this
+    local gibCount = explosionRng:RandomInt(MIN_GIBS + 1) + MIN_GIBS
+    for _ = 1, gibCount do
+        local speed = explosionRng:RandomInt(8) + 1
+        Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.BLOOD_PARTICLE, explosionRng:RandomInt(MAX_BLOOD_GIB_SUBTYPE + 1), player.Position, RandomVector() * speed, player)
+    end
 
     -- DO NOT ANIMATE, REMOVES ISAAC'S HEAD UPON DYING AFTER TAKING A DEVIL DEAL
     --player:AnimateSad()

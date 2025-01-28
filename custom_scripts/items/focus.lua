@@ -8,12 +8,48 @@ local LEVEL_2_THRESHOLD = 8
 local LEVEL_2_CHARGE = 1
 local LEVEL_3_THRESHOLD = 12
 
-if EID then
-    EID:addCollectible(Isaac.GetItemIdByName("Focus"), "Clearing a room spawns a {{IsaacSmall}} Minisaac.#Depending on number of Minisaacs, Isaac gains different effects:#{{ArrowUp}} " .. LEVEL_1_THRESHOLD .. "+ {{Damage}} +" .. LEVEL_1_DAMAGE .. " Damage#{{ArrowUp}} " .. LEVEL_2_THRESHOLD .. "+ All active items gain " .. LEVEL_2_CHARGE .. " charge when entering an uncleared room for the first time. Items can get overcharged by this effect.#{{ArrowUp}} " .. LEVEL_3_THRESHOLD .. "+ {{Card51}} Holy Card effect refreshing on room enter.", "Focus")
+---@param player EntityPlayer
+local function countMiniIsaacs(player)
+    return Isaac.CountEntities(player, EntityType.ENTITY_FAMILIAR, FamiliarVariant.MINISAAC)
 end
 
+if EID then
+    EID:addCollectible(Isaac.GetItemIdByName("Focus"), "Clearing a room spawns a {{IsaacSmall}} Minisaac.#Depending on number of Minisaacs, Isaac gains different effects:#{{ArrowUp}} " .. LEVEL_1_THRESHOLD .. "+ {{Damage}} +" .. LEVEL_1_DAMAGE .. " Damage#{{ArrowUp}} " .. LEVEL_2_THRESHOLD .. "+ All active items gain " .. LEVEL_2_CHARGE .. " charge when entering an uncleared room for the first time. Items can get overcharged by this effect.#{{ArrowUp}} " .. LEVEL_3_THRESHOLD .. "+ {{Collectible313}} Holy Mantle effect.", "Focus")
+end
+
+local miniIsaacCount = 0
 local miniIsaacJustDied = false
-local damageGrantedThisRoom = false
+local miniIsaacJustSpawned = false
+
+---@param entityType EntityType
+---@param variant integer
+---@param subtype integer
+---@param position Vector
+---@param velocity Vector
+---@param spawner Entity
+---@param seed integer
+local function onEntitySpawn(_, entityType, variant, subtype, position, velocity, spawner, seed)
+    if entityType == EntityType.ENTITY_FAMILIAR and variant == FamiliarVariant.MINISAAC then
+        
+        local player = spawner:ToPlayer()
+
+        if player == nil then
+            --print("Player is nil in onEntitySpawn")
+            return
+        end
+
+        -- cannot update just the spawner
+        -- it says AddCacheFlags is null for this object ?????
+
+        IterateOverPlayers(function(player, _)
+            if player:HasCollectible(FOCUS) then
+                miniIsaacJustSpawned = true
+                player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
+                player:EvaluateItems()
+            end
+        end)
+    end
+end
 
 ---@param entity Entity
 local function onMiniIsaacKill(_, entity)
@@ -30,35 +66,35 @@ local function onMiniIsaacKill(_, entity)
     end
 end
 
-local function onRoomClear(player, playerID)
+---@param player EntityPlayer
+local function onRoomClear(player, _)
     for _ = 1, player:GetCollectibleNum(FOCUS) do
         player:AddMinisaac(player.Position)
     end
 end
 
+---@param player EntityPlayer
+---@param cacheFlag CacheFlag
 local function onCacheUpdate(_, player, cacheFlag)
-    local miniCount = Isaac.CountEntities(player, EntityType.ENTITY_FAMILIAR, FamiliarVariant.MINISAAC)
+    if cacheFlag & CacheFlag.CACHE_DAMAGE == CacheFlag.CACHE_DAMAGE then
+        if player:HasCollectible(FOCUS) then
+            miniIsaacCount = countMiniIsaacs(player) + (miniIsaacJustSpawned and 1 or 0) - (miniIsaacJustDied and 1 or 0)
+            miniIsaacJustSpawned, miniIsaacJustDied = false, false
 
-    if miniIsaacJustDied then
-        miniIsaacJustDied = false
-        miniCount = miniCount - 1
-    end
-
-    if miniCount >= LEVEL_1_THRESHOLD and not damageGrantedThisRoom then
-        player.Damage = player.Damage + player:GetCollectibleNum(FOCUS) * LEVEL_1_DAMAGE
-        damageGrantedThisRoom = true
+            if miniIsaacCount >= LEVEL_1_THRESHOLD then
+                player.Damage = player.Damage + player:GetCollectibleNum(FOCUS) * LEVEL_1_DAMAGE
+            end
+        end
     end
 end
 
 ---@param player EntityPlayer
 ---@param playerID integer
 local function onNewRoomEnter(player, playerID)
-    local miniCount = Isaac.CountEntities(player, EntityType.ENTITY_FAMILIAR, FamiliarVariant.MINISAAC)
     local itemCount = player:GetCollectibleNum(FOCUS)
 
-    damageGrantedThisRoom = false
-
-    if miniCount >= LEVEL_2_THRESHOLD then
+    miniIsaacCount = countMiniIsaacs(player)
+    if miniIsaacCount >= LEVEL_2_THRESHOLD then
 
         for _, slot in pairs(ActiveSlot) do
             local activeItemID = player:GetActiveItem(slot)
@@ -75,13 +111,18 @@ local function onNewRoomEnter(player, playerID)
             local room = Game():GetRoom()
             if room:IsFirstVisit() and not room:IsClear() then
                 player:SetActiveCharge(preCharge + itemCount * LEVEL_2_CHARGE, slot)
+                
+                local postCharge = player:GetActiveCharge(slot) + player:GetBatteryCharge(slot)
+                if postCharge == preCharge then
+                    goto continue
+                end
+
                 Game():GetHUD():FlashChargeBar(player, slot)
                 local batteryVfxVector = player.Position
                 batteryVfxVector.Y = batteryVfxVector.Y - 80
                 Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.BATTERY, BatterySubType.BATTERY_MICRO, batteryVfxVector, Vector.Zero, player)
-                local postCharge = player:GetActiveCharge(slot) + player:GetBatteryCharge(slot)
                 local batterySfx
-                if postCharge == maxCharge or postCharge == 2*maxCharge then
+                if postCharge % maxCharge == 0 then
                     batterySfx = SoundEffect.SOUND_BATTERYCHARGE
                 else
                     batterySfx = SoundEffect.SOUND_BEEP
@@ -91,10 +132,10 @@ local function onNewRoomEnter(player, playerID)
             ::continue::
         end
     end
-    if miniCount >= LEVEL_3_THRESHOLD then
+    if miniIsaacCount >= LEVEL_3_THRESHOLD then
         local effects = player:GetEffects()
-        if not effects:HasNullEffect(NullItemID.ID_HOLY_CARD) then
-            effects:AddNullEffect(NullItemID.ID_HOLY_CARD, true, 1)
+        if not effects:HasCollectibleEffect(CollectibleType.COLLECTIBLE_HOLY_MANTLE) then
+            effects:AddCollectibleEffect(CollectibleType.COLLECTIBLE_HOLY_MANTLE, true, 1)
         end
     end
 end
@@ -105,7 +146,7 @@ MOD:AddCallback(ModCallbacks.MC_POST_NEW_ROOM,
     end
 )
 MOD:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, 
-    function(rng, spawnPostion)
+    function()
         IterateOverPlayers(onRoomClear)
     end
 )
@@ -113,13 +154,4 @@ MOD:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheUpdate)
 
 MOD:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, onMiniIsaacKill, EntityType.ENTITY_FAMILIAR)
 
-MOD:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, 
-    function()
-        IterateOverPlayers(
-            function(player, playerID)
-                player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
-                player:EvaluateItems()
-            end
-        )
-    end
-)
+MOD:AddCallback(ModCallbacks.MC_PRE_ENTITY_SPAWN, onEntitySpawn)

@@ -1,6 +1,7 @@
 .vs
 .vscode
 .luarc.json
+disable.it
 
 # Compiled Lua sources
 luac.out

@@ -1,0 +1,9 @@
+<entities anm2root="gfx/" version="5">
+
+    <entity name="Cursed Gaper" id="999" anm2path="monsters/010.001_gaper.anm2" baseHP="8" stageHP="2" collisionMass="10" collisionRadius="10" friction="0.2" numGridCollisionPoints="6" shadowSize="10" champion="0" collisionDamage="1" />
+        <gibs ammount="14" blood="1" bone="1" eye="1" gut="1" />
+        <beastiary anim="Idle" tramsform="0,0,1" />
+        <devolve id="10.1" weight="1" />
+    </entity>
+
+</entities>

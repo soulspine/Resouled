@@ -1,7 +1,5 @@
-DADDY_HAUNT = Isaac.GetItemIdByName("Daddy Haunt")
-
-print("Loaded Daddy Haunt")
+local DADDY_HAUNT = Isaac.GetItemIdByName("Daddy Haunt")
 
 if EID then
-    EID:addCollectible(Isaac.GetItemIdByName("Daddy Haunt"), "Not implemented yet", "Daddy Haunt")
+    EID:addCollectible(DADDY_HAUNT, "Not implemented yet", "Daddy Haunt")
 end

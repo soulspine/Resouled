@@ -1,20 +1,18 @@
-FOCUS = Isaac.GetItemIdByName("Focus")
+local FOCUS = Isaac.GetItemIdByName("Focus")
 
-print("Loaded Focus")
-
-local LEVEL_1_THRESHOLD = 4
+local LEVEL_1_THRESHOLD = 3
 local LEVEL_1_DAMAGE = 1
-local LEVEL_2_THRESHOLD = 8
+local LEVEL_2_THRESHOLD = 6
 local LEVEL_2_CHARGE = 1
-local LEVEL_3_THRESHOLD = 12
+local LEVEL_3_THRESHOLD = 9
+
+if EID then
+    EID:addCollectible(FOCUS, "Clearing a room spawns a {{IsaacSmall}} Minisaac.#Depending on number of Minisaacs, Isaac gains different effects:#{{ArrowUp}} " .. LEVEL_1_THRESHOLD .. "+ {{Damage}} +" .. LEVEL_1_DAMAGE .. " Damage#{{ArrowUp}} " .. LEVEL_2_THRESHOLD .. "+ All active items gain " .. LEVEL_2_CHARGE .. " charge when entering an uncleared room for the first time. Items can get overcharged by this effect.#{{ArrowUp}} " .. LEVEL_3_THRESHOLD .. "+ {{Collectible313}} Holy Mantle effect.", "Focus")
+end
 
 ---@param player EntityPlayer
 local function countMiniIsaacs(player)
     return Isaac.CountEntities(player, EntityType.ENTITY_FAMILIAR, FamiliarVariant.MINISAAC)
-end
-
-if EID then
-    EID:addCollectible(Isaac.GetItemIdByName("Focus"), "Clearing a room spawns a {{IsaacSmall}} Minisaac.#Depending on number of Minisaacs, Isaac gains different effects:#{{ArrowUp}} " .. LEVEL_1_THRESHOLD .. "+ {{Damage}} +" .. LEVEL_1_DAMAGE .. " Damage#{{ArrowUp}} " .. LEVEL_2_THRESHOLD .. "+ All active items gain " .. LEVEL_2_CHARGE .. " charge when entering an uncleared room for the first time. Items can get overcharged by this effect.#{{ArrowUp}} " .. LEVEL_3_THRESHOLD .. "+ {{Collectible313}} Holy Mantle effect.", "Focus")
 end
 
 local miniIsaacCount = 0

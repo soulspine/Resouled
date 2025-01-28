@@ -1,9 +1,7 @@
-ISAACS_LAST_WILL = Isaac.GetItemIdByName("Isaac's last will")
-
-print("Loaded Isaac's last will")
+local ISAACS_LAST_WILL = Isaac.GetItemIdByName("Isaac's last will")
 
 if EID then
-    EID:addCollectible(Isaac.GetItemIdByName("Isaac's last will"), "{{Warning}} SINGLE USE#On death, revives Isaac in current room with 1 hit worth of default health type, grants {{Guppy}} Guppy transformation and sets pocket active item to Guppy's Paw if he doesn't already hold any pocket active.#Every enemy that dies in the same room after the respawn grants {{HalfSoulHeart}} half a soul heart.", "Isaac's last will")
+    EID:addCollectible(ISAACS_LAST_WILL, "{{Warning}} SINGLE USE#On death, revives Isaac in current room with 1 hit worth of default health type, grants {{Guppy}} Guppy transformation and sets pocket active item to Guppy's Paw if he doesn't already hold any pocket active.#Every enemy that dies in the same room after the respawn grants {{HalfSoulHeart}} half a soul heart.", "Isaac's last will")
 end
 
 local game = Game()

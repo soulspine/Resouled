@@ -1,6 +1,10 @@
-SOULBOUND = Isaac.GetItemIdByName("Soulbound")
+local SOULBOUND = Isaac.GetItemIdByName("Soulbound")
 
-print("Loaded Soulbound")
+-- TODO FIX THIS BECAUSE ITS BROKEN FOR FORGOTTEN
+
+if EID then
+    EID:addCollectible(SOULBOUND, "Not implemented yet", "Soulbound")
+end
 
 local unlockTranslation =  {
     [PlayerType.PLAYER_ISAAC_B] = "taintedIsaacCheck",

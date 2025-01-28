@@ -1,0 +1,10 @@
+<entities anm2root="gfx/" version="5">
+    <!-- ID:
+    3 = FAMILIAR
+    5 = PICKUP
+    1000 = EFFECT
+    -->
+    <!-- variant 444 becasue 4souls -->
+    <entity anm2path="entity_strawberry_regular.anm2" name="Regular Strawberry Pickup" id="5" variant="444" subtype="0" collisionRadius="12" collisionMass="9999" shadowSize="15"/>
+    <entity anm2path="entity_strawberry_regular.anm2" name="Regular Strawberry Familiar" id="3" variant="444" subtype="0" shadowSize="15" friction="1.5"/>
+</entities>

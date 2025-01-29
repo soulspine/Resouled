@@ -1,6 +1,6 @@
 <entities anm2root="gfx/" version="5">
 
-    <entity name="Cursed Gaper" id="999" anm2path="monsters/010.001_gaper.anm2" baseHP="8" stageHP="2" collisionMass="10" collisionRadius="10" friction="0.2" numGridCollisionPoints="6" shadowSize="10" champion="0" collisionDamage="1" />
+    <entity name="Cursed Gaper" id="999" anm2path="monsters/010.001_gaper.anm2" baseHP="8" stageHP="2" collisionMass="10" collisionRadius="10" friction="0.2" numGridCollisionPoints="6" shadowSize="10" champion="0" collisionDamage="1">
         <gibs ammount="14" blood="1" bone="1" eye="1" gut="1" />
         <beastiary anim="Idle" tramsform="0,0,1" />
         <devolve id="10.1" weight="1" />
@@ -12,6 +12,6 @@
     1000 = EFFECT
     -->
     <!-- variant 444 becasue 4souls -->
-    <entity anm2path="entity_strawberry_regular.anm2" name="Regular Strawberry Pickup" id="5" variant="444" subtype="0" collisionRadius="12" collisionMass="9999" shadowSize="15"/>
-    <entity anm2path="entity_strawberry_regular.anm2" name="Regular Strawberry Familiar" id="3" variant="444" subtype="0" shadowSize="15" friction="1.5"/>
+    <entity anm2path="strawberry_red.anm2" name="Red Strawberry Pickup" id="5" variant="444" subtype="0" collisionRadius="12" collisionMass="9999" shadowSize="15"/>
+    <entity anm2path="strawberry_red.anm2" name="Red Strawberry Familiar" id="3" variant="444" subtype="0" shadowSize="15" friction="1.5"/>
 </entities>

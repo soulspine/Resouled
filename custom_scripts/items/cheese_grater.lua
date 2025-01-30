@@ -41,14 +41,14 @@ function KillCounterTimerCountdown()
                 combo = "0"
             end
             scoreToLose = scoreToLose + 1
-            finalKillScore = math.floor((killCounter * 17000) - (scoreToLose/30))
+            finalKillScore = math.floor((killCounter * 100) - (scoreToLose/30))
             stringFinalKillScore = tostring(finalKillScore)
             if killCounter ~= oldKillCounter and killCounter > oldKillCounter then
                 timer = 0
                 oldKillCounter = killCounter
             end
             if timer > killCounterTimer then
-                finalKillScore = math.floor((killCounter * 17000) - (scoreToLose/30))
+                finalKillScore = math.floor((killCounter * 100) - (scoreToLose/30))
                 killCounter = 0
                 stringFinalKillScore = "0"
                 scoreToLose = 0

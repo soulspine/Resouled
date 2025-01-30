@@ -30,6 +30,7 @@ function KillCounter()
         player.Damage = playerBaseDamage + (killCounter/5)
     end
 end
+MOD:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, KillCounter)
 
 function KillCounterTimerCountdown()
     player = Isaac.GetPlayer()
@@ -57,6 +58,7 @@ function KillCounterTimerCountdown()
         end
     end
 end
+MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, KillCounterTimerCountdown)
 
 function ComboRewards()
     player = Isaac.GetPlayer()
@@ -267,6 +269,7 @@ function ComboRewards()
         end
     end
 end
+MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, ComboRewards)
 
 function PlayerSpeedUp(_, player, playerID)
     local player = Isaac.GetPlayer(playerID)
@@ -294,14 +297,17 @@ function PlayerSpeedUp(_, player, playerID)
         return
     end
 end
+MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, PlayerSpeedUp)
 
-function timerResetOnRunEnd()
+function timerResetOnRunStart()
         timer = 0
         killCounter = 0
         combo = "0"
         stringFinalKillScore = "0"
         printTimer = "0"
+        font:Unload()
 end
+MOD:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, timerResetOnRunStart)
 
 function setBaseDamage(_, player, playerID)
     player = Isaac.GetPlayer()
@@ -309,6 +315,7 @@ function setBaseDamage(_, player, playerID)
         player.Damage = playerBaseDamage + (killCounter/5)
     end
 end
+MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, setBaseDamage)
 
 function DrawCombo()
     player = Isaac.GetPlayer()
@@ -325,11 +332,4 @@ function DrawCombo()
             counterDrawn = true
     end
 end
-
-MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, PlayerSpeedUp)
-MOD:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, KillCounter)
-MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, KillCounterTimerCountdown)
-MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, ComboRewards)
-MOD:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, timerResetOnRunEnd)
-MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, setBaseDamage)
 MOD:AddCallback(ModCallbacks.MC_POST_RENDER, DrawCombo)

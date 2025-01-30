@@ -19,61 +19,67 @@ local playerBaseDamage = 5
 font:Load("font/terminus.fnt")
 
 function KillCounter()
-    oldKillCounter = killCounter
-    killCounter = killCounter + 1
-    combo = tostring(killCounter)
+    player = Isaac.GetPlayer()
     if player:HasCollectible(CHEESE_GRATER) then
-    player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
-    player.Damage = playerBaseDamage + (killCounter/5)
+        oldKillCounter = killCounter
+        killCounter = killCounter + 1
+        combo = tostring(killCounter)
+        player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
+        player.Damage = playerBaseDamage + (killCounter/5)
     end
 end
 
 function KillCounterTimerCountdown()
-    if killCounter > 0 then
-        timer = timer + 1
-        printTimer = tostring(math.floor(((killCounterTimer/30)+1)-(timer/30)))
-        if printTimer == "0" then
-            combo = "0"
-        end
-        scoreToLose = scoreToLose + 1
-        finalKillScore = math.floor((killCounter * 100) - (scoreToLose/30))
-        stringFinalKillScore = tostring(finalKillScore)
-        if killCounter ~= oldKillCounter and killCounter > oldKillCounter then
-            timer = 0
-            oldKillCounter = killCounter
-            print("timer reset")
-        end
-        if timer > killCounterTimer then
+    player = Isaac.GetPlayer()
+    if player:HasCollectible(CHEESE_GRATER) then
+        if killCounter > 0 then
+            timer = timer + 1
+            printTimer = tostring(math.floor(((killCounterTimer/30)+1)-(timer/30)))
+            if printTimer == "0" then
+                combo = "0"
+            end
+            scoreToLose = scoreToLose + 1
             finalKillScore = math.floor((killCounter * 100) - (scoreToLose/30))
-            killCounter = 0
-            stringFinalKillScore = "0"
-            scoreToLose = 0
-            print(finalKillScore)
+            stringFinalKillScore = tostring(finalKillScore)
+            if killCounter ~= oldKillCounter and killCounter > oldKillCounter then
+                timer = 0
+                oldKillCounter = killCounter
+                print("timer reset")
+            end
+            if timer > killCounterTimer then
+                finalKillScore = math.floor((killCounter * 100) - (scoreToLose/30))
+                killCounter = 0
+                stringFinalKillScore = "0"
+                scoreToLose = 0
+                print(finalKillScore)
+            end
         end
     end
 end
 
 function ComboRewards()
     player = Isaac.GetPlayer()
-    local function zeros()
-        timer = 0
-        killCounter = 0
-        combo = "0"
-        stringFinalKillScore = "0"
-        printTimer = "0"
-        scoreToLose = 0
-    end
-    if timer >= killCounterTimer then
-        if finalKillScore < 2000 then
-            zeros()
+    if player:HasCollectible(CHEESE_GRATER) then
+        local function zeros()
+            timer = 0
+            killCounter = 0
+            combo = "0"
+            stringFinalKillScore = "0"
+            printTimer = "0"
+            scoreToLose = 0
         end
-        if finalKillScore >= 2000 and finalKillScore < 4000 then
-            zeros()
-            Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, 1, player.Position, Vector.Zero, player)
-        end
-        if finalKillScore >= 4000 and finalKillScore < 6000 then
-            zeros()
-            Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_DOLLAR, player.Position, Vector.Zero, player)
+        if timer >= killCounterTimer then
+            if finalKillScore < 2000 then
+                zeros()
+            end
+            if finalKillScore >= 2000 and finalKillScore < 4000 then
+                zeros()
+                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, 1, player.Position, Vector.Zero, player)
+            end
+            if finalKillScore >= 4000 and finalKillScore < 6000 then
+                zeros()
+                Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_DOLLAR, player.Position, Vector.Zero, player)
+            end
         end
     end
 end

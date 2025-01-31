@@ -23,7 +23,7 @@ end
 ---@param quality integer
 ---@param rng RNG
 ---@param position Vector
----@param onlyUnlocks? boolean default true
+---@param onlyUnlocks? boolean @default true
 function MOD:SpawnItemOfQuality(quality, rng, position, onlyUnlocks)
     onlyUnlocks = onlyUnlocks and true or false
     local itemConfig = Isaac.GetItemConfig()
@@ -31,7 +31,7 @@ function MOD:SpawnItemOfQuality(quality, rng, position, onlyUnlocks)
     
     for i = 1, #itemConfig:GetCollectibles() do
         local item = itemConfig:GetCollectible(i)
-        if item and item.Quality == quality and not item.Hidden and (not onlyUnlocks or item:IsAvailable()) then
+        if item and item.Quality == quality and not item.Hidden and (not onlyUnlocks or item:IsAvailable()) and not item:HasTags(ItemConfig.TAG_QUEST) then
             table.insert(validItems, i)
         end
     end

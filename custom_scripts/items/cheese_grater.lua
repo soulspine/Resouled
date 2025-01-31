@@ -6,18 +6,18 @@ local baseSpeed = 1
 local boostLine = 2.20
 local wallCheck = 0.99
 local killCounter = 0
+local combo = ""
 local oldKillCounter = 0
 local killCounterTimer = 300
 local timer = 0
+local printTimer = ""
 local finalKillScore = 0
 local stringFinalKillScore = ""
 local scoreToLose = 0
-local combo = ""
 local font = Font()
-local printTimer = ""
-local playerBaseDamage = 5
 local counterDrawn = false
 local sfx = SFXManager()
+local playerDamageCalc = 5
 font:Load("font/terminus.fnt")
 
 function KillCounter()
@@ -27,7 +27,7 @@ function KillCounter()
         killCounter = killCounter + 1
         combo = tostring(killCounter)
         player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
-        player.Damage = playerBaseDamage + (killCounter/5)
+        player.Damage = playerDamageCalc + (killCounter/5)
     end
 end
 MOD:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, KillCounter)
@@ -73,50 +73,50 @@ function ComboRewards()
         end
         if timer >= killCounterTimer then
             sfx:Play(SoundEffect.SOUND_CHOIR_UNLOCK, 0.7, 10)
-            if finalKillScore < 2000 then
+            if finalKillScore < 2000 then --under 2000 no reward
                 zeros()
             end
-            if finalKillScore >= 2000 and finalKillScore < 4000 then
+            if finalKillScore >= 2000 and finalKillScore < 4000 then -- 2000 - 3999 one coin
                 zeros()
                 Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, 1, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
             end
-            if finalKillScore >= 4000 and finalKillScore < 6000 then
+            if finalKillScore >= 4000 and finalKillScore < 6000 then -- 4000 - 5999 three sacks
                 zeros()
                 Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_GRAB_BAG, 0, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                 Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_GRAB_BAG, 0, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                 Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_GRAB_BAG, 0, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
             end
-            if finalKillScore >= 6000 and finalKillScore < 8000 then
+            if finalKillScore >= 6000 and finalKillScore < 8000 then -- 6000 - 7999 three chests
                 zeros()
                 Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_CHEST, 0, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                 Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_CHEST, 0, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                 Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_CHEST, 0, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
             end
-            if finalKillScore >= 8000 and finalKillScore < 10000 then
+            if finalKillScore >= 8000 and finalKillScore < 10000 then -- 8000 - 9999 one trinket
                 zeros()
                 Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, 0, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
             end
-            if finalKillScore >= 10000 and finalKillScore < 12000 then
+            if finalKillScore >= 10000 and finalKillScore < 12000 then -- 10000 - 11999 one quality 1
                 zeros()
                 MOD:SpawnItemOfQuality(1, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
             end
-            if finalKillScore >= 12000 and finalKillScore < 14000 then
+            if finalKillScore >= 12000 and finalKillScore < 14000 then -- 12000 - 13999 20 carot cards
                 zeros()
                 for _ = 1, 20 do
                 Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, 0, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                 end
             end
-            if finalKillScore >- 14000 and finalKillScore < 16000 then
+            if finalKillScore >= 14000 and finalKillScore < 16000 then -- 14000 - 15999 20 sacks
                 zeros()
                 for _ = 1, 20 do
                 Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_GRAB_BAG, 0, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                 end
             end
-            if finalKillScore >= 16000 and finalKillScore < 18000 then
+            if finalKillScore >= 16000 and finalKillScore < 18000 then -- 16000 - 17999 one quality 2
                 zeros()
                 MOD:SpawnItemOfQuality(2, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
             end
-            if finalKillScore >= 18000 and finalKillScore < 20000 then
+            if finalKillScore >= 18000 and finalKillScore < 20000 then -- 18000 - 19999 10 golden chests, 10 keys, 3 sacks
                 zeros()
                 for _ = 1, 10 do
                     Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_LOCKEDCHEST, 0, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
@@ -126,20 +126,20 @@ function ComboRewards()
                     Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_GRAB_BAG, 1, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                 end
             end
-            if finalKillScore >= 20000 and finalKillScore < 22000 then
+            if finalKillScore >= 20000 and finalKillScore < 22000 then -- 20000 - 21999 one quality 2, 10 trinkets
                 zeros()
                 MOD:SpawnItemOfQuality(2, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
                 for _ = 1, 10 do
                     Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, 0, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                 end
             end
-            if finalKillScore >= 22000 and finalKillScore < 24000 then
+            if finalKillScore >= 22000 and finalKillScore < 24000 then -- 22000 - 23999 five quality 1's
                 zeros()
                 for _ = 1, 5 do
                     MOD:SpawnItemOfQuality(1, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
                 end
             end
-            if finalKillScore >= 24000 and finalKillScore < 26000 then
+            if finalKillScore >= 24000 and finalKillScore < 26000 then -- 24000 - 25999 10 trinkets, 3 gulp pills
                 zeros()
                 for _ = 1, 10 do
                     Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, 0, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
@@ -150,11 +150,11 @@ function ComboRewards()
                 pillEntity:ToPickup().Variant = Game():GetItemPool():ForceAddPillEffect(pillEffect)
                 end
             end
-            if finalKillScore >= 26000 and finalKillScore < 28000 then
+            if finalKillScore >= 26000 and finalKillScore < 28000 then -- 26000 - 27999 one quality 3
                 zeros()
                 MOD:SpawnItemOfQuality(3, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
             end
-            if finalKillScore >= 28000 and finalKillScore < 30000 then
+            if finalKillScore >= 28000 and finalKillScore < 30000 then -- 28000 - 29999 two secret room items bellow quality 4
                 zeros()
                 for _ = 1, 2 do
                     local pool = ItemPoolType.POOL_SECRET
@@ -166,10 +166,10 @@ function ComboRewards()
                     Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, collectible, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                 end
             end
-            if finalKillScore >= 30000 then
+            if finalKillScore >= 30000 then -- 30000+ random effect from bellow
                 zeros()
                 local reward = math.random(1,16)
-                if reward == 1 then
+                if reward == 1 then -- three random secret room items
                     for _ = 1, 3 do
                         local pool = ItemPoolType.POOL_SECRET
                         local seed = Game():GetSeeds():GetStartSeed()
@@ -180,16 +180,17 @@ function ComboRewards()
                         Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, collectible, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                     end
                 end
-                if reward == 2 then
+                if reward == 2 then -- 2 random quality 4's
+                    MOD:SpawnItemOfQuality(4, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
                     MOD:SpawnItemOfQuality(4, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
                 end
-                if reward == 3 then
+                if reward == 3 then -- 30 golden chests, paper clip
                     for _ = 1, 30 do
                         Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_LOCKEDCHEST, 0, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                     end
                     Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, TrinketType.TRINKET_PAPER_CLIP, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                 end
-                if reward == 4 then
+                if reward == 4 then -- 30 trinkets, 15 gulp pills
                     for _ = 1, 30 do
                         Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, 0, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                     end
@@ -199,40 +200,41 @@ function ComboRewards()
                     pillEntity:ToPickup().Variant = Game():GetItemPool():ForceAddPillEffect(pillEffect)
                     end
                 end
-                if reward == 5 then
-                    playerBaseDamage = 13.5
+                if reward == 5 then -- damage set to 13.5
+                    player = Isaac.GetPlayer()
+                    playerDamageCalc = 13.5
                 end
-                if reward == 6 then
+                if reward == 6 then -- 7 random quality 3's
                     for _ = 1, 7 do
                         MOD:SpawnItemOfQuality(3, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
                     end
                 end
-                if reward == 7 then
+                if reward == 7 then -- Pyro, Dollar, Skeleto Key, reverse fool
                     player:AddCollectible(CollectibleType.COLLECTIBLE_PYRO)
                     player:AddCollectible(CollectibleType.COLLECTIBLE_DOLLAR)
                     player:AddCollectible(CollectibleType.COLLECTIBLE_SKELETON_KEY)
                     Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TAROTCARD, Card.CARD_REVERSE_FOOL, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                 end
-                if reward == 8 then
+                if reward == 8 then -- Full Heal
                     local player = Isaac.GetPlayer()
                     player:AddHealth(24)
                 end
-                if reward == 9 then
-                    local pool = ItemPoolType.POOL_PLANETARIUM
-                    local seed = Game():GetSeeds():GetStartSeed()
-                    local collectible = Game():GetItemPool():GetCollectible(pool, true, seed)
+                if reward == 9 then -- 4 random planetarium items
                     for _ = 1, 4 do
+                        local pool = ItemPoolType.POOL_PLANETARIUM
+                        local seed = Game():GetSeeds():GetStartSeed()
+                        local collectible = Game():GetItemPool():GetCollectible(pool, true, seed)
                         Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, collectible, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                     end
                 end
-                if reward == 10 then
+                if reward == 10 then -- R key
                     Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_R_KEY, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                 end
-                if reward == 11 then
+                if reward == 11 then -- 2 diplopias
                     Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_DIPLOPIA, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                     Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_DIPLOPIA, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                 end
-                if reward == 12 then
+                if reward == 12 then -- 6 angel items
                     for _ = 1, 6 do
                         local pool = ItemPoolType.POOL_ANGEL
                         local seed = Game():GetSeeds():GetStartSeed()
@@ -240,7 +242,7 @@ function ComboRewards()
                         Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, collectible, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                     end
                 end
-                if reward == 13 then
+                if reward == 13 then -- 7 devil items
                     for _ = 1, 7 do
                         local pool = ItemPoolType.POOL_DEVIL
                         local seed = Game():GetSeeds():GetStartSeed()
@@ -248,17 +250,17 @@ function ComboRewards()
                         Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, collectible, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                     end
                 end
-                if reward == 14 then
+                if reward == 14 then -- Infamy, Metal Plate, Host Hat, Jelly Belly
                     player:AddCollectible(CollectibleType.COLLECTIBLE_INFAMY)
                     player:AddCollectible(CollectibleType.COLLECTIBLE_METAL_PLATE)
                     player:AddCollectible(CollectibleType.COLLECTIBLE_HOST_HAT)
                     player:AddCollectible(CollectibleType.COLLECTIBLE_JELLY_BELLY)
                 end
-                if reward == 15 then
+                if reward == 15 then -- Dr.Fetus, Pyromaniac
                     player:AddCollectible(CollectibleType.COLLECTIBLE_DR_FETUS)
                     player:AddCollectible(CollectibleType.COLLECTIBLE_PYROMANIAC)
                 end
-                if reward == 16 then
+                if reward == 16 then -- Forget Me Now, 3 random quality 3's
                     Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_FORGET_ME_NOW, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                     for _ = 1, 3 do
                         MOD:SpawnItemOfQuality(3, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
@@ -274,6 +276,7 @@ MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, ComboRewards)
 function PlayerSpeedUp(_, player, playerID)
     local player = Isaac.GetPlayer(playerID)
     if player:HasCollectible(CHEESE_GRATER) then
+        player.Damage = playerDamageCalc + (killCounter/5)
      local move = Input.IsActionPressed(ButtonAction.ACTION_LEFT, 0) or
                Input.IsActionPressed(ButtonAction.ACTION_RIGHT, 0) or
                Input.IsActionPressed(ButtonAction.ACTION_UP, 0) or
@@ -300,22 +303,14 @@ end
 MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, PlayerSpeedUp)
 
 function timerResetOnRunStart()
+        playerDamageCalc = 5
         timer = 0
         killCounter = 0
         combo = "0"
         stringFinalKillScore = "0"
         printTimer = "0"
-        font:Unload()
 end
 MOD:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, timerResetOnRunStart)
-
-function setBaseDamage(_, player, playerID)
-    player = Isaac.GetPlayer()
-    if player:HasCollectible(CHEESE_GRATER) then
-        player.Damage = playerBaseDamage + (killCounter/5)
-    end
-end
-MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, setBaseDamage)
 
 function DrawCombo()
     player = Isaac.GetPlayer()

@@ -3,7 +3,7 @@ local STRAWBERRY = Isaac.GetItemIdByName("Strawberry")
 local POSITION_OFFSET = Vector(0,-30)
 local CONSUME_SPEED_THRESHOLD = 0.01
 local CONSUME_FRAME_THRESHOLD = 20
-local LUCK_GAIN_PAST_1UP = 5
+local LUCK_GAIN_PAST_1UP = 1
 local NEW_RUN_INVINCIBILITY_FRAMES = 120
 local ROOM_ENTER_SPAWN_CHANCE = 10 -- in %
 
@@ -209,7 +209,6 @@ local berryInvincibilityFramesLeft = NEW_RUN_INVINCIBILITY_FRAMES
 ---@param player EntityPlayer
 ---@param playerID any
 local function onUpdate(player, playerID)
-
     if player:HasCollectible(STRAWBERRY) then
         local playerRunSave = SAVE_MANAGER.GetRunSave(player)
 
@@ -223,6 +222,8 @@ local function onUpdate(player, playerID)
             }
         end
 
+        --print(playerRunSave.Strawberry.NoMovementFrames)
+
         if berryInvincibilityFramesLeft > 0 then
             berryInvincibilityFramesLeft = berryInvincibilityFramesLeft - 1
             return
@@ -235,9 +236,9 @@ local function onUpdate(player, playerID)
 
         local scoreAnimation = ""
 
-        playerRunSave.Strawberry.NoMovementFrames = (player:GetVelocityBeforeUpdate():Length() < CONSUME_SPEED_THRESHOLD) and playerRunSave.Strawberry.NoMovementFrames + 1 or 0
+        playerRunSave.Strawberry.NoMovementFrames = (player:GetVelocityBeforeUpdate():Length() < CONSUME_SPEED_THRESHOLD) and math.min(CONSUME_FRAME_THRESHOLD,playerRunSave.Strawberry.NoMovementFrames + 1) or 0
 
-        if (#berries > 0 and playerRunSave.Strawberry.NoMovementFrames > CONSUME_FRAME_THRESHOLD) or playerRunSave.Strawberry.IsConsuming then
+        if (#berries > 0 and playerRunSave.Strawberry.NoMovementFrames == CONSUME_FRAME_THRESHOLD) or playerRunSave.Strawberry.IsConsuming then
             ---@type EntityFamiliar
             local firstBerry = berries[1].Ref:ToFamiliar()
             if firstBerry == nil then
@@ -376,9 +377,7 @@ local function onUpdate(player, playerID)
 
             -- update streak
             if #berries == 0 then
-                
-                -- TODO FIX THIS BECAUSE SPAWNS QUEST AND HIDDEN ITEMS
-                MOD:SpawnItemOfQuality(math.min(streak,4), player:GetCollectibleRNG(STRAWBERRY), firstBerry.Position)
+                MOD:SpawnItemOfQuality(math.min(streak, 4), player:GetCollectibleRNG(STRAWBERRY), Game():GetRoom():GetRandomPosition(10))
                 sfx:Play(SFX_KEY_GET, VOLUME_KEY_GET)
 
                 if playerRunSave.Strawberry.Streak >= THRESHOLD_1UP then
@@ -403,9 +402,10 @@ MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, function() IterateOverPlayers(onUpd
 ---@param player EntityPlayer
 ---@param cacheFlag CacheFlag
 local function onCacheEval(_, player, cacheFlag)
-    if player:HasCollectible(STRAWBERRY) then
+    print("Cache eval")
+    local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+    if player:HasCollectible(STRAWBERRY) and playerRunSave ~= nil then
         if cacheFlag & CacheFlag.CACHE_LUCK == CacheFlag.CACHE_LUCK then
-            local playerRunSave = SAVE_MANAGER.GetRunSave(player)
             player.Luck = player.Luck + playerRunSave.Strawberry.Luck
         end
     end
@@ -437,8 +437,9 @@ MOD:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, onNewFloorEnter)
 
 
 local function onBerryActiveUse(_, itemID, rng, player, useFlags, activeSlot, customVarData)
+    local itemConfig = Isaac.GetItemConfig()
     for _, entity in ipairs(Isaac.GetRoomEntities()) do
-        if entity.Type == EntityType.ENTITY_PICKUP and entity.Variant == PickupVariant.PICKUP_COLLECTIBLE and entity.SubType ~= CollectibleType.COLLECTIBLE_NULL and not entity:ToPickup():IsShopItem() then
+        if entity.Type == EntityType.ENTITY_PICKUP and entity.Variant == PickupVariant.PICKUP_COLLECTIBLE and entity.SubType ~= CollectibleType.COLLECTIBLE_NULL and not entity:ToPickup():IsShopItem() and not itemConfig:GetCollectible(entity.SubType):HasTags(ItemConfig.TAG_QUEST) then
             --print(entity:ToPickup().SubType)
             spawnBerryPickup(STRAWBERRY_SUBTYPE.BLUE, entity.Position, player:GetCollectibleRNG(STRAWBERRY):GetSeed())
             entity:Remove()
@@ -514,11 +515,11 @@ local function onEntityDamage(_, entity, amount, damageFlags, source, countdownF
         for _, berry in ipairs(SAVE_MANAGER.GetRunSave(player).Strawberry.Berries) do
             if berry.Ref.SubType == STRAWBERRY_SUBTYPE.GOLDEN then
                 hadGolden = true
-                sfx:Play(SFX_FUSEBOX_HIT_2_2D, LOSE_GOLDEN_BERRY_VOLUME, 15)
                 berry.Ref:GetSprite():Play("Consume", true)
             end
         end
         if hadGolden then
+            sfx:Play(SFX_FUSEBOX_HIT_2_2D, LOSE_GOLDEN_BERRY_VOLUME)
             MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, goldenRemoveOnHit)
         end
     end

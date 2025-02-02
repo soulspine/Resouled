@@ -402,9 +402,9 @@ MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, function() IterateOverPlayers(onUpd
 ---@param player EntityPlayer
 ---@param cacheFlag CacheFlag
 local function onCacheEval(_, player, cacheFlag)
-    print("Cache eval")
+    --print("Cache eval")
     local playerRunSave = SAVE_MANAGER.GetRunSave(player)
-    if player:HasCollectible(STRAWBERRY) and playerRunSave ~= nil then
+    if player:HasCollectible(STRAWBERRY) and playerRunSave.Strawberry ~= nil then
         if cacheFlag & CacheFlag.CACHE_LUCK == CacheFlag.CACHE_LUCK then
             player.Luck = player.Luck + playerRunSave.Strawberry.Luck
         end

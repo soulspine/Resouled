@@ -1,10 +1,12 @@
 MOD = RegisterMod("Resouled", 1)
 
-include("custom_scripts.items")
+include("custom_scripts.utility.hud_helper")
 
 ---@type SaveManager
 SAVE_MANAGER = include("custom_scripts.utility.save_manager")
 SAVE_MANAGER.Init(MOD)
+
+include("custom_scripts.items")
 
 function GetMaxItemID()
     local itemConfig = Isaac.GetItemConfig()

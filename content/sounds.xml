@@ -23,4 +23,8 @@
     <sound name="Red Strawberry 1UP">
         <sample weight="1" path="Celeste\strawberry_red_get_1up.wav" />
     </sound>
+
+    <sound name="Auction Gavel Sold">
+        <sample weight="1" path="auction_gavel_sold.wav" />
+    </sound>
 </sounds>

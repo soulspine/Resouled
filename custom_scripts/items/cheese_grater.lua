@@ -1,9 +1,9 @@
 local CHEESE_GRATER = Isaac.GetItemIdByName("Cheese Grater")
-local speedCap = 2.25
-local speedToAdd = 0.005
-local speedToRemove = 0.05
-local baseSpeed = 1
-local boostLine = 2.20
+local SPEED_CAP = 2.25
+local SPEED_TO_ADD_PER_FRAME = 0.005
+local SPEED_TO_REMOVE_PER_FRAME = 0.05
+local BASE_SPEED_OVERWRITE = 1
+local BOOST_EFFECT_SPEED_THRESHOLD = 2.20
 local wallCheck = 0.99
 local killCounter = 0
 local combo = ""
@@ -19,6 +19,62 @@ local counterDrawn = false
 local sfx = SFXManager()
 local playerDamageCalc = 5
 font:Load("font/terminus.fnt")
+
+local speedScreen = Sprite()
+speedScreen:Load("gfx/effects/screen.anm2", true)
+
+
+
+local SPRITE_SPEED_SCREEN_LEVEL_1_THRESHOLD = 1.25
+local SPRITE_SPEED_SCREEN_LEVEL_2_THRESHOLD = 2.2
+
+function CheeseGraterSpeedScreen()
+    speedScreen:Update()
+    if player.MoveSpeed <= SPRITE_SPEED_SCREEN_LEVEL_1_THRESHOLD then
+        speedScreen:Play("Idle", true)
+    elseif player.MoveSpeed > SPRITE_SPEED_SCREEN_LEVEL_1_THRESHOLD and player.MoveSpeed <= BOOST_EFFECT_SPEED_THRESHOLD then
+        speedScreen:Play("Run 1", true)
+    elseif player.MoveSpeed > BOOST_EFFECT_SPEED_THRESHOLD then
+        speedScreen:Play("Run 2", true)
+    
+    end
+end
+MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, CheeseGraterSpeedScreen)
+
+local function onUpdate()
+    IterateOverPlayers(function (player, playerID)
+        if player:HasCollectible(CHEESE_GRATER) then
+            local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+            
+            if playerRunSave == nil then
+                playerRunSave = {
+                    Combo = 0,
+                    ComboTimer = 0,
+                    TickTime = 0,
+                    -- 100*Combo - TickTime//30 = Score
+                }
+            end
+
+        end
+    end)
+end
+MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
+
+HudHelper.RegisterHUDElement({
+	Name = "HudHelperExample",
+	Priority = HudHelper.Priority.NORMAL,
+	XPadding = 0,
+	YPadding = 100,
+	Condition = function(player, playerHUDIndex, hudLayout)
+		return player:HasCollectible(CHEESE_GRATER)
+	end,
+	OnRender = function(player, playerHUDIndex, hudLayout, position)
+        speedScreen.Scale = Vector(0.35, 0.35)
+		speedScreen:Update()
+        speedScreen:Render(position + HudHelper.GetHealthHUDOffset(playerHUDIndex))
+	end,
+	BypassGhostBaby = true,
+}, HudHelper.HUDType.EXTRA)
 
 function KillCounter()
     player = Isaac.GetPlayer()
@@ -283,17 +339,17 @@ function PlayerSpeedUp(_, player, playerID)
                 Input.IsActionPressed(ButtonAction.ACTION_DOWN, 0)
       if move and player:GetVelocityBeforeUpdate():Length() > wallCheck then
           player:AddCacheFlags(CacheFlag.CACHE_SPEED)
-          player.MoveSpeed = player.MoveSpeed + speedToAdd * player:GetCollectibleNum(CHEESE_GRATER)
-          if player.MoveSpeed >= speedCap + 0.05 * (player:GetCollectibleNum(CHEESE_GRATER)-1) then
-              player.MoveSpeed = speedCap + 0.05 * (player:GetCollectibleNum(CHEESE_GRATER)-1)
+          player.MoveSpeed = player.MoveSpeed + SPEED_TO_ADD_PER_FRAME * player:GetCollectibleNum(CHEESE_GRATER)
+          if player.MoveSpeed >= SPEED_CAP + 0.05 * (player:GetCollectibleNum(CHEESE_GRATER)-1) then
+              player.MoveSpeed = SPEED_CAP + 0.05 * (player:GetCollectibleNum(CHEESE_GRATER)-1)
           end
       else
-        player.MoveSpeed = player.MoveSpeed - speedToRemove
-        if player.MoveSpeed <= baseSpeed + 0.05 * (player:GetCollectibleNum(CHEESE_GRATER)-1) then
-            player.MoveSpeed = baseSpeed + 0.05 * (player:GetCollectibleNum(CHEESE_GRATER)-1)
+        player.MoveSpeed = player.MoveSpeed - SPEED_TO_REMOVE_PER_FRAME
+        if player.MoveSpeed <= BASE_SPEED_OVERWRITE + 0.05 * (player:GetCollectibleNum(CHEESE_GRATER)-1) then
+            player.MoveSpeed = BASE_SPEED_OVERWRITE + 0.05 * (player:GetCollectibleNum(CHEESE_GRATER)-1)
         end
       end
-      if player.MoveSpeed >= boostLine then
+      if player.MoveSpeed >= BOOST_EFFECT_SPEED_THRESHOLD then
         Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.BLOOD_DROP, 1, player.Position, Vector.Zero, player)
       end
     else
@@ -316,15 +372,15 @@ function DrawCombo()
     player = Isaac.GetPlayer()
     if player:HasCollectible(CHEESE_GRATER) and counterDrawn == false then
         MOD:AddCallback(ModCallbacks.MC_POST_RENDER, function()
-            font:DrawString("Combo:".. combo, 320, 10, KColor(1,1,1,1), 0, false)
-            end)
-            MOD:AddCallback(ModCallbacks.MC_POST_RENDER, function()
-            font:DrawString("Time:"..printTimer, 320, 25, KColor(1,1,1,1), 0, false)
-            end)
-            MOD:AddCallback(ModCallbacks.MC_POST_RENDER, function()
-            font:DrawString("Score:"..stringFinalKillScore, 320, 40, KColor(1,1,1,1), 0, false)
-            end)
-            counterDrawn = true
+        font:DrawString("Combo:".. combo, 320, 10, KColor(1,1,1,1), 0, false)
+        end)
+        MOD:AddCallback(ModCallbacks.MC_POST_RENDER, function()
+        font:DrawString("Time:"..printTimer, 320, 25, KColor(1,1,1,1), 0, false)
+        end)
+        MOD:AddCallback(ModCallbacks.MC_POST_RENDER, function()
+        font:DrawString("Score:"..stringFinalKillScore, 320, 40, KColor(1,1,1,1), 0, false)
+        end)
+        counterDrawn = true
     end
 end
 MOD:AddCallback(ModCallbacks.MC_POST_RENDER, DrawCombo)

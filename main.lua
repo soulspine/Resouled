@@ -1,3 +1,4 @@
+---@type ModReference
 MOD = RegisterMod("Resouled", 1)
 
 include("custom_scripts.items")
@@ -23,7 +24,7 @@ end
 ---@param quality integer
 ---@param rng RNG
 ---@param position Vector
-function MOD:SpawnItemOfQuality(quality, rng, position)
+function SpawnItemOfQuality(quality, rng, position)
     local itemConfig = Isaac.GetItemConfig()
     local itemPool = Game():GetItemPool()
     local validItems = {}

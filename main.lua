@@ -69,3 +69,50 @@ function IterateOverPlayers(callback, ...)
         callback(player, i, ...)
     end
 end
+
+-- borrowed from epiphany
+---@param filter? fun(door: GridEntityDoor): boolean? @Filter which doors should be closed
+function MOD:ForceShutDoors(filter)
+	local room = Game():GetRoom()
+	for doorSlot = DoorSlot.LEFT0, DoorSlot.NUM_DOOR_SLOTS - 1 do
+		local door = room:GetDoor(doorSlot)
+		if door
+			and door:IsOpen()
+			and door:GetSprite():GetAnimation() ~= door.CloseAnimation
+			and (filter == nil or filter(door) == true)
+		then
+			door:Close(true)
+			door:GetSprite():Play(door.CloseAnimation, true)
+			door:SetVariant(DoorVariant.DOOR_HIDDEN)
+			local grid_save = SAVE_MANAGER.GetRoomFloorSave(room:GetGridPosition(door:GetGridIndex()))
+			if not grid_save.HasForcedShut then
+				grid_save.HasForcedShut = true
+			else
+				door:GetSprite():SetLastFrame()
+			end
+		end
+	end
+end
+
+---@param filter? fun(door: GridEntityDoor): boolean? @Filter which doors should be opened
+function MOD:ForceOpenDoors(filter)
+    local room = Game():GetRoom()
+    for doorSlot = DoorSlot.LEFT0, DoorSlot.NUM_DOOR_SLOTS - 1 do
+        local door = room:GetDoor(doorSlot)
+        if door
+            and not door:IsOpen()
+            and door:GetSprite():GetAnimation() == door.CloseAnimation
+            and (filter == nil or filter(door) == true)
+        then
+            door:Open()
+            door:GetSprite():Play(door.OpenAnimation, true)
+            door:SetVariant(DoorVariant.DOOR_UNLOCKED)
+            local grid_save = SAVE_MANAGER.GetRoomFloorSave(room:GetGridPosition(door:GetGridIndex()))
+            if grid_save.HasForcedShut then
+                grid_save.HasForcedShut = false
+            else
+                door:GetSprite():SetLastFrame()
+            end
+        end
+    end
+end

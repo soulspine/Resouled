@@ -23,22 +23,39 @@ end
 ---@param quality integer
 ---@param rng RNG
 ---@param position Vector
----@param onlyUnlocks? boolean @default true
-function MOD:SpawnItemOfQuality(quality, rng, position, onlyUnlocks)
-    onlyUnlocks = onlyUnlocks and true or false
+function MOD:SpawnItemOfQuality(quality, rng, position)
     local itemConfig = Isaac.GetItemConfig()
+    local itemPool = Game():GetItemPool()
     local validItems = {}
     
     for i = 1, #itemConfig:GetCollectibles() do
         local item = itemConfig:GetCollectible(i)
-        if item and item.Quality == quality and not item.Hidden and (not onlyUnlocks or item:IsAvailable()) and not item:HasTags(ItemConfig.TAG_QUEST) then
+        if item and item.Quality == quality and not item.Hidden and item:IsAvailable() and not item:HasTags(ItemConfig.TAG_QUEST) then
             table.insert(validItems, i)
         end
     end
     
+    ::reroll::
+
     if #validItems > 0 then
         local randomItem = validItems[rng:RandomInt(#validItems) + 1]
-        return Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, randomItem, Isaac.GetFreeNearPosition(position, 60), Vector.Zero, nil)
+        
+        if not itemPool:RemoveCollectible(randomItem) then
+            --remove raindomItem from valiudItems
+            print("Removing item from validItems - " .. randomItem)
+            for i = 1, #validItems do
+                if validItems[i] == randomItem then
+                    table.remove(validItems, i)
+                    break
+                end
+            end
+            goto reroll
+        end
+
+        local entity = Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, Isaac.GetFreeNearPosition(position, 60), Vector.Zero, nil, randomItem, rng:GetSeed())
+        rng:Next()
+        return entity
+
     end
     return nil
 end

@@ -18,12 +18,69 @@ local font = Font()
 local counterDrawn = false
 local sfx = SFXManager()
 local playerDamageCalc = 5
+local POSITION_OFFSET = Vector(0,-20)
+local toppingPickup = Isaac.GetEntityVariantByName("Topping Pickup")
+local toppingFamiliar = Isaac.GetEntityVariantByName("Topping Familiar")
+local toppings = {}
+local toppingTranslation = {
+    [0] = "Mushroom",
+    [1] = "Cheese",
+    [2] = "Tomato",
+    [3] = "Sausage",
+    [4] = "Pineapple",
+}
+local toppingCount = 0
 font:Load("font/terminus.fnt")
-
 local speedScreen = Sprite()
 speedScreen:Load("gfx/effects/screen.anm2", true)
 
+---@param pickup EntityPickup
+local function onToppingPickupInit(_, pickup)
+    local currentTopping = toppingTranslation[toppingCount]
+    local sprite = pickup:GetSprite()
+    sprite:Play(currentTopping, true)
+    pickup.PositionOffset = POSITION_OFFSET
+    pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
+end
+MOD:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onToppingPickupInit, toppingPickup)
 
+local function onToppingPickupCollision(_, pickup, collider, low)
+    if collider.Type == EntityType.ENTITY_PLAYER then
+        local player = collider:ToPlayer()
+
+        if player == nil then
+            return
+        end
+
+        if player:HasCollectible(CHEESE_GRATER) then
+            pickup:Remove()
+            Isaac.Spawn(EntityType.ENTITY_FAMILIAR, toppingPickup, pickup.SubType, pickup.Position, Vector.Zero, player)
+            toppingCount = toppingCount + 1
+            if toppingCount >= 5 then
+                toppingCount = 0
+            end
+        end
+    end
+end
+MOD:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onToppingPickupCollision, toppingPickup)
+
+---@param familiar EntityFamiliar
+local function onToppingFamiliarInit(_, familiar)
+    familiar.PositionOffset = POSITION_OFFSET
+    familiar:GetSprite():ReplaceSpritesheet(toppingCount, toppingTranslation[toppingCount]..".png")
+    familiar:AddToFollowers()
+    local player = familiar.Player:ToPlayer()
+    if player == nil then
+        return
+    end
+end
+MOD:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onToppingFamiliarInit, toppingFamiliar)
+
+---@param familiar EntityFamiliar
+local function onToppingFamiliarUpdate(_, familiar)
+    familiar:FollowParent()
+end
+MOD:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onToppingFamiliarUpdate, toppingFamiliar)
 
 local SPRITE_SPEED_SCREEN_LEVEL_1_THRESHOLD = 1.25
 local SPRITE_SPEED_SCREEN_LEVEL_2_THRESHOLD = 2.2

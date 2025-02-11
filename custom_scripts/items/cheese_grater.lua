@@ -21,7 +21,6 @@ local playerDamageCalc = 5
 local POSITION_OFFSET = Vector(0,-20)
 local toppingPickup = Isaac.GetEntityVariantByName("Topping Pickup")
 local toppingFamiliar = Isaac.GetEntityVariantByName("Topping Familiar")
-local toppings = {}
 local toppingTranslation = {
     [0] = "Mushroom",
     [1] = "Cheese",
@@ -30,21 +29,60 @@ local toppingTranslation = {
     [4] = "Pineapple",
 }
 local toppingCount = 0
+local toppingRoomCount = 0
+local roomsWithNoToppings = 1
+local topping = Isaac.GetEntityTypeByName("Topping Familiar")
+local roomCount = 0
 font:Load("font/terminus.fnt")
 local speedScreen = Sprite()
 speedScreen:Load("gfx/effects/screen.anm2", true)
 
+function toppingRoomCountCalculate()
+    local level = Game():GetLevel()
+    local rooms = level:GetRooms()
+    roomCount = rooms.Size
+    toppingCount = 0
+    roomsWithNoToppings = 1
+end
+MOD:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, toppingRoomCountCalculate)
+MOD:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, toppingRoomCountCalculate)
+
+
+
+function toppingsSpawning()
+    local player = Isaac.GetPlayer()
+    if player:HasCollectible(CHEESE_GRATER) then
+        local room = Game():GetRoom()
+        if room:IsFirstVisit() then
+            local rng = RNG()
+            toppingRoomCount = roomCount / 5
+            local chance = (100/toppingRoomCount) * roomsWithNoToppings
+            local randNum = math.random(0, 100)
+            if randNum < chance and toppingCount < 5 then
+                local randPos = Isaac.GetRandomPosition()
+                Isaac.Spawn(EntityType.ENTITY_PICKUP, toppingPickup, 0, Isaac.GetFreeNearPosition(randPos, 500), Vector.Zero, nil)
+                toppingCount = toppingCount + 1
+                roomsWithNoToppings = 1
+                print(toppingCount)
+            else
+                roomsWithNoToppings = roomsWithNoToppings + 1
+                return
+            end
+        end
+    end
+end
+MOD:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, toppingsSpawning)
+
 ---@param pickup EntityPickup
-local function onToppingPickupInit(_, pickup)
-    local currentTopping = toppingTranslation[toppingCount]
+function onToppingPickupInit(_, pickup)
     local sprite = pickup:GetSprite()
-    sprite:Play(currentTopping, true)
+    sprite:Play(toppingTranslation[toppingCount], true)
     pickup.PositionOffset = POSITION_OFFSET
     pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
 end
 MOD:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onToppingPickupInit, toppingPickup)
 
-local function onToppingPickupCollision(_, pickup, collider, low)
+function onToppingPickupCollision(_, pickup, collider)
     if collider.Type == EntityType.ENTITY_PLAYER then
         local player = collider:ToPlayer()
 
@@ -53,11 +91,9 @@ local function onToppingPickupCollision(_, pickup, collider, low)
         end
 
         if player:HasCollectible(CHEESE_GRATER) then
-            pickup:Remove()
-            Isaac.Spawn(EntityType.ENTITY_FAMILIAR, toppingPickup, pickup.SubType, pickup.Position, Vector.Zero, player)
-            toppingCount = toppingCount + 1
-            if toppingCount >= 5 then
-                toppingCount = 0
+            if toppingCount <= 5 then
+                pickup:Remove()
+                Isaac.Spawn(EntityType.ENTITY_FAMILIAR, toppingPickup, pickup.SubType, pickup.Position, Vector.Zero, player)
             end
         end
     end
@@ -65,10 +101,10 @@ end
 MOD:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onToppingPickupCollision, toppingPickup)
 
 ---@param familiar EntityFamiliar
-local function onToppingFamiliarInit(_, familiar)
+function onToppingFamiliarInit(_, familiar)
     familiar.PositionOffset = POSITION_OFFSET
-    familiar:GetSprite():ReplaceSpritesheet(toppingCount, toppingTranslation[toppingCount]..".png")
     familiar:AddToFollowers()
+    familiar:GetSprite():Play(toppingTranslation[toppingCount-1])
     local player = familiar.Player:ToPlayer()
     if player == nil then
         return
@@ -81,6 +117,7 @@ local function onToppingFamiliarUpdate(_, familiar)
     familiar:FollowParent()
 end
 MOD:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onToppingFamiliarUpdate, toppingFamiliar)
+
 
 local SPRITE_SPEED_SCREEN_LEVEL_1_THRESHOLD = 1.25
 local SPRITE_SPEED_SCREEN_LEVEL_2_THRESHOLD = 2.2
@@ -422,6 +459,7 @@ function timerResetOnRunStart()
         combo = "0"
         stringFinalKillScore = "0"
         printTimer = "0"
+        toppingCount = 0
 end
 MOD:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, timerResetOnRunStart)
 

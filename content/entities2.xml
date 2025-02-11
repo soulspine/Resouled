@@ -16,5 +16,5 @@
     <entity anm2path="strawberry_red.anm2" name="Red Strawberry Familiar" id="3" variant="444" subtype="0" shadowSize="15" friction="1.5"/>
 
     <entity anm2path="mushroom.anm2" name="Topping Pickup" id="5" variant="445" subtype="0" collisionRadius="12" collisionMass="5" shadowSize="15"/>
-    <entity anm2path="mushroom.anm2" name="Topping Familair" id="3" variant="445" subtype="0" shadowSize="15" friction="1.5"/>
+    <entity anm2path="mushroom.anm2" name="Topping Familiar" id="3" variant="445" subtype="0" shadowSize="15" friction="1.5"/>
 </entities>

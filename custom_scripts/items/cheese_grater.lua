@@ -19,68 +19,115 @@ local counterDrawn = false
 local sfx = SFXManager()
 local playerDamageCalc = 5
 local POSITION_OFFSET = Vector(0,-20)
-local toppingPickup = Isaac.GetEntityVariantByName("Topping Pickup")
-local toppingFamiliar = Isaac.GetEntityVariantByName("Topping Familiar")
-local toppingTranslation = {
-    [0] = "Mushroom",
-    [1] = "Cheese",
-    [2] = "Tomato",
-    [3] = "Sausage",
-    [4] = "Pineapple",
+local TOPPING_VARIANT = Isaac.GetEntityVariantByName("Topping Pickup")
+local TOPPING_SUBTYPES = {
+    MUSHROOM = 0,
+    CHEESE = 1,
+    TOMATO = 2,
+    SAUSAGE = 3,
+    PINEAPPLE = 4,
 }
 local toppingCount = 0
 local toppingRoomCount = 0
 local roomsWithNoToppings = 1
-local topping = Isaac.GetEntityTypeByName("Topping Familiar")
 local roomCount = 0
+local topping = Isaac.GetEntityTypeByName("Topping Familiar")
 font:Load("font/terminus.fnt")
 local speedScreen = Sprite()
 speedScreen:Load("gfx/effects/screen.anm2", true)
 
-function toppingRoomCountCalculate()
-    local level = Game():GetLevel()
-    local rooms = level:GetRooms()
-    roomCount = rooms.Size
-    toppingCount = 0
-    roomsWithNoToppings = 1
-end
-MOD:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, toppingRoomCountCalculate)
-MOD:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, toppingRoomCountCalculate)
+local function rollToppingRooms()
+    local cheeseGraterPresent = false
+    ---@param player EntityPlayer
+    IterateOverPlayers(function(player, playerID)
+        if player:HasCollectible(CHEESE_GRATER) then
+            cheeseGraterPresent = true
+        end
+    end)
 
-
-
-function toppingsSpawning()
-    local player = Isaac.GetPlayer()
-    if player:HasCollectible(CHEESE_GRATER) then
-        local room = Game():GetRoom()
-        if room:IsFirstVisit() then
-            local rng = RNG()
-            toppingRoomCount = roomCount / 5
-            local chance = (100/toppingRoomCount) * roomsWithNoToppings
-            local randNum = math.random(0, 100)
-            if randNum < chance and toppingCount < 5 then
-                local randPos = Isaac.GetRandomPosition()
-                Isaac.Spawn(EntityType.ENTITY_PICKUP, toppingPickup, 0, Isaac.GetFreeNearPosition(randPos, 500), Vector.Zero, nil)
-                toppingCount = toppingCount + 1
-                roomsWithNoToppings = 1
-                print(toppingCount)
-            else
-                roomsWithNoToppings = roomsWithNoToppings + 1
-                return
+    if cheeseGraterPresent then
+        local floorSave = SAVE_MANAGER.GetFloorSave()
+        floorSave.CheeseGrater = {
+            SpawnedCount  = 0,
+            Rooms = {},
+            SpawnedInRooms = {},
+        }
+        local maxRoomIndex = Game():GetLevel():GetRooms().Size + 1
+        local rng = player:GetCollectibleRNG(CHEESE_GRATER)
+        
+        for _ = 1, 5 do
+            ::reroll::
+            local newRoomIndex = rng:RandomInt(maxRoomIndex)
+            for _, roomIndex in ipairs(floorSave.CheeseGrater.Rooms) do
+                if roomIndex == newRoomIndex then
+                    goto reroll
+                end
             end
+            table.insert(floorSave.CheeseGrater.Rooms, newRoomIndex)
+            table.insert(floorSave.CheeseGrater.SpawnedInRooms, false)
         end
     end
 end
-MOD:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, toppingsSpawning)
+MOD:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, rollToppingRooms)
+
+local function tryToSpawnToppingInRoom()
+    local room = Game():GetRoom()
+
+    local roomDescriptor = Game():GetLevel():GetCurrentRoomDesc()
+    local floorSave = SAVE_MANAGER.GetFloorSave()
+
+    if floorSave.CheeseGrater == nil then
+        return
+    end
+
+    print(roomDescriptor.ListIndex)
+
+    local validRoom = false
+    for i, roomIndex in ipairs(floorSave.CheeseGrater.Rooms) do
+        if roomIndex == roomDescriptor.ListIndex and not floorSave.CheeseGrater.SpawnedInRooms[i] then
+            floorSave.CheeseGrater.SpawnedInRooms[i] = true
+            validRoom = true
+            break
+        end
+    end
+
+    if validRoom then
+        Game():Spawn(EntityType.ENTITY_PICKUP, TOPPING_VARIANT, Isaac.GetFreeNearPosition(Isaac.GetRandomPosition(), 500), Vector.Zero, nil, floorSave.CheeseGrater.SpawnedCount, room:GetSpawnSeed())
+        floorSave.CheeseGrater.SpawnedCount = floorSave.CheeseGrater.SpawnedCount + 1
+    end
+end
+MOD:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, tryToSpawnToppingInRoom)
+
+local function ensureFloorSave()
+    local floorSave = SAVE_MANAGER.GetFloorSave()
+    if floorSave.CheeseGrater == nil then
+        rollToppingRooms()
+    end
+end
+MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, ensureFloorSave)
 
 ---@param pickup EntityPickup
 function onToppingPickupInit(_, pickup)
     local sprite = pickup:GetSprite()
-    sprite:Play(toppingTranslation[toppingCount], true)
+    local animationName  = ""
+
+    if pickup.SubType == TOPPING_SUBTYPES.MUSHROOM then
+        animationName = "Mushroom"
+    elseif pickup.SubType == TOPPING_SUBTYPES.Cheese then
+        animationName = "Cheese"
+    elseif pickup.SubType == TOPPING_SUBTYPES.Tomato then
+        animationName = "Tomato"
+    elseif pickup.SubType == TOPPING_SUBTYPES.SAUSAGE then
+        animationName = "Sausage"
+    elseif pickup.SubType == TOPPING_SUBTYPES.PINEAPPLE then
+        animationName = "Pineapple"
+    end
+
+    sprite:Play(animationName, true)
     pickup.PositionOffset = POSITION_OFFSET
     pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
 end
-MOD:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onToppingPickupInit, toppingPickup)
+MOD:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onToppingPickupInit, TOPPING_VARIANT)
 
 function onToppingPickupCollision(_, pickup, collider)
     if collider.Type == EntityType.ENTITY_PLAYER then
@@ -93,30 +140,30 @@ function onToppingPickupCollision(_, pickup, collider)
         if player:HasCollectible(CHEESE_GRATER) then
             if toppingCount <= 5 then
                 pickup:Remove()
-                Isaac.Spawn(EntityType.ENTITY_FAMILIAR, toppingPickup, pickup.SubType, pickup.Position, Vector.Zero, player)
+                Isaac.Spawn(EntityType.ENTITY_FAMILIAR, TOPPING_VARIANT, pickup.SubType, pickup.Position, Vector.Zero, player)
             end
         end
     end
 end
-MOD:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onToppingPickupCollision, toppingPickup)
+MOD:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onToppingPickupCollision, TOPPING_VARIANT)ww
 
 ---@param familiar EntityFamiliar
 function onToppingFamiliarInit(_, familiar)
     familiar.PositionOffset = POSITION_OFFSET
     familiar:AddToFollowers()
-    familiar:GetSprite():Play(toppingTranslation[toppingCount-1])
+    familiar:GetSprite():Play(TOPPING_SUBTYPES-1)
     local player = familiar.Player:ToPlayer()
     if player == nil then
         return
     end
 end
-MOD:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onToppingFamiliarInit, toppingFamiliar)
+MOD:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onToppingFamiliarInit, TOPPING_VARIANT)
 
 ---@param familiar EntityFamiliar
 local function onToppingFamiliarUpdate(_, familiar)
     familiar:FollowParent()
 end
-MOD:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onToppingFamiliarUpdate, toppingFamiliar)
+MOD:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onToppingFamiliarUpdate, TOPPING_VARIANT)
 
 
 local SPRITE_SPEED_SCREEN_LEVEL_1_THRESHOLD = 1.25

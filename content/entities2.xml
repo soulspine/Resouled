@@ -15,6 +15,14 @@
     <entity anm2path="strawberry_red.anm2" name="Red Strawberry Pickup" id="5" variant="444" subtype="0" collisionRadius="12" collisionMass="9999" shadowSize="15"/>
     <entity anm2path="strawberry_red.anm2" name="Red Strawberry Familiar" id="3" variant="444" subtype="0" shadowSize="15" friction="1.5"/>
 
-    <entity anm2path="mushroom.anm2" name="Topping Pickup" id="5" variant="445" subtype="0" collisionRadius="12" collisionMass="5" shadowSize="15"/>
-    <entity anm2path="mushroom.anm2" name="Topping Familiar" id="3" variant="445" subtype="0" shadowSize="15" friction="1.5"/>
+    <entity anm2path="toppings.anm2" name="Mushroom Pickup" id="5" variant="445" subtype="0" collisionRadius="12" collisionMass="5" shadowSize="15"/>
+    <entity anm2path="toppings.anm2" name="Cheese Pickup" id="5" variant="445" subtype="1" collisionRadius="12" collisionMass="5" shadowSize="15"/>
+    <entity anm2path="toppings.anm2" name="Tomato Pickup" id="5" variant="445" subtype="2" collisionRadius="12" collisionMass="5" shadowSize="15"/>
+    <entity anm2path="toppings.anm2" name="Susage Pickup" id="5" variant="445" subtype="3" collisionRadius="12" collisionMass="5" shadowSize="15"/>
+    <entity anm2path="toppings.anm2" name="Pineapple Pickup" id="5" variant="445" subtype="4" collisionRadius="12" collisionMass="5" shadowSize="15"/>
+    <entity anm2path="toppings.anm2" name="Mushroom Familiar" id="3" variant="445" subtype="0" shadowSize="15" friction="1.5"/>
+    <entity anm2path="toppings.anm2" name="Cheese Familiar" id="3" variant="445" subtype="1" shadowSize="15" friction="1.5"/>
+    <entity anm2path="toppings.anm2" name="Tomato Familiar" id="3" variant="445" subtype="2" shadowSize="15" friction="1.5"/>
+    <entity anm2path="toppings.anm2" name="Sausage Familiar" id="3" variant="445" subtype="3" shadowSize="15" friction="1.5"/>
+    <entity anm2path="toppings.anm2" name="Pineapple Familiar" id="3" variant="445" subtype="4" shadowSize="15" friction="1.5"/>
 </entities>

@@ -12,8 +12,9 @@
     1000 = EFFECT
     -->
     <!-- variant 444 becasue 4souls -->
-    <entity anm2path="strawberry_red.anm2" name="Red Strawberry Pickup" id="5" variant="444" subtype="0" collisionRadius="24" collisionMass="9999" shadowSize="15"/>
-    <entity anm2path="strawberry_blue.anm2" name="Blue Strawberry Pickup" id="5" variant="444" subtype="1" collisionRadius="24" collisionMass="9999" shadowSize="15"/>
+    <entity anm2path="strawberry_red.anm2" name="Red Strawberry Pickup" id="5" variant="444" subtype="0" collisionRadius="24" collisionMass="9999" shadowSize="15" friction="1.5"/>
+    <entity anm2path="strawberry_blue.anm2" name="Blue Strawberry Pickup" id="5" variant="444" subtype="1" collisionRadius="24" collisionMass="9999" shadowSize="15" friction="1.5"/>
+    <entity anm2path="strawberry_winged.anm2" name="Winged Strawberry Pickup" id="5" variant="444" subtype="3" collisionRadius="24" collisionMass="9999" shadowSize="15" friction="1.5"/>
     <entity anm2path="strawberry_red.anm2" name="Red Strawberry Familiar" id="3" variant="444" subtype="0" shadowSize="15" friction="1.5" tage="cansacrifice"/>
     <entity anm2path="strawberry_blue.anm2" name="Blue Strawberry Familiar" id="3" variant="444" subtype="1" shadowSize="15" friction="1.5" tags="cansacrifice"/>
     <!-- TODO FIX THIS TO GOLDEN ANIMATION WHEN SPRITESHEET READY -->

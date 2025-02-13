@@ -19,7 +19,7 @@ local counterDrawn = false
 local sfx = SFXManager()
 local playerDamageCalc = 5
 local POSITION_OFFSET = Vector(0,-20)
-local TOPPING_VARIANT = Isaac.GetEntityVariantByName("Topping Pickup")
+local toppingCount = 0
 local TOPPING_SUBTYPES = {
     MUSHROOM = 0,
     CHEESE = 1,
@@ -27,12 +27,18 @@ local TOPPING_SUBTYPES = {
     SAUSAGE = 3,
     PINEAPPLE = 4,
 }
-local toppingCount = 0
+local TOPPING_VARIANT_TRANSLATION = {
+    [0] = "Mushroom",
+    [1] = "Cheese",
+    [2] = "Tomato",
+    [3] = "Sausage",
+    [4] = "Pineapple",
+}
+local TOPPING_VARIANT = Isaac.GetEntityVariantByName(TOPPING_VARIANT_TRANSLATION[toppingCount].." Pickup")
 local toppingRoomCount = 0
 local roomsWithNoToppings = 1
 local roomCount = 0
 local topping = Isaac.GetEntityTypeByName("Topping Familiar")
-font:Load("font/terminus.fnt")
 local speedScreen = Sprite()
 speedScreen:Load("gfx/effects/screen.anm2", true)
 
@@ -80,8 +86,6 @@ local function tryToSpawnToppingInRoom()
         return
     end
 
-    print(roomDescriptor.ListIndex)
-
     local validRoom = false
     for i, roomIndex in ipairs(floorSave.CheeseGrater.Rooms) do
         if roomIndex == roomDescriptor.ListIndex and not floorSave.CheeseGrater.SpawnedInRooms[i] then
@@ -92,7 +96,7 @@ local function tryToSpawnToppingInRoom()
     end
 
     if validRoom then
-        Game():Spawn(EntityType.ENTITY_PICKUP, TOPPING_VARIANT, Isaac.GetFreeNearPosition(Isaac.GetRandomPosition(), 500), Vector.Zero, nil, floorSave.CheeseGrater.SpawnedCount, room:GetSpawnSeed())
+        Game():Spawn(EntityType.ENTITY_PICKUP, TOPPING_VARIANT, Isaac.GetFreeNearPosition(Isaac.GetRandomPosition(), 500), Vector.Zero, nil, toppingCount, room:GetSpawnSeed())
         floorSave.CheeseGrater.SpawnedCount = floorSave.CheeseGrater.SpawnedCount + 1
     end
 end
@@ -113,9 +117,9 @@ function onToppingPickupInit(_, pickup)
 
     if pickup.SubType == TOPPING_SUBTYPES.MUSHROOM then
         animationName = "Mushroom"
-    elseif pickup.SubType == TOPPING_SUBTYPES.Cheese then
+    elseif pickup.SubType == TOPPING_SUBTYPES.CHEESE then
         animationName = "Cheese"
-    elseif pickup.SubType == TOPPING_SUBTYPES.Tomato then
+    elseif pickup.SubType == TOPPING_SUBTYPES.TOMATO then
         animationName = "Tomato"
     elseif pickup.SubType == TOPPING_SUBTYPES.SAUSAGE then
         animationName = "Sausage"
@@ -124,7 +128,6 @@ function onToppingPickupInit(_, pickup)
     end
 
     sprite:Play(animationName, true)
-    pickup.PositionOffset = POSITION_OFFSET
     pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
 end
 MOD:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onToppingPickupInit, TOPPING_VARIANT)
@@ -132,26 +135,26 @@ MOD:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onToppingPickupInit, TOPPING_V
 function onToppingPickupCollision(_, pickup, collider)
     if collider.Type == EntityType.ENTITY_PLAYER then
         local player = collider:ToPlayer()
+        local room = Game():GetRoom()
 
         if player == nil then
             return
         end
 
         if player:HasCollectible(CHEESE_GRATER) then
-            if toppingCount <= 5 then
-                pickup:Remove()
-                Isaac.Spawn(EntityType.ENTITY_FAMILIAR, TOPPING_VARIANT, pickup.SubType, pickup.Position, Vector.Zero, player)
-            end
+            pickup:Remove()
+            Game():Spawn(EntityType.ENTITY_FAMILIAR, TOPPING_VARIANT, pickup.Position, Vector.Zero, player, toppingCount, room:GetSpawnSeed())
+            toppingCount = toppingCount + 1
         end
     end
 end
-MOD:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onToppingPickupCollision, TOPPING_VARIANT)ww
+MOD:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onToppingPickupCollision, TOPPING_VARIANT, player)
 
 ---@param familiar EntityFamiliar
 function onToppingFamiliarInit(_, familiar)
     familiar.PositionOffset = POSITION_OFFSET
     familiar:AddToFollowers()
-    familiar:GetSprite():Play(TOPPING_SUBTYPES-1)
+    familiar:GetSprite():Play(TOPPING_VARIANT_TRANSLATION[toppingCount])
     local player = familiar.Player:ToPlayer()
     if player == nil then
         return
@@ -165,20 +168,35 @@ local function onToppingFamiliarUpdate(_, familiar)
 end
 MOD:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onToppingFamiliarUpdate, TOPPING_VARIANT)
 
+HudHelper.RegisterHUDElement({
+    Name = "HudHelperExample",
+    Priority = HudHelper.Priority.NORMAL,
+    XPadding = 0,
+    YPadding = 100,
+    Condition = function(player, playerHUDIndex, hudLayout)
+        return player:HasCollectible(CHEESE_GRATER)
+    end,
+    OnRender = function(player, playerHUDIndex, hudLayout, position)
+        speedScreen.Scale = Vector(0.35, 0.35)
+        speedScreen:Update()
+        speedScreen:Render(position + HudHelper.GetHealthHUDOffset(playerHUDIndex))
+    end,
+    BypassGhostBaby = true,
+}, HudHelper.HUDType.EXTRA)
 
 local SPRITE_SPEED_SCREEN_LEVEL_1_THRESHOLD = 1.25
 local SPRITE_SPEED_SCREEN_LEVEL_2_THRESHOLD = 2.2
 
 function CheeseGraterSpeedScreen()
     speedScreen:Update()
-    if player.MoveSpeed <= SPRITE_SPEED_SCREEN_LEVEL_1_THRESHOLD then
-        speedScreen:Play("Idle", true)
-    elseif player.MoveSpeed > SPRITE_SPEED_SCREEN_LEVEL_1_THRESHOLD and player.MoveSpeed <= BOOST_EFFECT_SPEED_THRESHOLD then
+    if player.MoveSpeed < SPRITE_SPEED_SCREEN_LEVEL_1_THRESHOLD then
+        speedScreen:Play("Idle",true)
+    elseif player.MoveSpeed >= SPRITE_SPEED_SCREEN_LEVEL_1_THRESHOLD and player.MoveSpeed < SPRITE_SPEED_SCREEN_LEVEL_2_THRESHOLD then
         speedScreen:Play("Run 1", true)
-    elseif player.MoveSpeed > BOOST_EFFECT_SPEED_THRESHOLD then
+        speedScreen:LoadGraphics()
+    elseif player.MoveSpeed >= SPRITE_SPEED_SCREEN_LEVEL_2_THRESHOLD then
         speedScreen:Play("Run 2", true)
-    
-    end
+    end 
 end
 MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, CheeseGraterSpeedScreen)
 
@@ -201,21 +219,6 @@ local function onUpdate()
 end
 MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 
-HudHelper.RegisterHUDElement({
-	Name = "HudHelperExample",
-	Priority = HudHelper.Priority.NORMAL,
-	XPadding = 0,
-	YPadding = 100,
-	Condition = function(player, playerHUDIndex, hudLayout)
-		return player:HasCollectible(CHEESE_GRATER)
-	end,
-	OnRender = function(player, playerHUDIndex, hudLayout, position)
-        speedScreen.Scale = Vector(0.35, 0.35)
-		speedScreen:Update()
-        speedScreen:Render(position + HudHelper.GetHealthHUDOffset(playerHUDIndex))
-	end,
-	BypassGhostBaby = true,
-}, HudHelper.HUDType.EXTRA)
 
 function KillCounter()
     player = Isaac.GetPlayer()
@@ -250,7 +253,6 @@ function KillCounterTimerCountdown()
                 killCounter = 0
                 stringFinalKillScore = "0"
                 scoreToLose = 0
-                print(finalKillScore)
             end
         end
     end
@@ -463,7 +465,6 @@ function ComboRewards()
                         MOD:SpawnItemOfQuality(3, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
                     end
                 end
-                print(reward)
             end
         end
     end
@@ -507,12 +508,15 @@ function timerResetOnRunStart()
         stringFinalKillScore = "0"
         printTimer = "0"
         toppingCount = 0
+        counterDrawn = false
+        
 end
 MOD:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, timerResetOnRunStart)
 
 function DrawCombo()
     player = Isaac.GetPlayer()
     if player:HasCollectible(CHEESE_GRATER) and counterDrawn == false then
+        font:Load("font/terminus.fnt")
         MOD:AddCallback(ModCallbacks.MC_POST_RENDER, function()
         font:DrawString("Combo:".. combo, 320, 10, KColor(1,1,1,1), 0, false)
         end)
@@ -523,6 +527,8 @@ function DrawCombo()
         font:DrawString("Score:"..stringFinalKillScore, 320, 40, KColor(1,1,1,1), 0, false)
         end)
         counterDrawn = true
+    elseif not player:HasCollectible(CHEESE_GRATER) and counterDrawn == false then
+        font:Unload()
     end
 end
 MOD:AddCallback(ModCallbacks.MC_POST_RENDER, DrawCombo)

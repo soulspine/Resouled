@@ -8,7 +8,7 @@ local wallCheck = 0.99
 local killCounter = 0
 local combo = ""
 local oldKillCounter = 0
-local killCounterTimer = 300
+local killCounterTimer = 600
 local timer = 0
 local printTimer = ""
 local finalKillScore = 0
@@ -19,6 +19,8 @@ local counterDrawn = false
 local sfx = SFXManager()
 local playerDamageCalc = 5
 local POSITION_OFFSET = Vector(0,-20)
+local playerCollisionDamageAdded = false
+local playerCollisionDamageRemoved = false
 local toppingCount = 0
 local TOPPING_SUBTYPES = {
     MUSHROOM = 0,
@@ -38,9 +40,25 @@ local TOPPING_VARIANT = Isaac.GetEntityVariantByName(TOPPING_VARIANT_TRANSLATION
 local toppingRoomCount = 0
 local roomsWithNoToppings = 1
 local roomCount = 0
-local topping = Isaac.GetEntityTypeByName("Topping Familiar")
+local topping = Isaac.GetEntityTypeByName(TOPPING_VARIANT_TRANSLATION[toppingCount].." Familiar")
 local speedScreen = Sprite()
 speedScreen:Load("gfx/effects/screen.anm2", true)
+
+local function OnNewFloorRemoveToppings()
+    for i=0, toppingCount-1 do
+        for _, entity in ipairs(Isaac.GetRoomEntities()) do
+            if entity.Variant == Isaac.GetEntityVariantByName(TOPPING_VARIANT_TRANSLATION[i].." Familiar") then
+              entity:Remove()
+            end
+        end
+    end
+    toppingCount = 0
+    if timer > 0 then
+        timer = timer - 60
+    end
+
+end
+MOD:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, OnNewFloorRemoveToppings)
 
 local function rollToppingRooms()
     local cheeseGraterPresent = false
@@ -145,6 +163,7 @@ function onToppingPickupCollision(_, pickup, collider)
             pickup:Remove()
             Game():Spawn(EntityType.ENTITY_FAMILIAR, TOPPING_VARIANT, pickup.Position, Vector.Zero, player, toppingCount, room:GetSpawnSeed())
             toppingCount = toppingCount + 1
+            timer = 0
         end
     end
 end
@@ -236,8 +255,13 @@ function KillCounterTimerCountdown()
     player = Isaac.GetPlayer()
     if player:HasCollectible(CHEESE_GRATER) then
         if killCounter > 0 then
-            timer = timer + 1
-            printTimer = tostring(math.floor(((killCounterTimer/30)+1)-(timer/30)))
+            player:GetEffects()
+            if player.MoveSpeed < BOOST_EFFECT_SPEED_THRESHOLD then
+                timer = timer + 2
+            else
+                timer = timer + 1.5
+            end
+            printTimer = tostring(math.floor(((killCounterTimer/60)+1)-(timer/60)))
             if printTimer == "0" then
                 combo = "0"
             end
@@ -531,4 +555,5 @@ function DrawCombo()
         font:Unload()
     end
 end
+
 MOD:AddCallback(ModCallbacks.MC_POST_RENDER, DrawCombo)

@@ -101,19 +101,6 @@ end
 
 ---@param pickup EntityPickup
 local function onBerryPickupInit(_, pickup)
-
-    if pickup.SubType == STRAWBERRY_SUBTYPE.WINGED then
-        local wingedRunSave = SAVE_MANAGER.GetRunSave(pickup)
-
-        wingedRunSave = {
-            Collected = false,
-            RunningAway = false,
-            TargetPosition = Game():GetRoom():GetRandomPosition(WINGED_RANDOM_POSITION_MARGIN),
-            Cooldown = 0,
-            Speed = 0,
-        }
-    end
-
     local sprite = pickup:GetSprite()
     sprite:Play(ANIMATION_IDLE, true)
     sprite:SetFrame(math.random(0,15))
@@ -132,14 +119,6 @@ MOD:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onBerryPickupInit, STRAWBERRY_
 ---@param low boolean
 local function onBerryPickupCollision(_, pickup, collider, low)
     --print(collider:ToPlayer():GetName())
-    local npc = collider:ToNPC()
-    local wingedRunSave = SAVE_MANAGER.GetRunSave(pickup)
-
-    if npc and npc:IsActiveEnemy() and pickup.SubType == STRAWBERRY_SUBTYPE.WINGED and not wingedRunSave.Collected then
-        wingedRunSave.RunningAway = true
-        -- TODO PLAY ANIMATION AND SFX
-        return
-    end
 
     if collider.Type == EntityType.ENTITY_PLAYER then
         local player = collider:ToPlayer()
@@ -178,33 +157,46 @@ end
 MOD:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onBerryPickupCollision, STRAWBERRY_VARIANT)
 
 
+
 ---@param pickup EntityPickup
 local function onBerryPickupUpdate(_, pickup)
     if pickup.SubType == STRAWBERRY_SUBTYPE.WINGED then
-        local wingedRunSave = SAVE_MANAGER.GetRunSave(pickup)
-
-        if wingedRunSave.RunningAway then
-            pickup.Velocity = (pickup.Position - wingedRunSave.TargetPosition):Normalized() * wingedRunSave.Speed
-            wingedRunSave.Speed = math.min(WINGED_MAX_SPEED, wingedRunSave.Speed + WINGED_RUN_AWAY_ACCELERATION)
-            local pos = pickup.Position
-            print(pos.X .. " " .. pos.Y)
-            return
-        end
-        
-        if wingedRunSave.Cooldown > 0 then
-            wingedRunSave.Cooldown = wingedRunSave.Cooldown - 1
+        -- remove the berry if it's not the first visit
+        if not Game():GetRoom():IsFirstVisit() then
+            pickup:Remove()
             return
         end
 
-        if pickup.Position:Distance(wingedRunSave.TargetPosition) < WINGED_RANDOM_POSITION_MARGIN then
-            wingedRunSave.TargetPosition = Game():GetRoom():GetRandomPosition(WINGED_RANDOM_POSITION_MARGIN)
+        local roomSave = SAVE_MANAGER.GetRoomSave(pickup)
+        local globalRoomSave = SAVE_MANAGER.GetRoomSave()
+
+        if globalRoomSave.WingedBerries == nil then
+            globalRoomSave.WingedBerries = {}
+            table.insert(globalRoomSave.WingedBerries, EntityRef(pickup))
+        end
+
+        if roomSave.WingedBerry == nil then
+            roomSave.WingedBerry = {
+                TargetPosition = Game():GetRoom():GetRandomPosition(WINGED_RANDOM_POSITION_MARGIN),
+                Cooldown = 0,
+                Speed = 0,
+            }
+        end
+
+        if roomSave.WingedBerry.Cooldown > 0 then
+            roomSave.WingedBerry.Cooldown = roomSave.WingedBerry.Cooldown - 1
+            return
+        end
+
+        if pickup.Position:Distance(roomSave.WingedBerry.TargetPosition) < WINGED_RANDOM_POSITION_MARGIN then
+            roomSave.WingedBerry.TargetPosition = Game():GetRoom():GetRandomPosition(WINGED_RANDOM_POSITION_MARGIN)
             local rng = pickup:GetDropRNG()
-            wingedRunSave.Cooldown = rng:RandomInt(WINGED_MAX_COOLDOWN) + 1
-            wingedRunSave.Speed = 0
+            roomSave.WingedBerry.Cooldown = rng:RandomInt(WINGED_MAX_COOLDOWN) + 1
+            roomSave.WingedBerry.Speed = 0
             pickup.Velocity = Vector.Zero
         else
-            pickup.Velocity = (wingedRunSave.TargetPosition - pickup.Position):Normalized() * wingedRunSave.Speed
-            wingedRunSave.Speed = math.min(WINGED_MAX_SPEED, wingedRunSave.Speed + WINGED_ACCELERATION)
+            pickup.Velocity = (roomSave.WingedBerry.TargetPosition - pickup.Position):Normalized() * roomSave.WingedBerry.Speed
+            roomSave.WingedBerry.Speed = math.min(WINGED_MAX_SPEED, roomSave.WingedBerry.Speed + WINGED_ACCELERATION)
         end
 
         
@@ -612,3 +604,23 @@ local function onEntityDamage(_, entity, amount, damageFlags, source, countdownF
     end
 end
 MOD:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, onEntityDamage, EntityType.ENTITY_PLAYER)
+
+
+
+---@param rng RNG
+---@param position Vector
+local function onRoomClear(_, rng, position)
+    if Isaac.CountEntities(nil, EntityType.ENTITY_PICKUP, STRAWBERRY_VARIANT, STRAWBERRY_SUBTYPE.WINGED) > 0 then
+        local globalRoomSave = SAVE_MANAGER.GetRoomSave()
+        
+        ---@param berryRef EntityRef
+        for _, berryRef in ipairs(globalRoomSave.WingedBerries) do
+            local berry = berryRef.Entity:ToPickup()
+            if berry ~= nil then
+                berry:Remove()
+                -- TODO PLAY ANIMATION RUN AWAY
+            end
+        end
+    end
+end
+MOD:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, onRoomClear)

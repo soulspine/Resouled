@@ -19,8 +19,6 @@ local counterDrawn = false
 local sfx = SFXManager()
 local playerDamageCalc = 5
 local POSITION_OFFSET = Vector(0,-20)
-local playerCollisionDamageAdded = false
-local playerCollisionDamageRemoved = false
 local toppingCount = 0
 local TOPPING_SUBTYPES = {
     MUSHROOM = 0,
@@ -37,12 +35,13 @@ local TOPPING_VARIANT_TRANSLATION = {
     [4] = "Pineapple",
 }
 local TOPPING_VARIANT = Isaac.GetEntityVariantByName(TOPPING_VARIANT_TRANSLATION[toppingCount].." Pickup")
-local toppingRoomCount = 0
-local roomsWithNoToppings = 1
-local roomCount = 0
-local topping = Isaac.GetEntityTypeByName(TOPPING_VARIANT_TRANSLATION[toppingCount].." Familiar")
 local speedScreen = Sprite()
 speedScreen:Load("gfx/effects/screen.anm2", true)
+-- r = 1
+-- R = 0.5
+-- o = (4.5 ,6)
+-- O = (-3 ,-2)
+-- x=(rsin(ot)+Rsin(Ot),rcos(ot)+Rcos(Ot))
 
 local function OnNewFloorRemoveToppings()
     for i=0, toppingCount-1 do
@@ -56,7 +55,7 @@ local function OnNewFloorRemoveToppings()
     if timer > 0 then
         timer = timer - 60
     end
-
+    
 end
 MOD:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, OnNewFloorRemoveToppings)
 

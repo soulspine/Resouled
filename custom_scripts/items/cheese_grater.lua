@@ -34,6 +34,7 @@ local TOPPING_VARIANT_TRANSLATION = {
     [3] = "Sausage",
     [4] = "Pineapple",
 }
+local PIZZA = Isaac.GetEntityTypeByName("Pizza Orbital")
 local TOPPING_VARIANT = Isaac.GetEntityVariantByName(TOPPING_VARIANT_TRANSLATION[toppingCount].." Pickup")
 local speedScreen = Sprite()
 speedScreen:Load("gfx/effects/screen.anm2", true)
@@ -44,6 +45,9 @@ speedScreen:Load("gfx/effects/screen.anm2", true)
 -- x=(rsin(ot)+Rsin(Ot),rcos(ot)+Rcos(Ot))
 
 local function OnNewFloorRemoveToppings()
+    if toppingCount >= 5 then
+        Game():Spawn(EntityType.ENTITY_FAMILIAR, PIZZA, Isaac.GetFreeNearPosition(Isaac.GetRandomPosition(), 500), Vector.Zero, nil, 0, 0)
+    end
     for i=0, toppingCount-1 do
         for _, entity in ipairs(Isaac.GetRoomEntities()) do
             if entity.Variant == Isaac.GetEntityVariantByName(TOPPING_VARIANT_TRANSLATION[i].." Familiar") then
@@ -58,6 +62,17 @@ local function OnNewFloorRemoveToppings()
     
 end
 MOD:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, OnNewFloorRemoveToppings)
+
+function onPizzaFamiliarInit(_, familiar)
+    familiar.PositionOffset = POSITION_OFFSET
+    familiar:AddToFollowers()
+    familiar:GetSprite():Play("Idle")
+    local player = familiar.Player:ToPlayer()
+    if player == nil then
+        return
+    end
+end
+MOD:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onPizzaFamiliarInit, PIZZA)
 
 local function rollToppingRooms()
     local cheeseGraterPresent = false

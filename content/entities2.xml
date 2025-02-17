@@ -25,4 +25,5 @@
     <entity anm2path="toppings.anm2" name="Tomato Familiar" id="3" variant="445" subtype="2" shadowSize="15" friction="1.5"/>
     <entity anm2path="toppings.anm2" name="Sausage Familiar" id="3" variant="445" subtype="3" shadowSize="15" friction="1.5"/>
     <entity anm2path="toppings.anm2" name="Pineapple Familiar" id="3" variant="445" subtype="4" shadowSize="15" friction="1.5"/>
+    <entity anm2path="pizza!.anm2" name="Pizza Orbital" id="3" variant="446" subtype="0" shadowSize="56" collisionRadius="50" collisionMass="2.5"/>
 </entities>

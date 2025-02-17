@@ -7,7 +7,6 @@ local ROOM_ENTER_WINGED_REPLACE_CHANCE = 0.4
 local POSITION_OFFSET = Vector(0,-30)
 local CONSUME_SPEED_THRESHOLD = 0.01
 local CONSUME_FRAME_THRESHOLD = 20
-local NEW_RUN_INVINCIBILITY_FRAMES = 120
 local WINGED_RANDOM_POSITION_MARGIN = 10
 local BERRY_SPAWN_DISTANCE_THRESHOLD = 10
 local WINGED_MAX_COOLDOWN = 30
@@ -16,6 +15,7 @@ local WINGED_MAX_SPEED = 2.5
 local WINGED_RUN_AWAY_ACCELERATION = 0.01
 local WINGED_RUN_AWAY_COOLDOWN = 14
 local WINGED_DESPAWN_DISTANCE = 100
+local PICKUP_PARTICLE_RANGE = 15
 
 local CONSUME_EARLY_SCORE_END_FRAME = 4
 
@@ -177,21 +177,20 @@ MOD:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onBerryPickupCollision, ST
 
 ---@param pickup EntityPickup
 local function onBerryPickupUpdate(_, pickup)
+
+    if not Game():GetRoom():IsFirstVisit() then
+        pickup:Remove()
+        return
+    end
+
+    Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.EMBER_PARTICLE, pickup.Position + Vector(math.random(-PICKUP_PARTICLE_RANGE, PICKUP_PARTICLE_RANGE), math.random(-PICKUP_PARTICLE_RANGE, PICKUP_PARTICLE_RANGE)) + POSITION_OFFSET, Vector.Zero, nil, 0, 0)
+
     if pickup.SubType == STRAWBERRY_SUBTYPE.WINGED then
-        -- remove the berry if it's not the first visit
-        if not Game():GetRoom():IsFirstVisit() then
-            pickup:Remove()
-            return
-        end
-
-        Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.EMBER_PARTICLE, pickup.Position + POSITION_OFFSET, Vector.Zero, nil, 0, 0)
-
         local roomSave = SAVE_MANAGER.GetRoomSave(pickup)
         local globalRoomSave = SAVE_MANAGER.GetRoomSave()
 
-        if globalRoomSave.WingedBerries == nil then
-            globalRoomSave.WingedBerries = {}
-            table.insert(globalRoomSave.WingedBerries, EntityRef(pickup))
+        if globalRoomSave.WingedBerry == nil then
+            globalRoomSave.WingedBerry = EntityRef(pickup)
         end
 
         if roomSave.WingedBerry == nil then
@@ -321,10 +320,6 @@ local function onBerryFamiliarUpdate(_, familiar)
 end    
 MOD:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onBerryFamiliarUpdate, STRAWBERRY_VARIANT)
 
-
-
-local berryInvincibilityFramesLeft = NEW_RUN_INVINCIBILITY_FRAMES
-
 ---@param player EntityPlayer
 ---@param playerID any
 local function onUpdate(player, playerID)
@@ -342,11 +337,6 @@ local function onUpdate(player, playerID)
         end
 
         --print(playerRunSave.Strawberry.NoMovementFrames)
-
-        if berryInvincibilityFramesLeft > 0 then
-            berryInvincibilityFramesLeft = berryInvincibilityFramesLeft - 1
-            return
-        end
 
         local berries = playerRunSave.Strawberry.Berries
         local streak = playerRunSave.Strawberry.Streak
@@ -533,17 +523,7 @@ MOD:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval)
 
 
 
-local function onGameStart()
-    -- give berries invulnerability so player doesnt instantly despawn them
-    berryInvincibilityFramesLeft = NEW_RUN_INVINCIBILITY_FRAMES
-end
-MOD:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, onGameStart)
-
-
-
 local function onNewFloorEnter()
-    berryInvincibilityFramesLeft = NEW_RUN_INVINCIBILITY_FRAMES
-
     ---@param player EntityPlayer
     IterateOverPlayers(function(player, playerID)
         if player:HasCollectible(STRAWBERRY) then
@@ -685,19 +665,16 @@ local function onRoomClear(_, rng, position)
             end
         end
 
-        ---@param berryRef EntityRef
-        for _, berryRef in ipairs(globalRoomSave.WingedBerries) do
-            local berry = berryRef.Entity:ToPickup()
-            if berry ~= nil then
-                local roomSave = SAVE_MANAGER.GetRoomSave(berry)
-                roomSave.WingedBerry.RunningAway = true
-                roomSave.WingedBerry.Speed = 0
-                roomSave.WingedBerry.TargetPosition = validDoors[rng:RandomInt(numOfValidDoors) + 1]
-                roomSave.WingedBerry.Cooldown = WINGED_RUN_AWAY_COOLDOWN
-                berry.Velocity = Vector.Zero
-                berry:GetSprite():Play(ANIMATION_RUN_AWAY, true)
-                sfx:Play(SFX_STRAWBERRY_LAUGH, VOLUME_STRAWBERRY_LAUGH)
-            end
+        local berry = globalRoomSave.WingedBerry.Entity:ToPickup()
+        if berry ~= nil then
+            local roomSave = SAVE_MANAGER.GetRoomSave(berry)
+            roomSave.WingedBerry.RunningAway = true
+            roomSave.WingedBerry.Speed = 0
+            roomSave.WingedBerry.TargetPosition = validDoors[rng:RandomInt(numOfValidDoors) + 1]
+            roomSave.WingedBerry.Cooldown = WINGED_RUN_AWAY_COOLDOWN
+            berry.Velocity = Vector.Zero
+            berry:GetSprite():Play(ANIMATION_RUN_AWAY, true)
+            sfx:Play(SFX_STRAWBERRY_LAUGH, VOLUME_STRAWBERRY_LAUGH)
         end
     end
 end

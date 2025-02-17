@@ -1,7 +1,7 @@
 <items gfxroot="gfx/items/" deathanim2="gfx/custom_death_items.anm2" version="1">
     <passive id="0" name="Daddy Haunt" gfx="daddy_haunt.png" description="Menace hanging over your enemies" quality="3" cache="damage" />
     <passive id="0" name="Soulbound" gfx="soulbound.png" description="Forever together" quality="3"/>
-    <passive id="0" name="Isaac's last will" gfx="isaacs_last_will.png" description="I leave all that I own to my cat Guppy" quality="1"/>
+    <passive id="0" name="Isaac's last will" gfx="isaacs_last_will.png" description="I leave all that I own to my cat Guppy" quality="2"/>
     <passive id="0" name="Focus" gfx="focus.png" description="" quality="3" cache="damage"/>
     <active id="0" name="Strawberry" gfx="strawberry.png" description="Impress your friends" quality="4" cache="luck" passivecache="true" maxcharges="6"/>
     

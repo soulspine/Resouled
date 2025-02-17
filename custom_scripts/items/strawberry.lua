@@ -1,7 +1,7 @@
 local STRAWBERRY = Isaac.GetItemIdByName("Strawberry")
 
 local LUCK_GAIN_PAST_1UP = 1
-local ROOM_ENTER_SPAWN_CHANCE = 0.25
+local ROOM_ENTER_SPAWN_CHANCE = 0.15
 local ROOM_ENTER_WINGED_REPLACE_CHANCE = 0.4
 
 local POSITION_OFFSET = Vector(0,-30)
@@ -9,6 +9,7 @@ local CONSUME_SPEED_THRESHOLD = 0.01
 local CONSUME_FRAME_THRESHOLD = 20
 local NEW_RUN_INVINCIBILITY_FRAMES = 120
 local WINGED_RANDOM_POSITION_MARGIN = 10
+local BERRY_SPAWN_DISTANCE_THRESHOLD = 10
 local WINGED_MAX_COOLDOWN = 30
 local WINGED_ACCELERATION = 0.1
 local WINGED_MAX_SPEED = 2.5
@@ -531,17 +532,29 @@ local function onRoomEnter()
     function(player, playerID)
         local room = Game():GetRoom()
         if player:HasCollectible(STRAWBERRY) and not triedToSpawn and room:IsFirstVisit() then
-            local rng = player:GetCollectibleRNG(STRAWBERRY)
+            local rng = RNG()
+            rng:SetSeed(room:GetSpawnSeed(), 0)
             if  rng:RandomFloat() < ROOM_ENTER_SPAWN_CHANCE then
                 triedToSpawn = true
                 local berrySubtype
-                if rng:RandomFloat() < ROOM_ENTER_WINGED_REPLACE_CHANCE then
+                if not room:IsClear() and rng:RandomFloat() < ROOM_ENTER_WINGED_REPLACE_CHANCE then
                     berrySubtype = STRAWBERRY_SUBTYPE.WINGED
                 else
                     berrySubtype = STRAWBERRY_SUBTYPE.RED
                 end
+                
+                local topLeft = room:GetTopLeftPos()
+                local bottomRight = room:GetBottomRightPos()
+                local roomWidth = bottomRight.X - topLeft.X
+                local roomHeight = bottomRight.Y - topLeft.Y
+                
+                ::reroll::
 
-                spawnBerryPickup(berrySubtype, room:GetRandomPosition(10), player:GetCollectibleRNG(STRAWBERRY):GetSeed())
+                local rawPosition = Vector(rng:RandomInt(roomWidth), rng:RandomInt(roomHeight))  
+
+                local position = room:FindFreeTilePosition(rawPosition, BERRY_SPAWN_DISTANCE_THRESHOLD)
+
+                spawnBerryPickup(berrySubtype, position, player:GetCollectibleRNG(STRAWBERRY):GetSeed())
             end
         end
     end)

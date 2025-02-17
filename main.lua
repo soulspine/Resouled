@@ -1,4 +1,4 @@
----@type ModReference
+---@class ModReference
 MOD = RegisterMod("Resouled", 1)
 
 include("scripts.items")
@@ -24,7 +24,7 @@ end
 ---@param quality integer
 ---@param rng RNG
 ---@param position Vector
-function SpawnItemOfQuality(quality, rng, position)
+function MOD:SpawnItemOfQuality(quality, rng, position)
     local itemConfig = Isaac.GetItemConfig()
     local itemPool = Game():GetItemPool()
     local validItems = {}
@@ -68,5 +68,18 @@ function IterateOverPlayers(callback, ...)
     for i = 0, Game():GetNumPlayers() - 1 do
         local player = Isaac.GetPlayer(i)
         callback(player, i, ...)
+    end
+end
+
+---@param player EntityPlayer
+function MOD:GrantGuppyTransformation(player)
+    if not player:HasPlayerForm(PlayerForm.PLAYERFORM_GUPPY)
+    then
+        for _ = 1, 4 do
+            player:AddTrinket(TrinketType.TRINKET_KIDS_DRAWING, true)
+        end
+
+        player:TryRemoveTrinket(TrinketType.TRINKET_KIDS_DRAWING)
+        player:TryRemoveTrinket(TrinketType.TRINKET_KIDS_DRAWING)
     end
 end

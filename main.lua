@@ -1,10 +1,10 @@
 ---@type ModReference
 MOD = RegisterMod("Resouled", 1)
 
-include("custom_scripts.items")
+include("scripts.items")
 
 ---@type SaveManager
-SAVE_MANAGER = include("custom_scripts.utility.save_manager")
+SAVE_MANAGER = include("scripts.utility.save_manager")
 SAVE_MANAGER.Init(MOD)
 
 function GetMaxItemID()

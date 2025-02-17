@@ -1,0 +1,21 @@
+<ItemPools>
+    <Pool Name="Treasure Pool">
+         <Item Name="taintedIsaacCheck" Weight="0" RemoveOn="0"/>
+         <Item Name="taintedMaggyCheck" Weight="0" RemoveOn="0"/>
+         <Item Name="taintedCainCheck" Weight="0" RemoveOn="0"/>
+         <Item Name="taintedJudasCheck" Weight="0" RemoveOn="0"/>
+         <Item Name="taintedBlueBabyCheck" Weight="0" RemoveOn="0"/>
+         <Item Name="taintedEveCheck" Weight="0" RemoveOn="0"/>
+         <Item Name="taintedSamsonCheck" Weight="0" RemoveOn="0"/>
+         <Item Name="taintedAzazelCheck" Weight="0" RemoveOn="0"/>
+         <Item Name="taintedLazarusCheck" Weight="0" RemoveOn="0"/>
+         <Item Name="taintedEdenCheck" Weight="0" RemoveOn="0"/>
+         <Item Name="taintedLostCheck" Weight="0" RemoveOn="0"/>
+         <Item Name="taintedLilithCheck" Weight="0" RemoveOn="0"/>
+         <Item Name="taintedKeeperCheck" Weight="0" RemoveOn="0"/>
+         <Item Name="taintedApollyonCheck" Weight="0" RemoveOn="0"/>
+         <Item Name="taintedForgottenCheck" Weight="0" RemoveOn="0"/>
+         <Item Name="taintedBethanyCheck" Weight="0" RemoveOn="0"/>
+         <Item Name="taintedJacobCheck" Weight="0" RemoveOn="0"/>
+    </Pool>
+</ItemPools>

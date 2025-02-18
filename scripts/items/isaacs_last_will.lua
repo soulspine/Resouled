@@ -7,7 +7,7 @@ end
 ---@param entity Entity
 local function onEntityDeath(_, entity)
     local player = entity:ToPlayer()
-    if player then
+    if player and player:HasCollectible(ISAACS_LAST_WILL) then
         MOD:GrantGuppyTransformation(player)
     end
 end

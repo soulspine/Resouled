@@ -1,8 +1,6 @@
 ---@class ModReference
 MOD = RegisterMod("Resouled", 1)
 
-include("scripts.items")
-
 ---@type SaveManager
 SAVE_MANAGER = include("scripts.utility.save_manager")
 SAVE_MANAGER.Init(MOD)
@@ -64,7 +62,7 @@ end
 ---@param callback function
 -- Iterates over all players in the game and calls the callback function with 2 first arguments: `player` and `playerID`.
 -- Passes all additional arguments to the callback function in the same order as they were passed to this function.
-function IterateOverPlayers(callback, ...)
+function MOD:IterateOverPlayers(callback, ...)
     for i = 0, Game():GetNumPlayers() - 1 do
         local player = Isaac.GetPlayer(i)
         callback(player, i, ...)
@@ -83,3 +81,6 @@ function MOD:GrantGuppyTransformation(player)
         player:TryRemoveTrinket(TrinketType.TRINKET_KIDS_DRAWING)
     end
 end
+
+include("scripts.items")
+include("scripts.curses")

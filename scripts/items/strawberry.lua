@@ -505,7 +505,7 @@ local function onUpdate(player, playerID)
         end
     end
 end
-MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, function() IterateOverPlayers(onUpdate) end)
+MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, function() MOD:IterateOverPlayers(onUpdate) end)
 
 
 ---@param player EntityPlayer
@@ -525,7 +525,7 @@ MOD:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval)
 
 local function onNewFloorEnter()
     ---@param player EntityPlayer
-    IterateOverPlayers(function(player, playerID)
+    MOD:IterateOverPlayers(function(player, playerID)
         if player:HasCollectible(STRAWBERRY) then
             spawnBerryFamiliar(STRAWBERRY_SUBTYPE.GOLDEN, Game():GetRoom():GetRandomPosition(10), player)
         end
@@ -556,7 +556,7 @@ MOD:AddCallback(ModCallbacks.MC_USE_ITEM, onBerryActiveUse, STRAWBERRY)
 
 local function onRoomEnter()
     local triedToSpawn = false
-    IterateOverPlayers(
+    MOD:IterateOverPlayers(
     ---@param player EntityPlayer
     function(player, playerID)
         local room = Game():GetRoom()

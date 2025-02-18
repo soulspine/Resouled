@@ -83,4 +83,5 @@ function MOD:GrantGuppyTransformation(player)
 end
 
 include("scripts.items")
+include("scripts.pocketitems")
 include("scripts.curses")

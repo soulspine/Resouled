@@ -69,3 +69,59 @@ local function GREED_onPlayerDamage(_, entity, amount, flags, source, countdown)
     end
 end
 MOD:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, GREED_onPlayerDamage, EntityType.ENTITY_PLAYER)
+
+--Samson's Blessing
+local hasSamsonsBlessing = false
+local dmg = 0
+local blessingDmg = 0
+local damageBonus = 0
+local samsonsBlessingPower = 0
+
+local function getPlayerDamageStats()
+    local player = Isaac.GetPlayer()
+    dmg = player.Damage
+    dmg = dmg / dmg / dmg
+    blessingDmg = dmg * 3.5
+    damageBonus = player.Damage - blessingDmg
+    print(blessingDmg)
+end
+MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, getPlayerDamageStats)
+
+local function samsonsBlessingPostDamageEffectsDamageFix()
+    local player = Isaac.GetPlayer()
+    if hasSamsonsBlessing == true then
+        player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
+        player.Damage = blessingDmg + 0.005 * samsonsBlessingPower
+    end
+end
+MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, samsonsBlessingPostDamageEffectsDamageFix)
+
+local function samsonsBlessingMechanic(_, EntityNPC)
+    local player = Isaac.GetPlayer()
+    local rng = RNG()
+    rng:SetSeed(Game():GetSeeds():GetStartSeed(), 0)
+    local randNum = rng:RandomInt(1)
+    print(randNum)
+    if hasSamsonsBlessing == true and randNum == 0 then
+        player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
+        player.Damage = (blessingDmg + 0.005) + damageBonus
+        samsonsBlessingPower = samsonsBlessingPower + 1
+    end
+end
+MOD:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, samsonsBlessingMechanic)
+
+local function grantSamsonsBlessing()
+    local player = Isaac.GetPlayer()
+    if player.Damage <= 0.75 and hasSamsonsBlessing == false then
+        Game():GetHUD():ShowFortuneText("Custom blessing", "Samson's Blessing!")
+        hasSamsonsBlessing = true
+    end
+end
+MOD:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, grantSamsonsBlessing)
+
+local function samsonsBlessingStatsResetOnNewRun()
+    dmg = 0
+    damageBonus = 0
+    samsonsBlessingPower = 0
+end
+MOD:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, samsonsBlessingStatsResetOnNewRun)

@@ -26,6 +26,7 @@ local TOPPING_SUBTYPES = {
     TOMATO = 2,
     SAUSAGE = 3,
     PINEAPPLE = 4,
+    PIZZA = 5,
 }
 local TOPPING_VARIANT_TRANSLATION = {
     [0] = "Mushroom",
@@ -33,8 +34,8 @@ local TOPPING_VARIANT_TRANSLATION = {
     [2] = "Tomato",
     [3] = "Sausage",
     [4] = "Pineapple",
+    [5] = "Pizza",
 }
-local PIZZA = Isaac.GetEntityTypeByName("Pizza Orbital")
 local TOPPING_VARIANT = Isaac.GetEntityVariantByName(TOPPING_VARIANT_TRANSLATION[toppingCount].." Pickup")
 local speedScreen = Sprite()
 speedScreen:Load("gfx/effects/screen.anm2", true)
@@ -45,8 +46,10 @@ speedScreen:Load("gfx/effects/screen.anm2", true)
 -- x=(rsin(ot)+Rsin(Ot),rcos(ot)+Rcos(Ot))
 
 local function OnNewFloorRemoveToppings()
+    local player = Isaac.GetPlayer()
+    print(toppingCount)
     if toppingCount >= 5 then
-        Game():Spawn(EntityType.ENTITY_FAMILIAR, PIZZA, Isaac.GetFreeNearPosition(Isaac.GetRandomPosition(), 500), Vector.Zero, nil, 0, 0)
+        Game():Spawn(EntityType.ENTITY_FAMILIAR, Isaac.GetEntityVariantByName("Pizza Orbital"), player.Position, Vector.Zero, player, 0, 0)
     end
     for i=0, toppingCount-1 do
         for _, entity in ipairs(Isaac.GetRoomEntities()) do
@@ -63,6 +66,7 @@ local function OnNewFloorRemoveToppings()
 end
 MOD:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, OnNewFloorRemoveToppings)
 
+---@param familiar EntityFamiliar
 function onPizzaFamiliarInit(_, familiar)
     familiar.PositionOffset = POSITION_OFFSET
     familiar:AddToFollowers()
@@ -72,7 +76,13 @@ function onPizzaFamiliarInit(_, familiar)
         return
     end
 end
-MOD:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onPizzaFamiliarInit, PIZZA)
+MOD:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onPizzaFamiliarInit, Isaac.GetEntityVariantByName("Pizza Orbital"))
+
+---@param familiar EntityFamiliar
+local function onPizzaFamiliarUpdate(_, familiar)
+    familiar:FollowParent()
+end
+MOD:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onPizzaFamiliarUpdate, Isaac.GetEntityVariantByName("Pizza Orbital"))
 
 local function rollToppingRooms()
     local cheeseGraterPresent = false

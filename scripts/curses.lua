@@ -41,7 +41,6 @@ local function onCurseEval(_, curses)
         -- TODO: MAKE BETTER CURSE DISPLAY
         Game():GetHUD():ShowFortuneText("Custom curse", customCurses[curses])
     end
-    print("Curse: " .. curses)
     return curses
 end
 MOD:AddCallback(ModCallbacks.MC_POST_CURSE_EVAL, onCurseEval)
@@ -56,7 +55,6 @@ MOD:AddCallback(ModCallbacks.MC_POST_CURSE_EVAL, onCurseEval)
 local function GREED_onPlayerDamage(_, entity, amount, flags, source, countdown)
     local player = entity:ToPlayer()
     if player and cursePresent(CURSE_OF_GREED) and flags & DamageFlag.DAMAGE_FAKE == 0 then
-        print("Player damage")
         local coins = player:GetNumCoins()
         if coins > 0 then
             local greedCoins = math.floor(coins / 4)

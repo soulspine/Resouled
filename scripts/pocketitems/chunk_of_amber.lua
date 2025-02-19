@@ -20,6 +20,7 @@ local function onRuneUse(_, cardId, player, useFlags)
     local position = player.Position
     spawnPickups(PickupVariant.PICKUP_COIN, CoinSubType.COIN_PENNY, player:GetNumCoins(), position)
     spawnPickups(PickupVariant.PICKUP_BOMB, BombSubType.BOMB_NORMAL, player:GetNumBombs(), position)
+    spawnPickups(PickupVariant.PICKUP_BOMB, BombSubType.BOMB_GIGA, player:GetNumGigaBombs(), position)
     spawnPickups(PickupVariant.PICKUP_KEY, KeySubType.KEY_NORMAL, player:GetNumKeys(), position)
     spawnPickups(PickupVariant.PICKUP_POOP, PoopPickupSubType.POOP_SMALL, player:GetPoopMana(), position)
     spawnPickups(PickupVariant.PICKUP_HEART, HeartSubType.HEART_HALF_SOUL, player:GetSoulCharge(), position)

@@ -6,7 +6,7 @@ local SFX_VOLUME = 0.7
 
 ---@param player EntityPlayer
 local function onPlayerUpdate(_, player)
-    if not Resouled:HasBlessing(player, Resouled.Blessings.MAGGY) and Resouled:GetEffectiveHP(player) == 1 then
+    if not player:HasFullHearts() and not Resouled:HasBlessing(player, Resouled.Blessings.MAGGY) and Resouled:GetEffectiveHP(player) == 1 then
         local playerRunSave = SAVE_MANAGER.GetRunSave(player)
         Resouled:GrantBlessing(player, Resouled.Blessings.MAGGY)
         playerRunSave.Blessings.Maggy = HP_GAIN_ROOM_COOLDOWN

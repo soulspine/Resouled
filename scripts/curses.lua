@@ -5,6 +5,8 @@ local GREED_NAME = "Curse of Greed"
 local CURSE_OF_GREED = Isaac.GetCurseIdByName(GREED_NAME)
 customCurses[1 << CURSE_OF_GREED] = GREED_NAME
 
+local GREED_COIN_DROP_AMOUNT_MIN = 4
+local GREED_COIN_DROP_AMOUNT_MAX = 6
 local GREED_COIN_TIMEOUT = 60 -- frames
 local GREED_POSITION_STEP = 10
 local GREED_COIN_VECTOR_SIZE = 2
@@ -43,7 +45,7 @@ local function onCurseEval(_, curses)
     end
     return curses
 end
-MOD:AddCallback(ModCallbacks.MC_POST_CURSE_EVAL, onCurseEval)
+Resouled:AddCallback(ModCallbacks.MC_POST_CURSE_EVAL, onCurseEval)
 
 
 
@@ -57,7 +59,8 @@ local function GREED_onPlayerDamage(_, entity, amount, flags, source, countdown)
     if player and cursePresent(CURSE_OF_GREED) and flags & DamageFlag.DAMAGE_FAKE == 0 then
         local coins = player:GetNumCoins()
         if coins > 0 then
-            local greedCoins = math.floor(coins / 4)
+            local rng = player:GetDropRNG()
+            local greedCoins = rng:RandomInt(GREED_COIN_DROP_AMOUNT_MAX - GREED_COIN_DROP_AMOUNT_MIN + 1) + GREED_COIN_DROP_AMOUNT_MIN
             player:AddCoins(-greedCoins)
             for _ = 1, greedCoins do
                 local spawnPos = Isaac.GetFreeNearPosition(player.Position, GREED_POSITION_STEP)
@@ -68,60 +71,4 @@ local function GREED_onPlayerDamage(_, entity, amount, flags, source, countdown)
         end
     end
 end
-MOD:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, GREED_onPlayerDamage, EntityType.ENTITY_PLAYER)
-
---Samson's Blessing
-local hasSamsonsBlessing = false
-local dmg = 0
-local blessingDmg = 0
-local damageBonus = 0
-local samsonsBlessingPower = 0
-
-local function getPlayerDamageStats()
-    local player = Isaac.GetPlayer()
-    dmg = player.Damage
-    dmg = dmg / dmg / dmg
-    blessingDmg = dmg * 3.5
-    damageBonus = player.Damage - blessingDmg
-    print(blessingDmg)
-end
-MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, getPlayerDamageStats)
-
-local function samsonsBlessingPostDamageEffectsDamageFix()
-    local player = Isaac.GetPlayer()
-    if hasSamsonsBlessing == true then
-        player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
-        player.Damage = blessingDmg + 0.005 * samsonsBlessingPower
-    end
-end
-MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, samsonsBlessingPostDamageEffectsDamageFix)
-
-local function samsonsBlessingMechanic(_, EntityNPC)
-    local player = Isaac.GetPlayer()
-    local rng = RNG()
-    rng:SetSeed(Game():GetSeeds():GetStartSeed(), 0)
-    local randNum = rng:RandomInt(1)
-    print(randNum)
-    if hasSamsonsBlessing == true and randNum == 0 then
-        player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
-        player.Damage = (blessingDmg + 0.005) + damageBonus
-        samsonsBlessingPower = samsonsBlessingPower + 1
-    end
-end
-MOD:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, samsonsBlessingMechanic)
-
-local function grantSamsonsBlessing()
-    local player = Isaac.GetPlayer()
-    if player.Damage <= 0.75 and hasSamsonsBlessing == false then
-        Game():GetHUD():ShowFortuneText("Custom blessing", "Samson's Blessing!")
-        hasSamsonsBlessing = true
-    end
-end
-MOD:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, grantSamsonsBlessing)
-
-local function samsonsBlessingStatsResetOnNewRun()
-    dmg = 0
-    damageBonus = 0
-    samsonsBlessingPower = 0
-end
-MOD:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, samsonsBlessingStatsResetOnNewRun)
+Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, GREED_onPlayerDamage, EntityType.ENTITY_PLAYER)

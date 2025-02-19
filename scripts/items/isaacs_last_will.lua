@@ -10,8 +10,8 @@ end
 local function onEntityDeath(_, entity)
     local player = entity:ToPlayer()
     if player and player:HasCollectible(ISAACS_LAST_WILL) then
-        MOD:GrantGuppyTransformation(player)
+        Resouled:GrantGuppyTransformation(player)
         player:AddCoins(COINS)
     end
 end
-MOD:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, onEntityDeath)
+Resouled:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, onEntityDeath)

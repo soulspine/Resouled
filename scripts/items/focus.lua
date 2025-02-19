@@ -39,7 +39,7 @@ local function onEntitySpawn(_, entityType, variant, subtype, position, velocity
         -- cannot update just the spawner
         -- it says AddCacheFlags is null for this object ?????
 
-        MOD:IterateOverPlayers(function(player, _)
+        Resouled:IterateOverPlayers(function(player, _)
             if player:HasCollectible(FOCUS) then
                 miniIsaacJustSpawned = true
                 player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
@@ -138,18 +138,18 @@ local function onNewRoomEnter(player, playerID)
     end
 end
 
-MOD:AddCallback(ModCallbacks.MC_POST_NEW_ROOM,
+Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM,
     function()
-        MOD:IterateOverPlayers(onNewRoomEnter)
+        Resouled:IterateOverPlayers(onNewRoomEnter)
     end
 )
-MOD:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, 
+Resouled:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, 
     function()
-        MOD:IterateOverPlayers(onRoomClear)
+        Resouled:IterateOverPlayers(onRoomClear)
     end
 )
-MOD:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheUpdate)
+Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheUpdate)
 
-MOD:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, onMiniIsaacKill, EntityType.ENTITY_FAMILIAR)
+Resouled:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, onMiniIsaacKill, EntityType.ENTITY_FAMILIAR)
 
-MOD:AddCallback(ModCallbacks.MC_PRE_ENTITY_SPAWN, onEntitySpawn)
+Resouled:AddCallback(ModCallbacks.MC_PRE_ENTITY_SPAWN, onEntitySpawn)

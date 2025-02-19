@@ -4,7 +4,7 @@ local PICKUP_SPAWN_STEP = 1
 local PICKUP_VELOCITY = 50
 
 if EID then
-    EID:addCard(CHUNK_OF_AMBER, "Doubles amounts of the following:#{{Coin}} Coins#{{Bomb}} Bombs#{{Key}} Keys#{{PoopPickup}} Poop Mana (Tainted ???)#{{SoulHeart}} Soul Charge (Bethany)#{{Heart}} Blood Charge (Tainted Bethany)", "Chunk of Amber")
+    EID:addCard(CHUNK_OF_AMBER, "SPAWNS ALL PICKUPS PLAYER HAS IN THEIR INVENTORY#TODO FIX", "Chunk of Amber")
     -- TODO EID.addIcon
 end
 
@@ -25,4 +25,4 @@ local function onRuneUse(_, cardId, player, useFlags)
     spawnPickups(PickupVariant.PICKUP_HEART, HeartSubType.HEART_HALF_SOUL, player:GetSoulCharge(), position)
     spawnPickups(PickupVariant.PICKUP_HEART, HeartSubType.HEART_HALF, player:GetBloodCharge(), position)
 end
-MOD:AddCallback(ModCallbacks.MC_USE_CARD, onRuneUse, CHUNK_OF_AMBER)
+Resouled:AddCallback(ModCallbacks.MC_USE_CARD, onRuneUse, CHUNK_OF_AMBER)

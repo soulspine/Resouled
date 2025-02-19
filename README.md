@@ -11,6 +11,9 @@ Mod bringing Four Souls content into Isaac.
 # Curses
 - [Curse of Greed](README/curses/CurseOfGreed.md)
 
+# Blessings
+- [Samson's Blessing](README/blessings/SamsonsBlessing.md)
+
 # [Save Manager](https://github.com/catinsurance/IsaacSaveManager)
 by catinsurance \
 [docs](https://github.com/catinsurance/IsaacSaveManager/wiki)

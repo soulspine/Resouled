@@ -1,9 +1,9 @@
 ---@class ModReference
-MOD = RegisterMod("Resouled", 1)
+Resouled = RegisterMod("Resouled", 1)
 
 ---@type SaveManager
 SAVE_MANAGER = include("scripts.utility.save_manager")
-SAVE_MANAGER.Init(MOD)
+SAVE_MANAGER.Init(Resouled)
 
 function GetMaxItemID()
     local itemConfig = Isaac.GetItemConfig()
@@ -22,7 +22,7 @@ end
 ---@param quality integer
 ---@param rng RNG
 ---@param position Vector
-function MOD:SpawnItemOfQuality(quality, rng, position)
+function Resouled:SpawnItemOfQuality(quality, rng, position)
     local itemConfig = Isaac.GetItemConfig()
     local itemPool = Game():GetItemPool()
     local validItems = {}
@@ -62,7 +62,7 @@ end
 ---@param callback function
 -- Iterates over all players in the game and calls the callback function with 2 first arguments: `player` and `playerID`.
 -- Passes all additional arguments to the callback function in the same order as they were passed to this function.
-function MOD:IterateOverPlayers(callback, ...)
+function Resouled:IterateOverPlayers(callback, ...)
     for i = 0, Game():GetNumPlayers() - 1 do
         local player = Isaac.GetPlayer(i)
         callback(player, i, ...)
@@ -70,7 +70,7 @@ function MOD:IterateOverPlayers(callback, ...)
 end
 
 ---@param player EntityPlayer
-function MOD:GrantGuppyTransformation(player)
+function Resouled:GrantGuppyTransformation(player)
     if not player:HasPlayerForm(PlayerForm.PLAYERFORM_GUPPY)
     then
         for _ = 1, 4 do
@@ -85,3 +85,4 @@ end
 include("scripts.items")
 include("scripts.pocketitems")
 include("scripts.curses")
+include("scripts.blessings")

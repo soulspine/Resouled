@@ -127,7 +127,7 @@ local function onBerryPickupInit(_, pickup)
         Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.RIPPLE_POOF, pickup.Position, Vector.Zero, nil, 0, 0)
     end
 end    
-MOD:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onBerryPickupInit, STRAWBERRY_VARIANT)
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onBerryPickupInit, STRAWBERRY_VARIANT)
 
 
 
@@ -171,7 +171,7 @@ local function onBerryPickupCollision(_, pickup, collider, low)
         return true
     end
 end
-MOD:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onBerryPickupCollision, STRAWBERRY_VARIANT)
+Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onBerryPickupCollision, STRAWBERRY_VARIANT)
 
 
 
@@ -270,7 +270,7 @@ local function onBerryPickupUpdate(_, pickup)
         end
     end    
 end
-MOD:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onBerryPickupUpdate, STRAWBERRY_VARIANT)
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onBerryPickupUpdate, STRAWBERRY_VARIANT)
 
 
 
@@ -289,7 +289,7 @@ local function onBerryFamiliarInit(_, familiar)
 
     table.insert(playerRunSave.Strawberry.Berries, EntityPtr(familiar))
 end    
-MOD:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onBerryFamiliarInit, STRAWBERRY_VARIANT)
+Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onBerryFamiliarInit, STRAWBERRY_VARIANT)
 
 
 
@@ -318,7 +318,7 @@ local function onBerryFamiliarUpdate(_, familiar)
     familiar:FollowParent()
     --print(#activeBerries[GetPtrHash(familiar.Player)])
 end    
-MOD:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onBerryFamiliarUpdate, STRAWBERRY_VARIANT)
+Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onBerryFamiliarUpdate, STRAWBERRY_VARIANT)
 
 ---@param player EntityPlayer
 ---@param playerID any
@@ -486,7 +486,7 @@ local function onUpdate(player, playerID)
 
             -- update streak
             if #berries == 0 then
-                MOD:SpawnItemOfQuality(math.min(streak, 4), player:GetCollectibleRNG(STRAWBERRY), Game():GetRoom():GetRandomPosition(10))
+                Resouled:SpawnItemOfQuality(math.min(streak, 4), player:GetCollectibleRNG(STRAWBERRY), Game():GetRoom():GetRandomPosition(10))
                 sfx:Play(SFX_KEY_GET, VOLUME_KEY_GET)
 
                 if playerRunSave.Strawberry.Streak >= THRESHOLD_1UP then
@@ -505,7 +505,7 @@ local function onUpdate(player, playerID)
         end
     end
 end
-MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, function() MOD:IterateOverPlayers(onUpdate) end)
+Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, function() Resouled:IterateOverPlayers(onUpdate) end)
 
 
 ---@param player EntityPlayer
@@ -519,19 +519,19 @@ local function onCacheEval(_, player, cacheFlag)
         end
     end
 end
-MOD:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval)
+Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval)
 
 
 
 local function onNewFloorEnter()
     ---@param player EntityPlayer
-    MOD:IterateOverPlayers(function(player, playerID)
+    Resouled:IterateOverPlayers(function(player, playerID)
         if player:HasCollectible(STRAWBERRY) then
             spawnBerryFamiliar(STRAWBERRY_SUBTYPE.GOLDEN, Game():GetRoom():GetRandomPosition(10), player)
         end
     end)
 end
-MOD:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, onNewFloorEnter)
+Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, onNewFloorEnter)
 
 
 
@@ -550,13 +550,13 @@ local function onBerryActiveUse(_, itemID, rng, player, useFlags, activeSlot, cu
 
     return true
 end
-MOD:AddCallback(ModCallbacks.MC_USE_ITEM, onBerryActiveUse, STRAWBERRY)
+Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onBerryActiveUse, STRAWBERRY)
 
 
 
 local function onRoomEnter()
     local triedToSpawn = false
-    MOD:IterateOverPlayers(
+    Resouled:IterateOverPlayers(
     ---@param player EntityPlayer
     function(player, playerID)
         local room = Game():GetRoom()
@@ -587,7 +587,7 @@ local function onRoomEnter()
     end)
 
 end
-MOD:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onRoomEnter)
+Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onRoomEnter)
 
 
 
@@ -625,7 +625,7 @@ local function onEntityDamage(_, entity, amount, damageFlags, source, countdownF
         end
         --print(numberOfGoldens)
         if numberOfGoldens == 0 then
-            MOD:RemoveCallback(ModCallbacks.MC_POST_UPDATE, goldenRemoveOnHit)
+            Resouled:RemoveCallback(ModCallbacks.MC_POST_UPDATE, goldenRemoveOnHit)
         end
     end
 
@@ -639,11 +639,11 @@ local function onEntityDamage(_, entity, amount, damageFlags, source, countdownF
         end
         if hadGolden then
             sfx:Play(SFX_FUSEBOX_HIT_2_2D, VOLUME_LOSE_GOLDEN)
-            MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, goldenRemoveOnHit)
+            Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, goldenRemoveOnHit)
         end
     end
 end
-MOD:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, onEntityDamage, EntityType.ENTITY_PLAYER)
+Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, onEntityDamage, EntityType.ENTITY_PLAYER)
 
 
 
@@ -678,4 +678,4 @@ local function onRoomClear(_, rng, position)
         end
     end
 end
-MOD:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, onRoomClear)
+Resouled:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, onRoomClear)

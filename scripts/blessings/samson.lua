@@ -1,20 +1,27 @@
-local GRANT_DAMAGE_THRESHOLD = 1
+local DAMAGE_GAIN_CHANCE = 0.10
+local DAMAGE_GAIN = 0.02
 
-local DAMAGE_GAIN_CHANCE = 0.25
-local DAMAGE_GAIN = 0.05
+---@param player EntityPlayer
+local function onPlayerInit(_, player)
+    local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+    playerRunSave.Blessings.Samson = {
+        BaseDamage = player.Damage,
+        BaseFireRate = Resouled:GetFireRate(player),
+        Damage = 0
+    }
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, onPlayerInit)
 
 ---@param player EntityPlayer
 ---@param cacheFlag CacheFlag
 local function onCacheEval(_, player, cacheFlag)
-    if not Resouled:HasBlessing(player, Resouled.Blessings.SAMSON) and player.Damage <= GRANT_DAMAGE_THRESHOLD then
-        local playerRunSave = SAVE_MANAGER.GetRunSave(player)
-        Resouled:GrantBlessing(player, Resouled.Blessings.SAMSON)
-        playerRunSave.Blessings.Samson = 0
+    local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+    if not Resouled:HasBlessing(player, Resouled.Blessings.Samson) and player.Damage < playerRunSave.Blessings.Samson.BaseDamage and Resouled:GetFireRate(player) < playerRunSave.Blessings.Samson.BaseFireRate then
+        Resouled:GrantBlessing(player, Resouled.Blessings.Samson)
     end
 
-    if Resouled:HasBlessing(player, Resouled.Blessings.SAMSON) and cacheFlag | CacheFlag.CACHE_DAMAGE == CacheFlag.CACHE_DAMAGE then
-        local playerRunSave = SAVE_MANAGER.GetRunSave(player)
-        player.Damage = player.Damage + playerRunSave.Blessings.Samson
+    if Resouled:HasBlessing(player, Resouled.Blessings.Samson) and cacheFlag | CacheFlag.CACHE_DAMAGE == CacheFlag.CACHE_DAMAGE then
+        player.Damage = player.Damage + playerRunSave.Blessings.Samson.Damage
     end
 end
 Resouled:AddPriorityCallback(ModCallbacks.MC_EVALUATE_CACHE, CallbackPriority.LATE, onCacheEval)
@@ -26,9 +33,9 @@ local function onNpcDeath(_, npc)
     local rng = npc:GetDropRNG()
     if rng:RandomFloat() < DAMAGE_GAIN_CHANCE then
         Resouled:IterateOverPlayers(function(player, playerId)
-            if Resouled:HasBlessing(player, Resouled.Blessings.SAMSON) then
+            if Resouled:HasBlessing(player, Resouled.Blessings.Samson) then
                 local playerRunSave = SAVE_MANAGER.GetRunSave(player)
-                playerRunSave.Blessings.Samson = playerRunSave.Blessings.Samson + DAMAGE_GAIN
+                playerRunSave.Blessings.Samson.Damage = playerRunSave.Blessings.Samson.Damage + DAMAGE_GAIN
                 player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
                 player:EvaluateItems()
             end

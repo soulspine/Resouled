@@ -5,20 +5,6 @@ Resouled = RegisterMod("Resouled", 1)
 SAVE_MANAGER = include("scripts.utility.save_manager")
 SAVE_MANAGER.Init(Resouled)
 
-function GetMaxItemID()
-    local itemConfig = Isaac.GetItemConfig()
-    local maxItemId = CollectibleType.NUM_COLLECTIBLES
-
-    while true do
-        if itemConfig:GetCollectible(maxItemId) == nil then
-            break
-        end
-        maxItemId = maxItemId + 1
-    end
-
-    return maxItemId - 1
-end
-
 ---@param quality integer
 ---@param rng RNG
 ---@param position Vector
@@ -106,6 +92,33 @@ end
 ---@param player EntityPlayer
 function Resouled:GetEffectiveBlackHP(player)
     return player:GetSoulHearts() - Resouled:GetEffectiveSoulHP(player)
+end
+
+---@param player EntityPlayer
+function Resouled:GetFireRate(player)
+    return 30 / (player.MaxFireDelay + 1)
+end
+
+---@param player EntityPlayer
+function Resouled:GetCollectibleQualityNum(player)
+    local qCount = {
+        [0] = 0,
+        [1] = 0,
+        [2] = 0,
+        [3] = 0,
+        [4] = 0
+    }
+    local itemConfig = Isaac.GetItemConfig()
+
+    ---@diagnostic disable-next-line: undefined-field
+    for i = 1, itemConfig:GetCollectibles().Size - 1 do
+        local item = itemConfig:GetCollectible(i)
+        if item and not item.Hidden and item:IsAvailable() and not item:HasTags(ItemConfig.TAG_QUEST) and player:HasCollectible(i) then
+            qCount[item.Quality] = qCount[item.Quality] + player:GetCollectibleNum(i)
+        end
+    end
+
+    return qCount
 end
 
 include("scripts.items")

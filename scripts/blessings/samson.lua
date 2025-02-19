@@ -1,6 +1,6 @@
 local GRANT_DAMAGE_THRESHOLD = 1
 
-local DAMAGE_GAIN_CHANCE = 1
+local DAMAGE_GAIN_CHANCE = 0.25
 local DAMAGE_GAIN = 0.05
 
 ---@param player EntityPlayer

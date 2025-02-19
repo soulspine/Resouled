@@ -13,6 +13,7 @@ Mod bringing Four Souls content into Isaac.
 
 # Blessings
 - [Samson's Blessing](README/blessings/SamsonsBlessing.md)
+- [Maggy's Blessing](README/blessings/MaggysBlessing.md)
 
 # [Save Manager](https://github.com/catinsurance/IsaacSaveManager)
 by catinsurance \

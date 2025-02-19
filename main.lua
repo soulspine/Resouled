@@ -82,6 +82,32 @@ function Resouled:GrantGuppyTransformation(player)
     end
 end
 
+---@param player EntityPlayer
+function Resouled:GetEffectiveHP(player)
+    -- TODO
+    local red = player:GetHearts()
+    local soul = player:GetSoulHearts() -- black hearts are counted in
+    local bone = player:GetBoneHearts()
+    local rotten = player:GetRottenHearts()
+    local eternal = player:GetEternalHearts()
+    return red + soul + bone - rotten + eternal
+end
+
+---@param player EntityPlayer
+function Resouled:GetEffectiveRedHP(player)
+    return player:GetHearts() - 2*player:GetRottenHearts()
+end
+
+---@param player EntityPlayer
+function Resouled:GetEffectiveSoulHP(player)
+    return math.max(player:GetSoulHearts() - 2*player:GetBlackHearts(), 0)
+end
+
+---@param player EntityPlayer
+function Resouled:GetEffectiveBlackHP(player)
+    return player:GetSoulHearts() - Resouled:GetEffectiveSoulHP(player)
+end
+
 include("scripts.items")
 include("scripts.pocketitems")
 include("scripts.curses")

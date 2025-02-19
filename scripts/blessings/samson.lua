@@ -6,13 +6,14 @@ local DAMAGE_GAIN = 0.05
 ---@param player EntityPlayer
 ---@param cacheFlag CacheFlag
 local function onCacheEval(_, player, cacheFlag)
-    local playerRunSave = SAVE_MANAGER.GetRunSave(player)
     if not Resouled:HasBlessing(player, Resouled.Blessings.SAMSON) and player.Damage <= GRANT_DAMAGE_THRESHOLD then
+        local playerRunSave = SAVE_MANAGER.GetRunSave(player)
         Resouled:GrantBlessing(player, Resouled.Blessings.SAMSON)
         playerRunSave.Blessings.Samson = 0
     end
 
     if Resouled:HasBlessing(player, Resouled.Blessings.SAMSON) and cacheFlag | CacheFlag.CACHE_DAMAGE == CacheFlag.CACHE_DAMAGE then
+        local playerRunSave = SAVE_MANAGER.GetRunSave(player)
         player.Damage = player.Damage + playerRunSave.Blessings.Samson
     end
 end

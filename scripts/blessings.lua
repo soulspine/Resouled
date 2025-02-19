@@ -1,6 +1,7 @@
 ---@enum ResouledBlessing
 Resouled.Blessings = {
     SAMSON = 1,
+    MAGGY = 2,
 }
 -- next blessings have to have id being a binary shift: eg. 1, 2, 4, 8, 6, 32, 64, 128 ... 
 
@@ -54,3 +55,4 @@ function Resouled:RemoveBlessing(player, blessing)
 end
 
 include("scripts.blessings.samson")
+include("scripts.blessings.maggy")

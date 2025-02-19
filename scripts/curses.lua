@@ -1,5 +1,5 @@
 local customCurses = {}
-local CUSTOM_CURSE_CHANCE = 1
+local CUSTOM_CURSE_CHANCE = 0.25
 
 local GREED_NAME = "Curse of Greed"
 local CURSE_OF_GREED = Isaac.GetCurseIdByName(GREED_NAME)

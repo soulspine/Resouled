@@ -1,6 +1,6 @@
 local GRANT_DAMAGE_THRESHOLD = 1
 
-local DAMAGE_GAIN_CHANCE = 0.25
+local DAMAGE_GAIN_CHANCE = 1
 local DAMAGE_GAIN = 0.05
 
 ---@param player EntityPlayer
@@ -22,24 +22,16 @@ Resouled:AddPriorityCallback(ModCallbacks.MC_EVALUATE_CACHE, CallbackPriority.LA
 
 ---@param npc EntityNPC
 local function onNpcDeath(_, npc)
-    local globalRunSave = SAVE_MANAGER.GetRunSave()
     local rng = npc:GetDropRNG()
-    if globalRunSave.Blessings[Resouled.Blessings.SAMSON] and rng:RandomFloat() < DAMAGE_GAIN_CHANCE then
-        
-        ---@param playerRef EntityRef
-        for _, playerRef in ipairs(globalRunSave.Blessings[Resouled.Blessings.SAMSON]) do
-            local player = playerRef.Entity:ToPlayer()
-
-            if not player then
-                goto continue
+    if rng:RandomFloat() < DAMAGE_GAIN_CHANCE then
+        Resouled:IterateOverPlayers(function(player, playerId)
+            if Resouled:HasBlessing(player, Resouled.Blessings.SAMSON) then
+                local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+                playerRunSave.Blessings.Samson = playerRunSave.Blessings.Samson + DAMAGE_GAIN
+                player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
+                player:EvaluateItems()
             end
-
-            local playerRunSave = SAVE_MANAGER.GetRunSave(player)
-            playerRunSave.Blessings.Samson = playerRunSave.Blessings.Samson + DAMAGE_GAIN
-            player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
-            player:EvaluateItems()
-            ::continue::
-        end
+        end)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNpcDeath)

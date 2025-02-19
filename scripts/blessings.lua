@@ -9,9 +9,11 @@ Resouled.Blessings = {
 ---@param player EntityPlayer
 local function createPlayerBlessingsContainer(_, player)
     local playerRunSave = SAVE_MANAGER.GetRunSave(player)
-    playerRunSave.Blessings = {
-        Obtained = 0
-    }
+    if not playerRunSave.Blessings then
+        playerRunSave.Blessings = {
+            Obtained = 0
+        }
+    end 
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, createPlayerBlessingsContainer)
 
@@ -39,19 +41,6 @@ function Resouled:GrantBlessing(player, blessing)
 
         local playerRunSave = SAVE_MANAGER.GetRunSave(player)
         playerRunSave.Blessings.Obtained = playerRunSave.Blessings.Obtained | blessing
-
-        local globalRunSave = SAVE_MANAGER.GetRunSave()
-        if globalRunSave.Blessings then
-            if globalRunSave.Blessings[blessing] then
-                table.insert(globalRunSave.Blessings[blessing], EntityRef(player))
-            else
-                globalRunSave.Blessings[blessing] = {EntityRef(player)}
-            end
-        else
-            globalRunSave.Blessings = {
-                [blessing] = {EntityRef(player)}
-            }
-        end
     end
 end
 
@@ -61,19 +50,6 @@ function Resouled:RemoveBlessing(player, blessing)
     if Resouled:HasBlessing(player, blessing) then
         local playerRunSave = SAVE_MANAGER.GetRunSave(player)
         playerRunSave.Blessings.Obtained = playerRunSave.Blessings.Obtained & ~blessing
-    
-        local globalRunSave = SAVE_MANAGER.GetRunSave()
-        if globalRunSave.Blessings then
-            if globalRunSave.Blessings[blessing] then
-                for i, playerRef in ipairs(globalRunSave.Blessings[blessing]) do
-                    if playerRef:ToPlayer() == player then
-                        table.remove(globalRunSave.Blessings[blessing], i)
-                        break
-                    end
-                end
-            end
-        end
-
     end
 end
 

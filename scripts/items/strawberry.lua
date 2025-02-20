@@ -1,4 +1,4 @@
-local STRAWBERRY = Isaac.GetItemIdByName("Strawberry")
+local STRAWBERRY = Isaac.GetItemIdByName("Strawberry") -- TODO ADD MOON BERRY
 
 local LUCK_GAIN_PAST_1UP = 1
 local ROOM_ENTER_SPAWN_CHANCE = 0.15
@@ -6,7 +6,7 @@ local ROOM_ENTER_WINGED_REPLACE_CHANCE = 0.4
 
 local POSITION_OFFSET = Vector(0,-30)
 local CONSUME_SPEED_THRESHOLD = 0.01
-local CONSUME_FRAME_THRESHOLD = 20
+local CONSUME_FRAME_THRESHOLD = 30
 local WINGED_RANDOM_POSITION_MARGIN = 10
 local BERRY_SPAWN_DISTANCE_THRESHOLD = 10
 local WINGED_MAX_COOLDOWN = 30
@@ -20,7 +20,7 @@ local PICKUP_PARTICLE_RANGE = 15
 local CONSUME_EARLY_SCORE_END_FRAME = 4
 
 if EID then
-    EID:addCollectible(STRAWBERRY, "While held, Isaac can collect strawberries that will follow him.#" .. math.floor(ROOM_ENTER_SPAWN_CHANCE * 100) .. "% chance to spawn a Strawberry when entering a room for the first time.#On use turns pedestal items into Strawberries.#Upon entering a new floor, spawns a Golden Berry that disappears when Isaac takes any damage.#{{Warning}} Standing still will make berries count up score. The higher the score, the higher quality item will spawn.", "Strawberry")
+    EID:addCollectible(STRAWBERRY, "While held, Isaac can collect strawberries that will follow him.#On use, converts all pedestal items in the room into strawberries.#{{Warning}} Standing still will make collected berries count up score. The higher the score, the higher quality chaos pool item will spawn.", "Strawberry")
 end
 
 local STRAWBERRY_VARIANT = Isaac.GetEntityVariantByName("Red Strawberry Pickup")
@@ -178,7 +178,7 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onBerryPickupCollisio
 ---@param pickup EntityPickup
 local function onBerryPickupUpdate(_, pickup)
 
-    if not Game():GetRoom():IsFirstVisit() then
+    if pickup.SubType ~= STRAWBERRY_SUBTYPE.BLUE and not Game():GetRoom():IsFirstVisit() then
         pickup:Remove()
         return
     end
@@ -321,21 +321,32 @@ end
 Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onBerryFamiliarUpdate, STRAWBERRY_VARIANT)
 
 ---@param player EntityPlayer
-local function onUpdate(player)
-    if player:HasCollectible(STRAWBERRY) then
-        local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+local function onPlayerInit(_, player)
+    local playerRunSave = SAVE_MANAGER.GetRunSave(player)
 
         if playerRunSave.Strawberry == nil then
             playerRunSave.Strawberry = {
-                Streak = 0,
-                IsConsuming = false,
-                Berries = {},
-                Luck = 0,
-                NoMovementFrames = 0,
-            }
-        end
+            Streak = 0,
+            IsConsuming = false,
+            Berries = {},
+            Luck = 0,
+            NoMovementFrames = 0,
+        }
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, onPlayerInit)
 
-        --print(playerRunSave.Strawberry.NoMovementFrames)
+---@param player EntityPlayer
+local function onUpdate(player) -- this has to be on update because player updates run always and normal updates are paused when game is paused for example
+    local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+    
+    if playerRunSave.Strawberry == nil then
+        return
+    end
+
+    playerRunSave.Strawberry.NoMovementFrames = (player:GetVelocityBeforeUpdate():Length() < CONSUME_SPEED_THRESHOLD) and math.min(CONSUME_FRAME_THRESHOLD,playerRunSave.Strawberry.NoMovementFrames + 1) or 0
+
+    if #playerRunSave.Strawberry.Berries > 0 or playerRunSave.Strawberry.IsConsuming then
 
         local berries = playerRunSave.Strawberry.Berries
         local streak = playerRunSave.Strawberry.Streak
@@ -344,9 +355,7 @@ local function onUpdate(player)
 
         local scoreAnimation = ""
 
-        playerRunSave.Strawberry.NoMovementFrames = (player:GetVelocityBeforeUpdate():Length() < CONSUME_SPEED_THRESHOLD) and math.min(CONSUME_FRAME_THRESHOLD,playerRunSave.Strawberry.NoMovementFrames + 1) or 0
-
-        if (#berries > 0 and playerRunSave.Strawberry.NoMovementFrames == CONSUME_FRAME_THRESHOLD) or playerRunSave.Strawberry.IsConsuming then
+        if playerRunSave.Strawberry.NoMovementFrames == CONSUME_FRAME_THRESHOLD or playerRunSave.Strawberry.IsConsuming then
             ---@type EntityFamiliar
             local firstBerry = berries[1].Ref:ToFamiliar()
             if firstBerry == nil then

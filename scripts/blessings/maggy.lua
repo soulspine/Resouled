@@ -20,7 +20,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, onPlayerUpdate)
 ---@param position Vector
 local function onRoomClear(_, rng, position)
     ---@param player EntityPlayer
-    Resouled:IterateOverPlayers(function(player, playerId)
+    Resouled:IterateOverPlayers(function(player)
         if Resouled:HasBlessing(player, Resouled.Blessings.Maggy) then
             local playerRunSave = SAVE_MANAGER.GetRunSave(player)
             if Resouled:GetEffectiveHP(player) < player:GetHeartLimit() // 3 and playerRunSave.Blessings.Maggy == 0 then

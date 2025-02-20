@@ -32,7 +32,7 @@ Resouled:AddPriorityCallback(ModCallbacks.MC_EVALUATE_CACHE, CallbackPriority.LA
 local function onNpcDeath(_, npc)
     local rng = npc:GetDropRNG()
     if rng:RandomFloat() < DAMAGE_GAIN_CHANCE then
-        Resouled:IterateOverPlayers(function(player, playerId)
+        Resouled:IterateOverPlayers(function(player)
             if Resouled:HasBlessing(player, Resouled.Blessings.Samson) then
                 local playerRunSave = SAVE_MANAGER.GetRunSave(player)
                 playerRunSave.Blessings.Samson.Damage = playerRunSave.Blessings.Samson.Damage + DAMAGE_GAIN

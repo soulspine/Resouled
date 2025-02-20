@@ -321,8 +321,7 @@ end
 Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onBerryFamiliarUpdate, STRAWBERRY_VARIANT)
 
 ---@param player EntityPlayer
----@param playerID any
-local function onUpdate(player, playerID)
+local function onUpdate(player)
     if player:HasCollectible(STRAWBERRY) then
         local playerRunSave = SAVE_MANAGER.GetRunSave(player)
 
@@ -486,7 +485,7 @@ local function onUpdate(player, playerID)
 
             -- update streak
             if #berries == 0 then
-                Resouled:SpawnItemOfQuality(math.min(streak, 4), player:GetCollectibleRNG(STRAWBERRY), Game():GetRoom():GetRandomPosition(10))
+                Resouled:SpawnChaosItemOfQuality(math.min(streak, 4), player:GetCollectibleRNG(STRAWBERRY), Game():GetRoom():GetRandomPosition(10))
                 sfx:Play(SFX_KEY_GET, VOLUME_KEY_GET)
 
                 if playerRunSave.Strawberry.Streak >= THRESHOLD_1UP then
@@ -525,7 +524,7 @@ Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval)
 
 local function onNewFloorEnter()
     ---@param player EntityPlayer
-    Resouled:IterateOverPlayers(function(player, playerID)
+    Resouled:IterateOverPlayers(function(player)
         if player:HasCollectible(STRAWBERRY) then
             spawnBerryFamiliar(STRAWBERRY_SUBTYPE.GOLDEN, Game():GetRoom():GetRandomPosition(10), player)
         end
@@ -558,7 +557,7 @@ local function onRoomEnter()
     local triedToSpawn = false
     Resouled:IterateOverPlayers(
     ---@param player EntityPlayer
-    function(player, playerID)
+    function(player)
         local room = Game():GetRoom()
         if player:HasCollectible(STRAWBERRY) and not triedToSpawn and room:IsFirstVisit() then
             local rng = RNG()

@@ -11,6 +11,10 @@ local function onPlayerUpdate(_, player)
             Damage = 0
         }
     end
+
+    if not Resouled:HasBlessing(player, Resouled.Blessings.Samson) and player.Damage < playerRunSave.Blessings.Samson.BaseDamage and Resouled:GetFireRate(player) < playerRunSave.Blessings.Samson.BaseFireRate then
+        Resouled:GrantBlessing(player, Resouled.Blessings.Samson)
+    end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, onPlayerUpdate)
 
@@ -23,15 +27,12 @@ local function onCacheEval(_, player, cacheFlag)
         return
     end
 
-    if not Resouled:HasBlessing(player, Resouled.Blessings.Samson) and player.Damage < playerRunSave.Blessings.Samson.BaseDamage and Resouled:GetFireRate(player) < playerRunSave.Blessings.Samson.BaseFireRate then
-        Resouled:GrantBlessing(player, Resouled.Blessings.Samson)
-    end
-
+    
     if Resouled:HasBlessing(player, Resouled.Blessings.Samson) and cacheFlag | CacheFlag.CACHE_DAMAGE == CacheFlag.CACHE_DAMAGE then
         player.Damage = player.Damage + playerRunSave.Blessings.Samson.Damage
     end
 end
-Resouled:AddPriorityCallback(ModCallbacks.MC_EVALUATE_CACHE, CallbackPriority.LATE, onCacheEval)
+Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval)
 
 
 

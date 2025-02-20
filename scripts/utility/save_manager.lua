@@ -1,4 +1,4 @@
----@diagnostic disable: missing-fields
+---@diagnostic disable: missing-fields, undefined-global, undefined-field
 -- Check out everything here: https://github.com/maya-bee/IsaacSaveManager
 
 local game = Game()

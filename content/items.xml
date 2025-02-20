@@ -4,7 +4,7 @@
     <passive id="0" name="Isaac's last will" gfx="isaacs_last_will.png" description="I leave all that I own to my cat Guppy" quality="2"/>
     <passive id="0" name="Focus" gfx="focus.png" description="" quality="3" cache="damage"/>
     <passive id="0" name="Strawberry" gfx="strawberry.png" description="Impress your friends" quality="3"/>
-    <passive id="0" name="Cheese Grater" gfx="cheese_grater.png" description="Gotta go fast!" quality="4"/>
+    <passive id="1" name="Cheese Grater" gfx="cheese_grater.png" description="Gotta go fast!" quality="4"/>
     
     <!-- Tainted characters achievement check items -->
     <passive id="0" name="taintedIsaacCheck" achievement="474" quality="0" craftquality="-1" hidden="0" tags="noeden nodaily nochallenge nocantrip nolostbr nogreed nokeeper"/>

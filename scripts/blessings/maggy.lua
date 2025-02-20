@@ -6,7 +6,7 @@ local SFX_VOLUME = 0.7
 
 ---@param player EntityPlayer
 local function onPlayerUpdate(_, player)
-    if not player:HasFullHearts() and not Resouled:HasBlessing(player, Resouled.Blessings.Maggy) and Resouled:GetEffectiveHP(player) == 1 then
+    if not Resouled:HasBlessing(player, Resouled.Blessings.Maggy) and Resouled:GetEffectiveHP(player) == 1 then
         local playerRunSave = SAVE_MANAGER.GetRunSave(player)
         Resouled:GrantBlessing(player, Resouled.Blessings.Maggy)
         playerRunSave.Blessings.Maggy = HP_GAIN_ROOM_COOLDOWN
@@ -27,6 +27,7 @@ local function onRoomClear(_, rng, position)
                 local validHeartSubTypes = {}
 
                 local fullHearts = player:HasFullHearts()
+                local preHP = Resouled:GetEffectiveHP(player)
 
                 if Resouled:GetEffectiveRedHP(player) > 0 and not fullHearts then
                     table.insert(validHeartSubTypes, HeartSubType.HEART_FULL)
@@ -69,9 +70,11 @@ local function onRoomClear(_, rng, position)
                         player:AddEternalHearts(HP_GAIN)
                     end
 
-                    Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.HEART, player.Position + EFFECT_OFFSET, Vector.Zero, player, 0, rng:GetSeed())
-                    playerRunSave.Blessings.Maggy = HP_GAIN_ROOM_COOLDOWN
-                    SFXManager():Play(SoundEffect.SOUND_VAMP_GULP, SFX_VOLUME)
+                    if Resouled:GetEffectiveHP(player) > preHP then
+                        Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.HEART, player.Position + EFFECT_OFFSET, Vector.Zero, player, 0, rng:GetSeed())
+                        playerRunSave.Blessings.Maggy = HP_GAIN_ROOM_COOLDOWN
+                        SFXManager():Play(SoundEffect.SOUND_VAMP_GULP, SFX_VOLUME)
+                    end
 
                 end
             else

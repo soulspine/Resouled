@@ -31,7 +31,6 @@ function Resouled:SpawnChaosItemOfQuality(quality, rng, position)
         
         if not itemPool:RemoveCollectible(randomItem) then
             --remove raindomItem from valiudItems
-            print("Removing item from validItems - " .. randomItem)
             for i = 1, #validItems do
                 if validItems[i] == randomItem then
                     table.remove(validItems, i)

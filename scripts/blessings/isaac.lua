@@ -1,20 +1,19 @@
 local OBTAIN_ITEM_THRESHOLD = 6
 local SPAWN_CHANCE_PER_PEDESTAL = 0.33
 
----@param player EntityPlayer
-local function onPlayerInit(_, player)
-    local playerRunSave = SAVE_MANAGER.GetRunSave(player)
-    playerRunSave.Blessings.Isaac = {
-        ItemCount = 0,
-        QualityCount = Resouled:GetCollectibleQualityNum(player),
-    }
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, onPlayerInit)
 
 ---@param player EntityPlayer
 ---@param cacheFlag CacheFlag
 local function onPlayerUpdate(_, player, cacheFlag)
     local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+
+    if not playerRunSave.Blessings.Isaac then
+        playerRunSave.Blessings.Isaac = {
+            ItemCount = 0,
+            QualityCount = Resouled:GetCollectibleQualityNum(player),
+        }
+    end
+
     if player:GetCollectibleCount() ~= playerRunSave.Blessings.Isaac.ItemCount then
         playerRunSave.Blessings.Isaac.ItemCount = player:GetCollectibleCount()
         playerRunSave.Blessings.Isaac.QualityCount = Resouled:GetCollectibleQualityNum(player)

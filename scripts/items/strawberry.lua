@@ -321,9 +321,8 @@ end
 Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onBerryFamiliarUpdate, STRAWBERRY_VARIANT)
 
 ---@param player EntityPlayer
-local function onPlayerInit(_, player)
+local function onPlayerUpdate(_, player)
     local playerRunSave = SAVE_MANAGER.GetRunSave(player)
-
         if playerRunSave.Strawberry == nil then
             playerRunSave.Strawberry = {
             Streak = 0,
@@ -334,7 +333,7 @@ local function onPlayerInit(_, player)
         }
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, onPlayerInit)
+Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, onPlayerUpdate)
 
 ---@param player EntityPlayer
 local function onUpdate(player) -- this has to be on update because player updates run always and normal updates are paused when game is paused for example

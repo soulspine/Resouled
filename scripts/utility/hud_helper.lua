@@ -1,5 +1,5 @@
 ---@type ModReference
-local Mod = MOD
+local Mod = Resouled
 local emptyShaderName = "HudHelperEmptyShader"
 
 local VERSION = 1.03 -- do not modify

@@ -12,9 +12,6 @@
     1000 = EFFECT
     -->
     <!-- variant 444 becasue 4souls -->
-    <entity anm2path="strawberry_red.anm2" name="Red Strawberry Pickup" id="5" variant="444" subtype="0" collisionRadius="12" collisionMass="9999" shadowSize="15"/>
-    <entity anm2path="strawberry_red.anm2" name="Red Strawberry Familiar" id="3" variant="444" subtype="0" shadowSize="15" friction="1.5"/>
-
     <entity anm2path="toppings.anm2" name="Mushroom Pickup" id="5" variant="445" subtype="0" collisionRadius="12" collisionMass="5" shadowSize="15"/>
     <entity anm2path="toppings.anm2" name="Cheese Pickup" id="5" variant="445" subtype="1" collisionRadius="12" collisionMass="5" shadowSize="15"/>
     <entity anm2path="toppings.anm2" name="Tomato Pickup" id="5" variant="445" subtype="2" collisionRadius="12" collisionMass="5" shadowSize="15"/>
@@ -26,4 +23,10 @@
     <entity anm2path="toppings.anm2" name="Sausage Familiar" id="3" variant="445" subtype="3" shadowSize="15" friction="1.5"/>
     <entity anm2path="toppings.anm2" name="Pineapple Familiar" id="3" variant="445" subtype="4" shadowSize="15" friction="1.5"/>
     <entity anm2path="pizza!.anm2" name="Pizza Orbital" id="3" variant="512" subtype="0" shadowSize="56" friction="1.5"/>
+    <entity anm2path="strawberry_red.anm2" name="Red Strawberry Pickup" id="5" variant="444" subtype="0" collisionRadius="24" collisionMass="0" shadowSize="15" friction="1.5"/>
+    <entity anm2path="strawberry_blue.anm2" name="Blue Strawberry Pickup" id="5" variant="444" subtype="1" collisionRadius="24" collisionMass="0" shadowSize="15" friction="1.5"/>
+    <entity anm2path="strawberry_winged.anm2" name="Winged Strawberry Pickup" id="5" variant="444" subtype="3" collisionRadius="24" collisionMass="0" shadowSize="15" friction="1.5"/>
+    <entity anm2path="strawberry_red.anm2" name="Red Strawberry Familiar" id="3" variant="444" subtype="0" shadowSize="15" friction="1.5" tage="cansacrifice"/>
+    <entity anm2path="strawberry_blue.anm2" name="Blue Strawberry Familiar" id="3" variant="444" subtype="1" shadowSize="15" friction="1.5" tags="cansacrifice"/>
+    <entity anm2path="strawberry_golden.anm2" name="Golden Strawberry Familiar" id="3" variant="444" subtype="2" shadowSize="15" friction="1.5" tags="cansacrifice"/>
 </entities>

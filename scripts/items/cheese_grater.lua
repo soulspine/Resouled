@@ -64,7 +64,7 @@ local function OnNewFloorRemoveToppings()
     end
     
 end
-MOD:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, OnNewFloorRemoveToppings)
+Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, OnNewFloorRemoveToppings)
 
 ---@param familiar EntityFamiliar
 function onPizzaFamiliarInit(_, familiar)
@@ -76,18 +76,18 @@ function onPizzaFamiliarInit(_, familiar)
         return
     end
 end
-MOD:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onPizzaFamiliarInit, Isaac.GetEntityVariantByName("Pizza Orbital"))
+Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onPizzaFamiliarInit, Isaac.GetEntityVariantByName("Pizza Orbital"))
 
 ---@param familiar EntityFamiliar
 local function onPizzaFamiliarUpdate(_, familiar)
     familiar:FollowParent()
 end
-MOD:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onPizzaFamiliarUpdate, Isaac.GetEntityVariantByName("Pizza Orbital"))
+Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onPizzaFamiliarUpdate, Isaac.GetEntityVariantByName("Pizza Orbital"))
 
 local function rollToppingRooms()
     local cheeseGraterPresent = false
     ---@param player EntityPlayer
-    IterateOverPlayers(function(player, playerID)
+    Resouled:IterateOverPlayers(function(player, playerID)
         if player:HasCollectible(CHEESE_GRATER) then
             cheeseGraterPresent = true
         end
@@ -116,7 +116,7 @@ local function rollToppingRooms()
         end
     end
 end
-MOD:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, rollToppingRooms)
+Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, rollToppingRooms)
 
 local function tryToSpawnToppingInRoom()
     local room = Game():GetRoom()
@@ -142,7 +142,7 @@ local function tryToSpawnToppingInRoom()
         floorSave.CheeseGrater.SpawnedCount = floorSave.CheeseGrater.SpawnedCount + 1
     end
 end
-MOD:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, tryToSpawnToppingInRoom)
+Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, tryToSpawnToppingInRoom)
 
 local function ensureFloorSave()
     local floorSave = SAVE_MANAGER.GetFloorSave()
@@ -150,7 +150,7 @@ local function ensureFloorSave()
         rollToppingRooms()
     end
 end
-MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, ensureFloorSave)
+Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, ensureFloorSave)
 
 ---@param pickup EntityPickup
 function onToppingPickupInit(_, pickup)
@@ -172,7 +172,7 @@ function onToppingPickupInit(_, pickup)
     sprite:Play(animationName, true)
     pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
 end
-MOD:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onToppingPickupInit, TOPPING_VARIANT)
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onToppingPickupInit, TOPPING_VARIANT)
 
 function onToppingPickupCollision(_, pickup, collider)
     if collider.Type == EntityType.ENTITY_PLAYER then
@@ -191,7 +191,7 @@ function onToppingPickupCollision(_, pickup, collider)
         end
     end
 end
-MOD:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onToppingPickupCollision, TOPPING_VARIANT, player)
+Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onToppingPickupCollision, TOPPING_VARIANT)
 
 ---@param familiar EntityFamiliar
 function onToppingFamiliarInit(_, familiar)
@@ -203,13 +203,13 @@ function onToppingFamiliarInit(_, familiar)
         return
     end
 end
-MOD:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onToppingFamiliarInit, TOPPING_VARIANT)
+Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onToppingFamiliarInit, TOPPING_VARIANT)
 
 ---@param familiar EntityFamiliar
 local function onToppingFamiliarUpdate(_, familiar)
     familiar:FollowParent()
 end
-MOD:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onToppingFamiliarUpdate, TOPPING_VARIANT)
+Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onToppingFamiliarUpdate, TOPPING_VARIANT)
 
 HudHelper.RegisterHUDElement({
     Name = "HudHelperExample",
@@ -241,10 +241,10 @@ function CheeseGraterSpeedScreen()
         speedScreen:Play("Run 2", true)
     end 
 end
-MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, CheeseGraterSpeedScreen)
+Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, CheeseGraterSpeedScreen)
 
 local function onUpdate()
-    IterateOverPlayers(function (player, playerID)
+    Resouled:IterateOverPlayers(function (player, playerID)
         if player:HasCollectible(CHEESE_GRATER) then
             local playerRunSave = SAVE_MANAGER.GetRunSave(player)
             
@@ -260,7 +260,7 @@ local function onUpdate()
         end
     end)
 end
-MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
+Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 
 
 function KillCounter()
@@ -273,7 +273,7 @@ function KillCounter()
         player.Damage = playerDamageCalc + (killCounter/5)
     end
 end
-MOD:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, KillCounter)
+Resouled:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, KillCounter)
 
 function KillCounterTimerCountdown()
     player = Isaac.GetPlayer()
@@ -305,7 +305,7 @@ function KillCounterTimerCountdown()
         end
     end
 end
-MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, KillCounterTimerCountdown)
+Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, KillCounterTimerCountdown)
 
 function ComboRewards()
     player = Isaac.GetPlayer()
@@ -345,7 +345,7 @@ function ComboRewards()
             end
             if finalKillScore >= 10000 and finalKillScore < 12000 then -- 10000 - 11999 one quality 1
                 zeros()
-                MOD:SpawnItemOfQuality(1, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
+                Resouled:SpawnItemOfQuality(1, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
             end
             if finalKillScore >= 12000 and finalKillScore < 14000 then -- 12000 - 13999 20 carot cards
                 zeros()
@@ -361,7 +361,7 @@ function ComboRewards()
             end
             if finalKillScore >= 16000 and finalKillScore < 18000 then -- 16000 - 17999 one quality 2
                 zeros()
-                MOD:SpawnItemOfQuality(2, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
+                Resouled:SpawnItemOfQuality(2, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
             end
             if finalKillScore >= 18000 and finalKillScore < 20000 then -- 18000 - 19999 10 golden chests, 10 keys, 3 sacks
                 zeros()
@@ -375,7 +375,7 @@ function ComboRewards()
             end
             if finalKillScore >= 20000 and finalKillScore < 22000 then -- 20000 - 21999 one quality 2, 10 trinkets
                 zeros()
-                MOD:SpawnItemOfQuality(2, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
+                Resouled:SpawnItemOfQuality(2, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
                 for _ = 1, 10 do
                     Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, 0, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                 end
@@ -383,7 +383,7 @@ function ComboRewards()
             if finalKillScore >= 22000 and finalKillScore < 24000 then -- 22000 - 23999 five quality 1's
                 zeros()
                 for _ = 1, 5 do
-                    MOD:SpawnItemOfQuality(1, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
+                    Resouled:SpawnItemOfQuality(1, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
                 end
             end
             if finalKillScore >= 24000 and finalKillScore < 26000 then -- 24000 - 25999 10 trinkets, 3 gulp pills
@@ -399,7 +399,7 @@ function ComboRewards()
             end
             if finalKillScore >= 26000 and finalKillScore < 28000 then -- 26000 - 27999 one quality 3
                 zeros()
-                MOD:SpawnItemOfQuality(3, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
+                Resouled:SpawnItemOfQuality(3, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
             end
             if finalKillScore >= 28000 and finalKillScore < 30000 then -- 28000 - 29999 two secret room items bellow quality 4
                 zeros()
@@ -428,8 +428,8 @@ function ComboRewards()
                     end
                 end
                 if reward == 2 then -- 2 random quality 4's
-                    MOD:SpawnItemOfQuality(4, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
-                    MOD:SpawnItemOfQuality(4, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
+                    Resouled:SpawnItemOfQuality(4, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
+                    Resouled:SpawnItemOfQuality(4, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
                 end
                 if reward == 3 then -- 30 golden chests, paper clip
                     for _ = 1, 30 do
@@ -453,7 +453,7 @@ function ComboRewards()
                 end
                 if reward == 6 then -- 7 random quality 3's
                     for _ = 1, 7 do
-                        MOD:SpawnItemOfQuality(3, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
+                        Resouled:SpawnItemOfQuality(3, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
                     end
                 end
                 if reward == 7 then -- Pyro, Dollar, Skeleto Key, reverse fool
@@ -510,14 +510,14 @@ function ComboRewards()
                 if reward == 16 then -- Forget Me Now, 3 random quality 3's
                     Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_FORGET_ME_NOW, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                     for _ = 1, 3 do
-                        MOD:SpawnItemOfQuality(3, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
+                        Resouled:SpawnItemOfQuality(3, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
                     end
                 end
             end
         end
     end
 end
-MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, ComboRewards)
+Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, ComboRewards)
 
 function PlayerSpeedUp(_, player, playerID)
     local player = Isaac.GetPlayer(playerID)
@@ -546,7 +546,7 @@ function PlayerSpeedUp(_, player, playerID)
         return
     end
 end
-MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, PlayerSpeedUp)
+Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, PlayerSpeedUp)
 
 function timerResetOnRunStart()
         playerDamageCalc = 5
@@ -559,19 +559,19 @@ function timerResetOnRunStart()
         counterDrawn = false
         
 end
-MOD:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, timerResetOnRunStart)
+Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, timerResetOnRunStart)
 
 function DrawCombo()
     player = Isaac.GetPlayer()
     if player:HasCollectible(CHEESE_GRATER) and counterDrawn == false then
         font:Load("font/terminus.fnt")
-        MOD:AddCallback(ModCallbacks.MC_POST_RENDER, function()
+        Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, function()
         font:DrawString("Combo:".. combo, 320, 10, KColor(1,1,1,1), 0, false)
         end)
-        MOD:AddCallback(ModCallbacks.MC_POST_RENDER, function()
+        Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, function()
         font:DrawString("Time:"..printTimer, 320, 25, KColor(1,1,1,1), 0, false)
         end)
-        MOD:AddCallback(ModCallbacks.MC_POST_RENDER, function()
+        Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, function()
         font:DrawString("Score:"..stringFinalKillScore, 320, 40, KColor(1,1,1,1), 0, false)
         end)
         counterDrawn = true
@@ -580,4 +580,4 @@ function DrawCombo()
     end
 end
 
-MOD:AddCallback(ModCallbacks.MC_POST_RENDER, DrawCombo)
+Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, DrawCombo)

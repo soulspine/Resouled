@@ -17,7 +17,7 @@ local function createPlayerBlessingsContainer(_, player)
         }
     end 
 end
-Resouled:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.IMPORTANT, createPlayerBlessingsContainer)
+Resouled:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, CallbackPriority.IMPORTANT, createPlayerBlessingsContainer)
 
 
 
@@ -27,6 +27,11 @@ Resouled:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.
 ---@return boolean
 function Resouled:HasBlessing(player, blessing)
     local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+
+    if not playerRunSave.Blessings then
+        return false
+    end
+
     return playerRunSave.Blessings.Obtained & blessing == blessing
 end
 

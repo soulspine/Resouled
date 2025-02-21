@@ -60,7 +60,7 @@ local function GREED_onPlayerDamage(_, entity, amount, flags, source, countdown)
         local coins = player:GetNumCoins()
         if coins > 0 then
             local rng = player:GetDropRNG()
-            local greedCoins = rng:RandomInt(GREED_COIN_DROP_AMOUNT_MAX - GREED_COIN_DROP_AMOUNT_MIN + 1) + GREED_COIN_DROP_AMOUNT_MIN
+            local greedCoins = math.min(rng:RandomInt(GREED_COIN_DROP_AMOUNT_MAX - GREED_COIN_DROP_AMOUNT_MIN + 1) + GREED_COIN_DROP_AMOUNT_MIN, player:GetNumCoins())
             player:AddCoins(-greedCoins)
             for _ = 1, greedCoins do
                 local spawnPos = Isaac.GetFreeNearPosition(player.Position, GREED_POSITION_STEP)

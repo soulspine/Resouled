@@ -1,3 +1,4 @@
+---@diagnostic disable: missing-fields, undefined-global, undefined-field
 ---@type ModReference
 local Mod = Resouled
 local emptyShaderName = "HudHelperEmptyShader"

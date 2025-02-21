@@ -1,7 +1,7 @@
 ---@class ModReference
 Resouled = RegisterMod("Resouled", 1)
 
-HudHelper = include("scripts.utility.hud_helper")
+include("scripts.utility.hud_helper") -- HudHelper variable
 
 ---@type SaveManager
 SAVE_MANAGER = include("scripts.utility.save_manager")

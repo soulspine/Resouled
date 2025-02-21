@@ -396,7 +396,7 @@ function ComboRewards()
             end
             if finalKillScore >= 10000 and finalKillScore < 12000 then -- 10000 - 11999 one quality 1
                 zeros()
-                Resouled:SpawnItemOfQuality(1, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
+                Resouled:SpawnChaosItemOfQuality(1, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
             end
             if finalKillScore >= 12000 and finalKillScore < 14000 then -- 12000 - 13999 20 carot cards
                 zeros()
@@ -412,7 +412,7 @@ function ComboRewards()
             end
             if finalKillScore >= 16000 and finalKillScore < 18000 then -- 16000 - 17999 one quality 2
                 zeros()
-                Resouled:SpawnItemOfQuality(2, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
+                Resouled:SpawnChaosItemOfQuality(2, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
             end
             if finalKillScore >= 18000 and finalKillScore < 20000 then -- 18000 - 19999 10 golden chests, 10 keys, 3 sacks
                 zeros()
@@ -426,7 +426,7 @@ function ComboRewards()
             end
             if finalKillScore >= 20000 and finalKillScore < 22000 then -- 20000 - 21999 one quality 2, 10 trinkets
                 zeros()
-                Resouled:SpawnItemOfQuality(2, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
+                Resouled:SpawnChaosItemOfQuality(2, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
                 for _ = 1, 10 do
                     Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, 0, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                 end
@@ -434,7 +434,7 @@ function ComboRewards()
             if finalKillScore >= 22000 and finalKillScore < 24000 then -- 22000 - 23999 five quality 1's
                 zeros()
                 for _ = 1, 5 do
-                    Resouled:SpawnItemOfQuality(1, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
+                    Resouled:SpawnChaosItemOfQuality(1, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
                 end
             end
             if finalKillScore >= 24000 and finalKillScore < 26000 then -- 24000 - 25999 10 trinkets, 3 gulp pills
@@ -450,7 +450,7 @@ function ComboRewards()
             end
             if finalKillScore >= 26000 and finalKillScore < 28000 then -- 26000 - 27999 one quality 3
                 zeros()
-                Resouled:SpawnItemOfQuality(3, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
+                Resouled:SpawnChaosItemOfQuality(3, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
             end
             if finalKillScore >= 28000 and finalKillScore < 30000 then -- 28000 - 29999 two secret room items bellow quality 4
                 zeros()
@@ -479,8 +479,8 @@ function ComboRewards()
                     end
                 end
                 if reward == 2 then -- 2 random quality 4's
-                    Resouled:SpawnItemOfQuality(4, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
-                    Resouled:SpawnItemOfQuality(4, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
+                    Resouled:SpawnChaosItemOfQuality(4, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
+                    Resouled:SpawnChaosItemOfQuality(4, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
                 end
                 if reward == 3 then -- 30 golden chests, paper clip
                     for _ = 1, 30 do
@@ -503,7 +503,7 @@ function ComboRewards()
                 end
                 if reward == 6 then -- 7 random quality 3's
                     for _ = 1, 7 do
-                        Resouled:SpawnItemOfQuality(3, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
+                        Resouled:SpawnChaosItemOfQuality(3, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
                     end
                 end
                 if reward == 7 then -- Pyro, Dollar, Skeleto Key, reverse fool
@@ -560,7 +560,7 @@ function ComboRewards()
                 if reward == 16 then -- Forget Me Now, 3 random quality 3's
                     Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, CollectibleType.COLLECTIBLE_FORGET_ME_NOW, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                     for _ = 1, 3 do
-                        Resouled:SpawnItemOfQuality(3, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
+                        Resouled:SpawnChaosItemOfQuality(3, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
                     end
                 end
             end

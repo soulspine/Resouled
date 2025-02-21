@@ -39,13 +39,14 @@ local TOPPING_VARIANT_TRANSLATION = {
 local MOVESPEEDFIX = 1
 local TOPPING_VARIANT = Isaac.GetEntityVariantByName(TOPPING_VARIANT_TRANSLATION[toppingCount].." Pickup")
 local speedScreen = Sprite()
+local pizzaShootTimer = 0
+local pizzaShootTreshold = 180
 speedScreen:Load("gfx/effects/screen.anm2", true)
 -- r = 1
 -- R = 0.5
 -- o = (4.5 ,6)
 -- O = (-3 ,-2)
 -- x=(rsin(ot)+Rsin(Ot),rcos(ot)+Rcos(Ot))
-
 
 local function onUpdate()
     Resouled:IterateOverPlayers(function (player, playerID)
@@ -138,7 +139,6 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, OnNewFloorRemoveToppings)
 ---@param familiar EntityFamiliar
 function onPizzaFamiliarInit(_, familiar)
     familiar.PositionOffset = POSITION_OFFSET
-    familiar:AddToFollowers()
     familiar:GetSprite():Play("Idle")
     local player = familiar.Player:ToPlayer()
     if player == nil then
@@ -149,7 +149,35 @@ Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onPizzaFamiliarInit, Isaac.G
 
 ---@param familiar EntityFamiliar
 local function onPizzaFamiliarUpdate(_, familiar)
-    familiar:FollowParent()
+    local randomEnemy
+    local enemies = Isaac.GetRoomEntities()
+    for _, entity in ipairs(enemies) do
+        if entity:IsVulnerableEnemy() then
+            randomEnemy = entity
+            break
+        end
+    end
+    local pos = Vector(0,0)
+    if randomEnemy then
+        pizzaShootTimer = pizzaShootTimer + 1
+        pos = randomEnemy.Position
+        familiar:FollowPosition(pos)
+        if pizzaShootTimer == pizzaShootTreshold/4 then
+            Game():Spawn(EntityType.ENTITY_TEAR, TearVariant.LOST_CONTACT, familiar.Position, Vector(0,0), player, 0, Game():GetRoom():GetSpawnSeed())
+        end
+        if pizzaShootTimer == 2*(pizzaShootTreshold/4) then
+            Game():Spawn(EntityType.ENTITY_TEAR, TearVariant.LOST_CONTACT, familiar.Position, Vector(0,0), player, 0, Game():GetRoom():GetSpawnSeed())
+        end
+        if pizzaShootTimer == 3*(pizzaShootTreshold/4) then
+            Game():Spawn(EntityType.ENTITY_TEAR, TearVariant.LOST_CONTACT, familiar.Position, Vector(0,0), player, 0, Game():GetRoom():GetSpawnSeed())
+        end
+        if pizzaShootTimer >= pizzaShootTreshold then
+            Game():Spawn(EntityType.ENTITY_TEAR, TearVariant.LOST_CONTACT, familiar.Position, Vector(0,0), player, 0, Game():GetRoom():GetSpawnSeed())
+            pizzaShootTimer = 0
+        end
+    else
+        familiar:FollowParent()
+    end
 end
 Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onPizzaFamiliarUpdate, Isaac.GetEntityVariantByName("Pizza Orbital"))
 
@@ -169,7 +197,7 @@ local function rollToppingRooms()
             Rooms = {},
             SpawnedInRooms = {},
         }
-        local maxRoomIndex = Game():GetLevel():GetRooms().Size + 1
+        local maxRoomIndex = Game():GetLevel():GetRooms().Size - 1
         local rng = player:GetCollectibleRNG(CHEESE_GRATER)
         
         for _ = 1, 5 do
@@ -437,15 +465,13 @@ function ComboRewards()
                     Resouled:SpawnChaosItemOfQuality(1, player:GetCollectibleRNG(CHEESE_GRATER), player.Position)
                 end
             end
-            if finalKillScore >= 24000 and finalKillScore < 26000 then -- 24000 - 25999 10 trinkets, 3 gulp pills
+            if finalKillScore >= 24000 and finalKillScore < 26000 then -- 24000 - 25999 10 trinkets, one time use pocket smelter
                 zeros()
                 for _ = 1, 10 do
                     Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, 0, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                 end
-                local pillEffect = PillEffect.PILLEFFECT_GULP
-                local pillEntity = Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_PILL, 0, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
-                for _ = 1, 3 do
-                pillEntity:ToPickup().Variant = Game():GetItemPool():ForceAddPillEffect(pillEffect)
+                if player:GetActiveItem(ActiveSlot.SLOT_POCKET2) == CollectibleType.COLLECTIBLE_NULL then
+                    player:SetPocketActiveItem(CollectibleType.COLLECTIBLE_SMELTER, ActiveSlot.SLOT_POCKET2, true)
                 end
             end
             if finalKillScore >= 26000 and finalKillScore < 28000 then -- 26000 - 27999 one quality 3
@@ -488,14 +514,12 @@ function ComboRewards()
                     end
                     Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, TrinketType.TRINKET_PAPER_CLIP, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                 end
-                if reward == 4 then -- 30 trinkets, 15 gulp pills
+                if reward == 4 then -- 30 trinkets, one time use pocket smelter
                     for _ = 1, 30 do
                         Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, 0, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
                     end
-                    local pillEffect = PillEffect.PILLEFFECT_GULP
-                    local pillEntity = Isaac.Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_PILL, 0, Isaac.GetFreeNearPosition(player.Position, 40), Vector.Zero, nil)
-                    for _ = 1, 15 do
-                    pillEntity:ToPickup().Variant = Game():GetItemPool():ForceAddPillEffect(pillEffect)
+                    if player:GetActiveItem(ActiveSlot.SLOT_POCKET2) == CollectibleType.COLLECTIBLE_NULL then
+                        player:SetPocketActiveItem(CollectibleType.COLLECTIBLE_SMELTER, ActiveSlot.SLOT_POCKET2, true)
                     end
                 end
                 if reward == 5 then -- damage set to 13.5

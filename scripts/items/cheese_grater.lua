@@ -1,4 +1,5 @@
 local CHEESE_GRATER = Isaac.GetItemIdByName("Cheese Grater")
+local COMBO_DAMAGE_DIVIDER = 10
 local SPEED_CAP = 2.25
 local SPEED_TO_ADD_PER_FRAME = 0.005
 local SPEED_TO_REMOVE_PER_FRAME = 0.05
@@ -17,7 +18,6 @@ local scoreToLose = 0
 local font = Font()
 local counterDrawn = false
 local sfx = SFXManager()
-local playerDamageCalc = 5
 local POSITION_OFFSET = Vector(0,-20)
 local toppingCount = 0
 local TOPPING_SUBTYPES = {
@@ -36,6 +36,7 @@ local TOPPING_VARIANT_TRANSLATION = {
     [4] = "Pineapple",
     [5] = "Pizza",
 }
+local MOVESPEEDFIX = 1
 local TOPPING_VARIANT = Isaac.GetEntityVariantByName(TOPPING_VARIANT_TRANSLATION[toppingCount].." Pickup")
 local speedScreen = Sprite()
 speedScreen:Load("gfx/effects/screen.anm2", true)
@@ -45,24 +46,92 @@ speedScreen:Load("gfx/effects/screen.anm2", true)
 -- O = (-3 ,-2)
 -- x=(rsin(ot)+Rsin(Ot),rcos(ot)+Rcos(Ot))
 
-local function OnNewFloorRemoveToppings()
-    local player = Isaac.GetPlayer()
-    print(toppingCount)
-    if toppingCount >= 5 then
-        Game():Spawn(EntityType.ENTITY_FAMILIAR, Isaac.GetEntityVariantByName("Pizza Orbital"), player.Position, Vector.Zero, player, 0, 0)
-    end
-    for i=0, toppingCount-1 do
-        for _, entity in ipairs(Isaac.GetRoomEntities()) do
-            if entity.Variant == Isaac.GetEntityVariantByName(TOPPING_VARIANT_TRANSLATION[i].." Familiar") then
-              entity:Remove()
+
+local function onUpdate()
+    Resouled:IterateOverPlayers(function (player, playerID)
+        if player:HasCollectible(CHEESE_GRATER) then
+            MOVESPEEDFIX = player.MoveSpeed
+            local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+            if playerRunSave.CheeseGrater == nil then
+                playerRunSave.CheeseGrater = {
+                    Combo = 0,
+                    ComboTimer = 0,
+                    TickTime = 0,
+                    -- 100*Combo - TickTime//30 = Score
+                    Dmg = player.Damage,
+                }
             end
         end
+    end)
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
+
+local function onCacheEval()
+    local player = Isaac.GetPlayer()
+    if player:HasCollectible(CHEESE_GRATER) then
+        local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+        if playerRunSave.CheeseGrater == nil then
+            playerRunSave.CheeseGrater = {
+                Combo = 0,
+                ComboTimer = 0,
+                TickTime = 0,
+                -- 100*Combo - TickTime//30 = Score
+                Dmg = player.Damage,
+            }
+        end
+        playerRunSave.CheeseGrater.Dmg = player.Damage - (killCounter/COMBO_DAMAGE_DIVIDER)
+        player.Damage = playerRunSave.CheeseGrater.Dmg + (killCounter/COMBO_DAMAGE_DIVIDER)
+        player.MoveSpeed = MOVESPEEDFIX
     end
-    toppingCount = 0
-    if timer > 0 then
-        timer = timer - 60
+end
+Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval)
+
+local function cheeseGraterDamageFix()
+    local player = Isaac.GetPlayer()
+    local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+    if player:HasCollectible(CHEESE_GRATER) then
+        playerRunSave.CheeseGrater.Dmg = player.Damage - (killCounter/COMBO_DAMAGE_DIVIDER)
+        if playerRunSave.CheeseGrater.Dmg < 0.5 then
+            playerRunSave.CheeseGrater.Dmg = 0.5
+        end
+        player.Damage = playerRunSave.CheeseGrater.Dmg + (killCounter/COMBO_DAMAGE_DIVIDER)
     end
-    
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, cheeseGraterDamageFix)
+
+---@param pickup EntityPickup
+local function onPickupInit(_, pickup)
+    player = Isaac.GetPlayer()
+    if player:HasCollectible(CHEESE_GRATER) then
+        local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+        playerRunSave.CheeseGrater.Dmg = player.Damage - (killCounter/COMBO_DAMAGE_DIVIDER)
+        player.Damage = playerRunSave.CheeseGrater.Dmg + (killCounter/COMBO_DAMAGE_DIVIDER)
+        player.MoveSpeed = MOVESPEEDFIX
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onPickupInit, EntityPickup.PICKUP_COLLECTIBLE)
+
+local function OnNewFloorRemoveToppings()
+    local player = Isaac.GetPlayer()
+    if player:HasCollectible(CHEESE_GRATER) then
+        
+        local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+        if toppingCount >= 5 then
+            Game():Spawn(EntityType.ENTITY_FAMILIAR, Isaac.GetEntityVariantByName("Pizza Orbital"), player.Position, Vector.Zero, player, 0, 0)
+        end
+        for i=0, toppingCount-1 do
+            for _, entity in ipairs(Isaac.GetRoomEntities()) do
+                if entity.Variant == Isaac.GetEntityVariantByName(TOPPING_VARIANT_TRANSLATION[i].." Familiar") then
+                    entity:Remove()
+                end
+            end
+        end
+        toppingCount = 0
+        if timer > 0 then
+            timer = timer - 60
+        end
+        player.Damage = playerRunSave.CheeseGrater.Dmg + (killCounter/COMBO_DAMAGE_DIVIDER)
+    end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, OnNewFloorRemoveToppings)
 
@@ -243,34 +312,14 @@ function CheeseGraterSpeedScreen()
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, CheeseGraterSpeedScreen)
 
-local function onUpdate()
-    Resouled:IterateOverPlayers(function (player, playerID)
-        if player:HasCollectible(CHEESE_GRATER) then
-            local playerRunSave = SAVE_MANAGER.GetRunSave(player)
-            
-            if playerRunSave == nil then
-                playerRunSave = {
-                    Combo = 0,
-                    ComboTimer = 0,
-                    TickTime = 0,
-                    -- 100*Combo - TickTime//30 = Score
-                }
-            end
-
-        end
-    end)
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
-
-
 function KillCounter()
     player = Isaac.GetPlayer()
+    local playerRunSave = SAVE_MANAGER.GetRunSave(player)
     if player:HasCollectible(CHEESE_GRATER) then
         oldKillCounter = killCounter
         killCounter = killCounter + 1
         combo = tostring(killCounter)
-        player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
-        player.Damage = playerDamageCalc + (killCounter/5)
+        player.Damage = playerRunSave.CheeseGrater.Dmg + (killCounter/COMBO_DAMAGE_DIVIDER)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, KillCounter)
@@ -319,6 +368,8 @@ function ComboRewards()
             scoreToLose = 0
         end
         if timer >= killCounterTimer then
+            local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+            player.Damage = playerRunSave.CheeseGrater.Dmg
             sfx:Play(SoundEffect.SOUND_CHOIR_UNLOCK, 0.7, 10)
             if finalKillScore < 2000 then --under 2000 no reward
                 zeros()
@@ -449,7 +500,6 @@ function ComboRewards()
                 end
                 if reward == 5 then -- damage set to 13.5
                     player = Isaac.GetPlayer()
-                    playerDamageCalc = 13.5
                 end
                 if reward == 6 then -- 7 random quality 3's
                     for _ = 1, 7 do
@@ -522,7 +572,6 @@ Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, ComboRewards)
 function PlayerSpeedUp(_, player, playerID)
     local player = Isaac.GetPlayer(playerID)
     if player:HasCollectible(CHEESE_GRATER) then
-        player.Damage = playerDamageCalc + (killCounter/5)
      local move = Input.IsActionPressed(ButtonAction.ACTION_LEFT, 0) or
                Input.IsActionPressed(ButtonAction.ACTION_RIGHT, 0) or
                Input.IsActionPressed(ButtonAction.ACTION_UP, 0) or
@@ -549,7 +598,6 @@ end
 Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, PlayerSpeedUp)
 
 function timerResetOnRunStart()
-        playerDamageCalc = 5
         timer = 0
         killCounter = 0
         combo = "0"
@@ -557,7 +605,6 @@ function timerResetOnRunStart()
         printTimer = "0"
         toppingCount = 0
         counterDrawn = false
-        
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, timerResetOnRunStart)
 

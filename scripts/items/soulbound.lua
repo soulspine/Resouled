@@ -161,4 +161,4 @@ local function onDeath(_)
 end
 
     
-MOD:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, onDeath, EntityType.ENTITY_PLAYER)
+Resouled:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, onDeath, EntityType.ENTITY_PLAYER)

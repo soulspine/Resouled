@@ -1,16 +1,26 @@
-local STRAWBERRY = Isaac.GetItemIdByName("Strawberry")
+local STRAWBERRY = Isaac.GetItemIdByName("Strawberry") -- TODO ADD MOON BERRY
+
+local LUCK_GAIN_PAST_1UP = 1
+local ROOM_ENTER_SPAWN_CHANCE = 0.15
+local ROOM_ENTER_WINGED_REPLACE_CHANCE = 0.4
 
 local POSITION_OFFSET = Vector(0,-30)
 local CONSUME_SPEED_THRESHOLD = 0.01
-local CONSUME_FRAME_THRESHOLD = 20
-local LUCK_GAIN_PAST_1UP = 1
-local NEW_RUN_INVINCIBILITY_FRAMES = 120
-local ROOM_ENTER_SPAWN_CHANCE = 10 -- in %
+local CONSUME_FRAME_THRESHOLD = 30
+local WINGED_RANDOM_POSITION_MARGIN = 10
+local BERRY_SPAWN_DISTANCE_THRESHOLD = 10
+local WINGED_MAX_COOLDOWN = 30
+local WINGED_ACCELERATION = 0.1
+local WINGED_MAX_SPEED = 2.5
+local WINGED_RUN_AWAY_ACCELERATION = 0.01
+local WINGED_RUN_AWAY_COOLDOWN = 14
+local WINGED_DESPAWN_DISTANCE = 100
+local PICKUP_PARTICLE_RANGE = 15
 
 local CONSUME_EARLY_SCORE_END_FRAME = 4
 
 if EID then
-    EID:addCollectible(STRAWBERRY, "While held, Isaac can collect strawberries that will follow him.#" .. ROOM_ENTER_SPAWN_CHANCE .. "% chance to spawn a Strawberry in every room.#On use turns pedestal items into Strawberries.#Upon entering a new floor, spawns a Golden Berry that disappears when Isaac takes any damage.#{{Warning}} Standing still will make berries count up score. The higher the score, the higher quality item will spawn.", "Strawberry")
+    EID:addCollectible(STRAWBERRY, "While held, Isaac can collect strawberries that will follow him.#On use, converts all pedestal items in the room into strawberries.#{{Warning}} Standing still will make collected berries count up score. The higher the score, the higher quality chaos pool item will spawn.", "Strawberry")
 end
 
 local STRAWBERRY_VARIANT = Isaac.GetEntityVariantByName("Red Strawberry Pickup")
@@ -20,7 +30,8 @@ local sfx = SFXManager()
 local STRAWBERRY_SUBTYPE = {
     RED = 0,
     BLUE = 1,
-    GOLDEN = 2
+    GOLDEN = 2,
+    WINGED = 3,
 }
 
 local SFX_KEY_GET = Isaac.GetSoundIdByName("Key Get")
@@ -50,6 +61,12 @@ local SFX_STRAWBERRY_GOLDEN_4000 = Isaac.GetSoundIdByName("Golden Strawberry 400
 local SFX_STRAWBERRY_GOLDEN_5000 = Isaac.GetSoundIdByName("Golden Strawberry 5000")
 local SFX_STRAWBERRY_GOLDEN_1UP = Isaac.GetSoundIdByName("Golden Strawberry 1UP")
 
+local SFX_STRAWBERRY_WING_FLAP_1 = Isaac.GetSoundIdByName("Strawberry Wing Flap 1")
+local SFX_STRAWBERRY_WING_FLAP_2 = Isaac.GetSoundIdByName("Strawberry Wing Flap 2")
+local SFX_STRAWBERRY_WING_FLAP_3 = Isaac.GetSoundIdByName("Strawberry Wing Flap 3")
+local SFX_STRAWBERRY_LAUGH = Isaac.GetSoundIdByName("Strawberry Laugh")
+local SFX_STRAWBERRY_FLY_AWAY = Isaac.GetSoundIdByName("Strawberry Fly Away")
+
 local SFX_UI_POSTGAME_STRAWBERRY_TOTAL = Isaac.GetSoundIdByName("UI Postgame Strawberry Total")
 local SFX_UI_POSTGAME_STRAWBERRY_COUNT = Isaac.GetSoundIdByName("UI Postgame Strawberry Count")
 local SFX_UI_GAME_INCREMENT_STRAWBERRY = Isaac.GetSoundIdByName("UI Game Increment Strawberry")
@@ -60,16 +77,24 @@ local VOLUME_STRAWBERRY_TOUCH = 0.7
 local VOLUME_STRAWBERRY_PULSE = 0.7
 local VOLUME_STRAWBERRY_SCORE = 0.7
 local VOLUME_ACTIVE_USE = 0.7
-local LOSE_GOLDEN_BERRY_VOLUME = 0.7
+local VOLUME_LOSE_GOLDEN = 0.7
+local VOLUME_STRAWBERRY_FLAP = 0.7
+local VOLUME_STRAWBERRY_LAUGH = 0.7
+local VOLUME_STRAWBERRY_FLY_AWAY = 0.7
 
 local ANIMATION_IDLE = "Idle"
 local ANIMATION_CONSUME = "Consume"
 local ANIMATION_1UP_LOOP = "1UP LOOP"
 local ANIMATION_1UP_END = "1UP END"
+local ANIMATION_RUN_AWAY = "RunAway"
 local ANIMATION_NONE = "None"
 local THRESHOLD_1UP = 5
-local FRAME_STRAWBERRY_PULSE = 60
+local FRAME_STRAWBERRY_RED_PULSE = 60
+local FRAME_STRAWBERRY_BLUE_PULSE = 60
+local FRAME_STRAWBERRY_WINGED_PULSE = 51
 local FRAME_STRAWBERRY_GOLDEN_PULSE = 66
+local FRAME_STRAWBERRY_WINGED_LOOP = 24
+local FRAME_STRAWBERRY_WINGED_FLAP = 3
 
 ---@param subtype integer
 ---@param position Vector
@@ -95,10 +120,14 @@ local function onBerryPickupInit(_, pickup)
     sprite:Play(ANIMATION_IDLE, true)
     sprite:SetFrame(math.random(0,15))
     pickup.PositionOffset = POSITION_OFFSET
-    pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
-    Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.RIPPLE_POOF, pickup.Position, Vector.Zero, nil, 0, 0)
+    pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
+    pickup.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
+    pickup:AddEntityFlags(EntityFlag.FLAG_NO_PHYSICS_KNOCKBACK | EntityFlag.FLAG_NO_KNOCKBACK)
+    if Game():GetRoom():IsFirstVisit() then
+        Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.RIPPLE_POOF, pickup.Position, Vector.Zero, nil, 0, 0)
+    end
 end    
-MOD:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onBerryPickupInit, STRAWBERRY_VARIANT)
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onBerryPickupInit, STRAWBERRY_VARIANT)
 
 
 
@@ -107,6 +136,7 @@ MOD:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onBerryPickupInit, STRAWBERRY_
 ---@param low boolean
 local function onBerryPickupCollision(_, pickup, collider, low)
     --print(collider:ToPlayer():GetName())
+
     if collider.Type == EntityType.ENTITY_PLAYER then
         local player = collider:ToPlayer()
 
@@ -121,41 +151,126 @@ local function onBerryPickupCollision(_, pickup, collider, low)
         if player:HasCollectible(STRAWBERRY) then
             pickup:Remove()
             local touchSFX
+            local berrySubtype
             if pickup.SubType == STRAWBERRY_SUBTYPE.RED then
                 touchSFX = SFX_STRAWBERRY_RED_TOUCH
+                berrySubtype = STRAWBERRY_SUBTYPE.RED
             elseif pickup.SubType == STRAWBERRY_SUBTYPE.BLUE then
                 touchSFX = SFX_STRAWBERRY_BLUE_TOUCH
+                berrySubtype = STRAWBERRY_SUBTYPE.BLUE
             elseif pickup.SubType == STRAWBERRY_SUBTYPE.GOLDEN then
                 touchSFX = SFX_STRAWBERRY_RED_TOUCH
+                berrySubtype = STRAWBERRY_SUBTYPE.GOLDEN
+            elseif pickup.SubType == STRAWBERRY_SUBTYPE.WINGED then
+                touchSFX = SFX_STRAWBERRY_RED_TOUCH
+                berrySubtype = STRAWBERRY_SUBTYPE.RED
             end
             sfx:Play(touchSFX, VOLUME_STRAWBERRY_TOUCH)
-            spawnBerryFamiliar(pickup.SubType, pickup.Position, player)
+            spawnBerryFamiliar(berrySubtype, pickup.Position, player)
         end
         return true
     end
 end
-MOD:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onBerryPickupCollision, STRAWBERRY_VARIANT)
+Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onBerryPickupCollision, STRAWBERRY_VARIANT)
+
 
 
 ---@param pickup EntityPickup
 local function onBerryPickupUpdate(_, pickup)
-    local sprite = pickup:GetSprite()
-    if sprite:IsPlaying(ANIMATION_IDLE) then
-        if sprite:GetFrame() == FRAME_STRAWBERRY_PULSE then
-            local pulseSfx
-            if pickup.SubType == STRAWBERRY_SUBTYPE.RED then
-                pulseSfx = SFX_STRAWBERRY_RED_PULSE
-            elseif pickup.SubType == STRAWBERRY_SUBTYPE.BLUE then
-                pulseSfx = SFX_STRAWBERRY_BLUE_PULSE
-            elseif pickup.SubType == STRAWBERRY_SUBTYPE.GOLDEN then
-                pulseSfx = SFX_STRAWBERRY_RED_PULSE
+
+    if pickup.SubType ~= STRAWBERRY_SUBTYPE.BLUE and not Game():GetRoom():IsFirstVisit() then
+        pickup:Remove()
+        return
+    end
+
+    Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.EMBER_PARTICLE, pickup.Position + Vector(math.random(-PICKUP_PARTICLE_RANGE, PICKUP_PARTICLE_RANGE), math.random(-PICKUP_PARTICLE_RANGE, PICKUP_PARTICLE_RANGE)) + POSITION_OFFSET, Vector.Zero, nil, 0, 0)
+
+    if pickup.SubType == STRAWBERRY_SUBTYPE.WINGED then
+        local roomSave = SAVE_MANAGER.GetRoomSave(pickup)
+        local globalRoomSave = SAVE_MANAGER.GetRoomSave()
+
+        if globalRoomSave.WingedBerry == nil then
+            globalRoomSave.WingedBerry = EntityRef(pickup)
+        end
+
+        if roomSave.WingedBerry == nil then
+            roomSave.WingedBerry = {
+                RunningAway = false,
+                TargetPosition = Game():GetRoom():GetRandomPosition(WINGED_RANDOM_POSITION_MARGIN),
+                Cooldown = 0,
+                Speed = 0,
+            }
+        end
+
+        if roomSave.WingedBerry.Cooldown > 0 then
+            roomSave.WingedBerry.Cooldown = roomSave.WingedBerry.Cooldown - 1
+            return
+        end
+
+        if roomSave.WingedBerry.RunningAway then
+            -- accelerate until reached TargetPosition
+            --print(pickup.Position)
+            if pickup.Velocity.X == 0 and pickup.Velocity.Y == 0 then
+                pickup.Velocity = (roomSave.WingedBerry.TargetPosition - pickup.Position):Normalized()
+                sfx:Play(SFX_STRAWBERRY_FLY_AWAY, VOLUME_STRAWBERRY_FLY_AWAY)
+                pickup:GetSprite():Play(ANIMATION_IDLE, true)
+            else
+                pickup.Velocity = pickup.Velocity + (roomSave.WingedBerry.TargetPosition - pickup.Position):Normalized() * WINGED_RUN_AWAY_ACCELERATION
+                
+            end
+            
+            local room = Game():GetRoom()
+            local bottomRight = room:GetBottomRightPos()
+            
+            if pickup.Position.X < 0 - WINGED_DESPAWN_DISTANCE
+            or pickup.Position.Y < 0 - WINGED_DESPAWN_DISTANCE
+            or pickup.Position.X > bottomRight.X + WINGED_DESPAWN_DISTANCE
+            or pickup.Position.Y > bottomRight.Y + WINGED_DESPAWN_DISTANCE then
+                pickup:Remove()
+                return
             end
 
-            sfx:Play(pulseSfx, VOLUME_STRAWBERRY_PULSE)
-        end    
+
+        else
+            if pickup.Position:Distance(roomSave.WingedBerry.TargetPosition) < WINGED_RANDOM_POSITION_MARGIN then
+                roomSave.WingedBerry.TargetPosition = Game():GetRoom():GetRandomPosition(WINGED_RANDOM_POSITION_MARGIN)
+                local rng = pickup:GetDropRNG()
+                roomSave.WingedBerry.Cooldown = rng:RandomInt(WINGED_MAX_COOLDOWN) + 1
+                roomSave.WingedBerry.Speed = 0
+                pickup.Velocity = Vector.Zero
+            else
+                pickup.Velocity = (roomSave.WingedBerry.TargetPosition - pickup.Position):Normalized() * roomSave.WingedBerry.Speed
+                roomSave.WingedBerry.Speed = math.min(WINGED_MAX_SPEED, roomSave.WingedBerry.Speed + WINGED_ACCELERATION)
+            end
+        end
+    end
+
+    local sprite = pickup:GetSprite()
+    if sprite:IsPlaying(ANIMATION_IDLE) then
+        local frame = sprite:GetFrame()
+
+        local pulseSfx = nil
+        if pickup.SubType == STRAWBERRY_SUBTYPE.RED and frame == FRAME_STRAWBERRY_RED_PULSE then
+            pulseSfx = SFX_STRAWBERRY_RED_PULSE
+        elseif pickup.SubType == STRAWBERRY_SUBTYPE.BLUE and frame == FRAME_STRAWBERRY_BLUE_PULSE then
+            pulseSfx = SFX_STRAWBERRY_BLUE_PULSE
+        elseif pickup.SubType == STRAWBERRY_SUBTYPE.GOLDEN and frame == FRAME_STRAWBERRY_GOLDEN_PULSE then
+            pulseSfx = SFX_STRAWBERRY_RED_PULSE
+        elseif pickup.SubType == STRAWBERRY_SUBTYPE.WINGED and frame == FRAME_STRAWBERRY_WINGED_PULSE then
+            pulseSfx = SFX_STRAWBERRY_RED_PULSE
+        end
+        
+        if pulseSfx ~= nil then
+            sfx:Play(pulseSfx, VOLUME_STRAWBERRY_PULSE, 0)
+        end
+
+        if pickup.SubType == STRAWBERRY_SUBTYPE.WINGED and frame%FRAME_STRAWBERRY_WINGED_LOOP == FRAME_STRAWBERRY_WINGED_FLAP then
+            local flapSFX = {SFX_STRAWBERRY_WING_FLAP_1, SFX_STRAWBERRY_WING_FLAP_2, SFX_STRAWBERRY_WING_FLAP_3}
+            sfx:Play(flapSFX[math.random(1,3)], VOLUME_STRAWBERRY_FLAP, 0)
+        end
     end    
-end    
-MOD:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onBerryPickupUpdate, STRAWBERRY_VARIANT)
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onBerryPickupUpdate, STRAWBERRY_VARIANT)
 
 
 
@@ -174,7 +289,7 @@ local function onBerryFamiliarInit(_, familiar)
 
     table.insert(playerRunSave.Strawberry.Berries, EntityPtr(familiar))
 end    
-MOD:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onBerryFamiliarInit, STRAWBERRY_VARIANT)
+Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onBerryFamiliarInit, STRAWBERRY_VARIANT)
 
 
 
@@ -183,51 +298,54 @@ local function onBerryFamiliarUpdate(_, familiar)
     --print("Familiar update")
     local sprite = familiar:GetSprite()
     if sprite:IsPlaying(ANIMATION_IDLE) then
-        if sprite:GetFrame() == FRAME_STRAWBERRY_PULSE then
-            local pulseSfx
-            if familiar.SubType == STRAWBERRY_SUBTYPE.RED then
-                pulseSfx = SFX_STRAWBERRY_RED_PULSE
-            elseif familiar.SubType == STRAWBERRY_SUBTYPE.BLUE then
-                pulseSfx = SFX_STRAWBERRY_BLUE_PULSE
-            elseif familiar.SubType == STRAWBERRY_SUBTYPE.GOLDEN then
-                pulseSfx = SFX_STRAWBERRY_RED_PULSE
-            end
-
+        local frame = sprite:GetFrame()
+        local pulseSfx = nil
+        if familiar.SubType == STRAWBERRY_SUBTYPE.RED and frame == FRAME_STRAWBERRY_RED_PULSE then
+            pulseSfx = SFX_STRAWBERRY_RED_PULSE
+        elseif familiar.SubType == STRAWBERRY_SUBTYPE.BLUE and frame == FRAME_STRAWBERRY_BLUE_PULSE then
+            pulseSfx = SFX_STRAWBERRY_BLUE_PULSE
+        elseif familiar.SubType == STRAWBERRY_SUBTYPE.GOLDEN and frame == FRAME_STRAWBERRY_GOLDEN_PULSE then
+            pulseSfx = SFX_STRAWBERRY_RED_PULSE
+        elseif familiar.SubType == STRAWBERRY_SUBTYPE.WINGED and frame == FRAME_STRAWBERRY_WINGED_PULSE then
+            pulseSfx = SFX_STRAWBERRY_RED_PULSE
+        end
+        
+        if pulseSfx ~= nil then
             sfx:Play(pulseSfx, VOLUME_STRAWBERRY_PULSE)
-        end    
+        end
     end
     
     familiar:FollowParent()
     --print(#activeBerries[GetPtrHash(familiar.Player)])
 end    
-MOD:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onBerryFamiliarUpdate, STRAWBERRY_VARIANT)
-
-
-
-local berryInvincibilityFramesLeft = NEW_RUN_INVINCIBILITY_FRAMES
+Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onBerryFamiliarUpdate, STRAWBERRY_VARIANT)
 
 ---@param player EntityPlayer
----@param playerID any
-local function onUpdate(player, playerID)
-    if player:HasCollectible(STRAWBERRY) then
-        local playerRunSave = SAVE_MANAGER.GetRunSave(player)
-
+local function onPlayerUpdate(_, player)
+    local playerRunSave = SAVE_MANAGER.GetRunSave(player)
         if playerRunSave.Strawberry == nil then
             playerRunSave.Strawberry = {
-                Streak = 0,
-                IsConsuming = false,
-                Berries = {},
-                Luck = 0,
-                NoMovementFrames = 0,
-            }
-        end
+            Streak = 0,
+            IsConsuming = false,
+            Berries = {},
+            Luck = 0,
+            NoMovementFrames = 0,
+        }
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, onPlayerUpdate)
 
-        --print(playerRunSave.Strawberry.NoMovementFrames)
+---@param player EntityPlayer
+local function onUpdate(player) -- this has to be on update because player updates run always and normal updates are paused when game is paused for example
+    local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+    
+    if playerRunSave.Strawberry == nil then
+        return
+    end
 
-        if berryInvincibilityFramesLeft > 0 then
-            berryInvincibilityFramesLeft = berryInvincibilityFramesLeft - 1
-            return
-        end
+    playerRunSave.Strawberry.NoMovementFrames = (player:GetVelocityBeforeUpdate():Length() < CONSUME_SPEED_THRESHOLD) and math.min(CONSUME_FRAME_THRESHOLD,playerRunSave.Strawberry.NoMovementFrames + 1) or 0
+
+    if #playerRunSave.Strawberry.Berries > 0 or playerRunSave.Strawberry.IsConsuming then
 
         local berries = playerRunSave.Strawberry.Berries
         local streak = playerRunSave.Strawberry.Streak
@@ -236,9 +354,7 @@ local function onUpdate(player, playerID)
 
         local scoreAnimation = ""
 
-        playerRunSave.Strawberry.NoMovementFrames = (player:GetVelocityBeforeUpdate():Length() < CONSUME_SPEED_THRESHOLD) and math.min(CONSUME_FRAME_THRESHOLD,playerRunSave.Strawberry.NoMovementFrames + 1) or 0
-
-        if (#berries > 0 and playerRunSave.Strawberry.NoMovementFrames == CONSUME_FRAME_THRESHOLD) or playerRunSave.Strawberry.IsConsuming then
+        if playerRunSave.Strawberry.NoMovementFrames == CONSUME_FRAME_THRESHOLD or playerRunSave.Strawberry.IsConsuming then
             ---@type EntityFamiliar
             local firstBerry = berries[1].Ref:ToFamiliar()
             if firstBerry == nil then
@@ -377,7 +493,7 @@ local function onUpdate(player, playerID)
 
             -- update streak
             if #berries == 0 then
-                MOD:SpawnItemOfQuality(math.min(streak, 4), player:GetCollectibleRNG(STRAWBERRY), Game():GetRoom():GetRandomPosition(10))
+                Resouled:SpawnChaosItemOfQuality(math.min(streak, 4), player:GetCollectibleRNG(STRAWBERRY), Game():GetRoom():GetRandomPosition(10))
                 sfx:Play(SFX_KEY_GET, VOLUME_KEY_GET)
 
                 if playerRunSave.Strawberry.Streak >= THRESHOLD_1UP then
@@ -396,7 +512,7 @@ local function onUpdate(player, playerID)
         end
     end
 end
-MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, function() IterateOverPlayers(onUpdate) end)
+Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, function() Resouled:IterateOverPlayers(onUpdate) end)
 
 
 ---@param player EntityPlayer
@@ -410,29 +526,19 @@ local function onCacheEval(_, player, cacheFlag)
         end
     end
 end
-MOD:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval)
-
-
-
-local function onGameStart()
-    -- give berries invulnerability so player doesnt instantly despawn them
-    berryInvincibilityFramesLeft = NEW_RUN_INVINCIBILITY_FRAMES
-end
-MOD:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, onGameStart)
+Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval)
 
 
 
 local function onNewFloorEnter()
-    berryInvincibilityFramesLeft = NEW_RUN_INVINCIBILITY_FRAMES
-
     ---@param player EntityPlayer
-    IterateOverPlayers(function(player, playerID)
+    Resouled:IterateOverPlayers(function(player)
         if player:HasCollectible(STRAWBERRY) then
             spawnBerryFamiliar(STRAWBERRY_SUBTYPE.GOLDEN, Game():GetRoom():GetRandomPosition(10), player)
         end
     end)
 end
-MOD:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, onNewFloorEnter)
+Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, onNewFloorEnter)
 
 
 
@@ -451,24 +557,44 @@ local function onBerryActiveUse(_, itemID, rng, player, useFlags, activeSlot, cu
 
     return true
 end
-MOD:AddCallback(ModCallbacks.MC_USE_ITEM, onBerryActiveUse, STRAWBERRY)
+Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onBerryActiveUse, STRAWBERRY)
 
 
 
 local function onRoomEnter()
     local triedToSpawn = false
-    IterateOverPlayers(function(player, playerID)
+    Resouled:IterateOverPlayers(
+    ---@param player EntityPlayer
+    function(player)
         local room = Game():GetRoom()
         if player:HasCollectible(STRAWBERRY) and not triedToSpawn and room:IsFirstVisit() then
-            if player:GetCollectibleRNG(STRAWBERRY):RandomInt(100) < ROOM_ENTER_SPAWN_CHANCE then
+            local rng = RNG()
+            rng:SetSeed(room:GetSpawnSeed(), 0)
+            if  rng:RandomFloat() < ROOM_ENTER_SPAWN_CHANCE then
                 triedToSpawn = true
-                spawnBerryPickup(STRAWBERRY_SUBTYPE.RED, room:GetRandomPosition(10), player:GetCollectibleRNG(STRAWBERRY):GetSeed())
+                local berrySubtype
+                if not room:IsClear() and rng:RandomFloat() < ROOM_ENTER_WINGED_REPLACE_CHANCE then
+                    berrySubtype = STRAWBERRY_SUBTYPE.WINGED
+                else
+                    berrySubtype = STRAWBERRY_SUBTYPE.RED
+                end
+                
+                local topLeft = room:GetTopLeftPos()
+                local bottomRight = room:GetBottomRightPos()
+                local roomWidth = bottomRight.X - topLeft.X
+                local roomHeight = bottomRight.Y - topLeft.Y
+
+                local rawPosition = Vector(rng:RandomInt(roomWidth), rng:RandomInt(roomHeight))  
+
+                local position = room:FindFreeTilePosition(rawPosition, BERRY_SPAWN_DISTANCE_THRESHOLD)
+
+                spawnBerryPickup(berrySubtype, position, player:GetCollectibleRNG(STRAWBERRY):GetSeed())
             end
         end
     end)
 
 end
-MOD:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onRoomEnter)
+Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onRoomEnter)
 
 
 
@@ -506,7 +632,7 @@ local function onEntityDamage(_, entity, amount, damageFlags, source, countdownF
         end
         --print(numberOfGoldens)
         if numberOfGoldens == 0 then
-            MOD:RemoveCallback(ModCallbacks.MC_POST_UPDATE, goldenRemoveOnHit)
+            Resouled:RemoveCallback(ModCallbacks.MC_POST_UPDATE, goldenRemoveOnHit)
         end
     end
 
@@ -519,11 +645,44 @@ local function onEntityDamage(_, entity, amount, damageFlags, source, countdownF
             end
         end
         if hadGolden then
-            sfx:Play(SFX_FUSEBOX_HIT_2_2D, LOSE_GOLDEN_BERRY_VOLUME)
-            MOD:AddCallback(ModCallbacks.MC_POST_UPDATE, goldenRemoveOnHit)
+            sfx:Play(SFX_FUSEBOX_HIT_2_2D, VOLUME_LOSE_GOLDEN)
+            Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, goldenRemoveOnHit)
         end
     end
 end
-MOD:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, onEntityDamage, EntityType.ENTITY_PLAYER)
+Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, onEntityDamage, EntityType.ENTITY_PLAYER)
 
 
+
+---@param rng RNG
+---@param position Vector
+local function onRoomClear(_, rng, position)
+    if Isaac.CountEntities(nil, EntityType.ENTITY_PICKUP, STRAWBERRY_VARIANT, STRAWBERRY_SUBTYPE.WINGED) > 0 then
+        local globalRoomSave = SAVE_MANAGER.GetRoomSave()
+        local room = Game():GetRoom()
+        
+        local numOfValidDoors = 0
+        local validDoors = {}
+
+        for i = 1, DoorSlot.NUM_DOOR_SLOTS do
+            local door = room:GetDoor(i)
+            if door ~= nil then
+                numOfValidDoors = numOfValidDoors + 1
+                table.insert(validDoors, door.Position)
+            end
+        end
+
+        local berry = globalRoomSave.WingedBerry.Entity:ToPickup()
+        if berry ~= nil then
+            local roomSave = SAVE_MANAGER.GetRoomSave(berry)
+            roomSave.WingedBerry.RunningAway = true
+            roomSave.WingedBerry.Speed = 0
+            roomSave.WingedBerry.TargetPosition = validDoors[rng:RandomInt(numOfValidDoors) + 1]
+            roomSave.WingedBerry.Cooldown = WINGED_RUN_AWAY_COOLDOWN
+            berry.Velocity = Vector.Zero
+            berry:GetSprite():Play(ANIMATION_RUN_AWAY, true)
+            sfx:Play(SFX_STRAWBERRY_LAUGH, VOLUME_STRAWBERRY_LAUGH)
+        end
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, onRoomClear)

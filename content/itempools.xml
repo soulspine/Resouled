@@ -1,21 +1,35 @@
 <ItemPools>
-    <Pool Name="Treasure Pool">
-         <Item Name="taintedIsaacCheck" Weight="0" RemoveOn="0"/>
-         <Item Name="taintedMaggyCheck" Weight="0" RemoveOn="0"/>
-         <Item Name="taintedCainCheck" Weight="0" RemoveOn="0"/>
-         <Item Name="taintedJudasCheck" Weight="0" RemoveOn="0"/>
-         <Item Name="taintedBlueBabyCheck" Weight="0" RemoveOn="0"/>
-         <Item Name="taintedEveCheck" Weight="0" RemoveOn="0"/>
-         <Item Name="taintedSamsonCheck" Weight="0" RemoveOn="0"/>
-         <Item Name="taintedAzazelCheck" Weight="0" RemoveOn="0"/>
-         <Item Name="taintedLazarusCheck" Weight="0" RemoveOn="0"/>
-         <Item Name="taintedEdenCheck" Weight="0" RemoveOn="0"/>
-         <Item Name="taintedLostCheck" Weight="0" RemoveOn="0"/>
-         <Item Name="taintedLilithCheck" Weight="0" RemoveOn="0"/>
-         <Item Name="taintedKeeperCheck" Weight="0" RemoveOn="0"/>
-         <Item Name="taintedApollyonCheck" Weight="0" RemoveOn="0"/>
-         <Item Name="taintedForgottenCheck" Weight="0" RemoveOn="0"/>
-         <Item Name="taintedBethanyCheck" Weight="0" RemoveOn="0"/>
-         <Item Name="taintedJacobCheck" Weight="0" RemoveOn="0"/>
+    <Pool Name="treasure">
+        <Item Name="Strawberry" Weight="0.4" DecreaseBy="0.4" RemoveOn="0.04"/>
+
+        <Item Name="taintedIsaacCheck" Weight="0" RemoveOn="0"/>
+        <Item Name="taintedMaggyCheck" Weight="0" RemoveOn="0"/>
+        <Item Name="taintedCainCheck" Weight="0" RemoveOn="0"/>
+        <Item Name="taintedJudasCheck" Weight="0" RemoveOn="0"/>
+        <Item Name="taintedBlueBabyCheck" Weight="0" RemoveOn="0"/>
+        <Item Name="taintedEveCheck" Weight="0" RemoveOn="0"/>
+        <Item Name="taintedSamsonCheck" Weight="0" RemoveOn="0"/>
+        <Item Name="taintedAzazelCheck" Weight="0" RemoveOn="0"/>
+        <Item Name="taintedLazarusCheck" Weight="0" RemoveOn="0"/>
+        <Item Name="taintedEdenCheck" Weight="0" RemoveOn="0"/>
+        <Item Name="taintedLostCheck" Weight="0" RemoveOn="0"/>
+        <Item Name="taintedLilithCheck" Weight="0" RemoveOn="0"/>
+        <Item Name="taintedKeeperCheck" Weight="0" RemoveOn="0"/>
+        <Item Name="taintedApollyonCheck" Weight="0" RemoveOn="0"/>
+        <Item Name="taintedForgottenCheck" Weight="0" RemoveOn="0"/>
+        <Item Name="taintedBethanyCheck" Weight="0" RemoveOn="0"/>
+        <Item Name="taintedJacobCheck" Weight="0" RemoveOn="0"/>
+    </Pool>
+
+    <Pool Name="greedTreasure">
+        <Item Name="Strawberry" Weight="0.4" DecreaseBy="0.4" RemoveOn="0.04"/>
+    </Pool>
+
+    <Pool Name="greedShop">
+        <Item Name="Strawberry" Weight="0.2" DecreaseBy="0.2" RemoveOn="0.02"/>
+    </Pool>
+
+    <Pool Name="ultraSecret">
+        <Item Name="Strawberry" Weight="1" DecreaseBy="0.4" RemoveOn="0.1"/>
     </Pool>
 </ItemPools>

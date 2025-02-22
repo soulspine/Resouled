@@ -1,0 +1,5 @@
+include("scripts.items.daddy_haunt")
+include("scripts.items.soulbound")
+include("scripts.items.isaacs_last_will")
+include("scripts.items.focus")
+include("scripts.items.strawberry")

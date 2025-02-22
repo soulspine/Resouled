@@ -68,6 +68,21 @@
     <sound name="Golden Strawberry 1UP">
         <sample weight="1" path="Celeste\strawberry_gold_get_1up.wav" />
     </sound>
+    <sound name="Strawberry Laugh">
+        <sample weight="1" path="Celeste\strawberry_laugh.wav" />
+    </sound>
+    <sound name="Strawberry Fly Away">
+        <sample weight="1" path="Celeste\strawberry_flyaway.wav" />
+    </sound>
+    <sound name="Strawberry Wing Flap 1">
+        <sample weight="1" path="Celeste\strawberry_wingflap_01.wav" />
+    </sound>
+    <sound name="Strawberry Wing Flap 2">
+        <sample weight="1" path="Celeste\strawberry_wingflap_02.wav" />
+    </sound>
+    <sound name="Strawberry Wing Flap 3">
+        <sample weight="1" path="Celeste\strawberry_wingflap_03.wav" />
+    </sound>
     <sound name="UI Postgame Strawberry Total">
         <sample weight="1" path="Celeste\ui_postgame_strawberry_total.wav" />
     </sound>

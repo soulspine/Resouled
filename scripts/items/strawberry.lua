@@ -518,7 +518,14 @@ Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, function() Resouled:IterateOve
 ---@param player EntityPlayer
 ---@param cacheFlag CacheFlag
 local function onCacheEval(_, player, cacheFlag)
-    --print("Cache eval")
+    local itemConfig = Isaac.GetItemConfig()
+    local strawberry = itemConfig:GetCollectible(STRAWBERRY)
+    if player:HasCollectible(STRAWBERRY) then
+        player:AddCostume(strawberry)
+    else
+        player:RemoveCostume(strawberry)
+    end
+
     local playerRunSave = SAVE_MANAGER.GetRunSave(player)
     if player:HasCollectible(STRAWBERRY) and playerRunSave.Strawberry ~= nil then
         if cacheFlag & CacheFlag.CACHE_LUCK == CacheFlag.CACHE_LUCK then

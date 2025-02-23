@@ -328,15 +328,19 @@ local SPRITE_SPEED_SCREEN_LEVEL_1_THRESHOLD = 1.25
 local SPRITE_SPEED_SCREEN_LEVEL_2_THRESHOLD = 2.2
 
 function CheeseGraterSpeedScreen()
-    speedScreen:Update()
-    if player.MoveSpeed < SPRITE_SPEED_SCREEN_LEVEL_1_THRESHOLD then
-        speedScreen:Play("Idle",true)
-    elseif player.MoveSpeed >= SPRITE_SPEED_SCREEN_LEVEL_1_THRESHOLD and player.MoveSpeed < SPRITE_SPEED_SCREEN_LEVEL_2_THRESHOLD then
-        speedScreen:Play("Run 1", true)
-        speedScreen:LoadGraphics()
-    elseif player.MoveSpeed >= SPRITE_SPEED_SCREEN_LEVEL_2_THRESHOLD then
-        speedScreen:Play("Run 2", true)
-    end 
+    local player = Isaac.GetPlayer()
+    if player:HasCollectible(CHEESE_GRATER) then
+        
+        speedScreen:Update()
+        if player.MoveSpeed < SPRITE_SPEED_SCREEN_LEVEL_1_THRESHOLD then
+            speedScreen:Play("Idle",true)
+        elseif player.MoveSpeed >= SPRITE_SPEED_SCREEN_LEVEL_1_THRESHOLD and player.MoveSpeed < SPRITE_SPEED_SCREEN_LEVEL_2_THRESHOLD then
+            speedScreen:Play("Run 1", true)
+            speedScreen:LoadGraphics()
+        elseif player.MoveSpeed >= SPRITE_SPEED_SCREEN_LEVEL_2_THRESHOLD then
+            speedScreen:Play("Run 2", true)
+        end 
+    end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, CheeseGraterSpeedScreen)
 

@@ -137,3 +137,15 @@ function Resouled:GetCollectibleQualityNum(player)
 
     return qCount
 end
+
+---@param collectibleId CollectibleType
+---@return boolean
+function Resouled:CollectiblePresent(collectibleId)
+    local itemPresent = false
+    Resouled:IterateOverPlayers(function(player)
+        if player:HasCollectible(collectibleId) then
+            itemPresent = true
+        end
+    end)
+    return itemPresent
+end

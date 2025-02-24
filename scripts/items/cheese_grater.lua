@@ -196,43 +196,19 @@ Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onToppingFamiliarInit, TOPPI
 ---@param familiar EntityFamiliar
 local function onToppingFamiliarUpdate(_, familiar)
     if familiar.SubType == TOPPING_SUBTYPES.PIZZA then
-        local roomSave = SAVE_MANAGER.GetRoomSave(familiar)
         local room = Game():GetRoom()
         if room:GetAliveEnemiesCount() > 0 then
             familiar.SpriteRotation = (familiar.SpriteRotation + PIZZA_ROTATION_GAIN)%360
-            print(familiar.SpriteRotation)
-            if not roomSave.Target then
-                local entities = room:GetEntities()
-                local rng = RNG()
-                rng:SetSeed(familiar.InitSeed, 0)
-                
-                local validEnemies = {}
-                
-                for i = 1, entities.Size do
-                    local entity = entities:Get(i)
-                    if entity:IsVulnerableEnemy() and entity:IsActiveEnemy() and entity:IsVisible() then
-                        table.insert(validEnemies, EntityRef(entity))
-                    end
-                end
-                if #validEnemies == 0 then
-                    return
-                end
+            local target = Resouled:GetEnemyTarget(familiar)
+            if target then
 
-                ---@type EntityRef
-                roomSave.Target = validEnemies[math.random(#validEnemies)]
-            else
-                local enemy = roomSave.Target.Entity:ToNPC()
-
-                if not enemy then
-                    roomSave.Target = nil
-                    return
-                end
-
-                if familiar.Position:Distance(enemy.Position) < PIZZA_COLLISION_DISTANCE_MARGIN or enemy:IsDead() then
-                    roomSave.Target = nil
+                if familiar.Position:Distance(target.Position) < PIZZA_COLLISION_DISTANCE_MARGIN or target:IsDead() then
+                    Resouled:ClearEnemyTarget(familiar)
                 else
-                    familiar.Velocity = (enemy.Position - familiar.Position):Normalized() * PIZZA_VELOCITY_MULTIPLIER
+                    familiar.Velocity = (target.Position - familiar.Position):Normalized() * PIZZA_VELOCITY_MULTIPLIER
                 end
+            else
+                Resouled:SelectRandomEnemyTarget(familiar)
             end
         else
             familiar:FollowParent()

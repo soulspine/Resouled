@@ -11,6 +11,7 @@
     5 = PICKUP
     1000 = EFFECT
     -->
+    <entity anm2path="daddy_haunt.anm2" name="Daddy Haunt" id="3" variant="872" subtype="0" collisionRadius="100" shadowSize="15" friction="1"/>
     <!-- variant 444 becasue 4souls -->
     <entity anm2path="toppings.anm2" name="Mushroom Familiar" id="3" variant="445" subtype="0" shadowSize="15" friction="1.5"/>
     <entity anm2path="toppings.anm2" name="Cheese Familiar" id="3" variant="445" subtype="1" shadowSize="15" friction="1.5"/>

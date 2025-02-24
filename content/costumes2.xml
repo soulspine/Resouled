@@ -1,3 +1,4 @@
 <costumes anm2root="gfx/characters/">
-    <costume id="1" anm2path="cheese_grater.anm2" type="passive" priority="10"/>
+    <costume id="2" anm2path="cheese_grater.anm2" type="passive" priority="10"/>
+    <costume id="444" anm2path="strawberry.anm2" type="passive" priority="10" />
 </costumes>

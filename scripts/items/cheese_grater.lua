@@ -179,7 +179,6 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, postBossClear)
 
 ---@param familiar EntityFamiliar
 local function onToppingFamiliarInit(_, familiar)
-    familiar:AddToFollowers()
     if familiar.SubType ~= TOPPING_SUBTYPES.PIZZA then    
         familiar.PositionOffset = POSITION_OFFSET
     end
@@ -201,7 +200,7 @@ local function onToppingFamiliarUpdate(_, familiar)
             familiar.SpriteRotation = (familiar.SpriteRotation + PIZZA_ROTATION_GAIN)%360
             local target = Resouled:GetEnemyTarget(familiar)
             if target then
-
+                familiar:RemoveFromFollowers()
                 if familiar.Position:Distance(target.Position) < PIZZA_COLLISION_DISTANCE_MARGIN or target:IsDead() then
                     Resouled:ClearEnemyTarget(familiar)
                 else
@@ -211,6 +210,7 @@ local function onToppingFamiliarUpdate(_, familiar)
                 Resouled:SelectRandomEnemyTarget(familiar)
             end
         else
+            familiar:AddToFollowers()
             familiar:FollowParent()
         end
     else

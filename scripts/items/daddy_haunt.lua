@@ -23,7 +23,6 @@ Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval)
 
 ---@param familiar EntityFamiliar
 local function onFamiliarInit(_, familiar)
-    familiar:AddToFollowers()
 end
 Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onFamiliarInit, DADDY_HAUNT_VARIANT)
 
@@ -35,6 +34,7 @@ local function onFamiliarUpdate(_, familiar)
         if room:GetAliveEnemiesCount() > 0 then
             local target = Resouled:GetEnemyTarget(familiar)
             if target then
+                familiar:RemoveFromFollowers()
                 familiar:FollowPosition(target.Position)
                 familiar.Velocity = familiar.Velocity * VELOCITY_MULTIPLIER
                 familiar.PositionOffset = POSITION_OFFSET_ENEMY_HOVER
@@ -44,6 +44,7 @@ local function onFamiliarUpdate(_, familiar)
             
         end
     else
+        familiar:AddToFollowers()
         familiar:FollowParent()
         familiar.PositionOffset = POSITION_OFFSET_FOLLOW_PARENT
     end

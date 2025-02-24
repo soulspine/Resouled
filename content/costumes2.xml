@@ -1,4 +1,12 @@
 <costumes anm2root="gfx/characters/">
+<!-- Base Game V2 -->
     <costume id="2" anm2path="cheese_grater.anm2" type="passive" priority="10"/>
+<!-- Four Souls V2 -->
+
+<!-- Requiem -->
+
+<!-- Summer Of Isaac -->
+
+<!-- Promotional Sets -->
     <costume id="444" anm2path="strawberry.anm2" type="passive" priority="10" />
 </costumes>

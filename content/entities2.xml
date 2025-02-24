@@ -1,24 +1,31 @@
 <entities anm2root="gfx/" version="5">
-
+    <!-- ID:
+    3 = FAMILIAR
+    5 = PICKUP
+    1000 = EFFECT
+    -->
+<!-- Base Game V2 -->
     <entity name="Cursed Gaper" id="999" anm2path="monsters/010.001_gaper.anm2" baseHP="8" stageHP="2" collisionMass="10" collisionRadius="10" friction="0.2" numGridCollisionPoints="6" shadowSize="10" champion="0" collisionDamage="1">
         <gibs ammount="14" blood="1" bone="1" eye="1" gut="1" />
         <beastiary anim="Idle" tramsform="0,0,1" />
         <devolve id="10.1" weight="1" />
     </entity>
 
-    <!-- ID:
-    3 = FAMILIAR
-    5 = PICKUP
-    1000 = EFFECT
-    -->
     <entity anm2path="daddy_haunt.anm2" name="Daddy Haunt" id="3" variant="872" subtype="0" collisionRadius="100" shadowSize="15" friction="1"/>
-    <!-- variant 444 becasue 4souls -->
     <entity anm2path="toppings.anm2" name="Mushroom Familiar" id="3" variant="445" subtype="0" shadowSize="15" friction="1.5"/>
     <entity anm2path="toppings.anm2" name="Cheese Familiar" id="3" variant="445" subtype="1" shadowSize="15" friction="1.5"/>
     <entity anm2path="toppings.anm2" name="Tomato Familiar" id="3" variant="445" subtype="2" shadowSize="15" friction="1.5"/>
     <entity anm2path="toppings.anm2" name="Sausage Familiar" id="3" variant="445" subtype="3" shadowSize="15" friction="1.5"/>
     <entity anm2path="toppings.anm2" name="Pineapple Familiar" id="3" variant="445" subtype="4" shadowSize="15" friction="1.5"/>
     <entity anm2path="toppings.anm2" name="Pizza Familiar" id="3" variant="445" subtype="5" shadowSize="10" friction="1" collisionRadius="10"/>
+<!-- Four Souls V2 -->
+
+<!-- Requiem -->
+
+<!-- Summer Of Isaac -->
+
+<!-- Promotional Sets -->
+    <!-- variant 444 becasue 4souls -->
     <entity anm2path="strawberry_red.anm2" name="Red Strawberry Pickup" id="5" variant="444" subtype="0" collisionRadius="24" collisionMass="0" shadowSize="15" friction="1.5"/>
     <entity anm2path="strawberry_blue.anm2" name="Blue Strawberry Pickup" id="5" variant="444" subtype="1" collisionRadius="24" collisionMass="0" shadowSize="15" friction="1.5"/>
     <entity anm2path="strawberry_winged.anm2" name="Winged Strawberry Pickup" id="5" variant="444" subtype="3" collisionRadius="24" collisionMass="0" shadowSize="15" friction="1.5"/>

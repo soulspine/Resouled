@@ -15,7 +15,7 @@ end
 ---@param player EntityPlayer
 ---@param cacheFlag CacheFlag
 local function onCacheEval(_, player, cacheFlag)
-    if cacheFlag & CacheFlag.CACHE_FAMILIARS and player:HasCollectible(DADDY_HAUNT) then
+    if cacheFlag & CacheFlag.CACHE_FAMILIARS then
         player:CheckFamiliar(DADDY_HAUNT_VARIANT, player:GetCollectibleNum(DADDY_HAUNT), player:GetCollectibleRNG(DADDY_HAUNT))
     end
 end

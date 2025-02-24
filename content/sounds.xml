@@ -95,4 +95,8 @@
     <sound name="Fusebox Hit 2 2D">
         <sample weight="1" path="Celeste\fusebox_hit_2_2d.wav"/>
     </sound>
+
+    <sound name="Auction Gavel Sold">
+        <sample weight="1" path="auction_gavel_sold.wav" />
+    </sound>
 </sounds>

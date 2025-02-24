@@ -1,4 +1,16 @@
 <sounds root="sfx/">
+<!-- Base Game V2 -->
+
+<!-- Four Souls V2 -->
+
+<!-- Requiem -->
+    <sound name="Auction Gavel Sold">
+        <sample weight="1" path="auction_gavel_sold.wav" />
+    </sound>
+
+<!-- Summer Of Isaac -->
+
+<!-- Promotional Sets -->
     <sound name="Key Get">
         <sample weight="1" path="Celeste\key_get.wav"/>
     </sound>
@@ -96,7 +108,4 @@
         <sample weight="1" path="Celeste\fusebox_hit_2_2d.wav"/>
     </sound>
 
-    <sound name="Auction Gavel Sold">
-        <sample weight="1" path="auction_gavel_sold.wav" />
-    </sound>
 </sounds>

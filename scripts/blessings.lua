@@ -66,6 +66,11 @@ function Resouled:RemoveBlessing(player, blessing)
     end
 end
 
-include("scripts.blessings.samson")
-include("scripts.blessings.maggy")
-include("scripts.blessings.isaac")
+-- Base Game V2
+-- Four Souls V2
+-- Requiem
+include("scripts.blessings.Requiem.isaac")
+include("scripts.blessings.Requiem.maggy")
+include("scripts.blessings.Requiem.samson")
+-- Summer Of Isaac
+-- Promotional Sets

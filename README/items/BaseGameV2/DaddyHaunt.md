@@ -1,4 +1,4 @@
-# <img src="../../resources/gfx/items/collectibles/daddy_haunt.png" alt="Daddy Haunt Resouled sprite"/> Daddy Haunt
+# <img src="../../../resources/gfx/items/collectibles/daddy_haunt.png" alt="Daddy Haunt Resouled sprite"/> Daddy Haunt
 
 ## Effect
 TODO

@@ -1,8 +1,7 @@
 <items gfxroot="gfx/items/" deathanim2="gfx/custom_death_items.anm2" version="1">
 <!-- Base Game V2 -->
-    <familiar id="1" name="Daddy Haunt" gfx="daddy_haunt.png" description="Menace hanging over your enemies" quality="3" cache="familiar" />
+    <familiar id="1" name="Daddy Haunt" gfx="daddy_haunt.png" description="Menace hanging over your enemies" quality="3" cache="familiars" />
     <passive id="2" name="Cheese Grater" gfx="cheese_grater.png" description="Gotta go fast!" quality="3"/>
-    
 <!-- Four Souls V2 -->
 <!-- Requiem -->
     <active id="447" name="Auction Gavel" gfx="auction_gavel.png" description="Sold!" quality="2"/>

@@ -3,6 +3,7 @@ Resouled.Blessings = {
     Samson = 1,
     Maggy = 2,
     Isaac = 4,
+    Steam = 8,
 }
 -- next blessings have to have id being a binary shift: eg. 1, 2, 4, 8, 6, 32, 64, 128 ... 
 
@@ -72,5 +73,6 @@ end
 include("scripts.blessings.Requiem.isaac")
 include("scripts.blessings.Requiem.maggy")
 include("scripts.blessings.Requiem.samson")
+include("scripts.blessings.Requiem.steam")
 -- Summer Of Isaac
 -- Promotional Sets

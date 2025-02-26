@@ -1,10 +1,19 @@
--- Iterates over all players in the game and calls the callback function with 2 first arguments: `player` and `playerID`.
+-- Iterates over all players in the game and calls the callback function with first argument being `player`.
 -- Passes all additional arguments to the callback function in the same order as they were passed to this function.
 ---@param callback function
 function Resouled:IterateOverPlayers(callback, ...)
     for i = 0, Game():GetNumPlayers() - 1 do
         local player = Isaac.GetPlayer(i)
         callback(player, ...)
+    end
+end
+
+--- Iterates over all entities in the room and calls the callback function with first argument being `entity`.
+--- Passes all additional arguments to the callback function in the same order as they were passed to this function.
+--- @param callback function
+function Resouled:IterateOverRoomEntities(callback, ...)
+    for _, entity in ipairs(Isaac.GetRoomEntities()) do
+        callback(entity, ...)
     end
 end
 
@@ -138,6 +147,7 @@ function Resouled:GetCollectibleQualityNum(player)
     return qCount
 end
 
+--- Whether a specified collectible is held by any player in the game
 ---@param collectibleId CollectibleType
 ---@return boolean
 function Resouled:CollectiblePresent(collectibleId)
@@ -148,6 +158,17 @@ function Resouled:CollectiblePresent(collectibleId)
         end
     end)
     return itemPresent
+end
+
+--- Returns number representing total number of occurences of a collectible in all players' inventories
+--- @param collectibleId CollectibleType
+--- @return integer
+function Resouled:TotalCollectibleNum(collectibleId)
+    local totalNum = 0
+    Resouled:IterateOverPlayers(function(player)
+        totalNum = totalNum + player:GetCollectibleNum(collectibleId)
+    end)
+    return totalNum
 end
 
 --- Sets targeet of the familiar to a random enemy in the room. It is stored in the room save data as an `EntityRef`. \
@@ -242,4 +263,16 @@ function Resouled:ForceOpenDoors(filter)
             end
         end
     end
+end
+
+function Resouled:GetRoomPickupsValue()
+    local roomValue = 0
+    ---@param entity Entity
+    Resouled:IterateOverRoomEntities(function(entity)
+        local pickup = entity:ToPickup()
+        if pickup and pickup:IsShopItem() then
+            roomValue = roomValue + pickup.Price
+        end
+    end)
+    return roomValue
 end

@@ -56,8 +56,10 @@ local function preNpcUpdate(_, npc)
                 end
                 if #items > 0 then 
                     local randomItem = math.random(#items)
-                    player:RemoveCollectible(items[randomItem])
-                    Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, Isaac.GetFreeNearPosition(Isaac.GetRandomPosition(), 10), Vector.Zero, nil, items[randomItem], Game():GetRoom():GetSpawnSeed())
+                    if items[randomItem] ~= player:GetActiveItem(ActiveSlot.SLOT_POCKET) then
+                        player:RemoveCollectible(items[randomItem])
+                        Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, Isaac.GetFreeNearPosition(Isaac.GetRandomPosition(), 10), Vector.Zero, nil, items[randomItem], Game():GetRoom():GetSpawnSeed())
+                    end
                 end
                     
                 removedEffect = true

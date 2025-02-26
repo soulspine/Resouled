@@ -22,7 +22,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onRoomEnter)
 
 ---@param pickup EntityPickup
 local function onPickupUpdate(_, pickup)
-    if Resouled:HasBlessing(Isaac.GetPlayer(), Resouled.Blessings.Steam) and pickup:IsShopItem() then
+    if Resouled:HasBlessing(Isaac.GetPlayer(), Resouled.Blessings.Steam) and pickup:IsShopItem() and pickup.Price > 0 then
         local data = pickup:GetData()
         
         if pickup.AutoUpdatePrice == true then

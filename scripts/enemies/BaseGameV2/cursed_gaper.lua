@@ -1,4 +1,5 @@
-local CURSED_GAPER_VARIANT = 4
+local CURSED_GAPER_VARIANT = Isaac.GetEntityVariantByName("Cursed Gaper")
+local CURSED_GAPER_TYPE = Isaac.GetEntityTypeByName("Cursed Gaper")
 local HALO_SUBTYPE = 3
 
 local HALO_OFFSET = Vector(0, -15)
@@ -15,7 +16,7 @@ local function onNpcInit(_, npc)
         npc:GetData().Halo = halo
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, EntityType.ENTITY_GAPER)
+Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CURSED_GAPER_TYPE)
 
 ---@param npc EntityNPC
 local function preNpcUpdate(_, npc)
@@ -28,4 +29,4 @@ local function preNpcUpdate(_, npc)
         end
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, preNpcUpdate, EntityType.ENTITY_GAPER)
+Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, preNpcUpdate, CURSED_GAPER_TYPE)

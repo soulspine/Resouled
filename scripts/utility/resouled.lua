@@ -270,9 +270,82 @@ function Resouled:GetRoomPickupsValue()
     ---@param entity Entity
     Resouled:IterateOverRoomEntities(function(entity)
         local pickup = entity:ToPickup()
-        if pickup and pickup:IsShopItem() then
+        if pickup and pickup:IsShopItem() and pickup.Price > 0 then
             roomValue = roomValue + pickup.Price
         end
     end)
     return roomValue
+end
+
+--- Adds a following halo to the specified npc.
+---@param npc EntityNPC
+---@param haloSubtype integer
+---@param scale Vector
+---@param offset Vector
+function Resouled:AddHaloToNpc(npc, haloSubtype, scale, offset)
+    local haloEntity = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.HALO, npc.Position, Vector(0, 0), npc, haloSubtype, 0)
+    local halo = haloEntity:ToEffect()
+
+    if not halo then
+        return nil
+    end
+
+    halo.Parent = npc
+    halo.SpriteScale = scale
+    npc:GetData().Halo = halo
+    halo:GetData().Offset = offset
+    return halo
+end
+
+
+Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE,
+---@param npc EntityNPC
+function(_, npc)
+    local data = npc:GetData()
+    if data.Halo then
+        ---@type EntityEffect
+        local halo = data.Halo
+        halo.Position = halo.Parent.Position + halo:GetData().Offset
+    end
+end)
+
+--- Returns a table of all items held by the player where keys are collectible IDs and values are their counts
+--- @param player EntityPlayer
+--- @return table
+function Resouled:GetPlayerItems(player)
+    local items = {}
+    local itemConfig = Isaac.GetItemConfig()
+    for i = 1, #itemConfig:GetCollectibles() do
+        local collectible = itemConfig:GetCollectible(i)
+        if collectible and not collectible.Hidden and not collectible:HasTags(ItemConfig.TAG_QUEST) then
+            items[i] = player:GetCollectibleNum(i)
+        end
+    end
+    return items
+end
+
+--- @param player EntityPlayer
+--- @param rng RNG
+--- @return CollectibleType | nil
+function Resouled:ChooseRandomPlayerItemID(player, rng)
+    local items = {}
+    local itemConfig = Isaac.GetItemConfig()
+    for i = 1, #itemConfig:GetCollectibles() do
+        local collectible = itemConfig:GetCollectible(i)
+        if collectible
+        and not collectible.Hidden
+        and not collectible:HasTags(ItemConfig.TAG_QUEST)
+        and player:HasCollectible(i)
+        and collectible.ID ~= player:GetActiveItem(ActiveSlot.SLOT_POCKET)
+        and collectible.ID ~= player:GetActiveItem(ActiveSlot.SLOT_POCKET2)
+        then
+            table.insert(items, i)
+        end
+    end
+
+    if #items == 0 then
+        return nil
+    else
+        return items[rng:RandomInt(#items) + 1]
+    end
 end

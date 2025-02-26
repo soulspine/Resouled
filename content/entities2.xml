@@ -5,14 +5,14 @@
     1000 = EFFECT
     -->
 <!-- Base Game V2 -->
-    <entity name="Cursed Gaper" id="10" variant="4" anm2path="cursed_gaper.anm2" baseHP="14" stageHP="3" collisionMass="10" collisionRadius="10" friction="1.2" numGridCollisionPoints="6" shadowSize="10" champion="1" collisionDamage="1">
-        <beastiary anim="Idle" tramsform="0,0,1" />
-        <devolve id="10.1" weight="1" />
+    <entity name="Cursed Gaper" id="10" variant="4" anm2path="cursed_gaper.anm2" baseHP="14" stageHP="3" collisionMass="5" collisionRadius="13" friction="1.2" numGridCollisionPoints="12" shadowSize="14" champion="1" collisionDamage="1" reroll="true">
+        <beastiary anim="Idle" tramsform="0,0,1"/>
+        <devolve id="10.1.0" weight="1" />
     </entity>
 
-    <entity name="Cursed Fatty" id="208" variant="3" anm2path="cursed_fatty.anm2" baseHP="26" stageHP="6" collisionMass="20" collisionRadius="14" friction="0.9" numGridCollisionPoints="10" shadowSize="16" champion="1" collisionDamage="1">
-        <beastiary anim="Idle" tramsform="0,0,1" />
-        <devolve id="208.1" weight="1" />
+    <entity name="Cursed Fatty" id="208" variant="3" anm2path="cursed_fatty.anm2" baseHP="24" stageHP="3" collisionMass="10" collisionRadius="13" friction="0.9" numGridCollisionPoints="12" shadowSize="16" champion="1" collisionDamage="1" reroll="true">
+        <beastiary anim="Idle" tramsform="0,0,1"/>
+        <devolve id="208.0.0" weight="1" />
     </entity>
 
     <entity anm2path="daddy_haunt.anm2" name="Daddy Haunt" id="3" variant="872" subtype="0" collisionRadius="100" shadowSize="15" friction="1"/>

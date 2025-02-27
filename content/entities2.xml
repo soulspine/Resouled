@@ -5,14 +5,19 @@
     1000 = EFFECT
     -->
 <!-- Base Game V2 -->
-    <entity name="Cursed Gaper" id="10" variant="4" anm2path="cursed_gaper.anm2" baseHP="14" stageHP="3" collisionMass="5" collisionRadius="13" friction="1.2" numGridCollisionPoints="12" shadowSize="14" champion="1" collisionDamage="1" reroll="true">
+    <entity name="Cursed Gaper" id="10" variant="4" anm2path="cursed_gaper.anm2" baseHP="14" stageHP="3" collisionMass="5" collisionRadius="13" friction="1.2" numGridCollisionPoints="12" shadowSize="14" champion="0" collisionDamage="1" reroll="true">
         <beastiary anim="Idle" tramsform="0,0,1"/>
         <devolve id="10.1.0" weight="1" />
     </entity>
 
-    <entity name="Cursed Fatty" id="208" variant="3" anm2path="cursed_fatty.anm2" baseHP="24" stageHP="3" collisionMass="10" collisionRadius="13" friction="0.9" numGridCollisionPoints="12" shadowSize="16" champion="1" collisionDamage="1" reroll="true">
+    <entity name="Cursed Fatty" id="208" variant="3" anm2path="cursed_fatty.anm2" baseHP="24" stageHP="3" collisionMass="10" collisionRadius="13" friction="0.9" numGridCollisionPoints="12" shadowSize="16" champion="0" collisionDamage="1" reroll="true">
         <beastiary anim="Idle" tramsform="0,0,1"/>
         <devolve id="208.0.0" weight="1" />
+    </entity>
+
+    <entity name="Cursed Keeper Head" id="86" variant="1" anm2path="cursed_keeper_head.anm2" baseHP="40" stageHP="3" collisionMass="30" collisionRadius="13" friction="1.05" numGridCollisionPoints="12" shadowSize="17" champion="0" collisionDamage="1" reroll="true">
+        <beastiary anim="Idle" tramsform="0,0,1"/>
+        <devolve id="86.0.0" weight="1" />
     </entity>
 
     <entity anm2path="daddy_haunt.anm2" name="Daddy Haunt" id="3" variant="872" subtype="0" collisionRadius="100" shadowSize="15" friction="1"/>

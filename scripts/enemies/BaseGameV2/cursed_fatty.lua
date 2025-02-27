@@ -18,6 +18,25 @@ local HALO_SUBTYPE = 3
 local HALO_OFFSET = Vector(0, -15)
 local HALO_SCALE = Vector(1.5, 1.5)
 
+local CURSED_ENEMY_MORPH_CHANCE = 0.05
+
+local function onRoomEnter()
+    local rng = RNG()
+    if Game():GetLevel():GetCurses() < 0 then
+        return
+    end
+    for _ = 1, #Isaac.GetRoomEntities() do
+        local npc = Isaac.GetRoomEntities()[_]
+        rng:SetSeed(npc:GetDropRNG():GetSeed(), 0)
+        if npc == EntityType.ENTITY_PLAYER or not npc:IsEnemy() then
+        elseif npc.Type == CURSED_FATTY_TYPE and rng:RandomFloat() < CURSED_ENEMY_MORPH_CHANCE then
+            Game():Spawn(CURSED_FATTY_TYPE, CURSED_FATTY_VARIANT, npc.Position, Vector(0, 0), nil, 0, npc:GetDropRNG():GetSeed())
+            npc:Die()
+        end
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onRoomEnter)
+
 ---@param npc EntityNPC
 local function onNPCDeath(_, npc)
     if npc.Variant == CURSED_FATTY_VARIANT then

@@ -287,6 +287,14 @@ Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, speedScreenUpdate)
 ---@param player EntityPlayer
 local function playerSpeedUp(_, player)
     if player:HasCollectible(CHEESE_GRATER) then
+        local itemConfig = Isaac.GetItemConfig()
+        local playerItems = Resouled:GetPlayerItems(player)
+        for _ = 1, #itemConfig:GetCollectibles() do
+            if playerItems[_] ~= nil and _ ~= CHEESE_GRATER then
+                player:RemoveCostume(itemConfig:GetCollectible(_))
+                print(itemConfig:GetCollectible(_))
+            end
+        end
         local move = Input.IsActionPressed(ButtonAction.ACTION_LEFT, 0) or
             Input.IsActionPressed(ButtonAction.ACTION_RIGHT, 0) or
             Input.IsActionPressed(ButtonAction.ACTION_UP, 0) or

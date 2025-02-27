@@ -7,7 +7,7 @@ local BASE_SCORE = 60
 local SCORE_PER_FLOOR = 25
 local SCORE_LOSS_PER_UPDATE_PRE_BOSS_CLEAR = 1
 local SCORE_LOSS_PER_UPDATE_POST_BOSS_CLEAR = 2
-local POSITION_OFFSET = Vector(0,-20)
+local POSITION_OFFSET = Vector(0,-100)
 
 local PIZZA_COLLISION_DAMAGE_DPS = 30
 local PIZZA_COLLISION_DAMAGE_COUNTDOWN = 30 -- no idea what this does
@@ -196,8 +196,14 @@ Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onToppingFamiliarInit, TOPPI
 local function onToppingFamiliarUpdate(_, familiar)
     if familiar.SubType == TOPPING_SUBTYPES.PIZZA then
         local room = Game():GetRoom()
+        local sprite = familiar:GetSprite()
         if room:GetAliveEnemiesCount() > 0 then
-            familiar.SpriteRotation = (familiar.SpriteRotation + PIZZA_ROTATION_GAIN)%360
+
+            if not sprite:IsPlaying("PizzaAttack") then
+                sprite:Play("PizzaAttack", true)
+            end
+
+            familiar.SpriteRotation = (familiar.SpriteRotation + PIZZA_ROTATION_GAIN + math.random(-10, 10))%360
             local target = Resouled:GetEnemyTarget(familiar)
             if target then
                 familiar:RemoveFromFollowers()
@@ -210,6 +216,12 @@ local function onToppingFamiliarUpdate(_, familiar)
                 Resouled:SelectRandomEnemyTarget(familiar)
             end
         else
+
+            if not sprite:IsPlaying("PizzaIdle") then
+                sprite:Play("PizzaIdle", true)
+                familiar.SpriteRotation = 0
+            end
+
             familiar:AddToFollowers()
             familiar:FollowParent()
         end

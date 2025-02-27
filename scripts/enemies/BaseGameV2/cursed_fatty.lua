@@ -1,9 +1,11 @@
 local CURSED_FATTY_VARIANT = Isaac.GetEntityVariantByName("Cursed Fatty")
 local CURSED_FATTY_TYPE = Isaac.GetEntityTypeByName("Cursed Fatty")
 
+local DICE_ROLL_TARGET = 5
 local ACTIVATION_DISTANCE = 110
 local ITEM_DROP_STEP = 10
-local ITEM_DROP_COOLDOWN = 30
+local COOLDOWN = 10
+
 
 local DEATH_TEARS_SPAWN_COUNT = 10
 local DEATH_TEAR_BULLET_FLAGS = (ProjectileFlags.SMART | ProjectileFlags.ACCELERATE | ProjectileFlags.SINE_VELOCITY)
@@ -38,7 +40,7 @@ local function onNpcInit(_, npc)
     if npc.Variant == CURSED_FATTY_VARIANT then
         npc:AddEntityFlags(EntityFlag.FLAG_NO_PHYSICS_KNOCKBACK)
         Resouled:AddHaloToNpc(npc, HALO_SUBTYPE, HALO_SCALE, HALO_OFFSET)
-        npc:GetData().Cooldown = ITEM_DROP_COOLDOWN
+        npc:GetData().Cooldown = COOLDOWN
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CURSED_FATTY_TYPE)
@@ -60,7 +62,7 @@ local function preNpcUpdate(_, npc)
             if data.Cooldown == 0 and player.Position:Distance(npc.Position) < ACTIVATION_DISTANCE then
                 print("Player is close enough to drop item")
                 local itemToDrop = Resouled:ChooseRandomPlayerItemID(player, npc:GetDropRNG())
-                if itemToDrop then
+                if itemToDrop and Resouled:RollD6(npc:GetDropRNG()) == DICE_ROLL_TARGET then
                     player:RemoveCollectible(itemToDrop)
                     local rng = player:GetCollectibleRNG(itemToDrop)
                     rng:Next()
@@ -71,9 +73,8 @@ local function preNpcUpdate(_, npc)
                     if pickup then
                         pickup:Morph(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, itemToDrop, false, true, true)
                     end
-
-                    data.Cooldown = ITEM_DROP_COOLDOWN
                 end
+                data.Cooldown = COOLDOWN
             end
         end)
     end

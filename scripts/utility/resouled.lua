@@ -349,3 +349,9 @@ function Resouled:ChooseRandomPlayerItemID(player, rng)
         return items[rng:RandomInt(#items) + 1]
     end
 end
+
+--- Returns a number between 1 and 6
+--- @param rng RNG
+function Resouled:RollD6(rng)
+    return rng:RandomInt(6) + 1
+end

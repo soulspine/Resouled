@@ -26,6 +26,10 @@ local function onPickupUpdate(_, pickup)
         local data = pickup:GetData()
         
         if pickup.AutoUpdatePrice == true then
+            if Game():IsGreedMode() then
+                PRICE_DECREASE = 1
+                MIN_PRICE = 0
+            end
             data.OriginalPrice = pickup.Price
             pickup.AutoUpdatePrice = false
             data.BlessingOfSteamTargetPrice = data.OriginalPrice - PRICE_DECREASE

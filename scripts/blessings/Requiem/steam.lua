@@ -1,8 +1,13 @@
 local PRICE_DECREASE = 5
 local MIN_PRICE = 1
-
 local GRANT_MIN_COINS = 5
 local GRANT_ROOM_VALUE_PERCENTAGE = 0.25
+
+local GREED_PRICE_DECREASE = 2
+local GREED_MIN_PRICE = 1
+local GREED_GRANT_MIN_COINS = 12
+local GREED_ROOM_VALUE_PERCENTAGE = 0.25
+
 -- if player has less coins than roomValue * GRANT_ROOM_VALUE_PERCENTAGE,
 -- they will be granted this blessing
 
@@ -13,7 +18,19 @@ local function onRoomEnter()
         local shopValue = Resouled:GetRoomPickupsValue()
         print(shopValue, shopValue * GRANT_ROOM_VALUE_PERCENTAGE)
         local coins = player0:GetNumCoins()
-        if coins >= GRANT_MIN_COINS and coins < shopValue * GRANT_ROOM_VALUE_PERCENTAGE then
+        local grantMinCoins = 0
+        local grantRoomValuePercentage = 0
+
+        if Game():IsGreedMode() then
+            grantMinCoins = GREED_GRANT_MIN_COINS
+            grantRoomValuePercentage = GREED_ROOM_VALUE_PERCENTAGE
+        else
+            grantMinCoins = GRANT_MIN_COINS
+            grantRoomValuePercentage = GRANT_ROOM_VALUE_PERCENTAGE
+        end
+
+
+        if coins >= grantMinCoins and coins <= shopValue * grantRoomValuePercentage then
             Resouled:GrantBlessing(player0, Resouled.Blessings.Steam)
         end
     end
@@ -24,16 +41,21 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onRoomEnter)
 local function onPickupUpdate(_, pickup)
     if Resouled:HasBlessing(Isaac.GetPlayer(), Resouled.Blessings.Steam) and pickup:IsShopItem() and pickup.Price > 0 then
         local data = pickup:GetData()
-        
+
         if pickup.AutoUpdatePrice == true then
+            local decrease = 0
+            local minPrice = 0
             if Game():IsGreedMode() then
-                PRICE_DECREASE = 1
-                MIN_PRICE = 0
+                decrease = GREED_PRICE_DECREASE
+                minPrice = GREED_MIN_PRICE
+            else
+                decrease = PRICE_DECREASE
+                minPrice = MIN_PRICE
             end
             data.OriginalPrice = pickup.Price
             pickup.AutoUpdatePrice = false
-            data.BlessingOfSteamTargetPrice = data.OriginalPrice - PRICE_DECREASE
-            pickup.Price = math.max(MIN_PRICE, data.BlessingOfSteamTargetPrice)
+            data.BlessingOfSteamTargetPrice = data.OriginalPrice - decrease
+            pickup.Price = math.max(minPrice, data.BlessingOfSteamTargetPrice)
         else
             pickup.AutoUpdatePrice = true
         end

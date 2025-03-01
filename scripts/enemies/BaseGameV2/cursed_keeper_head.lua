@@ -20,25 +20,15 @@ local DEATH_TEAR_ACCELERATION = 1.105
 
 local CURSED_ENEMY_MORPH_CHANCE = 0.05
 
-local function onRoomEnter()
-    local rng = RNG()
-    if Game():GetLevel():GetCurses() < 0 then
-        return
-    end
-    for _ = 1, #Isaac.GetRoomEntities() do
-        local npc = Isaac.GetRoomEntities()[_]
-        rng:SetSeed(npc:GetDropRNG():GetSeed(), 0)
-        if npc == EntityType.ENTITY_PLAYER or not npc:IsEnemy() then
-        elseif npc.Type == CURSED_KEEPER_HEAD_TYPE and rng:RandomFloat() < CURSED_ENEMY_MORPH_CHANCE then
-            Game():Spawn(CURSED_KEEPER_HEAD_TYPE, CURSED_KEEPER_HEAD_VARIANT, npc.Position, Vector(0, 0), nil, 0, npc:GetDropRNG():GetSeed())
-            npc:Die()
-        end
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onRoomEnter)
+local COINS_TO_LOSE = 2
 
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
+    --Try to turn enemy into a cursed enemy
+    if Game():GetLevel():GetCurses() > 0 then
+        Resouled:TryEnemyMorph(_, npc, CURSED_ENEMY_MORPH_CHANCE, CURSED_KEEPER_HEAD_TYPE, CURSED_KEEPER_HEAD_VARIANT, 0)
+    end
+
     if npc.Variant == CURSED_KEEPER_HEAD_VARIANT then
         Resouled:AddHaloToNpc(npc, HALO_SUBTYPE, HALO_SCALE, HALO_OFFSET)
         npc:GetData().Cooldown = COOLDOWN
@@ -80,7 +70,7 @@ local function preNpcUpdate(_, npc)
             if data.Cooldown == 0 and player.Position:Distance(npc.Position) < ACTIVATION_DISTANCE then
                 print("Player is close enough to drop item")
                 if Resouled:RollD6(npc:GetDropRNG()) == DICE_ROLL_TARGET and player:GetNumCoins() > 0 then
-                    player:AddCoins(-2)
+                    player:AddCoins(-COINS_TO_LOSE)
                     local spawnPos = Isaac.GetFreeNearPosition(player.Position, GREED_POSITION_STEP)
                     local spawnVel = Vector(player.Position.X - spawnPos.X, player.Position.Y - spawnPos.Y):Resized(GREED_COIN_VECTOR_SIZE)
                     local coin = Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, spawnPos, spawnVel, nil, CoinSubType.COIN_PENNY, Game():GetSeeds():GetStageSeed(Game():GetLevel():GetStage()))

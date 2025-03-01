@@ -29,25 +29,14 @@ local function onNPCDeath(_, npc)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNPCDeath, CURSED_GAPER_TYPE)
 
-local function onRoomEnter()
-    local rng = RNG()
-    if Game():GetLevel():GetCurses() < 0 then
-        return
-    end
-    for _ = 1, #Isaac.GetRoomEntities() do
-        local npc = Isaac.GetRoomEntities()[_]
-        rng:SetSeed(npc:GetDropRNG():GetSeed(), 0)
-        if npc == EntityType.ENTITY_PLAYER or not npc:IsEnemy() then
-        elseif npc.Type == CURSED_GAPER_TYPE and rng:RandomFloat() < CURSED_ENEMY_MORPH_CHANCE then
-            Game():Spawn(CURSED_GAPER_TYPE, CURSED_GAPER_VARIANT, npc.Position, Vector(0, 0), nil, 0, npc:GetDropRNG():GetSeed())
-            npc:Die()
-        end
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onRoomEnter)
-
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
+    --Try to turn enemy into a cursed enemy
+    if Game():GetLevel():GetCurses() > 0 then
+        Resouled:TryEnemyMorph(_, npc, CURSED_ENEMY_MORPH_CHANCE, CURSED_GAPER_TYPE, CURSED_GAPER_VARIANT, 0)
+    end
+
+    --Add halo
     if npc.Variant == CURSED_GAPER_VARIANT then
         Resouled:AddHaloToNpc(npc, HALO_SUBTYPE, HALO_SCALE, HALO_OFFSET)
     end
@@ -57,8 +46,9 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CURSED_GAPER_TYPE
 ---@param npc EntityNPC
 local function preNpcUpdate(_, npc)
     if npc.Variant == CURSED_GAPER_VARIANT then
-        for _ = 1, #Isaac.GetRoomEntities() do
-            local entity = Isaac.GetRoomEntities()[_]
+        ---@param entity Entity
+        Resouled:IterateOverRoomEntities(function(entity)
+            entity:ToNPC()
             local data = entity:GetData()
             if data.FirstLook == nil then
                 data.BaseDamage = entity.CollisionDamage
@@ -84,9 +74,9 @@ local function preNpcUpdate(_, npc)
                     entity.CollisionDamage = entity.CollisionDamage - 2
                     data.DamageAdded = false
                     print(entity.CollisionDamage)
-                end    
+                end
             end
-        end
+        end)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, preNpcUpdate, CURSED_GAPER_TYPE)

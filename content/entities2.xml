@@ -20,6 +20,11 @@
         <devolve id="86.0.0" weight="1" />
     </entity>
 
+    <entity name="Cursed Horf" id="12" variant="1" anm2path="cursed_horf.anm2" baseHP="14" stageHP="3" collisionMass="3" collisionRadius="13" friction="1" numGridCollisionPoints="12" shadowSize="13" champion="0" collisionDamage="1" reroll="true">
+        <beastiary anim="Idle" tramsform="0,0,1"/>
+        <devolve id="12.0.0" weight="1" />
+    </entity>
+
     <entity anm2path="daddy_haunt.anm2" name="Daddy Haunt" id="3" variant="872" subtype="0" collisionRadius="100" shadowSize="15" friction="1"/>
     <entity anm2path="cheese_grater_familiars.anm2" name="Mushroom Familiar" id="3" variant="445" subtype="0" shadowSize="15" friction="1.5"/>
     <entity anm2path="cheese_grater_familiars.anm2" name="Cheese Familiar" id="3" variant="445" subtype="1" shadowSize="15" friction="1.5"/>

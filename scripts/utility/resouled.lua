@@ -355,3 +355,13 @@ end
 function Resouled:RollD6(rng)
     return rng:RandomInt(6) + 1
 end
+
+---@param npc EntityNPC
+function Resouled:TryEnemyMorph(_, npc, morphChance, type, variant, subtype)
+    local rng = RNG()
+    rng:SetSeed(npc:GetDropRNG():GetSeed(), 0)
+    if npc == EntityType.ENTITY_PLAYER or not npc:IsEnemy() then
+    elseif npc.Type == type and rng:RandomFloat() < morphChance then
+        npc:Morph(type, variant, subtype, 0)
+    end
+end

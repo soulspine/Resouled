@@ -1,5 +1,5 @@
 local customCurses = {}
-local CUSTOM_CURSE_CHANCE = 0.25
+local CUSTOM_CURSE_CHANCE = 1
 
 local GREED_NAME = "Curse of Greed"
 local CURSE_OF_GREED = Isaac.GetCurseIdByName(GREED_NAME)
@@ -39,8 +39,10 @@ local function onCurseEval(_, curses)
     if curses == 0 and rng:RandomFloat() < CUSTOM_CURSE_CHANCE then
         curses = rollCurse(rng)
         -- TODO: MAKE BETTER CURSE DISPLAY
-        Game():GetHUD():ShowFortuneText("Custom curse", customCurses[curses])
-    end
+        local level = Game():GetLevel()
+        --Game():GetHUD():ShowFortuneText("Custom curse", customCurses[curse])
+        level:AddCurse(curses, false)
+        end
     return curses
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_CURSE_EVAL, onCurseEval)

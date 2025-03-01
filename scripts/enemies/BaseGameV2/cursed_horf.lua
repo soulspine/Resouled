@@ -2,6 +2,8 @@ local CURSED_HORF_VARIANT = Isaac.GetEntityVariantByName("Cursed Horf")
 local CURSED_HORF_TYPE = Isaac.GetEntityTypeByName("Cursed Horf")
 local HALO_SUBTYPE = 3
 
+local REFLECT_CHANCE = 0.5
+
 local HALO_OFFSET = Vector(0, -15)
 local HALO_SCALE = Vector(1.5, 1.5)
 
@@ -15,12 +17,11 @@ local DEATH_TEAR_VELOCITY_MULTI = 5
 local ON_HIT_TEAR_HOMING_STRENGTH = 1
 local ON_HIT_TEAR_PROJECTILE_FLAGS = (ProjectileFlags.SMART)
 
-local CURSED_ENEMY_MORPH_CHANCE = 0.05
+local CURSED_ENEMY_MORPH_CHANCE = 0.1
 
 ---@param npc EntityNPC
 local function onNPCDeath(_, npc)
     if npc.Variant == CURSED_HORF_VARIANT then
-        npc:Die()
         local DEATH_PROJECTILE_PARAMS = ProjectileParams()
         DEATH_PROJECTILE_PARAMS.BulletFlags = DEATH_TEAR_BULLET_FLAGS
         DEATH_PROJECTILE_PARAMS.HomingStrength = DEATH_TEAR_HOMING_STRENGTH
@@ -41,7 +42,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNPCDeath, CURSED_HORF_TYP
 local function onNpcInit(_, npc)
     --Try to turn enemy into a cursed enemy
     if Game():GetLevel():GetCurses() > 0 then
-        Resouled:TryEnemyMorph(_, npc, CURSED_ENEMY_MORPH_CHANCE, CURSED_HORF_TYPE, CURSED_HORF_VARIANT, 0)
+        Resouled:TryEnemyMorph(npc, CURSED_ENEMY_MORPH_CHANCE, CURSED_HORF_TYPE, CURSED_HORF_VARIANT, 0)
     end
 
     --Add halo
@@ -55,14 +56,12 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CURSED_HORF_TYPE)
 ---@param flags DamageFlag
 ---@param source EntityRef
 ---@param type EntityType
-local function onEnemyHit(_, entity, ammount, flags, source, frames, type)
-    if entity.Variant == CURSED_HORF_VARIANT and not entity:IsDead() then
-        --local TargetVel = -source.Velocity
-        local TargetVel = -source.Entity.Velocity
+local function onEnemyHit(_, entity, amount, flags, source, frames, type)
+    if entity.Variant == CURSED_HORF_VARIANT and not entity:IsDead() and entity:GetDropRNG():RandomFloat() < REFLECT_CHANCE then
         local PROJECTILE_PARAMS = ProjectileParams()
         PROJECTILE_PARAMS.BulletFlags = ON_HIT_TEAR_PROJECTILE_FLAGS
         PROJECTILE_PARAMS.HomingStrength = ON_HIT_TEAR_HOMING_STRENGTH
-        entity:ToNPC():FireProjectiles(entity.Position, TargetVel, 0, PROJECTILE_PARAMS)
+        entity:ToNPC():FireProjectiles(entity.Position, -source.Entity.Velocity, 0, PROJECTILE_PARAMS)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, onEnemyHit, CURSED_HORF_TYPE)

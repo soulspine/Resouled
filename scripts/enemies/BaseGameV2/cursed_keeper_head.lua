@@ -4,21 +4,20 @@ local CURSED_KEEPER_HEAD_TYPE = Isaac.GetEntityTypeByName("Cursed Keeper Head")
 local HALO_SUBTYPE = 3
 local HALO_OFFSET = Vector(0, -15)
 local HALO_SCALE = Vector(1.5, 1.5)
-local COOLDOWN = 10
 
-local DICE_ROLL_TARGET = 2
+local COIN_DROP_CHANCE = 0.3
 local ACTIVATION_DISTANCE = 110
+local COOLDOWN = 40
 
-local GREED_COIN_TIMEOUT = 60 -- frames
-local GREED_POSITION_STEP = 10
-local GREED_COIN_VECTOR_SIZE = 2
+local COIN_POSITION_STEP = 10
+local COIN_VECTOR_SIZE = 2
 
 local DEATH_TEARS_SPAWN_COUNT = 7
 local DEATH_TEAR_BULLET_FLAGS = (ProjectileFlags.SMART | ProjectileFlags.ACCELERATE | ProjectileFlags.GREED | ProjectileFlags.TRIANGLE)
 local DEATH_TEAR_HOMING_STRENGTH = 0.05
-local DEATH_TEAR_ACCELERATION = 1.105
+local DEATH_TEAR_ACCELERATION = 1.085
 
-local CURSED_ENEMY_MORPH_CHANCE = 0.05
+local CURSED_ENEMY_MORPH_CHANCE = 0.1
 
 local COINS_TO_LOSE = 2
 
@@ -26,7 +25,7 @@ local COINS_TO_LOSE = 2
 local function onNpcInit(_, npc)
     --Try to turn enemy into a cursed enemy
     if Game():GetLevel():GetCurses() > 0 then
-        Resouled:TryEnemyMorph(_, npc, CURSED_ENEMY_MORPH_CHANCE, CURSED_KEEPER_HEAD_TYPE, CURSED_KEEPER_HEAD_VARIANT, 0)
+        Resouled:TryEnemyMorph(npc, CURSED_ENEMY_MORPH_CHANCE, CURSED_KEEPER_HEAD_TYPE, CURSED_KEEPER_HEAD_VARIANT, 0)
     end
 
     if npc.Variant == CURSED_KEEPER_HEAD_VARIANT then
@@ -57,24 +56,22 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNPCDeath, CURSED_KEEPER_H
 local function preNpcUpdate(_, npc)
     if npc.Variant == CURSED_KEEPER_HEAD_VARIANT then
         local data = npc:GetData()
-
-        print(data.Cooldown)
-
         if data.Cooldown > 0 then
             data.Cooldown = data.Cooldown - 1
         end
 
         ---@param player EntityPlayer
         Resouled:IterateOverPlayers(function(player)
-            print(player.Position:Distance(npc.Position))
             if data.Cooldown == 0 and player.Position:Distance(npc.Position) < ACTIVATION_DISTANCE then
-                print("Player is close enough to drop item")
-                if Resouled:RollD6(npc:GetDropRNG()) == DICE_ROLL_TARGET and player:GetNumCoins() > 0 then
-                    player:AddCoins(-COINS_TO_LOSE)
-                    local spawnPos = Isaac.GetFreeNearPosition(player.Position, GREED_POSITION_STEP)
-                    local spawnVel = Vector(player.Position.X - spawnPos.X, player.Position.Y - spawnPos.Y):Resized(GREED_COIN_VECTOR_SIZE)
-                    local coin = Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, spawnPos, spawnVel, nil, CoinSubType.COIN_PENNY, Game():GetSeeds():GetStageSeed(Game():GetLevel():GetStage()))
-                    coin:ToPickup().Timeout = GREED_COIN_TIMEOUT
+                local playerCoins = player:GetNumCoins()
+                if npc:GetDropRNG():RandomFloat() < COIN_DROP_CHANCE and playerCoins > 0 then
+                    local coinsToDrop = math.min(playerCoins, COINS_TO_LOSE)
+                    player:AddCoins(-coinsToDrop)
+                    for i = 1, coinsToDrop do
+                        local spawnPos = Isaac.GetFreeNearPosition(player.Position, COIN_POSITION_STEP)
+                        local spawnVel = Vector(player.Position.X - spawnPos.X, player.Position.Y - spawnPos.Y):Resized(COIN_VECTOR_SIZE)
+                        Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, spawnPos, spawnVel, nil, CoinSubType.COIN_PENNY, Game():GetSeeds():GetStageSeed(Game():GetLevel():GetStage()))
+                    end
                 end
                 data.Cooldown = COOLDOWN
             end

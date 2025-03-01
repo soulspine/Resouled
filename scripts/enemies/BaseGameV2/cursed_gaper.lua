@@ -12,7 +12,7 @@ local DEATH_TEAR_BULLET_FLAGS = (ProjectileFlags.SMART | ProjectileFlags.ACCELER
 local DEATH_TEAR_HOMING_STRENGTH = 0.05
 local DEATH_TEAR_ACCELERATION = 1.08
 
-local CURSED_ENEMY_MORPH_CHANCE = 0.05
+local CURSED_ENEMY_MORPH_CHANCE = 0.1
 
 ---@param npc EntityNPC
 local function onNPCDeath(_, npc)
@@ -33,7 +33,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNPCDeath, CURSED_GAPER_TY
 local function onNpcInit(_, npc)
     --Try to turn enemy into a cursed enemy
     if Game():GetLevel():GetCurses() > 0 then
-        Resouled:TryEnemyMorph(_, npc, CURSED_ENEMY_MORPH_CHANCE, CURSED_GAPER_TYPE, CURSED_GAPER_VARIANT, 0)
+        Resouled:TryEnemyMorph(npc, CURSED_ENEMY_MORPH_CHANCE, CURSED_GAPER_TYPE, CURSED_GAPER_VARIANT, 0)
     end
 
     --Add halo

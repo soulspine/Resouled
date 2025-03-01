@@ -25,12 +25,6 @@ local function cursePresent(curse)
     return Game():GetLevel():GetCurses() & curseShifted == curseShifted
 end
 
-if EID then
-    -- no idea how to make EID work with custom curses
-    --EID:addCurse(CURSE_OF_GREED, "On hit, Isaac drops 1/4 of his coins as ", "Curse of Greed")
-end
-
-
 
 ---@param curses integer
 local function onCurseEval(_, curses)

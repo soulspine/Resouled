@@ -350,18 +350,15 @@ function Resouled:ChooseRandomPlayerItemID(player, rng)
     end
 end
 
---- Returns a number between 1 and 6
---- @param rng RNG
-function Resouled:RollD6(rng)
-    return rng:RandomInt(6) + 1
-end
-
 ---@param npc EntityNPC
-function Resouled:TryEnemyMorph(_, npc, morphChance, type, variant, subtype)
+---@param morphChance number
+---@param type EntityType
+---@param variant integer
+---@param subtype integer
+function Resouled:TryEnemyMorph(npc, morphChance, type, variant, subtype)
     local rng = RNG()
     rng:SetSeed(npc:GetDropRNG():GetSeed(), 0)
-    if npc == EntityType.ENTITY_PLAYER or not npc:IsEnemy() then
-    elseif npc.Type == type and rng:RandomFloat() < morphChance then
-        npc:Morph(type, variant, subtype, 0)
+    if npc.Type == type and npc:IsActiveEnemy() and rng:RandomFloat() < morphChance then
+        npc:Morph(type, variant, subtype, npc:GetChampionColorIdx())
     end
 end

@@ -1,7 +1,7 @@
 local CURSED_FATTY_VARIANT = Isaac.GetEntityVariantByName("Cursed Fatty")
 local CURSED_FATTY_TYPE = Isaac.GetEntityTypeByName("Cursed Fatty")
 
-local DICE_ROLL_TARGET = 5
+local ITEM_DROP_CHANCE = 0.3
 local ACTIVATION_DISTANCE = 110
 local ITEM_DROP_STEP = 10
 local COOLDOWN = 10
@@ -18,7 +18,7 @@ local HALO_SUBTYPE = 3
 local HALO_OFFSET = Vector(0, -15)
 local HALO_SCALE = Vector(1.5, 1.5)
 
-local CURSED_ENEMY_MORPH_CHANCE = 0.05
+local CURSED_ENEMY_MORPH_CHANCE = 0.1
 
 ---@param npc EntityNPC
 local function onNPCDeath(_, npc)
@@ -41,7 +41,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNPCDeath, CURSED_FATTY_TY
 local function onNpcInit(_, npc)
     --Try to turn enemy into a cursed enemy
     if Game():GetLevel():GetCurses() > 0 then
-        Resouled:TryEnemyMorph(_, npc, CURSED_ENEMY_MORPH_CHANCE, CURSED_FATTY_TYPE, CURSED_FATTY_VARIANT, 0)
+        Resouled:TryEnemyMorph(npc, CURSED_ENEMY_MORPH_CHANCE, CURSED_FATTY_TYPE, CURSED_FATTY_VARIANT, 0)
     end
 
     if npc.Variant == CURSED_FATTY_VARIANT then
@@ -56,29 +56,32 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CURSED_FATTY_TYPE
 local function preNpcUpdate(_, npc)
     if npc.Variant == CURSED_FATTY_VARIANT then
         local data = npc:GetData()
-
-        print(data.Cooldown)
-
         if data.Cooldown > 0 then
             data.Cooldown = data.Cooldown - 1
         end
 
         ---@param player EntityPlayer
         Resouled:IterateOverPlayers(function(player)
-            print(player.Position:Distance(npc.Position))
             if data.Cooldown == 0 and player.Position:Distance(npc.Position) < ACTIVATION_DISTANCE then
-                print("Player is close enough to drop item")
                 local itemToDrop = Resouled:ChooseRandomPlayerItemID(player, npc:GetDropRNG())
-                if itemToDrop and Resouled:RollD6(npc:GetDropRNG()) == DICE_ROLL_TARGET then
+                if itemToDrop and npc:GetDropRNG():RandomFloat() <= ITEM_DROP_CHANCE then
+                    local itemCharge = 0
+                    if player:GetActiveItem(ActiveSlot.SLOT_PRIMARY) == itemToDrop then
+                        itemCharge = player:GetActiveCharge(ActiveSlot.SLOT_PRIMARY) + player:GetBatteryCharge(ActiveSlot.SLOT_PRIMARY)
+                    elseif player:GetActiveItem(ActiveSlot.SLOT_SECONDARY) == itemToDrop then
+                        itemCharge = player:GetActiveCharge(ActiveSlot.SLOT_SECONDARY) + player:GetBatteryCharge(ActiveSlot.SLOT_SECONDARY)
+                    end
+
                     player:RemoveCollectible(itemToDrop)
                     local rng = player:GetCollectibleRNG(itemToDrop)
-                    rng:Next()
-                    local entity = Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, Isaac.GetFreeNearPosition(Isaac.GetRandomPosition(), ITEM_DROP_STEP), Vector.Zero, nil, itemToDrop, rng:GetSeed())
+                    local entity = Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, Isaac.GetFreeNearPosition(Isaac.GetRandomPosition(), ITEM_DROP_STEP), Vector.Zero, player, itemToDrop, rng:GetSeed())
 
                     local pickup = entity:ToPickup()
 
                     if pickup then
                         pickup:Morph(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, itemToDrop, false, true, true)
+                        pickup.Touched = true
+                        pickup.Charge = itemCharge
                     end
                 end
                 data.Cooldown = COOLDOWN

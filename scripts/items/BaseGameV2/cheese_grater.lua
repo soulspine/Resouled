@@ -31,7 +31,7 @@ SPEED_SCREEN_SPRITE:Load("gfx/effects/screen.anm2", true)
 local ANIMATION_SPEED_SCREEN_IDLE = "Idle"
 local ANIMATION_SPEED_SCREEN_RUN1 = "Run1"
 local ANIMATION_SPEED_SCREEN_RUN2 = "Run2"
-local ANIMATION_SPEED_SCREEN_SWITCH = "Screen Switch"
+local ANIMATION_SPEED_SCREEN_SWITCH = ""
 local screenTargetAnimation
 
 local TOPPING_VARIANT = Isaac.GetEntityVariantByName("Pizza Familiar")
@@ -250,7 +250,7 @@ HudHelper.RegisterHUDElement({
         return player:HasCollectible(CHEESE_GRATER)
     end,
     OnRender = function(player, playerHUDIndex, hudLayout, position)
-        SPEED_SCREEN_SPRITE.Scale = Vector(0.35, 0.35)
+        SPEED_SCREEN_SPRITE.Scale = Vector(0.5, 0.5)
         SPEED_SCREEN_SPRITE:Update()
         SPEED_SCREEN_SPRITE:Render(position + HudHelper.GetHealthHUDOffset(playerHUDIndex))
     end,
@@ -269,6 +269,18 @@ local function speedScreenUpdate()
             return
         elseif SPEED_SCREEN_SPRITE:IsFinished(ANIMATION_SPEED_SCREEN_SWITCH) then
             if screenTargetAnimation then
+                local randomSwitch = math.random(1,5)
+                if randomSwitch == 1 then
+                    ANIMATION_SPEED_SCREEN_SWITCH = "Switch1"
+                elseif randomSwitch == 2 then
+                    ANIMATION_SPEED_SCREEN_SWITCH = "Switch2"
+                elseif randomSwitch == 3 then
+                    ANIMATION_SPEED_SCREEN_SWITCH = "Switch3"
+                elseif randomSwitch == 4 then
+                    ANIMATION_SPEED_SCREEN_SWITCH = "Switch4"
+                elseif randomSwitch == 5 then
+                    ANIMATION_SPEED_SCREEN_SWITCH = "Switch5"
+                end
                 SPEED_SCREEN_SPRITE:Play(screenTargetAnimation, true)
                 screenTargetAnimation = nil
             end

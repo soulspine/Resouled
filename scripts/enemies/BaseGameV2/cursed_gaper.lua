@@ -17,7 +17,6 @@ local CURSED_ENEMY_MORPH_CHANCE = 0.1
 ---@param npc EntityNPC
 local function onNPCDeath(_, npc)
     if npc.Variant == CURSED_GAPER_VARIANT then
-        npc:Die()
         local DEATH_PROJECTILE_PARAMS = ProjectileParams()
         DEATH_PROJECTILE_PARAMS.BulletFlags = DEATH_TEAR_BULLET_FLAGS
         DEATH_PROJECTILE_PARAMS.Acceleration = DEATH_TEAR_ACCELERATION

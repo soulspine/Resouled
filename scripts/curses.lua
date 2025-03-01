@@ -1,9 +1,13 @@
 local customCurses = {}
-local CUSTOM_CURSE_CHANCE = 0.25
+local CUSTOM_CURSE_CHANCE = 1
 
 local GREED_NAME = "Curse of Greed"
 local CURSE_OF_GREED = Isaac.GetCurseIdByName(GREED_NAME)
 customCurses[1 << CURSE_OF_GREED] = GREED_NAME
+
+local PAIN_NAME = "Curse of Pain"
+local CURSE_OF_PAIN = Isaac.GetCurseIdByName(PAIN_NAME)
+customCurses[1 << CURSE_OF_PAIN] = PAIN_NAME
 
 local GREED_COIN_DROP_AMOUNT_MIN = 4
 local GREED_COIN_DROP_AMOUNT_MAX = 6
@@ -66,3 +70,24 @@ local function GREED_onPlayerDamage(_, entity, amount, flags, source, countdown)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, GREED_onPlayerDamage, EntityType.ENTITY_PLAYER)
+
+---@param entity Entity
+---@param amount number
+---@param flags integer
+---@param source EntityRef
+---@param countdown integer
+local function PAIN_onPlayerHit(_, entity, amount, flags, source, countdown)
+    local player = entity:ToPlayer()
+    if not entity:ToPlayer():HasCollectible(CollectibleType.COLLECTIBLE_WAFER) then
+        if player and cursePresent(CURSE_OF_PAIN) and flags & DamageFlag.DAMAGE_FAKE == 0 then
+            if Resouled:GetEffectiveBlackHP(player) > 0 then
+                player:AddBlackHearts(-1)
+            elseif Resouled:GetEffectiveBlackHP(player) <= 0 and Resouled:GetEffectiveSoulHP(player) > 0 then
+                player:AddSoulHearts(-1)
+            elseif Resouled:GetEffectiveBlackHP(player) <= 0 and Resouled:GetEffectiveSoulHP(player) <= 0 and Resouled:GetEffectiveRedHP(player) > 0 then
+                player:AddHearts(-1)
+            end
+        end
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, PAIN_onPlayerHit, EntityType.ENTITY_PLAYER)

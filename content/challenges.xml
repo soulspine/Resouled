@@ -61,5 +61,5 @@
 -->
 
 <challenges version="1">
-	<challenge name="Pizza Time!" id="0" startingitems="734" startingtrinkets="39" playertype="0" endstage="13" roomfilter="miniboss" getcurse="4" adddamage="1" difficulty="1"/>
+	<challenge name="Pizza Time!" id="0" startingtrinkets="39" playertype="0" endstage="13" roomfilter="miniboss" getcurse="4" adddamage="1" difficulty="1"/>
 </challenges>

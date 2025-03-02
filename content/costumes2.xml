@@ -1,6 +1,6 @@
 <costumes anm2root="gfx/characters/">
 <!-- Base Game V2 -->
-    <costume id="2" anm2path="cheese_grater.anm2" type="passive" priority="10"/>
+    <costume anm2path="pizza_time.anm2" type="none" priority="10"/>
 <!-- Four Souls V2 -->
 
 <!-- Requiem -->

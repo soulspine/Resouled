@@ -1,0 +1,65 @@
+<!--
+* Challenge Format:
+*     name = name of the challenge; this will appear in the Custom Challenges menu screen
+
+*     id = unique challenge id; this is used if you want to add special behavior to your challenge via a mod
+*         - you can use any unique number, just make sure it's not already used by a default challenge or another custom challenge you have
+
+*     startingitems = items that the player will receive; each item id needs to be separated with a comma (no space)
+
+*     startingtrinkets = trinkets that the player will receive; each trinket id needs to be separated with a comma (no space)
+*         - you cannot add more than 2 trinkets and adding 2 will only work if the player has Mom's Purse or a similar item that expands trinket storage
+
+*     startingpill = effect id of the starting pill (defaults to -1 which means no pill)
+
+*     startingcard = card id of the starting card (can also include runes and other card-like pickups)
+*         - use -1 for random tarot card or 0 for no card (default)
+
+*     playertype = id of the player type (0 = Isaac, 1 = Magdalene, 2 = Cain, 3 = Judas, 4 = ???, 5 = Eve, 6 = Samson, 7 = Azazel, 8 = Lazarus, 9 = Eden, 10 = The Lost, 11 = Lazarus II, 12 = Black Judas, 13 = Lilith, 14 = Keeper, 15 = Apollyon, 16 = The Forgotten, 17 = The Soul, 18 = Bethany, 19 = Jacob, 20 = Esau, 21 = T. Isaac, 22 = T. Magdalene, 23 = T. Cain, 24 = T. Judas, 25 = T. ???, 26 = T. Eve, 27 = T. Samson, 28 = T. Azazel, 29 = T. Lazarus, 30 = T. Eden, 31 = T. The Lost, 32 = T. Lilith, 33 = T. Keeper, 34 = T. Apollyon, 35 = T. The Forgotten, 36 = T. Bethany, 37 = T. Jacob, 38 = T. Lazarus, 39 = T. Jacob2, 40 = T. The Soul)
+
+*     endstage = the final stage of the challenge; this is where the trophy will appear (1/2 = Basement/Cellar/Burning Basement/Downpour/Dross, 3/4 = Caves/Catacombs/Flooded Caves/Mines/Ashpit, 5/6 = Depths/Necropolis/Dank Depths/Mausouleum/Gehenna, 7/8 = Womb/Utero/Scarred Womb/Corpse, 9 = ??? (Blue Womb), 10 = Sheol/Cathedral, 11 = Dark Room/Chest, 12 = The Void, 13 = Home)
+
+*     roomfilter = list of room ids to not be generated in the challenge [Not all room ids can be used] (1 = normal, 2 = shop, 3 = error, 4 = treasure, 5 = boss, 6 = miniboss, 7 = secret, 8 = supersecret, 9 = arcade, 10 = curse, 11 = challenge, 12 = library, 13 = sacrifice, 14 = devil, 15 = angel, 16 = dungeon, 17 = bossrush, 18 = isaac's bedroom, 19 = barren, 20 = chest (vault), 21 = dice, 22 = black market, 23 = greed exit, 24 = planetarium, 25 = teleporter, 26 = teleporter exit, 27 = secret exit, 28 = blue, 29 = ultra secret)
+
+*     cursefilter = bitmask for curses that won't appear in the challenge (1 = darkness, 2 = labyrinth, 4 = lost, 8 = unknown, 16 = cursed, 32 = maze, 64 = blind, 128 = giant)
+
+*     getcurse = bitmask for curses that will be forced all the time (same ids as cursefilter)
+
+*     achievements = list of achievement ids that are required to be able to play the challenge separated with commas
+
+*     altpath = alternative floor for light/dark path (Isaac/Satan)
+*         false (default) = the challenge will go to The Dark Room; true = the challenge will go to The Chest
+
+*     canshoot = if set to true the player will be blindfolded and unable to shoot
+
+*     redhp = fills a specified amount of red heart containers; this does not add new containers (uses half hearts as a measure so 1 full heart container is equal to 2)
+*         - you can use negative numbers to drain existing heart containers
+
+*     maxhp = adds a specified amount of red heart containers (uses half hearts as a measure so 1 full heart container is equal to 2)
+
+*     soulhp = adds a specified amount of soul hearts (uses half hearts as a measure so 1 full heart container is equal to 2)
+
+*     blackhp = adds a specified amount of black hearts (uses half hearts as a measure so 1 full heart container is equal to 2)
+
+*     coins = adds a specified amount of coins
+
+*     maxdamage = setting this to true will fix the player's damage to 100, preventing any damage-modifying items from affecting it
+
+*     adddamage = modifies the player's damage by a specified amount
+
+*     minfirerate = fixes the player's tear delay to a specified amount, preventing any tear-delay-modifying items from affecting it
+
+*     minshotspeed = setting this to true will fix the player's shot speed to 1, preventing any shot-speed-modifying items from affecting it
+
+*     bigrange = if set to true, adds +10 range to the player
+
+*     difficulty = game difficulty (0 = normal (default); 1 = hard)
+
+*     megasatan = set to true to force the challenge to go to Mega Satan; this will also give the 2 Key Pieces required to open the door
+
+*     secretpath = set to true to force the Repentance alt path; the player will still be required to manually collect the Knife Pieces
+-->
+
+<challenges version="1">
+	<challenge name="Pizza Time!" id="0" startingitems="734" startingtrinkets="39" playertype="0" endstage="13" roomfilter="miniboss" getcurse="4" adddamage="1" difficulty="1"/>
+</challenges>

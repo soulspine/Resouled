@@ -31,6 +31,13 @@ local function onPlayerInit(_, player)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, onPlayerInit)
 
+local function onNewFloor()
+    if Isaac.GetChallenge() == PIZZA_TIME then
+        Game():GetLevel():AddCurse(LevelCurse.CURSE_OF_THE_LOST, false)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, onNewFloor)
+
 local function onUpdate()
     if Isaac.GetChallenge() == PIZZA_TIME then
         local runSave = SAVE_MANAGER.GetRunSave()

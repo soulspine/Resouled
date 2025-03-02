@@ -297,7 +297,7 @@ function Resouled:AddHaloToNpc(npc, haloSubtype, scale, offset)
     return halo
 end
 
-
+-- DO NOT TOUCH THIS UNLESS CHANGING SOMETHING IN AddHaloToNpc
 Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE,
 ---@param npc EntityNPC
 function(_, npc)
@@ -324,6 +324,8 @@ function Resouled:GetPlayerItems(player)
     return items
 end
 
+--- Returns ID of a random item held by the player. If there is no suitable item, returns `nil` \
+--- TODO ADD FILTER
 --- @param player EntityPlayer
 --- @param rng RNG
 --- @return CollectibleType | nil
@@ -350,6 +352,7 @@ function Resouled:ChooseRandomPlayerItemID(player, rng)
     end
 end
 
+--- Tries to morph an NPC into a different type, variant and subtype based on its drop RNG.
 ---@param npc EntityNPC
 ---@param morphChance number
 ---@param type EntityType

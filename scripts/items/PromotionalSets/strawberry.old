@@ -493,7 +493,7 @@ local function onUpdate(player) -- this has to be on update because player updat
 
             -- update streak
             if #berries == 0 then
-                Resouled:SpawnChaosItemOfQuality(math.min(streak, 4), player:GetCollectibleRNG(STRAWBERRY), Game():GetRoom():GetRandomPosition(10))
+                Resouled:SpawnChaosItemOfQuality(math.min(streak, 4), player:GetCollectibleRNG(STRAWBERRY), Game():GetRoom():GetRandomPosition(10), player)
                 sfx:Play(SFX_KEY_GET, VOLUME_KEY_GET)
 
                 if playerRunSave.Strawberry.Streak >= THRESHOLD_1UP then

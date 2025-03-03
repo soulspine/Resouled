@@ -1,17 +1,2 @@
 <ItemPools>
-    <Pool Name="treasure">
-        <Item Name="Strawberry" Weight="0.4" DecreaseBy="0.4" RemoveOn="0.04"/>
-    </Pool>
-
-    <Pool Name="greedTreasure">
-        <Item Name="Strawberry" Weight="0.4" DecreaseBy="0.4" RemoveOn="0.04"/>
-    </Pool>
-
-    <Pool Name="greedShop">
-        <Item Name="Strawberry" Weight="0.2" DecreaseBy="0.2" RemoveOn="0.02"/>
-    </Pool>
-
-    <Pool Name="ultraSecret">
-        <Item Name="Strawberry" Weight="1" DecreaseBy="0.4" RemoveOn="0.1"/>
-    </Pool>
 </ItemPools>

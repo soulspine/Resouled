@@ -8,5 +8,5 @@
 <!-- Summer Of Isaac -->
 
 <!-- Promotional Sets -->
-    <rune type="rune" pickup="3" description="x2" id="0" name="Chunk of Amber" hud="Chunk of Amber" mimiccharge="12" />
+    <!--rune type="rune" pickup="3" description="x2" id="0" name="Chunk of Amber" hud="Chunk of Amber" mimiccharge="12"/-->
 </pocketitems>

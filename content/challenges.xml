@@ -62,4 +62,5 @@
 
 <challenges version="1">
 	<challenge name="Pizza Time!" id="0" startingtrinkets="39" playertype="0" endstage="13" roomfilter="miniboss" adddamage="1" difficulty="1"/>
+	<challenge name="ISAAC-8" id ="1" startingitems="282" playertype="18" altpath="true" endstage="10" difficulty="1"/>
 </challenges>

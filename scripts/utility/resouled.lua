@@ -21,7 +21,8 @@ end
 ---@param quality integer
 ---@param rng RNG
 ---@param position Vector
-function Resouled:SpawnChaosItemOfQuality(quality, rng, position)
+---@param spawner? Entity @Entity that spawned the item
+function Resouled:SpawnChaosItemOfQuality(quality, rng, position, spawner)
     local itemConfig = Isaac.GetItemConfig()
     local itemPool = Game():GetItemPool()
     local validItems = {}
@@ -49,7 +50,7 @@ function Resouled:SpawnChaosItemOfQuality(quality, rng, position)
             goto reroll
         end
 
-        local entity = Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, Isaac.GetFreeNearPosition(position, 60), Vector.Zero, nil, randomItem, rng:GetSeed())
+        local entity = Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, Isaac.GetFreeNearPosition(position, 60), Vector.Zero, spawner, randomItem, rng:GetSeed())
         rng:Next()
         return entity
 

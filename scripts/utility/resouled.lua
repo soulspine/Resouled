@@ -366,3 +366,43 @@ function Resouled:TryEnemyMorph(npc, morphChance, type, variant, subtype)
         npc:Morph(type, variant, subtype, npc:GetChampionColorIdx())
     end
 end
+
+
+function Resouled:SetNoReroll(entityPickup)
+    local save = SAVE_MANAGER.GetRoomFloorSave(entityPickup)
+    save.NoReroll = {
+        Type = entityPickup.Type,
+        Variant = entityPickup.Variant,
+        SubType = entityPickup.SubType
+    }
+end
+
+
+---@param pickup EntityPickup
+local function onPickupUpdate(_, pickup)
+    local noRerollData = SAVE_MANAGER.GetRoomFloorSave(pickup).NoReroll
+    if noRerollData and noRerollData.Type ~= pickup.Type and noRerollData.Variant ~= pickup.Variant and noRerollData.SubType ~= pickup.SubType and pickup.SubType ~= CollectibleType.COLLECTIBLE_NULL then
+        pickup:Morph(noRerollData.Type, noRerollData.Variant, noRerollData.SubType, false, true, true)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onPickupUpdate, PickupVariant.PICKUP_COLLECTIBLE)
+
+---@param soul ResouledSouls
+---@param position Vector
+function Resouled:TrySpawnSoulItem(soul, position)
+    local soulId = Isaac.GetItemIdByName(soul)
+    local runSave = SAVE_MANAGER.GetRunSave()
+    if not runSave.Souls then
+        runSave.Souls = {}
+    end
+
+    if not runSave.Souls[soul] then
+        runSave.Souls[soul] = true
+        local entity = Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, position, Vector.Zero, nil, soulId, Isaac.GetPlayer(0):GetCollectibleRNG(soulId):GetSeed())
+        local pickup = entity:ToPickup()
+        if pickup then
+            pickup:Morph(pickup.Type, pickup.Variant, pickup.SubType, false, true, true)
+            Resouled:SetNoReroll(pickup)
+        end
+    end
+end

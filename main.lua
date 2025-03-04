@@ -1,6 +1,11 @@
 ---@class ModReference
 Resouled = RegisterMod("Resouled", 1)
 
+---@enum ResouledSouls
+ResouledSouls = {
+    MONSTRO = "Monstro's Soul",
+}
+
 include("scripts.utility.hud_helper")
 
 ---@type SaveManager

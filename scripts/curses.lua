@@ -4,7 +4,7 @@ Resouled.Curses = {
     CURSE_OF_PAIN = Isaac.GetCurseIdByName("Curse of Pain!")
 }
 
-local CUSTOM_CURSE_CHANCE = 1
+local CUSTOM_CURSE_CHANCE = 0.1
 
 include("scripts.curses.curse_of_greed")
 include("scripts.curses.curse_of_pain")

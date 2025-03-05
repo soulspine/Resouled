@@ -1,4 +1,4 @@
-local MONSTROS_SOUL_SUBTYPE = 3
+local MONSTROS_SOUL_VARIANT = Isaac.GetEntityVariantByName("Monstro's Soul")
 local MONSTORS_SOUL_ITEM_SUBTYPE = Isaac.GetItemIdByName("Monstro's Soul")
 
 local TEAR_COUNT = 10
@@ -35,7 +35,7 @@ local VOLUME_LAND = 1
 
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
-    if npc.SubType == MONSTROS_SOUL_SUBTYPE then
+    if npc.Variant == MONSTROS_SOUL_VARIANT then
         local data = npc:GetData()
         ---@type ProjectileParams
         data.TearParams = ProjectileParams()
@@ -51,7 +51,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, EntityType.ENTITY
 
 ---@param npc EntityNPC
 local function onNpcUpdate(_, npc)
-    if npc.SubType == MONSTROS_SOUL_SUBTYPE then
+    if npc.Variant == MONSTROS_SOUL_VARIANT then
         local data = npc:GetData()
         local sprite = npc:GetSprite()
         sprite.PlaybackSpeed = SPRITE_PLAYBACK_SPEED_MULTIPLIER
@@ -101,7 +101,7 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, onNpcUpdate, EntityType.ENT
 local function postNpcDeath(_, npc)
     local itemConfig = Isaac.GetItemConfig()
     local collectible = itemConfig:GetCollectible(MONSTORS_SOUL_ITEM_SUBTYPE)
-    if npc.Subtype ~= MONSTROS_SOUL_SUBTYPE and collectible:IsAvailable() then
+    if npc.Variant ~= MONSTROS_SOUL_VARIANT and collectible:IsAvailable() then
         Resouled:TrySpawnSoulItem(ResouledSouls.MONSTRO, npc.Position)
     end
 end

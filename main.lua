@@ -4,6 +4,7 @@ Resouled = RegisterMod("Resouled", 1)
 ---@enum ResouledSouls
 ResouledSouls = {
     MONSTRO = "Monstro's Soul",
+    DUKE = "Duke's Soul",
 }
 
 include("scripts.utility.hud_helper")

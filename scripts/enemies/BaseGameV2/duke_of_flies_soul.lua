@@ -24,6 +24,14 @@ local PROJECTILE_VARIANT = 6
 local PROJECTILE_COLOR = Color(2, 5, 12.5, 0.5)
 local PROJECTILE_SPEED_MULTIPLIER = 12.5
 
+local PARTICLE_TYPE = EffectVariant.DARK_BALL_SMOKE_PARTICLE
+local PARTICLE_COUNT = 2
+local PARTICLE_SPEED = 1
+local PARTICLE_COLOR = Color(8, 10, 12)
+local PARTICLE_HEIGHT = 0
+local PARTICLE_SUBTYPE = 0
+local PARTICLE_OFFSET = Vector(0, -65)
+
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
     if npc.Variant == DUKE_OF_FLIES_SOUL_VARIANT then
@@ -41,6 +49,8 @@ local function onNpcUpdate(_, npc)
         local sprite = npc:GetSprite()
         sprite.PlaybackSpeed = SPRITE_PLAYBACK_SPEED_MULTIPLIER
         npc.Velocity = npc.Velocity * 1.15
+
+        Game():SpawnParticles(npc.Position + PARTICLE_OFFSET, PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_SPEED, PARTICLE_COLOR, PARTICLE_HEIGHT, PARTICLE_SUBTYPE)
 
         
         if sprite:IsEventTriggered(EVENT_TRIGGER_RESOULED_ATTACK1) then

@@ -33,6 +33,14 @@ local SFX_LAND = SoundEffect.SOUND_HELLBOSS_GROUNDPOUND
 local VOLUME_SHOOT = 1
 local VOLUME_LAND = 1
 
+local PARTICLE_TYPE = EffectVariant.DARK_BALL_SMOKE_PARTICLE
+local PARTICLE_COUNT = 5
+local PARTICLE_SPEED = 7
+local PARTICLE_COLOR = Color(8, 10, 12)
+local PARTICLE_HEIGHT = 0
+local PARTICLE_SUBTYPE = 0
+local PARTICLE_OFFSET = Vector(0, 0)
+
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
     if npc.Variant == MONSTROS_SOUL_VARIANT then
@@ -54,9 +62,20 @@ local function onNpcUpdate(_, npc)
     if npc.Variant == MONSTROS_SOUL_VARIANT then
         local data = npc:GetData()
         local sprite = npc:GetSprite()
+
+        
         sprite.PlaybackSpeed = SPRITE_PLAYBACK_SPEED_MULTIPLIER
         
         if data.MovementBlockCooldown > 0 then
+            Game():SpawnParticles(npc.Position + PARTICLE_OFFSET, PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_SPEED, PARTICLE_COLOR, PARTICLE_HEIGHT, PARTICLE_SUBTYPE)
+
+            local creepEntity = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CREEP_WHITE, npc.Position, Vector.Zero, npc, 0, npc.InitSeed)
+            local creepEffect = creepEntity:ToEffect()
+            if creepEffect then
+                creepEffect:SetTimeout(CREEP_TIMEOUT)
+                creepEffect.Scale = CREEP_SCALE
+            end
+
             npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
             npc.Velocity = Vector.Zero
             data.MovementBlockCooldown = data.MovementBlockCooldown - 1
@@ -66,6 +85,8 @@ local function onNpcUpdate(_, npc)
         local sprite = npc:GetSprite()
     
         if npc.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_NONE then
+            Game():SpawnParticles(npc.Position + PARTICLE_OFFSET, PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_SPEED, PARTICLE_COLOR, PARTICLE_HEIGHT, PARTICLE_SUBTYPE)
+
             local creepEntity = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CREEP_WHITE, npc.Position, Vector.Zero, npc, 0, npc.InitSeed)
             local creepEffect = creepEntity:ToEffect()
             if creepEffect then

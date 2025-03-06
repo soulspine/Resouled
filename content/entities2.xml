@@ -25,9 +25,9 @@
         <devolve id="12.0.0" weight="1" />
     </entity>
 
-    <entity name="Monstro's Soul" boss="1" id="20" variant="1" subtype="0" anm2path="souls/monstros_soul.anm2" baseHP="4000" champion="0" collisionDamage="1" collisionMass="50" collisionRadius="40" friction="1" numGridCollisionPoints="12" shadowSize="56" stageHP="0" portrait="2"/>
+    <entity name="Monstro's Soul" boss="1" id="20" variant="1" subtype="0" anm2path="souls/monstros_soul.anm2" baseHP="4000" champion="0" collisionDamage="1" collisionMass="50" collisionRadius="40" friction="1" numGridCollisionPoints="12" shadowSize="56" stageHP="0" portrait="2" tags="nodelirium"/>
 
-    <entity name="Duke's Soul" id="67" variant="2" anm2path="souls/duke_of_flies_soul.anm2" baseHP="4000" boss="1" champion="0" collisionDamage="1" collisionMass="30" collisionRadius="35" friction="1" numGridCollisionPoints="12" shadowSize="34" stageHP="0" portrait="32"/>
+    <entity name="Duke's Soul" id="67" variant="2" anm2path="souls/duke_of_flies_soul.anm2" baseHP="4000" boss="1" champion="0" collisionDamage="1" collisionMass="30" collisionRadius="35" friction="1" numGridCollisionPoints="12" shadowSize="34" stageHP="0" portrait="32" tags="nodelirium"/>
     <entity name="Dukie's Soul" id="288" variant="1" anm2path="dukie_soul.anm2" baseHP="100" stageHP="0" collisionDamage="1" collisionMass="20" collisionRadius="13" friction="1" numGridCollisionPoints="12" shadowSize="17" portrait="146"/>
 
 

@@ -31,3 +31,4 @@ by catinsurance \
 [docs](https://github.com/catinsurance/IsaacSaveManager/wiki)
 
 ## Credits
+Icon textures from Isaac files and [four souls site](https://foursouls.com/)

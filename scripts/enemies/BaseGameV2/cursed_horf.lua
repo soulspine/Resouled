@@ -5,7 +5,7 @@ local HALO_SUBTYPE = 3
 local REFLECT_CHANCE = 0.5
 
 local HALO_OFFSET = Vector(0, -15)
-local HALO_SCALE = Vector(1.5, 1.5)
+local HALO_SCALE = Vector(0.5, 0.5)
 
 local DEATH_TEARS_SPAWN_COUNT = 3
 local DEATH_TEAR_BULLET_FLAGS = (ProjectileFlags.SMART | ProjectileFlags.CURVE_RIGHT)

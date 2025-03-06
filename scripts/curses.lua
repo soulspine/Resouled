@@ -42,6 +42,8 @@ local function rollCurse(rng)
             table.insert(cursesToRollFrom, blessingId)
         end
     end
+    -- TODO ADD RESTART CHECK - CURSES ARE NOT LOADED AFTER JUST ENABLING THE MOD,
+    -- GAME HAS TO BE RESTARTED FOR IT TO WORK PROPERLY
     return cursesToRollFrom[rng:RandomInt(#cursesToRollFrom) + 1] - 1
 end
 
@@ -57,7 +59,6 @@ local function onCurseEval(_, curses)
         local newCurse = rollCurse(rng)
         curses = 1 << newCurse
         currentLevel:AddCurse(curses, false)
-        print("Added curse: " .. newCurse)
         end
     return curses
 end

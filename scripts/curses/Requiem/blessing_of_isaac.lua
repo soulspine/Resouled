@@ -12,8 +12,6 @@ local function onNewRoomEnter()
                 local roomPedestalCount = Isaac.CountEntities(nil, EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE)
                 local grantChance = SPAWN_CHANCE_PER_PEDESTAL * roomPedestalCount
 
-                print("Room has " .. roomPedestalCount .. " pedestals, chance to grant: " .. grantChance)
-
                 if player:GetActiveItem(ActiveSlot.SLOT_POCKET2) == CollectibleType.COLLECTIBLE_NULL and rng:RandomFloat() < grantChance then
                     player:SetPocketActiveItem(CollectibleType.COLLECTIBLE_D6, ActiveSlot.SLOT_POCKET2, true)
                 end

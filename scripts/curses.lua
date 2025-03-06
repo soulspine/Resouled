@@ -1,15 +1,27 @@
 ---@enum ResouledCurses
 Resouled.Curses = {
     CURSE_OF_GREED = Isaac.GetCurseIdByName("Curse of Greed!"),
-    CURSE_OF_PAIN = Isaac.GetCurseIdByName("Curse of Pain!")
+    CURSE_OF_PAIN = Isaac.GetCurseIdByName("Curse of Pain!"),
 }
 
-local CUSTOM_CURSE_CHANCE = 0.1
+---@enum ResouledBlessings
+Resouled.Blessings = {
+    BLESSING_OF_ISAAC = Isaac.GetCurseIdByName("Blessing of Isaac!"),
+    BLESSING_OF_MAGGY = Isaac.GetCurseIdByName("Blessing of Maggy!"),
+    BLESSING_OF_SAMSON = Isaac.GetCurseIdByName("Blessing of Samson!"),
+    BLESSING_OF_STEAM = Isaac.GetCurseIdByName("Blessing of Steam!"),
+}
 
-include("scripts.curses.curse_of_greed")
-include("scripts.curses.curse_of_pain")
+local CUSTOM_CURSE_CHANCE = 1
 
----@param curse ResouledCurses
+include("scripts.curses.BaseGameV2.curse_of_greed")
+include("scripts.curses.BaseGameV2.curse_of_pain")
+include("scripts.curses.Requiem.blessing_of_isaac")
+include("scripts.curses.Requiem.blessing_of_maggy")
+include("scripts.curses.Requiem.blessing_of_samson")
+include("scripts.curses.Requiem.blessing_of_steam")
+
+---@param curse ResouledCurses | ResouledBlessings
 ---@return boolean
 function Resouled:CustomCursePresent(curse)
     local curseShifted = 1 << (curse - 1)
@@ -21,7 +33,14 @@ end
 local function rollCurse(rng)
     local cursesToRollFrom = {}
     for _, curseId in pairs(Resouled.Curses) do
-        table.insert(cursesToRollFrom, curseId)
+        if curseId ~= -1 then -- not found
+            table.insert(cursesToRollFrom, curseId)
+        end
+    end
+    for _, blessingId in pairs(Resouled.Blessings) do
+        if blessingId ~= -1 then
+            table.insert(cursesToRollFrom, blessingId)
+        end
     end
     return cursesToRollFrom[rng:RandomInt(#cursesToRollFrom) + 1] - 1
 end
@@ -38,6 +57,7 @@ local function onCurseEval(_, curses)
         local newCurse = rollCurse(rng)
         curses = 1 << newCurse
         currentLevel:AddCurse(curses, false)
+        print("Added curse: " .. newCurse)
         end
     return curses
 end

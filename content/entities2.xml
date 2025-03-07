@@ -28,16 +28,16 @@
     <entity name="Monstro's Soul" boss="1" id="20" variant="1" subtype="0" anm2path="souls/monstros_soul.anm2" baseHP="4000" champion="0" collisionDamage="1" collisionMass="50" collisionRadius="40" friction="1" numGridCollisionPoints="12" shadowSize="56" stageHP="0" portrait="2" tags="nodelirium"/>
 
     <entity name="Duke's Soul" id="67" variant="2" anm2path="souls/duke_of_flies_soul.anm2" baseHP="4000" boss="1" champion="0" collisionDamage="1" collisionMass="30" collisionRadius="35" friction="1" numGridCollisionPoints="12" shadowSize="34" stageHP="0" portrait="32" tags="nodelirium"/>
-    <entity name="Dukie's Soul" id="288" variant="1" anm2path="dukie_soul.anm2" baseHP="100" stageHP="0" collisionDamage="1" collisionMass="20" collisionRadius="13" friction="1" numGridCollisionPoints="12" shadowSize="17" portrait="146"/>
+    <entity name="Dukie's Soul" id="288" variant="1" anm2path="souls/dukie_soul.anm2" baseHP="100" stageHP="0" collisionDamage="1" collisionMass="20" collisionRadius="13" friction="1" numGridCollisionPoints="12" shadowSize="17" portrait="146"/>
 
 
     <entity anm2path="daddy_haunt.anm2" name="Daddy Haunt" id="3" variant="872" subtype="0" collisionRadius="100" shadowSize="15" friction="1"/>
-    <entity anm2path="cheese_grater_familiars.anm2" name="Mushroom Familiar" id="3" variant="445" subtype="0" shadowSize="15" friction="1.5"/>
-    <entity anm2path="cheese_grater_familiars.anm2" name="Cheese Familiar" id="3" variant="445" subtype="1" shadowSize="15" friction="1.5"/>
-    <entity anm2path="cheese_grater_familiars.anm2" name="Tomato Familiar" id="3" variant="445" subtype="2" shadowSize="15" friction="1.5"/>
-    <entity anm2path="cheese_grater_familiars.anm2" name="Sausage Familiar" id="3" variant="445" subtype="3" shadowSize="15" friction="1.5"/>
-    <entity anm2path="cheese_grater_familiars.anm2" name="Pineapple Familiar" id="3" variant="445" subtype="4" shadowSize="15" friction="1.5"/>
-    <entity anm2path="cheese_grater_familiars.anm2" name="Pizza Familiar" id="3" variant="445" subtype="5" shadowSize="10" friction="1" collisionRadius="10"/>
+    <entity anm2path="pizza_toppings.anm2" name="Mushroom Familiar" id="3" variant="445" subtype="0" shadowSize="15" friction="1.5"/>
+    <entity anm2path="pizza_toppings.anm2" name="Cheese Familiar" id="3" variant="445" subtype="1" shadowSize="15" friction="1.5"/>
+    <entity anm2path="pizza_toppings.anm2" name="Tomato Familiar" id="3" variant="445" subtype="2" shadowSize="15" friction="1.5"/>
+    <entity anm2path="pizza_toppings.anm2" name="Sausage Familiar" id="3" variant="445" subtype="3" shadowSize="15" friction="1.5"/>
+    <entity anm2path="pizza_toppings.anm2" name="Pineapple Familiar" id="3" variant="445" subtype="4" shadowSize="15" friction="1.5"/>
+    <entity anm2path="pizza_toppings.anm2" name="Pizza Familiar" id="3" variant="445" subtype="5" shadowSize="10" friction="1" collisionRadius="10"/>
 <!-- Four Souls V2 -->
 
 <!-- Requiem -->

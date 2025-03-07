@@ -6,6 +6,7 @@ local DUKIE_SOUL_VARIANT = Isaac.GetEntityVariantByName("Dukie's Soul")
 
 local SPRITE_PLAYBACK_SPEED_MULTIPLIER = 1.7
 
+local ENTITY_FLAGS = (EntityFlag.FLAG_NO_PHYSICS_KNOCKBACK)
 local SPRITE_SCALE_TO_ADD = 0.5
 local SPRITE_OFFSET = Vector(0, 10)
 local HITBOX_SIZE_MULTI = Vector(1, 0.5)
@@ -36,6 +37,7 @@ local PARTICLE_OFFSET = Vector(0, -65)
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
     if npc.Variant == DUKE_OF_FLIES_SOUL_VARIANT then
+        npc:AddEntityFlags(ENTITY_FLAGS)
         npc.Scale = npc.Scale + SPRITE_SCALE_TO_ADD --Sprite Scale
         npc.SpriteOffset = SPRITE_OFFSET --Sprite Offset
         npc.Size = npc.Size * HITBOX_SIZE_SCALE --Hitbox Size

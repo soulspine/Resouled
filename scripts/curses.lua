@@ -12,7 +12,7 @@ Resouled.Blessings = {
     BLESSING_OF_STEAM = Isaac.GetCurseIdByName("Blessing of Steam!"),
 }
 
-local CUSTOM_CURSE_CHANCE = 1
+local CUSTOM_CURSE_CHANCE = 0.1
 
 include("scripts.curses.BaseGameV2.curse_of_greed")
 include("scripts.curses.BaseGameV2.curse_of_pain")

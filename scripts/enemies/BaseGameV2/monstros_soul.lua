@@ -1,6 +1,7 @@
 local MONSTROS_SOUL_VARIANT = Isaac.GetEntityVariantByName("Monstro's Soul")
 local MONSTORS_SOUL_ITEM_SUBTYPE = Isaac.GetItemIdByName("Monstro's Soul")
 
+local ENTITY_FLAGS = (EntityFlag.FLAG_NO_PHYSICS_KNOCKBACK)
 local TEAR_COUNT = 10
 local TEAR_BULLET_FLAGS = (ProjectileFlags.SMART)
 local TEAR_SCALE = 1.5
@@ -15,11 +16,12 @@ local LASER_ROTATION_ANGLE = 360
 local LASER_ROTATION_SPEED = 2
 local LASER_MAX_DISTANCE = 100
 local LASER_TEAR_FLAGS = (TearFlags.TEAR_HOMING)
+local LASER_COLLISION_CLASS = EntityCollisionClass.ENTCOLL_PLAYERONLY
 
 local CREEP_SCALE = 2
 local CREEP_TIMEOUT = 100
 
-local SPRITE_PLAYBACK_SPEED_MULTIPLIER = 1.4
+local SPRITE_PLAYBACK_SPEED_MULTIPLIER = 1.6
 
 local LAND_MOVEMENT_BLOCK_COOLDOWN = 30
 
@@ -44,6 +46,7 @@ local PARTICLE_OFFSET = Vector(0, 0)
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
     if npc.Variant == MONSTROS_SOUL_VARIANT then
+        npc:AddEntityFlags(ENTITY_FLAGS)
         local data = npc:GetData()
         ---@type ProjectileParams
         data.TearParams = ProjectileParams()
@@ -105,6 +108,8 @@ local function onNpcUpdate(_, npc)
             for i = 0, LASER_COUNT - 1 do
                 local laser1 = EntityLaser.ShootAngle(LASER_VARIANT, npc.Position, 360/LASER_COUNT * i, LASER_TIMEOUT, Vector.Zero, npc)
                 local laser2 = EntityLaser.ShootAngle(LASER_VARIANT, npc.Position, 360/LASER_COUNT * i, LASER_TIMEOUT, Vector.Zero, npc)
+                laser1.EntityCollisionClass = LASER_COLLISION_CLASS
+                laser2.EntityCollisionClass = LASER_COLLISION_CLASS
                 laser1.TearFlags = LASER_TEAR_FLAGS
                 laser2.TearFlags = LASER_TEAR_FLAGS
                 laser1:SetActiveRotation(0, LASER_ROTATION_ANGLE, LASER_ROTATION_SPEED, false)

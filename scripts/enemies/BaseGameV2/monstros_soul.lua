@@ -2,7 +2,7 @@ local MONSTROS_SOUL_VARIANT = Isaac.GetEntityVariantByName("Monstro's Soul")
 local MONSTORS_SOUL_ITEM_SUBTYPE = Isaac.GetItemIdByName("Monstro's Soul")
 
 local ENTITY_FLAGS = (EntityFlag.FLAG_NO_PHYSICS_KNOCKBACK)
-local TEAR_COUNT = 10
+local TEAR_COUNT = 25
 local TEAR_BULLET_FLAGS = (ProjectileFlags.SMART)
 local TEAR_SCALE = 1.5
 local TEAR_TRAJECTORY_MODIFIER = 1
@@ -17,6 +17,7 @@ local LASER_ROTATION_SPEED = 2
 local LASER_MAX_DISTANCE = 100
 local LASER_TEAR_FLAGS = (TearFlags.TEAR_HOMING)
 local LASER_COLLISION_CLASS = EntityCollisionClass.ENTCOLL_PLAYERONLY
+local LASER_COLOR = Color(1.3, 1.7, 9, 0.5)
 
 local CREEP_SCALE = 2
 local CREEP_TIMEOUT = 100
@@ -118,6 +119,8 @@ local function onNpcUpdate(_, npc)
                 laser2:SetTimeout(LASER_TIMEOUT)
                 laser1:SetMaxDistance(LASER_MAX_DISTANCE)
                 laser2:SetMaxDistance(LASER_MAX_DISTANCE)
+                laser1.Color = LASER_COLOR
+                laser2.Color = LASER_COLOR
             end
         end
     end

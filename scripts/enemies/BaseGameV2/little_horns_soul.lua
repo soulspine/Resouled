@@ -73,6 +73,7 @@ local function onNpcInit(_, npc)
         npc.SizeMulti = HITBOX_MULTI
         data.CurrentAnimation = APPEAR
         data.attack = math.random(1,3)
+        data.bombCount = 0
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, LITTLE_HORN_SOUL_TYPE)
@@ -140,8 +141,12 @@ local function onNpcUpdate(_, npc)
                         local laBomba = Game():Spawn(EntityType.ENTITY_BOMB, BOMB_VARIANT, data.BOMB_POSITION_TRANSLATION[i], Vector.Zero, npc, BOMB_SUBTYPE, npc.InitSeed)
                         laBomba.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYEROBJECTS
                     end
-                    data.attackTimer = 0
-                    data.attack = math.random(1,3)
+                    data.bombCount = data.bombCount + 1
+                    if data.bombCount == 6 then
+                        data.attack = math.random(1,3)
+                        data.bombCount = 0
+                        data.attackTimer = 0
+                    end
                 end
             elseif data.attack == 3 then
                 sprite:Play(SUMMON)

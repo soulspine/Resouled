@@ -172,15 +172,13 @@ function Resouled:TotalCollectibleNum(collectibleId)
     return totalNum
 end
 
---- Sets targeet of the familiar to a random enemy in the room. It is stored in the room save data as an `EntityRef`. \
+--- Sets targeet of the familiar to a random enemy in the room. It is stored in its data as an `EntityRef`. \
 --- Returns `true` if a target was found, `false` otherwise
 ---@param familiar EntityFamiliar
 function Resouled:SelectRandomEnemyTarget(familiar)
-    local roomSave = SAVE_MANAGER.GetRoomSave(familiar)
+    local data = familiar:GetData()
     local room = Game():GetRoom()
     local entities = room:GetEntities()
-    local rng = RNG()
-    rng:SetSeed(familiar.InitSeed, 0)
     
     local validEnemies = {}
             
@@ -197,7 +195,7 @@ function Resouled:SelectRandomEnemyTarget(familiar)
     end
 
     ---@type EntityRef
-    roomSave.Target = validEnemies[math.random(#validEnemies)]
+    data.ResouledTarget = validEnemies[math.random(#validEnemies)]
     return true
 end
 
@@ -205,9 +203,9 @@ end
 --- @param familiar EntityFamiliar
 --- @return EntityNPC | nil
 function Resouled:GetEnemyTarget(familiar)
-    local roomSave = SAVE_MANAGER.GetRoomSave(familiar)
-    if roomSave.Target and not roomSave.Target.Entity:IsDead() then
-        return roomSave.Target.Entity:ToNPC()
+    local data = familiar:GetData()
+    if data.ResouledTarget and not data.ResouledTarget.Entity:IsDead() then
+        return data.ResouledTarget.Entity:ToNPC()
     else
         return nil
     end
@@ -215,8 +213,7 @@ end
 
 ---@param familiar EntityFamiliar
 function Resouled:ClearEnemyTarget(familiar)
-    local roomSave = SAVE_MANAGER.GetRoomSave(familiar)
-    roomSave.Target = nil
+    familiar:GetData().ResouledTarget = nil
 end
 
 -- borrowed from epiphany

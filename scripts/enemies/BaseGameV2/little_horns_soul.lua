@@ -22,6 +22,7 @@ local PARTICLE_TYPE = EffectVariant.DARK_BALL_SMOKE_PARTICLE
 local PARTICLE_COUNT = 5
 local PARTICLE_SPEED = 5
 local PARTICLE_COLOR = Color(8, 10, 12)
+local CLONE_PARTICLE_COLOR = Color(12, 6, 6)
 local PARTICLE_HEIGHT = 0
 local PARTICLE_SUBTYPE = 0
 local PARTICLE_OFFSET = Vector(0, -35)
@@ -79,7 +80,11 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, LITTLE_HORN_SOUL_
 ---@param npc EntityNPC
 local function onNpcUpdate(_, npc)
     if npc.Variant == LITTLE_HORN_SOUL_VARIANT then
-        Game():SpawnParticles(npc.Position + PARTICLE_OFFSET, PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_SPEED, PARTICLE_COLOR, PARTICLE_HEIGHT, PARTICLE_SUBTYPE)
+        if npc.SubType == 0 then
+            Game():SpawnParticles(npc.Position + PARTICLE_OFFSET, PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_SPEED, PARTICLE_COLOR, PARTICLE_HEIGHT, PARTICLE_SUBTYPE)
+        else
+            Game():SpawnParticles(npc.Position + PARTICLE_OFFSET, PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_SPEED, CLONE_PARTICLE_COLOR, PARTICLE_HEIGHT, PARTICLE_SUBTYPE)
+        end
 
         local sprite = npc:GetSprite()
         local data = npc:GetData()

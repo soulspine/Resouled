@@ -456,12 +456,15 @@ function Resouled:TryRevealQuestionMarkItem(pickup)
         return nil
     end
 
-    if Resouled:IsQuestionMarkItem(pickup) then
+    local data = pickup:GetData()
+    
+    if not data.ResouledRevealed and Resouled:IsQuestionMarkItem(pickup) then
         local sprite = pickup:GetSprite()
         local item = Isaac.GetItemConfig():GetCollectible(pickup.SubType)
         sprite:ReplaceSpritesheet(1, item.GfxFileName)
         sprite:LoadGraphics()
-        pickup:GetData().EID_DontHide = true
+        data.EID_DontHide = true
+        data.ResouledRevealed = true
         return true
     else
         return false

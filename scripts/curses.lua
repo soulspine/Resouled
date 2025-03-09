@@ -24,6 +24,11 @@ include("scripts.curses.Requiem.blessing_of_steam")
 ---@param curse ResouledCurses | ResouledBlessings
 ---@return boolean
 function Resouled:CustomCursePresent(curse)
+
+    if curse == -1 then
+        return false
+    end
+
     local curseShifted = 1 << (curse - 1)
     return Game():GetLevel():GetCurses() & curseShifted == curseShifted
 end

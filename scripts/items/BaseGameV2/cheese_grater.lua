@@ -1,10 +1,8 @@
 local CHEESE_GRATER = Isaac.GetItemIdByName("Cheese Grater")
 
 if EID then
-    EID:addCollectible(CHEESE_GRATER, "Reveals all {{UltraSecretRoom}} question mark items.#Works on alt path choices and {{CurseBlind}} Curse of the Blind.", "Cheese Grater")
+    EID:addCollectible(CHEESE_GRATER, "Reveals all {{QuestionMark}} question mark items.#Works on alt path choices and {{CurseBlind}} Curse of the Blind.", "Cheese Grater")
 end
-
-local LAYER_TO_REPLACE = 1
 
 ---@param pickup EntityPickup
 local function oncCollectibleUpdate(_, pickup) 

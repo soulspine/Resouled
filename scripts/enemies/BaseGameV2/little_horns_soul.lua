@@ -32,18 +32,18 @@ local LASER_GRID_COLLISION_CLASS = EntityGridCollisionClass.GRIDCOLL_NONE
 local LASER_COLOR = Color(1.3, 1.7, 9, 0.5)
 local LASER_VARIANT = LaserVariant.SHOOP
 
-local SHOOT_TRIGGER = "ResouledShoot"
-local BOMB_TRIGGER = "ResouledBomb"
-local DEATH_TRIGGER = "ResouledDeath"
-local SUMMON_TRIGGER = "ResouledSummon"
-local COLLISION_OFF_TRIGGER = "ResouledCollisionOFF"
-local COLLISION_ON_TRIGGER = "ResouledCollisionON"
+local EVENT_TRIGGER_RESOULED_SHOOT = "ResouledShoot"
+local EVENT_TRIGGER_RESOULED_BOMB = "ResouledBomb"
+local EVENT_TRIGGER_RESOULED_DEATH = "ResouledDeath"
+local EVENT_TRIGGER_RESOULED_SUMMON = "ResouledSummon"
+local EVENT_TRIGGER_RESOULED_COLLISION_OFF = "ResouledCollisionOFF"
+local EVENT_TRIGGER_RESOULED_COLLISION_ON = "ResouledCollisionON"
 
-local IDLE = "Idle"
-local ATTACK = "Shoot"
-local BOMB = "Bomb"
-local APPEAR = "Appear"
-local SUMMON = "Summon"
+local ANIMATION_IDLE = "Idle"
+local ANIMATION_ATTACK = "Shoot"
+local ANIMATION_BOMB = "Bomb"
+local ANIMATION_APPEAR = "Appear"
+local ANIMATION_SUMMON = "Summon"
 
 local BOMB_VARIANT = BombVariant.BOMB_SMALL
 local BOMB_SUBTYPE = BombSubType.BOMB_NORMAL
@@ -71,7 +71,7 @@ local function onNpcInit(_, npc)
         npc.Scale = SPRITE_SIZE
         npc.Size = npc.Size * HITBOX_SIZE
         npc.SizeMulti = HITBOX_MULTI
-        data.CurrentAnimation = APPEAR
+        data.CurrentAnimation = ANIMATION_APPEAR
         data.attack = math.random(1,3)
         data.bombCount = 0
     end
@@ -90,9 +90,9 @@ local function onNpcUpdate(_, npc)
         local sprite = npc:GetSprite()
         local data = npc:GetData()
 
-        if data.CurrentAnimation ~= IDLE and sprite:IsFinished(data.CurrentAnimation) then
-            data.CurrentAnimation = IDLE
-            sprite:Play(IDLE, true)
+        if data.CurrentAnimation ~= ANIMATION_IDLE and sprite:IsFinished(data.CurrentAnimation) then
+            data.CurrentAnimation = ANIMATION_IDLE
+            sprite:Play(ANIMATION_IDLE, true)
         end
 
         data.x = (data.x + 0.1)%(ONE_FULL_ORBIT/ORBIT_SPEED)
@@ -108,9 +108,9 @@ local function onNpcUpdate(_, npc)
         data.attackTimer = data.attackTimer + 1
         if data.attackTimer >= data.attackCooldown*30 then
             if data.attack == 1 then
-                sprite:Play(ATTACK)
-                data.CurrentAnimation = ATTACK
-                if sprite:IsEventTriggered(SHOOT_TRIGGER) then
+                sprite:Play(ANIMATION_ATTACK)
+                data.CurrentAnimation = ANIMATION_ATTACK
+                if sprite:IsEventTriggered(EVENT_TRIGGER_RESOULED_SHOOT) then
                     local randomDir = math.random(1,2)*180 - 90
                     local ball = Game():Spawn(SOUL_BALL_TYPE, SOUL_BALL_VARIANT, npc.Position, Vector.Zero, npc, 0, npc.InitSeed)
                     local laser = EntityLaser.ShootAngle(LASER_VARIANT, ball.Position, randomDir, 300, LASER_OFFSET, ball)
@@ -132,9 +132,9 @@ local function onNpcUpdate(_, npc)
                     [7] = npc:GetPlayerTarget().Position + Vector(70, -70),
                     [8] = npc:GetPlayerTarget().Position + Vector(-70, -70),
                 }
-                sprite:Play(BOMB)
-                data.CurrentAnimation = BOMB
-                if sprite:IsEventTriggered(BOMB_TRIGGER) then
+                sprite:Play(ANIMATION_BOMB)
+                data.CurrentAnimation = ANIMATION_BOMB
+                if sprite:IsEventTriggered(EVENT_TRIGGER_RESOULED_BOMB) then
                     npc:PlaySound(BOMB_SPAWN_SOUND, BOMB_SPAWN_VOLUME, BOMB_SPAWN_SOUND_DELAY, false, BOMB_SPAWN_PITCH)
                     for i = 1, 8 do
                         local effect = Game():Spawn(EntityType.ENTITY_EFFECT, BOMB_SPAWN_EFFECT, data.BOMB_POSITION_TRANSLATION[i], Vector.Zero, npc, 0, npc.InitSeed)
@@ -149,9 +149,9 @@ local function onNpcUpdate(_, npc)
                     end
                 end
             elseif data.attack == 3 then
-                sprite:Play(SUMMON)
-                data.CurrentAnimation = SUMMON
-                if sprite:IsEventTriggered(SUMMON_TRIGGER) then
+                sprite:Play(ANIMATION_SUMMON)
+                data.CurrentAnimation = ANIMATION_SUMMON
+                if sprite:IsEventTriggered(EVENT_TRIGGER_RESOULED_SUMMON) then
                     Game():Spawn(LITTLE_HORN_SOUL_TYPE, LITTLE_HORN_SOUL_VARIANT, npc.Position, Vector.Zero, npc, LITTLE_HORN_SOUL_CLONE_SUBTYPE, npc.InitSeed)
                     data.attackTimer = 0
                     data.attack = math.random(1,3)

@@ -8,6 +8,7 @@ include("scripts.enemies.BaseGameV2.monstros_soul")
 include("scripts.enemies.BaseGameV2.duke_of_flies_soul")
 include("scripts.enemies.BaseGameV2.little_horns_soul")
 include("scripts.enemies.BaseGameV2.soul_ball")
+include("scripts.enemies.BaseGameV2.bloats_soul")
 -- Four Souls V2
 -- Requiem
 -- Summer Of Isaac

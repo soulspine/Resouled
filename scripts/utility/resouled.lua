@@ -406,3 +406,64 @@ function Resouled:TrySpawnSoulItem(soul, position)
         end
     end
 end
+
+
+-- THIS IS FROM EID'S CODE BUT MODIFIED A BIT
+-- https://github.com/wofsauge/External-Item-Descriptions/blob/9908279ec579f2b1ec128c9c513e4cb3c3138a93/main.lua#L221
+local questionMarkSprite = Sprite()
+questionMarkSprite:Load("gfx/005.100_collectible.anm2",true)
+questionMarkSprite:ReplaceSpritesheet(1,"gfx/items/collectibles/questionmark.png")
+questionMarkSprite:LoadGraphics()
+
+--- Checks whether the pickup is a question mark item. \
+--- If pickup is not a collectible, returns `nil`
+---@param pickup EntityPickup
+---@return boolean | nil
+function Resouled:IsQuestionMarkItem(pickup)
+
+    if pickup.Variant ~= PickupVariant.PICKUP_COLLECTIBLE then
+        return nil
+    end
+
+    local entitySprite = pickup:GetSprite()
+    local animationName = entitySprite:GetAnimation()
+    if animationName ~= "Idle" and animationName ~= "ShopIdle" then
+        return false
+    end
+
+    questionMarkSprite:SetFrame(entitySprite:GetAnimation(),entitySprite:GetFrame())
+    for i = -1,1,1 do
+		for j = -40,10,3 do
+			local qcolor = questionMarkSprite:GetTexel(Vector(i,j), Vector.Zero, 1, 1)
+			local ecolor = entitySprite:GetTexel(Vector(i,j), Vector.Zero, 1, 1)
+			if qcolor.Red ~= ecolor.Red or qcolor.Green ~= ecolor.Green or qcolor.Blue ~= ecolor.Blue then
+				-- it is not same with question mark sprite
+				return false
+			end
+		end
+	end
+    return true
+end
+
+--- Tries to reveal a question mark item. \
+--- If it succeeds, returns `true`, otherwise `false` \
+--- If pickup is not a collectible, returns `nil`
+---@param pickup EntityPickup
+---@return boolean | nil
+function Resouled:TryRevealQuestionMarkItem(pickup)
+
+    if pickup.Variant ~= PickupVariant.PICKUP_COLLECTIBLE then
+        return nil
+    end
+
+    if Resouled:IsQuestionMarkItem(pickup) then
+        local sprite = pickup:GetSprite()
+        local item = Isaac.GetItemConfig():GetCollectible(pickup.SubType)
+        sprite:ReplaceSpritesheet(1, item.GfxFileName)
+        sprite:LoadGraphics()
+        pickup:GetData().EID_DontHide = true
+        return true
+    else
+        return false
+    end
+end

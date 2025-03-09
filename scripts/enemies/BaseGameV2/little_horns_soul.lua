@@ -24,7 +24,7 @@ local PARTICLE_SPEED = 5
 local PARTICLE_COLOR = Color(8, 10, 12)
 local PARTICLE_HEIGHT = 0
 local PARTICLE_SUBTYPE = 0
-local PARTICLE_OFFSET = Vector(0, -20)
+local PARTICLE_OFFSET = Vector(0, -35)
 
 local LASER_OFFSET = Vector(0, -25)
 local LASER_GRID_COLLISION_CLASS = EntityGridCollisionClass.GRIDCOLL_NONE
@@ -93,6 +93,11 @@ local function onNpcUpdate(_, npc)
 
         data.orbit = Vector(math.sin(data.x * ORBIT_SPEED), math.cos(data.x * ORBIT_SPEED)) * (ORBIT_SIZE * ORBIT_SPEED)
         npc.Velocity = (npc:GetPlayerTarget().Position - npc.Position):Normalized() * FOLLOW_SPEED + data.orbit
+        if npc.Position.Y - npc:GetPlayerTarget().Position.Y > 0 and sprite.FlipX then
+            sprite.FlipX = false
+        elseif npc.Position.Y - npc:GetPlayerTarget().Position.Y < 0 and not sprite.FlipX then
+            sprite.FlipX = true
+        end
 
         data.attackTimer = data.attackTimer + 1
         if data.attackTimer >= data.attackCooldown*30 then
@@ -143,6 +148,7 @@ local function onNpcUpdate(_, npc)
                 end
             end
         end
+        print(data.orbit)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, onNpcUpdate, LITTLE_HORN_SOUL_TYPE)

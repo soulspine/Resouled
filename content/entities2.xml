@@ -30,8 +30,8 @@
     <entity name="Duke's Soul" id="67" variant="2" anm2path="souls/duke_of_flies_soul.anm2" baseHP="4000" boss="1" champion="0" collisionDamage="1" collisionMass="30" collisionRadius="35" friction="1.02" numGridCollisionPoints="12" shadowSize="34" stageHP="0" portrait="32" tags="nodelirium"/>
     <entity name="Dukie's Soul" id="288" variant="1" anm2path="souls/dukie_soul.anm2" baseHP="75" stageHP="0" collisionDamage="1" collisionMass="20" collisionRadius="13" friction="1.02" numGridCollisionPoints="12" shadowSize="17" portrait="146"/>
 
-    <entity name="Little Horn's Soul" id="404" variant="2" anm2path="souls/little_horns_soul.anm2" baseHP="4000" stageHP="0" boss="1" champion="0" collisionDamage="1" collisionMass="30" collisionRadius="16" friction="1" numGridCollisionPoints="12" shadowSize="16" portrait="82"/>
-    <entity name="Little Horn's Soul Clone" id="404" variant="2" subtype="1" anm2path="souls/little_horns_soul_clone.anm2" baseHP="7" stageHP="0" boss="0" champion="0" collisionDamage="1" collisionMass="30" collisionRadius="16" friction="1" numGridCollisionPoints="12" shadowSize="16" portrait="82"/>
+    <entity name="Little Horn's Soul" id="404" variant="2" anm2path="souls/little_horns_soul.anm2" baseHP="4000" stageHP="0" boss="1" champion="0" collisionDamage="1" collisionMass="30" collisionRadius="16" friction="1" numGridCollisionPoints="12" shadowSize="19" portrait="82"/>
+    <entity name="Little Horn's Soul Clone" id="404" variant="2" subtype="1" anm2path="souls/little_horns_soul_clone.anm2" baseHP="7" stageHP="0" boss="0" champion="0" collisionDamage="1" collisionMass="30" collisionRadius="16" friction="1" numGridCollisionPoints="12" shadowSize="19" portrait="82"/>
     <entity name="Soul Ball" id="404" variant="3" anm2path="souls/soul_ball.anm2" baseHP="20" stageHP="0" champion="0" collisionDamage="0" collisionMass="999" collisionRadius="16" friction="0" numGridCollisionPoints="12" shadowSize="16" portrait="82"/>
 
     <entity anm2path="daddy_haunt.anm2" name="Daddy Haunt" id="3" variant="872" subtype="0" collisionRadius="100" shadowSize="15" friction="1"/>

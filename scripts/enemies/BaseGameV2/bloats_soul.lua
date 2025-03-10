@@ -3,7 +3,7 @@ local BLOATS_SOUL_VARIANT = Isaac.GetEntityVariantByName("Bloat's Soul")
 
 local ENTITY_FLAGS = (EntityFlag.FLAG_NO_PHYSICS_KNOCKBACK)
 local ENTITY_COLLISION_CLASS = EntityCollisionClass.ENTCOLL_PLAYEROBJECTS
-local GRID_COLLISION_CLASS = GridCollisionClass.COLLISION_NONE
+local GRID_COLLISION_CLASS = GridCollisionClass.COLLISION_WALL
 
 local PROJECTILE_PARAMS = ProjectileParams()
 local TEAR_COUNT = 20
@@ -60,6 +60,8 @@ local function onEntityInit(_, npc)
         data.TearParams.Variant = TEAR_VARIANT
         data.TearParams.Color = TEAR_COLOR
 
+        data.VelocityChange = 0
+
         data.Phase = "First"
 
     end
@@ -79,7 +81,14 @@ local function onEntityUpdate(_, npc)
             sprite:Play(IDLE, true)
         end
 
+
+        data.VelocityChange = data.VelocityChange + 1
         data.attackTimer = data.attackTimer + 1
+        if data.Phase == "First" and data.VelocityChange == 6 then
+            local randomMovement =  (npc:GetPlayerTarget().Position - npc.Position)/100 + Vector(math.random(-1, 1), math.random(-1, 1))
+            npc.Velocity = randomMovement
+            data.VelocityChange = 0
+        end
 
         if data.attackTimer >= data.attackCooldown * 30 and data.Phase == "First" then
             if data.currentAttack == 1 then

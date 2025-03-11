@@ -29,7 +29,7 @@ local EVENT_TRIGGER_RESOULED_ASCEND = "ResouledAscend"
 local EVENT_TRIGGER_RESOULED_DESCEND = "ResouledDescend"
 
 if EID then
-    EID:addCollectible(DADDY_HAUNT, "Not implemented yet", "Daddy Haunt")
+    EID:addCollectible(DADDY_HAUNT, "Locks onto an enemy and hovers over it slamming down every " .. math.ceil(SLAM_COOLDOWN/30) .. " seconds, dealing " .. math.floor(SLAM_DAMAGE) .. " damage in a small AoE.#Enemies hit have a " .. math.floor(SLAM_FEAR_CHANCE * 100) .. "% chance to be {{Fear}} feared for " .. math.floor(SLAM_FEAR_DURATION/30) .. " seconds.", "Daddy Haunt")
 end
 
 ---@param player EntityPlayer
@@ -45,9 +45,13 @@ Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval)
 ---@param familiar EntityFamiliar
 local function onFamiliarInit(_, familiar)
     local data = familiar:GetData()
-    data.ResouledCooldown = SLAM_COOLDOWN
+    local sprite = familiar:GetSprite()
+    data.ResouledCooldown = math.random(0, SLAM_COOLDOWN)
     data.ResouledAscendFrames = 0
     data.ResouledDescendFrames = 0
+    sprite.Color = SPRITE_COLOR_FOLLOW_PARENT
+    sprite.Scale = SPRITE_SCALE
+
 end
 Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onFamiliarInit, DADDY_HAUNT_VARIANT)
 
@@ -64,10 +68,10 @@ local function onFamiliarUpdate(_, familiar)
         if room:GetAliveEnemiesCount() > 0 then
             local target = Resouled:GetEnemyTarget(familiar)
             if target then
-                sprite.Color = SPRITE_COLOR_ENEMY_HOVER
-                
+
                 if familiar.IsFollower then
-                    familiar:AddToFollowers()
+                    familiar:RemoveFromFollowers()
+                    sprite.Color = SPRITE_COLOR_ENEMY_HOVER
                 end
 
                 familiar:FollowPosition(target.Position)
@@ -79,19 +83,18 @@ local function onFamiliarUpdate(_, familiar)
                 else
                     data.ResouledCooldown = data.ResouledCooldown - 1
                 end
-
             else
                 Resouled:SelectRandomEnemyTarget(familiar)
                 if sprite:IsPlaying(ANIMATION_IDLE) then
                     familiar.PositionOffset = POSITION_OFFSET_ENEMY_HOVER
                 end
             end
-            
         end
     else
-        sprite.Color = SPRITE_COLOR_FOLLOW_PARENT
+        
         if not familiar.IsFollower then
-            familiar:AddToFollowers()   
+            familiar:AddToFollowers()
+            sprite.Color = SPRITE_COLOR_FOLLOW_PARENT
         end
         familiar:FollowParent()
         familiar.PositionOffset = POSITION_OFFSET_FOLLOW_PARENT

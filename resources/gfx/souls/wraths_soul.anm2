@@ -1,5 +1,5 @@
 <AnimatedActor>
-	<Info CreatedBy="robot" CreatedOn="3/10/2025 9:10:06 PM" Version="103" Fps="30"/>
+	<Info CreatedBy="robot" CreatedOn="3/12/2025 8:42:56 PM" Version="104" Fps="30"/>
 	<Content>
 		<Spritesheets>
 			<Spritesheet Path="wraths_soul_body.png" Id="0"/>

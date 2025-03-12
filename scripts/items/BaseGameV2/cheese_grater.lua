@@ -7,6 +7,7 @@ local GRATED_OFF_ENEMY_HEALTH_FRACTION = 0.01
 local GRATED_OFF_ENEMY_TYPE = EntityType.ENTITY_SMALL_MAGGOT
 local GRATED_OFF_ENEMY_VARIANT = 0
 local GRATED_OFF_ENEMY_SUBTYPE = 0
+local GRATED_OFF_ENEMY_SPAWN_VELOCITY_MULTIPLIER = 3
 
 if EID then
     EID:addCollectible(CHEESE_GRATER, "Reveals all {{QuestionMark}} question mark items.#Works on alt path choices and {{CurseBlind}} Curse of the Blind.", "Cheese Grater")
@@ -35,17 +36,25 @@ Resouled:AddCallback(ModCallbacks.MC_POST_TEAR_INIT, onTearInit)
 local function onEntityTakeDamage(_, entity, amount, damageFlag, source, countdown)
     if source.Entity then
         local player = source.Entity:ToPlayer()
+        local knife = source.Entity:ToKnife()
         local tear = source.Entity:ToTear()
+
+        if tear or knife then
+            player = source.Entity.SpawnerEntity:ToPlayer()
+        end
+
         local npc = entity:ToNPC()
         if
         (player and player:HasCollectible(CHEESE_GRATER) and player:GetCollectibleRNG(CHEESE_GRATER):RandomFloat() < APPLY_TEAR_EFFECT_CHANCE(player.Luck)) or
         (tear and Resouled:GetCustomTearEffects(tear) and Resouled:GetCustomTearEffects(tear) | Resouled.TearEffects.CHEESE_GRATER == Resouled.TearEffects.CHEESE_GRATER) then
             if npc and npc:IsVulnerableEnemy() and not (damageFlag & DamageFlag.DAMAGE_FAKE == DamageFlag.DAMAGE_FAKE) and not Resouled:IsCustomTearEffectOnCooldown(npc, Resouled.TearEffects.CHEESE_GRATER) then
-                entity:TakeDamage(DAMAGE_MULTIPLIER * amount, damageFlag | DamageFlag.DAMAGE_FAKE, source, countdown)
-                Resouled:ApplyCustomTearEffectCooldown(npc, Resouled.TearEffects.CHEESE_GRATER, COOLDOWN)
 
-                if npc.HitPoints - DAMAGE_MULTIPLIER * amount > 0 then
-                    local gratedOffEntity = Game():Spawn(GRATED_OFF_ENEMY_TYPE, GRATED_OFF_ENEMY_VARIANT, npc.Position, Vector.FromAngle(math.random(360)):Normalized(), npc, GRATED_OFF_ENEMY_SUBTYPE, npc.DropSeed)
+                local newAmount = DAMAGE_MULTIPLIER * amount
+                if npc.HitPoints - newAmount > 0 then
+                    entity:TakeDamage(newAmount, damageFlag | DamageFlag.DAMAGE_FAKE, source, countdown)
+                    Resouled:ApplyCustomTearEffectCooldown(npc, Resouled.TearEffects.CHEESE_GRATER, COOLDOWN)
+
+                    local gratedOffEntity = Game():Spawn(GRATED_OFF_ENEMY_TYPE, GRATED_OFF_ENEMY_VARIANT, npc.Position, Vector.FromAngle(math.random(360)):Normalized() * GRATED_OFF_ENEMY_SPAWN_VELOCITY_MULTIPLIER, npc, GRATED_OFF_ENEMY_SUBTYPE, npc.DropSeed)
                     gratedOffEntity:AddHealth(-1*(1-GRATED_OFF_ENEMY_HEALTH_FRACTION)*gratedOffEntity.MaxHitPoints)
                 end
 

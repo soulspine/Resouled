@@ -436,10 +436,33 @@ function Resouled:IsQuestionMarkItem(pickup)
         return false
     end
 
+    local offsetY = 0
+    local overlayFrame = entitySprite:GetOverlayFrame()
+
+    if overlayFrame == 4 -- this is so stupid XD
+    or overlayFrame == 5
+    or overlayFrame == 6
+    or overlayFrame == 7
+    or overlayFrame == 8
+    or overlayFrame == 9
+    or overlayFrame == 10
+    or overlayFrame == 12
+    or overlayFrame == 13
+    or overlayFrame == 14
+    or overlayFrame == 16
+    or overlayFrame == 17
+    or overlayFrame == 18
+    or overlayFrame == 19 then
+        offsetY = -5
+    elseif overlayFrame == 11 then
+        offsetY = -8
+    end
+
     questionMarkSprite:SetFrame(entitySprite:GetAnimation(),entitySprite:GetFrame())
+
     for i = -1,1,1 do
 		for j = -40,10,3 do
-			local qcolor = questionMarkSprite:GetTexel(Vector(i,j), Vector.Zero, 1, 1)
+			local qcolor = questionMarkSprite:GetTexel(Vector(i,j - offsetY), Vector.Zero, 1, 1)
 			local ecolor = entitySprite:GetTexel(Vector(i,j), Vector.Zero, 1, 1)
 			if qcolor.Red ~= ecolor.Red or qcolor.Green ~= ecolor.Green or qcolor.Blue ~= ecolor.Blue then
 				-- it is not same with question mark sprite

@@ -1,5 +1,5 @@
 <AnimatedActor>
-	<Info CreatedBy="Unknown" CreatedOn="3/12/2025 7:24:52 PM" Version="0" Fps="30"/>
+	<Info CreatedBy="Unknown" CreatedOn="3/12/2025 10:39:33 PM" Version="3" Fps="30"/>
 	<Content>
 		<Spritesheets>
 			<Spritesheet Path="wraths_bomb.png" Id="0"/>
@@ -9,11 +9,11 @@
 		</Layers>
 		<Nulls/>
 		<Events>
-			<Event Name="Explosion" Id="0"/>
-			<Event Name="FuseStart" Id="1"/>
+			<Event Name="ResouledExplosion" Id="0"/>
+			<Event Name="ResouledFuseStart" Id="1"/>
 		</Events>
 	</Content>
-	<Animations DefaultAnimation="Fuse">
+	<Animations DefaultAnimation="Spawn">
 		<Animation Name="Fuse" FrameNum="35" Loop="false">
 			<RootAnimation>
 				<Frame XPosition="0" YPosition="0" XScale="100" YScale="100" Delay="1" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="255" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="false"/>

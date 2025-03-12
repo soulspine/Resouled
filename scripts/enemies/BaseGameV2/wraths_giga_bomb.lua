@@ -5,8 +5,16 @@ local WRATHS_GIGA_BOMB_SUBTYPE = 1
 local SPAWN_ANM = "Spawn"
 local FUSE_ANM = "Fuse"
 
-local FUSE_TRIGGER = "FuseStart"
-local EXPLOSION_TRIGGER = "Explosion"
+local EVENT_TRIGGER_RESOULED_FUSE_START = "ResouledFuseStart"
+local EVENT_TRIGGER_RESOULED_EXPLOSION = "ResouledExplosion"
+
+local EXPLOSION_DAMAGE = 0
+local EXPLOSION_COLOR = Color(1, 1, 1, 1, 0, 0, 0)
+local EXPLOSION_TEAR_FLAGS = (TearFlags.TEAR_EXPLOSIVE | TearFlags.TEAR_GIGA_BOMB)
+local EXPLOSION_RADIUS_MULTIPLIER = 2
+local EXPLOSION_LINE_CHECK = false
+local EXPLOSION_DAMAGE_SOURCE = false
+local EXPLOSION_DAMAGE_FLAGS = (DamageFlag.DAMAGE_FAKE)
 
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
@@ -21,12 +29,10 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, WRATHS_GIGA_BOMB_
 local function onNpcUpdate(_, npc)
     if npc.Variant == WRATHS_GIGA_BOMB_VARIANT and npc.SubType == WRATHS_GIGA_BOMB_SUBTYPE then
         local sprite = npc:GetSprite()
-        if sprite:WasEventTriggered(FUSE_TRIGGER) then
+        if sprite:WasEventTriggered(EVENT_TRIGGER_RESOULED_FUSE_START) then
             sprite:Play(FUSE_ANM, true)
-        end
-        if sprite:WasEventTriggered(EXPLOSION_TRIGGER) then
-            Game():BombExplosionEffects(npc.Position, 1, TearFlags.TEAR_EXPLOSIVE, Color(1, 1, 1), npc, 2, true, true, DamageFlag.DAMAGE_EXPLOSION)
-            Game():GetRoom():MamaMegaExplosion(npc.Position)
+        elseif sprite:IsEventTriggered(EVENT_TRIGGER_RESOULED_EXPLOSION) then
+            Game():BombExplosionEffects(npc.Position, EXPLOSION_DAMAGE, EXPLOSION_TEAR_FLAGS, EXPLOSION_COLOR, npc, EXPLOSION_RADIUS_MULTIPLIER, EXPLOSION_LINE_CHECK, EXPLOSION_DAMAGE_SOURCE, EXPLOSION_DAMAGE_FLAGS)
             Game():Spawn(WRATHS_GIGA_BOMB_TYPE, WRATHS_GIGA_BOMB_VARIANT, npc.Position, Vector.Zero, nil, 0, npc.InitSeed)
             npc:Remove()
         end
@@ -34,18 +40,3 @@ local function onNpcUpdate(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, onNpcUpdate, WRATHS_GIGA_BOMB_TYPE)
-
----@param entity Entity
----@param amount number
----@param damageFlag integer
----@param source EntityRef
----@param countdown integer
-local function onEntityTakeDamage(_, entity, amount, damageFlag, source, countdown)
-    if source.Entity.Type == WRATHS_GIGA_BOMB_TYPE and source.Entity.Variant == WRATHS_GIGA_BOMB_VARIANT and source.Entity.SubType == WRATHS_GIGA_BOMB_SUBTYPE then
-        if entity == nil then
-            return
-        end
-        return false
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, onEntityTakeDamage)

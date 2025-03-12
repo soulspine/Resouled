@@ -50,7 +50,6 @@ local PARTICLE_OFFSET = Vector(0, 0)
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
     if npc.Variant == MONSTROS_SOUL_VARIANT then
-        local data = npc:GetData()
         local sprite = npc:GetSprite()
         if NORMAL then
             sprite:ReplaceSpritesheet(0, "gfx/souls/monstros_soul_boss_normal.png")

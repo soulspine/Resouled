@@ -1,6 +1,8 @@
 local BLOATS_SOUL_TYPE = Isaac.GetEntityTypeByName("Bloat's Soul")
 local BLOATS_SOUL_VARIANT = Isaac.GetEntityVariantByName("Bloat's Soul")
 
+local NORMAL = true
+
 local ENTITY_FLAGS = (EntityFlag.FLAG_NO_PHYSICS_KNOCKBACK)
 local ENTITY_COLLISION_CLASS = EntityCollisionClass.ENTCOLL_ALL
 local GRID_COLLISION_CLASS = GridCollisionClass.COLLISION_SOLID
@@ -41,6 +43,7 @@ local PARTICLE_TYPE = EffectVariant.DARK_BALL_SMOKE_PARTICLE
 local PARTICLE_COUNT = 5
 local PARTICLE_SPEED = 5
 local PARTICLE_COLOR = Color(8, 10, 12)
+local NORMAL_PARTICLE_COLOR = Color(1.5,1,1)
 local PARTICLE_HEIGHT = 0
 local PARTICLE_SUBTYPE = 0
 local PARTICLE_OFFSET = Vector(0, 0)
@@ -61,6 +64,10 @@ local function onEntityInit(_, npc)
     if npc.Variant == BLOATS_SOUL_VARIANT then
         local sprite = npc:GetSprite()
         local data = npc:GetData()
+        if NORMAL then
+            sprite:ReplaceSpritesheet(0, "gfx/souls/bloats_soul_normal.png")
+            sprite:LoadGraphics()
+        end
         npc.GridCollisionClass = GRID_COLLISION_CLASS
         npc.EntityCollisionClass = ENTITY_COLLISION_CLASS
         npc:AddEntityFlags(ENTITY_FLAGS)
@@ -98,7 +105,11 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onEntityInit, BLOATS_SOUL_TY
 local function onEntityUpdate(_, npc)
     if npc.Variant == BLOATS_SOUL_VARIANT then
 
-        Game():SpawnParticles(npc.Position + PARTICLE_OFFSET, PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_SPEED, PARTICLE_COLOR, PARTICLE_HEIGHT, PARTICLE_SUBTYPE)
+        if NORMAL then
+            Game():SpawnParticles(npc.Position + PARTICLE_OFFSET, PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_SPEED, NORMAL_PARTICLE_COLOR, PARTICLE_HEIGHT, PARTICLE_SUBTYPE)
+        else
+            Game():SpawnParticles(npc.Position + PARTICLE_OFFSET, PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_SPEED, PARTICLE_COLOR, PARTICLE_HEIGHT, PARTICLE_SUBTYPE)
+        end
 
         local sprite = npc:GetSprite()
         local data = npc:GetData()

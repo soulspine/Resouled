@@ -204,10 +204,13 @@ end
 --- @return EntityNPC | nil
 function Resouled:GetEnemyTarget(familiar)
     local data = familiar:GetData()
-    if data.ResouledTarget and not data.ResouledTarget.Entity:IsDead() then
-        return data.ResouledTarget.Entity:ToNPC()
-    else
-        return nil
+    if data.ResouledTarget then
+        ---@type EntityNPC
+        local npc = data.ResouledTarget.Entity:ToNPC()
+
+        if npc and npc:IsVulnerableEnemy() and npc:IsActiveEnemy() and npc:IsVisible() and not npc:IsDead() then
+            return npc
+        end
     end
 end
 

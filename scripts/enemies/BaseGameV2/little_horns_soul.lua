@@ -2,6 +2,8 @@ local LITTLE_HORN_SOUL_TYPE = Isaac.GetEntityTypeByName("Little Horn's Soul")
 local LITTLE_HORN_SOUL_VARIANT = Isaac.GetEntityVariantByName("Little Horn's Soul")
 local LITTLE_HORN_SOUL_CLONE_SUBTYPE = 1
 
+local NORMAL = true
+
 local SOUL_BALL_TYPE = Isaac.GetEntityTypeByName("Soul Ball")
 local SOUL_BALL_VARIANT = Isaac.GetEntityVariantByName("Soul Ball")
 
@@ -23,6 +25,8 @@ local PARTICLE_COUNT = 5
 local PARTICLE_SPEED = 5
 local PARTICLE_COLOR = Color(8, 10, 12)
 local CLONE_PARTICLE_COLOR = Color(12, 6, 6)
+local NORMAL_PARTICLE_COLOR = Color(1.5,1,1)
+local CLONE_NORMAL_PARTICLE_COLOR = Color(3,1,1)
 local PARTICLE_HEIGHT = 0
 local PARTICLE_SUBTYPE = 0
 local PARTICLE_OFFSET = Vector(0, -35)
@@ -61,6 +65,14 @@ local function onNpcInit(_, npc)
     if npc.Variant == LITTLE_HORN_SOUL_VARIANT then
         local sprite = npc:GetSprite()
         local data = npc:GetData()
+        if NORMAL then
+            sprite:ReplaceSpritesheet(0, "gfx/souls/little_horns_soul_normal.png")
+            sprite:LoadGraphics()
+        end
+        if npc.SubType == LITTLE_HORN_SOUL_CLONE_SUBTYPE then
+            sprite:ReplaceSpritesheet(0, "gfx/souls/little_horns_soul_clone_normal.png")
+            sprite:LoadGraphics()
+        end
         npc.GridCollisionClass = GRID_COLLISION_CLASS
         npc.EntityCollisionClass = ENTITY_COLLISION_CLASS
         npc:AddEntityFlags(ENTITY_FLAGS)
@@ -82,9 +94,17 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, LITTLE_HORN_SOUL_
 local function onNpcUpdate(_, npc)
     if npc.Variant == LITTLE_HORN_SOUL_VARIANT then
         if npc.SubType == 0 then
-            Game():SpawnParticles(npc.Position + PARTICLE_OFFSET, PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_SPEED, PARTICLE_COLOR, PARTICLE_HEIGHT, PARTICLE_SUBTYPE)
+            if NORMAL then
+                Game():SpawnParticles(npc.Position + PARTICLE_OFFSET, PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_SPEED, NORMAL_PARTICLE_COLOR, PARTICLE_HEIGHT, PARTICLE_SUBTYPE)
+            else
+                Game():SpawnParticles(npc.Position + PARTICLE_OFFSET, PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_SPEED, PARTICLE_COLOR, PARTICLE_HEIGHT, PARTICLE_SUBTYPE)
+            end
         else
-            Game():SpawnParticles(npc.Position + PARTICLE_OFFSET, PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_SPEED, CLONE_PARTICLE_COLOR, PARTICLE_HEIGHT, PARTICLE_SUBTYPE)
+            if NORMAL then
+                Game():SpawnParticles(npc.Position + PARTICLE_OFFSET, PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_SPEED, CLONE_NORMAL_PARTICLE_COLOR, PARTICLE_HEIGHT, PARTICLE_SUBTYPE)
+            else
+                Game():SpawnParticles(npc.Position + PARTICLE_OFFSET, PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_SPEED, PARTICLE_COLOR, PARTICLE_HEIGHT, PARTICLE_SUBTYPE)
+            end
         end
 
         local sprite = npc:GetSprite()

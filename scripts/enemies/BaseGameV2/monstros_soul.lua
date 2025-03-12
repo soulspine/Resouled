@@ -1,6 +1,8 @@
 local MONSTROS_SOUL_VARIANT = Isaac.GetEntityVariantByName("Monstro's Soul")
 local MONSTORS_SOUL_ITEM_SUBTYPE = Isaac.GetItemIdByName("Monstro's Soul")
 
+local NORMAL = true
+
 local ENTITY_FLAGS = (EntityFlag.FLAG_NO_PHYSICS_KNOCKBACK)
 local TEAR_COUNT = 25
 local TEAR_BULLET_FLAGS = (ProjectileFlags.SMART)
@@ -40,6 +42,7 @@ local PARTICLE_TYPE = EffectVariant.DARK_BALL_SMOKE_PARTICLE
 local PARTICLE_COUNT = 5
 local PARTICLE_SPEED = 7
 local PARTICLE_COLOR = Color(8, 10, 12)
+local NORMAL_PARTICLE_COLOR = Color(1.5,1,1)
 local PARTICLE_HEIGHT = 0
 local PARTICLE_SUBTYPE = 0
 local PARTICLE_OFFSET = Vector(0, 0)
@@ -47,6 +50,12 @@ local PARTICLE_OFFSET = Vector(0, 0)
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
     if npc.Variant == MONSTROS_SOUL_VARIANT then
+        local data = npc:GetData()
+        local sprite = npc:GetSprite()
+        if NORMAL then
+            sprite:ReplaceSpritesheet(0, "gfx/souls/monstros_soul_boss_normal.png")
+            sprite:LoadGraphics()
+        end
         npc:AddEntityFlags(ENTITY_FLAGS)
         local data = npc:GetData()
         ---@type ProjectileParams
@@ -71,7 +80,11 @@ local function onNpcUpdate(_, npc)
         sprite.PlaybackSpeed = SPRITE_PLAYBACK_SPEED_MULTIPLIER
         
         if data.MovementBlockCooldown > 0 then
-            Game():SpawnParticles(npc.Position + PARTICLE_OFFSET, PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_SPEED, PARTICLE_COLOR, PARTICLE_HEIGHT, PARTICLE_SUBTYPE)
+            if NORMAL then
+                Game():SpawnParticles(npc.Position + PARTICLE_OFFSET, PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_SPEED, NORMAL_PARTICLE_COLOR, PARTICLE_HEIGHT, PARTICLE_SUBTYPE)
+            else
+                Game():SpawnParticles(npc.Position + PARTICLE_OFFSET, PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_SPEED, PARTICLE_COLOR, PARTICLE_HEIGHT, PARTICLE_SUBTYPE)
+            end
 
             local creepEntity = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CREEP_WHITE, npc.Position, Vector.Zero, npc, 0, npc.InitSeed)
             local creepEffect = creepEntity:ToEffect()
@@ -89,7 +102,11 @@ local function onNpcUpdate(_, npc)
         local sprite = npc:GetSprite()
     
         if npc.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_NONE then
-            Game():SpawnParticles(npc.Position + PARTICLE_OFFSET, PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_SPEED, PARTICLE_COLOR, PARTICLE_HEIGHT, PARTICLE_SUBTYPE)
+            if NORMAL then
+                Game():SpawnParticles(npc.Position + PARTICLE_OFFSET, PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_SPEED, NORMAL_PARTICLE_COLOR, PARTICLE_HEIGHT, PARTICLE_SUBTYPE)
+            else
+                Game():SpawnParticles(npc.Position + PARTICLE_OFFSET, PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_SPEED, PARTICLE_COLOR, PARTICLE_HEIGHT, PARTICLE_SUBTYPE)
+            end
 
             local creepEntity = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CREEP_WHITE, npc.Position, Vector.Zero, npc, 0, npc.InitSeed)
             local creepEffect = creepEntity:ToEffect()

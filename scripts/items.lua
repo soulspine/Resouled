@@ -1,4 +1,5 @@
 -- Base Game V2
+include("scripts.items.BaseGameV2.sleight_of_hand")
 include("scripts.items.BaseGameV2.daddy_haunt")
 include("scripts.items.BaseGameV2.cheese_grater")
 -- Four Souls V2

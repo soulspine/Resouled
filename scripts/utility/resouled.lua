@@ -556,3 +556,56 @@ Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, function(_, npc)
         end
     end
 end)
+
+--- Returns a table of all doors in the room
+--- @param room? Room defaults to current room if not specified
+--- @return GridEntityDoor[]
+function Resouled:GetRoomDoors(room)
+    local doors = {}
+    local room = room or Game():GetRoom()
+    for i = DoorSlot.LEFT0, DoorSlot.NUM_DOOR_SLOTS - 1  do
+        local door = room:GetDoor(i)
+        if door then
+            table.insert(doors, door)
+        end
+    end
+    return doors
+end
+
+---@param position Vector
+---@return GridEntityDoor | nil
+function Resouled:GetClosestDoor(position)
+    local doors = Resouled:GetRoomDoors()
+    local closestDoor = nil
+    for _, door in ipairs(doors) do
+        if not closestDoor or position:Distance(door.Position) < position:Distance(closestDoor.Position) then
+            closestDoor = door
+        end
+    end
+    return closestDoor
+end
+
+---@param player EntityPlayer
+function Resouled:IsPlayingPickupAnimation(player)
+    local sprite = player:GetSprite()
+    local animationName = sprite:GetAnimation()
+    return animationName == "PickupWalkUp"
+    or animationName == "PickupWalkDown"
+    or animationName == "PickupWalkLeft"
+    or animationName == "PickupWalkRight"
+end
+
+---@param player EntityPlayer
+---@param collectibleId CollectibleType
+---@return ActiveSlot | nil
+function Resouled:GetCollectibleActiveSlot(player, collectibleId)
+    local activeSlot = nil
+    for i = 0, ActiveSlot.SLOT_POCKET2 do
+        local item = player:GetActiveItem(i)
+        if item and item == collectibleId then
+            activeSlot = i
+            break
+        end
+    end
+    return activeSlot
+end

@@ -12,10 +12,10 @@ local TENTACLES_DEPTH_OFFSET = 100
 
 local GHOST_GRID_COLLISION_CLASS = EntityGridCollisionClass.GRIDCOLL_WALLS
 
-local DASH_COOLDOWN = 2 --seconds
-local DASH_ACTIVATION_DISTANCE = 125
-local DASH_VELOCITY_MULTIPLIER = 4
-local DASH_COOLDOWN_RESET_DISTANCE = 200
+local DASH_ACTIVATION_DISTANCE = 75
+local DASH_VELOCITY_MULTIPLIER = 5
+local DASH_VELOCITY_DROP_STOP = 1.05
+local DASH_COOLDOWN = 0.75 --seconds
 
 local SPEED_MULTIPLIER = 3
 
@@ -31,8 +31,9 @@ local function onNpcInit(_, npc)
         end
         npc.GridCollisionClass = GHOST_GRID_COLLISION_CLASS
 
+        data.Dashing = false
         data.DashCooldown = 0
-
+        data.DashVelocityDropStop = false
         data.tentacles = Game():Spawn(WRATHS_SOUL_GHOST_TYPE, WRATHS_SOUL_GHOST_VARIANT, npc.Position, Vector.Zero, npc, TENTACLES_SUBTYPE, npc.InitSeed)
         data.tentacles.DepthOffset = TENTACLES_DEPTH_OFFSET
         data.minion = Game():Spawn(WRATHS_SOUL_GHOST_TYPE, WRATHS_SOUL_GHOST_VARIANT, npc.Position, Vector.Zero, npc, WRATHS_SOUL_SUBTYPE, npc.InitSeed)
@@ -45,7 +46,7 @@ local function onNpcUpdate(_, npc)
     if npc.Variant == WRATHS_SOUL_GHOST_VARIANT and npc.SubType == WRATHS_SOUL_GHOST_SUBTYPE then
         local sprite = npc:GetSprite()
         local data = npc:GetData()
-        if data.DashCooldown <= 0 then    
+        if not data.Dashing then
             npc.Velocity = (npc:GetPlayerTarget().Position - npc.Position):Normalized() * (npc.Position:Distance(npc:GetPlayerTarget().Position) / (100/SPEED_MULTIPLIER))
         end
 
@@ -53,14 +54,18 @@ local function onNpcUpdate(_, npc)
             data.DashCooldown = data.DashCooldown - 1
         end
 
-        if npc.Position:Distance(npc:GetPlayerTarget().Position) > DASH_COOLDOWN_RESET_DISTANCE then
-            print("A")
-            data.DashCooldown = 0
+        if data.DashCooldown <= 0 and data.Dashing then
+            data.Dashing = false
         end
 
-        if npc.Position:Distance(npc:GetPlayerTarget().Position) < DASH_ACTIVATION_DISTANCE and data.DashCooldown <= 0 then
+        if data.Dashing then
+            npc.Velocity = npc.Velocity / DASH_VELOCITY_DROP_STOP
+        end
+
+        if npc.Position:Distance(npc:GetPlayerTarget().Position) < DASH_ACTIVATION_DISTANCE and not data.Dashing then
+            data.Dashing = true
+            data.DashCooldown = DASH_COOLDOWN * 30
             npc.Velocity = npc.Velocity * DASH_VELOCITY_MULTIPLIER
-            data.DashCooldown = DASH_COOLDOWN*30
         end
         data.tentacles.Position = npc.Position + TENTACLES_OFFSET
         data.tentacles.Velocity = npc.Velocity

@@ -11,6 +11,7 @@ include("scripts.enemies.BaseGameV2.little_horns_soul")
 include("scripts.enemies.BaseGameV2.soul_ball")
 include("scripts.enemies.BaseGameV2.bloats_soul")
 include("scripts.enemies.BaseGameV2.wraths_soul")
+include("scripts.enemies.BaseGameV2.wraths_soul_ghost")
 include("scripts.enemies.BaseGameV2.wraths_giga_bomb")
 -- Four Souls V2
 -- Requiem

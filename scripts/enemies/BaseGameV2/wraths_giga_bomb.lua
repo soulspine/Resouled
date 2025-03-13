@@ -39,7 +39,7 @@ local function onNpcUpdate(_, npc)
             sprite:Play(FUSE_ANM, true)
         elseif sprite:IsEventTriggered(EVENT_TRIGGER_RESOULED_EXPLOSION) then
             Game():BombExplosionEffects(npc.Position, EXPLOSION_DAMAGE, EXPLOSION_TEAR_FLAGS, EXPLOSION_COLOR, npc, EXPLOSION_RADIUS_MULTIPLIER, EXPLOSION_LINE_CHECK, EXPLOSION_DAMAGE_SOURCE, EXPLOSION_DAMAGE_FLAGS)
-            Game():Spawn(WRATHS_GIGA_BOMB_TYPE, WRATHS_GIGA_BOMB_VARIANT, npc.Position, Vector.Zero, nil, 0, npc.InitSeed)
+            Game():Spawn(WRATHS_GIGA_BOMB_TYPE, WRATHS_GIGA_BOMB_VARIANT, npc.Position, Vector.Zero, nil, 2, npc.InitSeed)
             npc:Remove()
         end
         return true

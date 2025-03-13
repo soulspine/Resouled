@@ -8,6 +8,10 @@ local SLEIGHT_OF_HAND = Isaac.GetItemIdByName("Sleight of Hand")
 -- 5. ANIMATES PICKUPS OVER THE PLAYER THAT USED THE ITEM
 -- 6. IF SOMETHING BREAKS, THERE IS A TIMEOUT THAT RESETS EVERYTHING BACK TO THE START
 
+if EID then
+    EID:addCollectible(SLEIGHT_OF_HAND, "Peeks into the closest room and makes Isaac hold all {{Coin}} pickups and {{Collectible}} items in that room.#If used on a {{BossRoom}} boss room, reveals the boss.", "Sleight of Hand")
+end
+
 local TIMEOUT = 1000
 local PICKUP_ANIMATE_COOLDOWN = 25
 
@@ -141,6 +145,7 @@ local function onPlayerUpdate(_, player)
                     player:SetActiveCharge(totalCharge - itemMaxCharges, activeSlot)
                 else
                     local bethanyCharge = itemMaxCharges - totalCharge
+                    print("Bethany charge: " .. bethanyCharge)
                     player:SetActiveCharge(0, activeSlot)
                     player:AddSoulCharge(-bethanyCharge)
                     player:AddBloodCharge(-bethanyCharge)

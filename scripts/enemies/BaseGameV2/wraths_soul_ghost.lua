@@ -13,13 +13,19 @@ local TENTACLES_DEPTH_OFFSET = 100
 local GHOST_GRID_COLLISION_CLASS = EntityGridCollisionClass.GRIDCOLL_WALLS
 
 local DASH_ACTIVATION_DISTANCE = 75
-local DASH_VELOCITY_MULTIPLIER = 5
+local DASH_VELOCITY_MULTIPLIER = 2.5
 local DASH_VELOCITY_DROP_STOP = 1.05
 local DASH_COOLDOWN = 0.75 --seconds
 
 local SPEED_MULTIPLIER = 3
 
 local NORMAL = true
+
+local MIN_SOULS = 1
+local MAX_SOULS = 3
+local SOULS_ENTITY_COLLISION_CLASS = EntityCollisionClass.ENTCOLL_PLAYEROBJECTS
+
+local ATTACK_COOLDOWN = 5 * 30 --seconds
 
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
@@ -37,6 +43,7 @@ local function onNpcInit(_, npc)
         data.tentacles = Game():Spawn(WRATHS_SOUL_GHOST_TYPE, WRATHS_SOUL_GHOST_VARIANT, npc.Position, Vector.Zero, npc, TENTACLES_SUBTYPE, npc.InitSeed)
         data.tentacles.DepthOffset = TENTACLES_DEPTH_OFFSET
         data.minion = Game():Spawn(WRATHS_SOUL_GHOST_TYPE, WRATHS_SOUL_GHOST_VARIANT, npc.Position, Vector.Zero, npc, WRATHS_SOUL_SUBTYPE, npc.InitSeed)
+        data.AttackCooldown = ATTACK_COOLDOWN
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, WRATHS_SOUL_GHOST_TYPE)
@@ -73,6 +80,21 @@ local function onNpcUpdate(_, npc)
         if npc.HitPoints <= 0 then
             data.tentacles:Remove()
             data.minion:Die()
+        end
+
+        data.AttackCooldown = data.AttackCooldown - 1
+        if data.AttackCooldown == 0 then
+            local VelocityTranslation = {
+                [1] = Vector(2,2),
+                [2] = Vector(-2,2),
+                [3] = Vector(2,-2),
+            }
+            for _ = 1, math.random(MIN_SOULS, MAX_SOULS) do
+                local ghost = Game():Spawn(EntityType.ENTITY_BEAST, 3, npc.Position, VelocityTranslation[_], npc, 0, npc.InitSeed)
+                ghost.Target = npc:GetPlayerTarget()
+                ghost.EntityCollisionClass = SOULS_ENTITY_COLLISION_CLASS
+                data.AttackCooldown = ATTACK_COOLDOWN
+            end
         end
         return true
     end

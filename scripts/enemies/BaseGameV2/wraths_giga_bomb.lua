@@ -2,6 +2,8 @@ local WRATHS_GIGA_BOMB_TYPE = Isaac.GetEntityTypeByName("Wrath's Giga Bomb")
 local WRATHS_GIGA_BOMB_VARIANT = Isaac.GetEntityVariantByName("Wrath's Giga Bomb")
 local WRATHS_GIGA_BOMB_SUBTYPE = 1
 
+local NORMAL = true
+
 local SPAWN_ANM = "Spawn"
 local FUSE_ANM = "Fuse"
 
@@ -20,6 +22,10 @@ local EXPLOSION_DAMAGE_FLAGS = (DamageFlag.DAMAGE_FAKE)
 local function onNpcInit(_, npc)
     if npc.Variant == WRATHS_GIGA_BOMB_VARIANT and npc.SubType == WRATHS_GIGA_BOMB_SUBTYPE then
         local sprite = npc:GetSprite()
+        if NORMAL then
+            sprite:ReplaceSpritesheet(0, "gfx/souls/wraths_bomb_normal.png")
+            sprite:LoadGraphics()
+        end
         sprite:Play(SPAWN_ANM, true)
     end
 end

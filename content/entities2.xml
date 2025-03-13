@@ -41,7 +41,7 @@
 
     <entity name="Bloat's Soul" id="68" variant="2" subtype="1" anm2path="souls/bloats_soul.anm2" baseHP="4000" boss="1" champion="0" collisionDamage="1" collisionMass="40" collisionRadius="27" friction="1" numGridCollisionPoints="12" shadowSize="39" stageHP="0" portrait="35"/>
 
-    <entity name="Wrath's Soul" id="48" variant="2" subtype="0" anm2path="souls/wraths_soul.anm2" baseHP="4000" boss="1" champion="0" collisionDamage="1" collisionMass="30" collisionRadius="13" friction="1" numGridCollisionPoints="12" shadowSize="14" portrait="16"/>
+    <entity name="Wrath's Soul" id="48" variant="2" subtype="0" anm2path="souls/wraths_soul.anm2" boss="0" champion="0" collisionDamage="1" collisionMass="30" collisionRadius="13" friction="1" numGridCollisionPoints="12" shadowSize="14" portrait="16"/>
     <entity name="Wrath's Giga Bomb" id="48" variant="2" subtype="1" anm2path="souls/wraths_bomb.anm2" boss="0" champion="0" collisionDamage="0" collisionMass="999" collisionRadius="32" friction="0" numGridCollisionPoints="12" shadowSize="65" portrait="16"/>
 
     <entity anm2path="daddy_haunt.anm2" name="Daddy Haunt" id="3" variant="872" subtype="0" collisionRadius="100" shadowSize="15" friction="1"/>

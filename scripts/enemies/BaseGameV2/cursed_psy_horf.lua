@@ -3,7 +3,7 @@ local CURSED_PSY_HORF_TYPE = Isaac.GetEntityTypeByName("Cursed Psy Horf")
 local HALO_SUBTYPE = 3
 
 local HALO_OFFSET = Vector(0, -15)
-local HALO_SCALE = Vector(1.5, 1.5)
+local HALO_SCALE = Vector(0.5, 0.5)
 
 local ACTIVATION_DISTANCE = 110
 
@@ -43,3 +43,18 @@ local function preNpcUpdate(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, preNpcUpdate, CURSED_PSY_HORF_TYPE)
+
+---@param type CollectibleType
+---@param rng RNG
+---@param player EntityPlayer
+---@param activeSlot ActiveSlot
+local function onActiveItemUse(_, type, rng, player, activeSlot)
+    Resouled:IterateOverRoomEntities(
+    ---@param npc EntityRef
+    function(npc)
+        if npc.Type == CURSED_PSY_HORF_TYPE and npc.Variant == CURSED_PSY_HORF_VARIANT then 
+            player:AddControlsCooldown(150)
+        end
+    end)
+end
+Resouled:AddCallback(ModCallbacks.MC_PRE_USE_ITEM, onActiveItemUse)

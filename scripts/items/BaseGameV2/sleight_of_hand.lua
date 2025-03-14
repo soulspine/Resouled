@@ -18,6 +18,19 @@ local PICKUP_ANIMATE_COOLDOWN = 25
 local ANIMATION_TELEPORT_UP = "TeleportUp"
 local ANIMATION_TELEPORT_UP_FRAME_NUM = 19
 
+local function adjustCharge(player, activeSlot)
+    local totalCharge = player:GetActiveCharge(activeSlot) + player:GetBatteryCharge(activeSlot)
+    local itemMaxCharges = Isaac.GetItemConfig():GetCollectible(SLEIGHT_OF_HAND).MaxCharges
+    if totalCharge >= itemMaxCharges then
+        player:SetActiveCharge(totalCharge - itemMaxCharges, activeSlot)
+    else
+        local bethanyCharge = itemMaxCharges - totalCharge
+        player:SetActiveCharge(0, activeSlot)
+        player:AddSoulCharge(-bethanyCharge)
+        player:AddBloodCharge(-bethanyCharge)
+    end
+end
+
 ---@param itemId CollectibleType
 ---@param rng RNG
 ---@param player EntityPlayer
@@ -35,7 +48,6 @@ local function onActiveUse(_, itemId, rng, player, useFlags, activeSlot, customV
 
     -- this is here to prevent player from spamming it between time frame of glowing hourglass teleport and charge adjustment
     if runSave.SleightOfHand then
-        print("Sleight of Hand is on cooldown")
         return returnTable
     end
 
@@ -66,7 +78,14 @@ local function onActiveUse(_, itemId, rng, player, useFlags, activeSlot, customV
             EnteredNewRoom = false,
         }
 
-        
+        adjustCharge(player, activeSlot)
+
+        -- we save charges 
+        runSave.SleightOfHand.Charges = {
+            Normal = player:GetActiveCharge(activeSlot) + player:GetBatteryCharge(activeSlot),
+            Soul = player:GetSoulCharge(),
+            Blood = player:GetBloodCharge(),
+        }
 
         -- depending on the room type, we have to do this because :ChangeRoom sometimes moves players to rooms on the opposite side????
         if targetRoomSafeIndex < 0 then
@@ -111,7 +130,6 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onNewRoomEnter)
 ---@param player EntityPlayer
 local function onPlayerUpdate(_, player)
     local runSave = SAVE_MANAGER.GetRunSave(nil, true)
-    --print(runSave.SleightOfHand)
 
     if runSave.SleightOfHand and runSave.SleightOfHand.EnteredNewRoom and not runSave.SleightOfHand.Rewinded then
         onNewRoomEnter()
@@ -137,19 +155,9 @@ local function onPlayerUpdate(_, player)
 
                 -- we set charges to what they should be
                 local activeSlot = Resouled:GetCollectibleActiveSlot(player, SLEIGHT_OF_HAND)
-                local totalCharge = player:GetActiveCharge(activeSlot) + player:GetBatteryCharge(activeSlot)
-
-                local itemMaxCharges = Isaac.GetItemConfig():GetCollectible(SLEIGHT_OF_HAND).MaxCharges
-
-                if totalCharge >= itemMaxCharges then
-                    player:SetActiveCharge(totalCharge - itemMaxCharges, activeSlot)
-                else
-                    local bethanyCharge = itemMaxCharges - totalCharge
-                    print("Bethany charge: " .. bethanyCharge)
-                    player:SetActiveCharge(0, activeSlot)
-                    player:AddSoulCharge(-bethanyCharge)
-                    player:AddBloodCharge(-bethanyCharge)
-                end
+                player:SetActiveCharge(runSave.SleightOfHand.Charges.Normal, activeSlot)
+                player:SetSoulCharge(runSave.SleightOfHand.Charges.Soul)
+                player:SetBloodCharge(runSave.SleightOfHand.Charges.Blood)
             end
         elseif animationName == ANIMATION_TELEPORT_UP then
             -- speeding up the teleport animation

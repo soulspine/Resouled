@@ -9,14 +9,35 @@ local SLEIGHT_OF_HAND = Isaac.GetItemIdByName("Sleight of Hand")
 -- 6. IF SOMETHING BREAKS, THERE IS A TIMEOUT THAT RESETS EVERYTHING BACK TO THE START
 
 if EID then
-    EID:addCollectible(SLEIGHT_OF_HAND, "Peeks into the closest room and makes Isaac hold all {{Coin}} pickups and {{Collectible}} items in that room.#If used on a {{BossRoom}} boss room, reveals the boss.", "Sleight of Hand")
+    EID:addCollectible(SLEIGHT_OF_HAND, "Peeks into the closest room and makes Isaac hold all {{Coin}} pickups and {{Collectible}} items in that room.", "Sleight of Hand")
 end
 
 local TIMEOUT = 1000
-local PICKUP_ANIMATE_COOLDOWN = 25
+local PICKUP_ANIMATE_COOLDOWN = 35
+local ACTIVATION_COOLDOWN = 21
 
 local ANIMATION_TELEPORT_UP = "TeleportUp"
 local ANIMATION_TELEPORT_UP_FRAME_NUM = 19
+
+local GLOWING_DOOR_SPRITE = Sprite()
+GLOWING_DOOR_SPRITE:Load("gfx/effects/glowing_door.anm2", true)
+GLOWING_DOOR_SPRITE:Play("Idle", true)
+local globalGlowingDoorPosition = Vector.Zero
+local globalGlowingDoorRotation = 0
+
+local BLACKOUT_SPRITE = Sprite()
+BLACKOUT_SPRITE:Load("gfx/effects/blackout.anm2", true)
+BLACKOUT_SPRITE:Play("Idle", true)
+local BLACKOUT_TRANSITION_TIME = 15
+local BLACKOUT_POST_TRANSITION_PAUSE = 15
+local BLACKOUT_STAY_TIME = 43
+local globalBlackoutIntensity = nil
+local globalBlackoutPostTransitionPause = 0
+local globalBlackoutTimer = 0
+
+local SFX_PICKUP_ANIM = SoundEffect.SOUND_FETUS_JUMP
+local SFX_USE = SoundEffect.SOUND_UNLOCK00
+local SFX_GLOWING_HOURGLASS_TELEPORT = SoundEffect.SOUND_HELL_PORTAL2
 
 local function adjustCharge(player, activeSlot)
     local totalCharge = player:GetActiveCharge(activeSlot) + player:GetBatteryCharge(activeSlot)
@@ -56,7 +77,13 @@ local function onActiveUse(_, itemId, rng, player, useFlags, activeSlot, customV
     if door then
         local game = Game()
         local level = game:GetLevel()
-        local targetRoomSafeIndex = level:GetRoomByIdx(door.TargetRoomIndex).SafeGridIndex
+        local targetRoomDesc = level:GetRoomByIdx(door.TargetRoomIndex)
+
+        if door.TargetRoomType == RoomType.ROOM_BOSS and not targetRoomDesc.Clear then
+            return returnTable
+        end
+
+        local targetRoomSafeIndex = targetRoomDesc.SafeGridIndex
         local targetRoomCoords = Vector(targetRoomSafeIndex % 13, targetRoomSafeIndex // 13)
         local playerPositions = {}
         
@@ -69,6 +96,9 @@ local function onActiveUse(_, itemId, rng, player, useFlags, activeSlot, customV
         
         -- data needed for it to work, animation cooldown is purposefully not set here
         runSave.SleightOfHand = {
+            ActivationCooldown = targetRoomSafeIndex < 0 and ACTIVATION_COOLDOWN or 0,
+            TargetRoomSafeIndex = targetRoomSafeIndex,
+            TargetRoomCoords = targetRoomCoords,
             PlayerPositions = playerPositions,
             Pickups = {},
             Rewinded = false,
@@ -87,12 +117,9 @@ local function onActiveUse(_, itemId, rng, player, useFlags, activeSlot, customV
             Blood = player:GetBloodCharge(),
         }
 
-        -- depending on the room type, we have to do this because :ChangeRoom sometimes moves players to rooms on the opposite side????
-        if targetRoomSafeIndex < 0 then
-            level:ChangeRoom(targetRoomSafeIndex) -- this is super buggy and just does not work properly on normal rooms
-        else
-            Isaac.ExecuteCommand("goto " .. targetRoomCoords.X .. " " .. targetRoomCoords.Y .. " " .. 0)
-        end
+        globalBlackoutIntensity = 1/BLACKOUT_TRANSITION_TIME
+        globalGlowingDoorPosition = Game():GetRoom():WorldToScreenPosition(door.Position)
+        globalGlowingDoorRotation = door:GetSprite().Rotation
     end
     return returnTable
 end
@@ -100,8 +127,9 @@ Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onActiveUse, SLEIGHT_OF_HAND)
 
 local function onNewRoomEnter()
     local runSave = SAVE_MANAGER.GetRunSave(nil, true)
-    if runSave.SleightOfHand then
+    if runSave.SleightOfHand and not runSave.SleightOfHand.EnteredNewRoom then
         runSave.SleightOfHand.EnteredNewRoom = true
+        SFXManager():Play(SFX_USE)
     end
     if runSave.SleightOfHand and not runSave.SleightOfHand.Rewinded and not Game():IsPaused() then
         -- we save all pickups data
@@ -119,7 +147,6 @@ local function onNewRoomEnter()
                 })
             end
         end)
-
         -- rewind
         Isaac.GetPlayer(0):UseActiveItem(CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS, false)
         runSave.SleightOfHand.Rewinded = true
@@ -131,9 +158,25 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onNewRoomEnter)
 local function onPlayerUpdate(_, player)
     local runSave = SAVE_MANAGER.GetRunSave(nil, true)
 
+    if runSave.SleightOfHand and runSave.SleightOfHand.ActivationCooldown >= 0 then
+        if runSave.SleightOfHand.ActivationCooldown == 0 then
+            -- depending on the room type, we have to do this because :ChangeRoom sometimes moves players to rooms on the opposite side????
+            if runSave.SleightOfHand.TargetRoomSafeIndex < 0 then
+                Game():GetLevel():ChangeRoom(runSave.SleightOfHand.TargetRoomSafeIndex) -- this is super buggy and just does not work properly on normal rooms
+            else
+                Isaac.ExecuteCommand("goto " .. runSave.SleightOfHand.TargetRoomCoords.X .. " " .. runSave.SleightOfHand.TargetRoomCoords.Y .. " " .. 0)
+            end
+        end
+        runSave.SleightOfHand.ActivationCooldown = runSave.SleightOfHand.ActivationCooldown - 1
+    end
+
     if runSave.SleightOfHand and runSave.SleightOfHand.EnteredNewRoom and not runSave.SleightOfHand.Rewinded then
         onNewRoomEnter()
         return
+    end
+
+    if runSave.SleightOfHand and SFXManager():IsPlaying(SFX_GLOWING_HOURGLASS_TELEPORT) then
+        SFXManager():Stop(SFX_GLOWING_HOURGLASS_TELEPORT)
     end
 
     if runSave.SleightOfHand and runSave.SleightOfHand.Rewinded and player:HasCollectible(SLEIGHT_OF_HAND) and player.Index == runSave.SleightOfHand.PlayerIndex then
@@ -183,6 +226,7 @@ local function onPlayerUpdate(_, player)
                     end
                     -- we remove the pickup from the list
                     table.remove(runSave.SleightOfHand.Pickups, 1)
+                    SFXManager():Play(SFX_PICKUP_ANIM)
                 else
                     -- if the list is empty we remove the sleight of hand data
                     runSave.SleightOfHand = nil
@@ -204,3 +248,30 @@ local function onPlayerUpdate(_, player)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, onPlayerUpdate)
+
+local function onRender()
+    if globalBlackoutIntensity then
+        local screenDimensions = Vector(Isaac.GetScreenWidth(), Isaac.GetScreenHeight())
+        BLACKOUT_SPRITE.Scale = screenDimensions / 16
+        BLACKOUT_SPRITE.Color = Color(0, 0, 0, globalBlackoutIntensity)
+        BLACKOUT_SPRITE:Render(screenDimensions / 2, Vector.Zero, Vector.Zero)
+        
+        GLOWING_DOOR_SPRITE.Color = Color(1, 1, 1, globalBlackoutIntensity)
+        GLOWING_DOOR_SPRITE.Scale = Vector(1.3, 1.3)
+        GLOWING_DOOR_SPRITE.Rotation = globalGlowingDoorRotation
+        GLOWING_DOOR_SPRITE:Render(globalGlowingDoorPosition, Vector.Zero, Vector.Zero)
+
+        globalBlackoutTimer = globalBlackoutTimer + 1
+
+        if globalBlackoutTimer < BLACKOUT_TRANSITION_TIME then
+            globalBlackoutIntensity = globalBlackoutIntensity + 1/BLACKOUT_TRANSITION_TIME
+        elseif globalBlackoutTimer < BLACKOUT_TRANSITION_TIME + BLACKOUT_STAY_TIME then
+        elseif globalBlackoutTimer < BLACKOUT_TRANSITION_TIME * 2 + BLACKOUT_STAY_TIME then
+            globalBlackoutIntensity = globalBlackoutIntensity - 1/BLACKOUT_TRANSITION_TIME
+        else
+            globalBlackoutIntensity = nil
+            globalBlackoutTimer = 0
+        end
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, onRender)

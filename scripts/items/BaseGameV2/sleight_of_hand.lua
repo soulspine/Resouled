@@ -53,12 +53,13 @@ local function adjustCharge(player, activeSlot)
 end
 
 ---@param player EntityPlayer
-local function onNewRun(_, player)
+local function onPlayerInit(_, player)
+    print("A")
     if player:GetPlayerType() == PlayerType.PLAYER_CAIN then
         player:AddCollectible(SLEIGHT_OF_HAND, 4, true, ActiveSlot.SLOT_PRIMARY, 0)
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, onNewRun, EntityType.ENTITY_PLAYER)
+Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, onPlayerInit)
 
 ---@param itemId CollectibleType
 ---@param rng RNG

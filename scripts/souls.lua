@@ -1,6 +1,20 @@
 local SOUL_TYPE = Isaac.GetEntityTypeByName("Soul Pickup")
 local SOUL_VARIANT = Isaac.GetEntityVariantByName("Soul Pickup")
 
+local cardsHud = Sprite()
+local currentAnm = "Empty"
+local cardCount = 0
+local oldCardCount = 0
+
+cardsHud:Load("gfx/four_souls_hud.anm2", true)
+cardsHud:Play(currentAnm, true)
+
+local function onRunStart()
+    cardCount = 0
+    oldCardCount = 0
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, onRunStart)
+
 ---@param pickup EntityPickup
 local function onPickupCollision(_, pickup)
     if pickup.Type == SOUL_TYPE and pickup.Variant == SOUL_VARIANT then
@@ -17,10 +31,6 @@ local function onPickupCollision(_, pickup)
             if RunSave.Souls[_] == data.Soul then
                 soulAlreadyCollected = true
             end
-        end
-
-        for _ = 1, #RunSave.Souls do
-            print(RunSave.Souls[_])
         end
 
         if not soulAlreadyCollected then
@@ -41,11 +51,85 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onPickupCollision)
 ---@param pickup EntityPickup
 local function onPickupUpdate(_, pickup)
     if pickup.Type == SOUL_TYPE and pickup.Variant == SOUL_VARIANT then
+        local RunSave = SAVE_MANAGER.GetRunSave()
         local data = pickup:GetData()
         local sprite = pickup:GetSprite()
+
+        local cardAnmTranslation = {
+            [1] = "Fill1",
+            [2] = "Fill2",
+            [3] = "Fill3",
+            [4] = "Fill4",
+        }
+
+        if not RunSave.Souls then
+            RunSave.Souls = {}
+        end
+
+        cardCount = 0
+        for _ = 1, 4 do
+            if RunSave.Souls[_] ~= nil then
+                cardCount = cardCount + 1
+            end
+        end
+
         if data.PickedUp then
-            
+            cardsHud:Play(cardAnmTranslation[cardCount])
+            currentAnm = cardAnmTranslation[cardCount]
+            data.PickedUp = false
         end
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onPickupUpdate)
+
+
+local function onRender()
+    local hud = Game():GetHUD()
+    local RunSave = SAVE_MANAGER.GetRunSave()
+
+    if not RunSave.Souls then
+        RunSave.Souls = {}
+    end
+    
+    if not cardsHud:IsLoaded() then
+        cardsHud:Load("gfx/four_souls_hud.anm2", true)
+    end
+
+    if hud:IsVisible() then
+        local renderPos = Isaac.WorldToRenderPosition(Vector(500, 100))
+        cardsHud:Render(renderPos ,Vector.Zero, Vector.Zero)
+    end
+
+    cardCount = 0
+    for _ = 1, 4 do
+        if RunSave.Souls[_] ~= nil then
+            cardCount = cardCount + 1
+        end
+    end
+    
+    if oldCardCount > cardCount then
+        local cardAnmTranslation = {
+            [0] = "Remove1",
+            [1] = "Remove2",
+            [2] = "Remove3",
+            [3] = "Remove4",
+        }
+        currentAnm = cardAnmTranslation[cardCount]
+        cardsHud:Play(currentAnm, true)
+    end
+
+    local cardAnmTranslation = {
+        [0] = "Empty",
+        [1] = "Filled1",
+        [2] = "Filled2",
+        [3] = "Filled3",
+        [4] = "Filled",
+    }
+    if cardsHud:WasEventTriggered("AnimationEnd") then
+        currentAnm = cardAnmTranslation[cardCount]
+        cardsHud:Play(currentAnm, true)
+    end
+    oldCardCount = cardCount
+    cardsHud:Update()
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, onRender)

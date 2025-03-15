@@ -5,6 +5,9 @@ Resouled = RegisterMod("Resouled", 1)
 ResouledSouls = {
     MONSTRO = "Monstro's Soul",
     DUKE = "Duke's Soul",
+    LITTLE_HORN = "Little Horn's Soul",
+    BLOAT = "Bloat's Soul",
+    WRATH = "Wrath's Soul",
 }
 
 include("scripts.utility.hud_helper")

@@ -628,7 +628,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, function()
             if not font:IsLoaded() then 
                 font:Load("font/terminus.fnt")
             end
-            font:DrawString(data.Soul, pickup.Position.X/1.47, pickup.Position.Y/1.47 - 110, KColor(1, 1 ,1 ,1), 1, true)
+            font:DrawString(data.Soul, Isaac.WorldToRenderPosition(pickup.Position).X, Isaac.WorldToRenderPosition(pickup.Position).Y - 50, KColor(1, 1 ,1 ,1), 1, true)
         end
     end)
 end)

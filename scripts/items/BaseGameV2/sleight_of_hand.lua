@@ -54,7 +54,6 @@ end
 
 ---@param player EntityPlayer
 local function onPlayerInit(_, player)
-    print("A")
     if player:GetPlayerType() == PlayerType.PLAYER_CAIN then
         player:AddCollectible(SLEIGHT_OF_HAND, 4, true, ActiveSlot.SLOT_PRIMARY, 0)
     end

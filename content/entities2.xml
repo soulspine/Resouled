@@ -5,6 +5,15 @@
     1000 = EFFECT
     -->
 <!-- Base Game V2 -->
+    <entity anm2path="coin_triple.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Triple Coin" numGridCollisionPoints="24" shadowSize="14" stageHP="0" variant="20" subtype="8">
+        <gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0"/>
+        <preload-snd id="234"/>
+    </entity>
+    <entity anm2path="coin_quad.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Quad Coin" numGridCollisionPoints="24" shadowSize="14" stageHP="0" variant="20" subtype="9">
+        <gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0"/>
+        <preload-snd id="234"/>
+    </entity>
+
     <entity name="Cursed Gaper" id="10" variant="4" anm2path="cursed_gaper.anm2" baseHP="14" stageHP="3" collisionMass="5" collisionRadius="13" friction="1.2" numGridCollisionPoints="12" shadowSize="14" champion="0" collisionDamage="1" reroll="true">
         <beastiary anim="Idle" tramsform="0,0,1"/>
         <devolve id="10.1.0" weight="1" />

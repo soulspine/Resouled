@@ -144,15 +144,6 @@ local function onNpcUpdate(_, npc)
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, onNpcUpdate, EntityType.ENTITY_MONSTRO)
 
-local function postNpcDeath(_, npc)
-    local itemConfig = Isaac.GetItemConfig()
-    local collectible = itemConfig:GetCollectible(MONSTORS_SOUL_ITEM_SUBTYPE)
-    if npc.Variant ~= MONSTROS_SOUL_VARIANT and collectible:IsAvailable() then
-        Resouled:TrySpawnSoulItem(ResouledSouls.MONSTRO, npc.Position)
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath, EntityType.ENTITY_MONSTRO)
-
 ---@param npc EntityNPC
 local function onNpcDeath(_, npc)
     if npc.Variant ~= MONSTROS_SOUL_VARIANT then 

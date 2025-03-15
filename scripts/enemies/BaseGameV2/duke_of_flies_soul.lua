@@ -98,15 +98,6 @@ local function onNpcUpdate(_, npc)
 end
 Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onNpcUpdate, EntityType.ENTITY_DUKE)
 
-local function postNpcDeath(_, npc)
-    local itemConfig = Isaac.GetItemConfig()
-    local collectible = itemConfig:GetCollectible(DUKE_OF_FLIES_SOUL_ITEM_SUBTYPE)
-    if npc.Variant ~= DUKE_OF_FLIES_SOUL_VARIANT and collectible:IsAvailable() then
-        Resouled:TrySpawnSoulItem(ResouledSouls.DUKE, npc.Position)
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath, EntityType.ENTITY_DUKE)
-
 ---@param npc EntityNPC
 local function onFlyInit(_, npc)
     if npc.SpawnerEntity then

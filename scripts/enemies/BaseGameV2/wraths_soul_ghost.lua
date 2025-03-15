@@ -2,6 +2,9 @@ local WRATHS_SOUL_GHOST_TYPE = Isaac.GetEntityTypeByName("Wrath's Soul Ghost")
 local WRATHS_SOUL_GHOST_VARIANT = Isaac.GetEntityVariantByName("Wrath's Soul Ghost")
 local WRATHS_SOUL_GHOST_SUBTYPE = 2
 
+local NORMAL = true
+local SOUL = "Wrath's Soul"
+
 local WRATHS_SOUL_SUBTYPE = 0
 
 local TENTACLES_SUBTYPE = 3
@@ -18,8 +21,6 @@ local DASH_VELOCITY_DROP_STOP = 1.05
 local DASH_COOLDOWN = 0.75 --seconds
 
 local SPEED_MULTIPLIER = 3
-
-local NORMAL = true
 
 local MIN_SOULS = 1
 local MAX_SOULS = 3
@@ -120,3 +121,11 @@ local function disableTentacleAI(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, disableTentacleAI, WRATHS_SOUL_GHOST_TYPE)
+
+---@param npc EntityNPC
+local function onNpcDeath(_, npc)
+    if npc.Variant ~= WRATHS_SOUL_GHOST_VARIANT then
+        Resouled:SpawnSoulPickup(npc, SOUL)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNpcDeath, WRATHS_SOUL_GHOST_TYPE)

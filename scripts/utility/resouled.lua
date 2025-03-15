@@ -609,3 +609,26 @@ function Resouled:GetCollectibleActiveSlot(player, collectibleId)
     end
     return activeSlot
 end
+
+function Resouled:SpawnSoulPickup(npc, SOUL)
+    local soul = Game():Spawn(5, 400, npc.Position, Vector.Zero, nil, 0, npc.InitSeed)
+    local data = soul:GetData()
+    soul:GetSprite():Play("Idle", true)
+    soul.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYEROBJECTS
+    data.Soul = SOUL
+    soul:Update()
+end
+
+Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, function()
+    ---@param pickup EntityPickup
+    Resouled:IterateOverRoomEntities(function(pickup)
+        local data = pickup:GetData()
+        if data.Soul then
+            local font = Font()
+            if not font:IsLoaded() then 
+                font:Load("font/terminus.fnt")
+            end
+            font:DrawString(data.Soul, pickup.Position.X/1.47, pickup.Position.Y/1.47 - 110, KColor(1, 1 ,1 ,1), 1, true)
+        end
+    end)
+end)

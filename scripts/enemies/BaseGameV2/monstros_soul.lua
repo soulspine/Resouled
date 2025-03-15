@@ -2,6 +2,7 @@ local MONSTROS_SOUL_VARIANT = Isaac.GetEntityVariantByName("Monstro's Soul")
 local MONSTORS_SOUL_ITEM_SUBTYPE = Isaac.GetItemIdByName("Monstro's Soul")
 
 local NORMAL = true
+local SOUL = "Monstro's Soul"
 
 local ENTITY_FLAGS = (EntityFlag.FLAG_NO_PHYSICS_KNOCKBACK)
 local TEAR_COUNT = 25
@@ -151,3 +152,11 @@ local function postNpcDeath(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath, EntityType.ENTITY_MONSTRO)
+
+---@param npc EntityNPC
+local function onNpcDeath(_, npc)
+    if npc.Variant ~= MONSTROS_SOUL_VARIANT then 
+        Resouled:SpawnSoulPickup(npc, SOUL)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNpcDeath, EntityType.ENTITY_MONSTRO)

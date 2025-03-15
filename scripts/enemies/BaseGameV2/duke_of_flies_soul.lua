@@ -2,6 +2,7 @@ local DUKE_OF_FLIES_SOUL_VARIANT = Isaac.GetEntityVariantByName("Duke's Soul")
 local DUKE_OF_FLIES_SOUL_ITEM_SUBTYPE = Isaac.GetItemIdByName("Duke's Soul")
 
 local NORMAL = true
+local SOUL = "Duke's Soul"
 
 local DUKIE_SOUL_TYPE = Isaac.GetEntityTypeByName("Dukie's Soul")
 local DUKIE_SOUL_VARIANT = Isaac.GetEntityVariantByName("Dukie's Soul")
@@ -128,3 +129,11 @@ local function onFlyDeathEffectInit(_, effect)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, onFlyDeathEffectInit, 1) -- effect idx that duke spawns
+
+---@param npc EntityNPC
+local function onNpcDeath(_, npc)
+    if npc.Variant ~= DUKE_OF_FLIES_SOUL_VARIANT then    
+        Resouled:SpawnSoulPickup(npc, SOUL)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNpcDeath, EntityType.ENTITY_DUKE)

@@ -2,6 +2,7 @@
 Resouled.Curses = {
     CURSE_OF_GREED = Isaac.GetCurseIdByName("Curse of Greed!"),
     CURSE_OF_PAIN = Isaac.GetCurseIdByName("Curse of Pain!"),
+    CURSE_OF_LOSS = Isaac.GetCurseIdByName("Curse of Loss!"),
 }
 
 ---@enum ResouledBlessings
@@ -12,10 +13,12 @@ Resouled.Blessings = {
     BLESSING_OF_STEAM = Isaac.GetCurseIdByName("Blessing of Steam!"),
 }
 
-local CUSTOM_CURSE_CHANCE = 0.1
+local CUSTOM_CURSE_CHANCE = 1
 
 include("scripts.curses.BaseGameV2.curse_of_greed")
 include("scripts.curses.BaseGameV2.curse_of_pain")
+include("scripts.curses.BaseGameV2.curse_of_loss")
+
 include("scripts.curses.Requiem.blessing_of_isaac")
 include("scripts.curses.Requiem.blessing_of_maggy")
 include("scripts.curses.Requiem.blessing_of_samson")

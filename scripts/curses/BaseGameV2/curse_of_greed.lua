@@ -10,8 +10,6 @@ local COIN_SPAWN_VECTOR_SIZE = 2
 ---@param source EntityRef
 ---@param countdown integer
 local function onPlayerDamage(_, entity, amount, flags, source, countdown)
-    print("Curse: " .. Game():GetLevel():GetCurses())
-    print(Game():GetLevel():GetCurseName())
     local player = entity:ToPlayer()
     if player and Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_GREED) and flags & DamageFlag.DAMAGE_FAKE == 0 then
         local coins = player:GetNumCoins()

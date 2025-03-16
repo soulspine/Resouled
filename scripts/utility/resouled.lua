@@ -6,10 +6,22 @@ local SOUL_PICKUP_VARIANT = Isaac.GetEntityVariantByName("Soul Pickup")
 
 ---@types <integer, Sprite>
 local soulCardSprites ={
-    [1] = Sprite(),
-    [2] = Sprite(),
-    [3] = Sprite(),
-    [4] = Sprite(),
+    [1] = {
+        Sprite = Sprite(),
+        Spritesheet = nil,
+    },
+    [2] = {
+        Sprite = Sprite(),
+        Spritesheet = nil,
+    },
+    [3] = {
+        Sprite = Sprite(),
+        Spritesheet = nil,
+    },
+    [4] = {
+        Sprite = Sprite(),
+        Spritesheet = nil,
+    },
 }
 local reloadSoulCards = false -- render optimization variable
 local fakeTabPressDuration = 0 -- to make cards always visible
@@ -659,9 +671,11 @@ local CARD_MARGIN = 20
 
 local function soulCardsHudRender()
     if Game():GetHUD():IsVisible() then
-        for i, sprite in pairs(soulCardSprites) do
+        for i, spriteData in pairs(soulCardSprites) do
 
-            if not sprite:IsLoaded() or reloadSoulCards then
+            local sprite = spriteData.Sprite
+
+            if not sprite:IsLoaded() or spriteData.Spritesheet == nil or reloadSoulCards then
                 local preFrame = sprite:GetFrame()
                 sprite:Load("gfx/soul_card.anm2", false)
                 local runSave = SAVE_MANAGER.GetRunSave()
@@ -675,10 +689,13 @@ local function soulCardsHudRender()
                     local soul = Resouled:GetSoulByName(soulName)
                     if soul then
                         sprite:ReplaceSpritesheet(0, soul.Gfx)
+                        spriteData.Spritesheet = soul.Gfx
                     end
+                else
+                    spriteData.Spritesheet = GFX_BLANK_SOUL_CARD
                 end
                 sprite:LoadGraphics()
-                sprite:Play("SlideUp", true)
+                sprite:Play(ANIMATION_SLIDE_UP, true)
                 sprite:SetFrame(preFrame)
             end
 
@@ -691,6 +708,10 @@ local function soulCardsHudRender()
 
             if fakeTabPressDuration > 0 then
                 fakeTabPressDuration = fakeTabPressDuration - 1
+            end
+
+            if spriteData.Spritesheet == GFX_BLANK_SOUL_CARD then
+                frame = 0
             end
 
             sprite:SetFrame(frame)

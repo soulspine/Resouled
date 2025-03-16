@@ -12,6 +12,7 @@ local soulCardSprites ={
     [4] = Sprite(),
 }
 local reloadSoulCards = false -- render optimization variable
+local fakeTabPressDuration = 0 -- to make cards always visible
 
 ---@class ResouledSoul
 ---@field Name string
@@ -521,6 +522,33 @@ function Resouled:TryAddSoulToPossessed(soul)
     return false
 end
 
+--- Index 1-4
+---@param index integer
+---@return boolean
+---@overload fun(self: ModReference, soul: ResouledSoul): boolean
+function Resouled:TryRemoveSoulFromPossessed(index)
+    local runSave = SAVE_MANAGER.GetRunSave()
+    local returnVal = false
+    if type(index) == "table" then
+        for i, possessedSoul in pairs(runSave.Souls.Possessed) do
+            ---@diagnostic disable-next-line: undefined-field
+            if possessedSoul == index.Name then
+                runSave.Souls.Possessed[i] = nil
+                returnVal = true
+            end
+        end
+    else
+        if runSave.Souls.Possessed[index] then
+            runSave.Souls.Possessed[index] = nil
+            returnVal = true
+        end
+    end
+    if returnVal then
+        reloadSoulCards = true
+    end
+    return returnVal
+end
+
 ---@param soul ResouledSoul
 function Resouled:MarkSoulAsSpawned(soul)
     local runSave = SAVE_MANAGER.GetRunSave()
@@ -546,12 +574,17 @@ function Resouled:TrySpawnSoulPickup(soul, position)
     end
 end
 
+--duration in game frames
+---@param duration integer
+function Resouled:MakeCardsExpandForDuration(duration)
+    fakeTabPressDuration = duration
+end
+
 ---@param pickup EntityPickup
 local function onSoulPickupInit(_, pickup)
     pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
     pickup.GridCollisionClass = GridCollisionClass.COLLISION_OBJECT
     pickup.PositionOffset = Vector(0, -20)
-    Resouled:SetNoReroll(pickup)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onSoulPickupInit, SOUL_PICKUP_VARIANT)
 
@@ -582,6 +615,7 @@ local function onSoulPickupCollision(_, pickup, collider, low)
             player:AnimatePickup(pickup:GetSprite(), true)
             Game():GetHUD():ShowItemText(floorSave.Soul.Name, Resouled:GetPossessedSoulsNum() .. "/4 souls collected")
             SFXManager():Play(SoundEffect.SOUND_HOLY)
+            Resouled:MakeCardsExpandForDuration(480)
             pickup:Remove()
         end
         return added
@@ -619,10 +653,14 @@ local function soulCardsHudRender()
             end
 
             local frame = sprite:GetFrame()
-            if Resouled:IsAnyonePressingAction(ButtonAction.ACTION_MAP) then
+            if Resouled:IsAnyonePressingAction(ButtonAction.ACTION_MAP) or fakeTabPressDuration > 0 then
                 frame = math.min(ANIMATION_SLIDE_UP_FRAME_NUM, frame + 1)
             else
                 frame = math.max(0, frame - 1)
+            end
+
+            if fakeTabPressDuration > 0 then
+                fakeTabPressDuration = fakeTabPressDuration - 1
             end
 
             sprite:SetFrame(frame)

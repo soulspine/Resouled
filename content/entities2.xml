@@ -14,7 +14,7 @@
         <preload-snd id="234"/>
     </entity>
 
-    <entity anm2path="soul_card.anm2" id="5" variant="400" collisionRadius="16" name="Soul Pickup" shadowSize="14"/>
+    <entity anm2path="soul_card.anm2" id="5" variant="444" collisionRadius="16" name="Soul Pickup" shadowSize="14" reroll="false" tags="noreroll"/>
 
     <entity name="Cursed Gaper" id="10" variant="4" anm2path="cursed_gaper.anm2" baseHP="14" stageHP="3" collisionMass="5" collisionRadius="13" friction="1.2" numGridCollisionPoints="12" shadowSize="14" champion="0" collisionDamage="1" reroll="true">
         <beastiary anim="Idle" tramsform="0,0,1"/>
@@ -72,10 +72,10 @@
 
 <!-- Promotional Sets -->
     <!-- variant 444 becasue 4souls -->
-    <entity anm2path="strawberries.anm2" name="Red Strawberry Pickup" id="5" variant="444" subtype="0" collisionRadius="24" collisionMass="0" shadowSize="15" friction="1.5"/>
-    <entity anm2path="strawberries.anm2" name="Blue Strawberry Pickup" id="5" variant="444" subtype="1" collisionRadius="24" collisionMass="0" shadowSize="15" friction="1.5"/>
-    <entity anm2path="strawberries.anm2" name="Winged Strawberry Pickup" id="5" variant="444" subtype="3" collisionRadius="24" collisionMass="0" shadowSize="15" friction="1.5"/>
-    <entity anm2path="strawberries.anm2" name="Red Strawberry Familiar" id="3" variant="444" subtype="0" shadowSize="15" friction="1.5" tage="cansacrifice"/>
-    <entity anm2path="strawberries.anm2" name="Blue Strawberry Familiar" id="3" variant="444" subtype="1" shadowSize="15" friction="1.5" tags="cansacrifice"/>
-    <entity anm2path="strawberries.anm2" name="Golden Strawberry Familiar" id="3" variant="444" subtype="2" shadowSize="15" friction="1.5" tags="cansacrifice"/>
+    <entity anm2path="strawberries.anm2" name="Red Strawberry Pickup" id="5" variant="450" subtype="0" collisionRadius="24" collisionMass="0" shadowSize="15" friction="1.5"/>
+    <entity anm2path="strawberries.anm2" name="Blue Strawberry Pickup" id="5" variant="450" subtype="1" collisionRadius="24" collisionMass="0" shadowSize="15" friction="1.5"/>
+    <entity anm2path="strawberries.anm2" name="Winged Strawberry Pickup" id="5" variant="450" subtype="3" collisionRadius="24" collisionMass="0" shadowSize="15" friction="1.5"/>
+    <entity anm2path="strawberries.anm2" name="Red Strawberry Familiar" id="3" variant="450" subtype="0" shadowSize="15" friction="1.5" tage="cansacrifice"/>
+    <entity anm2path="strawberries.anm2" name="Blue Strawberry Familiar" id="3" variant="450" subtype="1" shadowSize="15" friction="1.5" tags="cansacrifice"/>
+    <entity anm2path="strawberries.anm2" name="Golden Strawberry Familiar" id="3" variant="450" subtype="2" shadowSize="15" friction="1.5" tags="cansacrifice"/>
 </entities>

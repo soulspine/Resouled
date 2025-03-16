@@ -495,6 +495,18 @@ function Resouled:GetPossessedSouls()
     return runSave.Souls.Possessed
 end
 
+---@return integer
+function Resouled:GetPossessedSoulsNum()
+    local runSave = SAVE_MANAGER.GetRunSave()
+    local num = 0
+    for _, soul in pairs(runSave.Souls.Possessed) do
+        if soul then
+            num = num + 1
+        end
+    end
+    return num
+end
+
 ---@param soul ResouledSoul
 ---@return boolean
 function Resouled:TryAddSoulToPossessed(soul)
@@ -519,7 +531,7 @@ end
 ---@param position Vector
 ---@return boolean
 function Resouled:TrySpawnSoulPickup(soul, position)
-    if not Resouled:WasSoulSpawned(soul) then
+    if not Resouled:WasSoulSpawned(soul) and Resouled:GetPossessedSoulsNum() ~= 4 then
         local seed = 0
         while seed == 0 do
             seed = Random()
@@ -536,14 +548,27 @@ end
 
 ---@param pickup EntityPickup
 local function onSoulPickupInit(_, pickup)
-    local sprite = pickup:GetSprite()
-    sprite:Play("Idle", true)
     pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
     pickup.GridCollisionClass = GridCollisionClass.COLLISION_OBJECT
     pickup.PositionOffset = Vector(0, -20)
-    --Resouled:SetNoReroll(pickup)
+    Resouled:SetNoReroll(pickup)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onSoulPickupInit, SOUL_PICKUP_VARIANT)
+
+---@param pickup EntityPickup
+---@param offset Vector
+local function onSoulPickupRender(_, pickup, offset)
+    local data = pickup:GetData()
+    if not data.ResouledLoadedSpritesheet then
+        local floorSave = SAVE_MANAGER.GetRoomFloorSave(pickup)
+        data.ResouledLoadedSpritesheet = true
+        local sprite = pickup:GetSprite()
+        sprite:ReplaceSpritesheet(0, floorSave.Soul.Gfx)
+        sprite:LoadGraphics()
+        sprite:Play("Idle", true)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_RENDER, onSoulPickupRender, SOUL_PICKUP_VARIANT)
 
 ---@param pickup EntityPickup
 ---@param collider Entity
@@ -554,6 +579,9 @@ local function onSoulPickupCollision(_, pickup, collider, low)
         local floorSave = SAVE_MANAGER.GetRoomFloorSave(pickup)
         local added = Resouled:TryAddSoulToPossessed(floorSave.Soul)
         if added then
+            player:AnimatePickup(pickup:GetSprite(), true)
+            Game():GetHUD():ShowItemText(floorSave.Soul.Name, Resouled:GetPossessedSoulsNum() .. "/4 souls collected")
+            SFXManager():Play(SoundEffect.SOUND_HOLY)
             pickup:Remove()
         end
         return added
@@ -573,6 +601,11 @@ local function soulCardsHudRender()
                 local preFrame = sprite:GetFrame()
                 sprite:Load("gfx/soul_card.anm2", false)
                 local runSave = SAVE_MANAGER.GetRunSave()
+
+                if not runSave.Souls then
+                    prepareSoulContainerOnRunStart(nil, false)
+                end
+
                 local soulName = runSave.Souls.Possessed[i]
                 if soulName then
                     local soul = Resouled:GetSoulByName(soulName)
@@ -605,10 +638,10 @@ local function soulCardsHudRender()
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, soulCardsHudRender)
 
-local function updateSoulCardsOnGlowingHourglass()
+local function updateSoulCardsOnRoomEnter()
     reloadSoulCards = true
 end
-Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, updateSoulCardsOnGlowingHourglass, CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS)
+Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, updateSoulCardsOnRoomEnter)
 
 ---@param action ButtonAction
 function Resouled:IsAnyonePressingAction(action)

@@ -222,7 +222,7 @@ local function onPlayerUpdate(_, player)
                                 local pickupSprite = Sprite()
                                 pickupSprite:Load(pickup.Animation.File, true)
                                 pickupSprite:Play(pickup.Animation.Name, true)
-                                player:AnimatePickup(pickupSprite)
+                                player:AnimatePickup(pickupSprite, true)
                             end
                             -- we remove the pickup from the list
                             table.remove(runSave.SleightOfHand.Pickups, 1)

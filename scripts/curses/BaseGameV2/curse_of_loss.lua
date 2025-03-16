@@ -17,6 +17,7 @@ local function onUpdate()
     local roomSave = SAVE_MANAGER.GetRoomSave()
     local sfx = SFXManager()
     if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_LOSS) and roomSave.ChoosingSoul then
+        Resouled:ForceShutDoors()
         Resouled:MakeCardsExpandForDuration(CARD_EXTEND_DURATION)
         ---@param player EntityPlayer
         Resouled:IterateOverPlayers(function(player)
@@ -64,18 +65,17 @@ local function onUpdate()
                 sfx:Play(SoundEffect.SOUND_CHARACTER_SELECT_RIGHT)
             end
         end
-
+        
         if Resouled:IsAnyonePressingAction(ButtonAction.ACTION_ITEM) then
             if Resouled:GetPossessedSouls()[roomSave.ChosenSoul] == nil then
                 sfx:Play(SoundEffect.SOUND_DOGMA_GODHEAD)
             else
                 Resouled:TryRemoveSoulFromPossessed(roomSave.ChosenSoul)
                 roomSave.ChoosingSoul = nil
+                Resouled:ForceOpenDoors()
                 sfx:Play(SoundEffect.SOUND_BEAST_GHOST_DASH, 1.2)
             end
         end
-
-        print(roomSave.ChosenSoul)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)

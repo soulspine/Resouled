@@ -699,6 +699,20 @@ local function soulCardsHudRender()
                 sprite:SetFrame(preFrame)
             end
 
+            if sprite:IsLoaded() and spriteData.Spritesheet ~= nil then
+                local roomSave = SAVE_MANAGER.GetRoomSave()
+                if roomSave.ChosenSoul then
+                    if i == roomSave.ChosenSoul then
+                        sprite.Color = Color(3, 3, 3, 1, 0, 0, 0)
+                    else
+                        sprite.Color = Color(1, 1, 1, 1, 0, 0, 0)
+                    end
+                end
+                if Resouled:IsAnyonePressingAction(ButtonAction.ACTION_ITEM) then
+                    sprite.Color = Color(1, 1, 1, 1, 0, 0, 0)
+                end
+            end
+
             local frame = sprite:GetFrame()
             if Resouled:IsAnyonePressingAction(ButtonAction.ACTION_MAP) or fakeTabPressDuration > 0 then
                 frame = math.min(ANIMATION_SLIDE_UP_FRAME_NUM, frame + 1)

@@ -2,7 +2,6 @@ local BLOATS_SOUL_TYPE = Isaac.GetEntityTypeByName("Bloat's Soul")
 local BLOATS_SOUL_VARIANT = Isaac.GetEntityVariantByName("Bloat's Soul")
 
 local NORMAL = true
-local SOUL = "Bloat's Soul"
 
 local ENTITY_FLAGS = (EntityFlag.FLAG_NO_PHYSICS_KNOCKBACK)
 local ENTITY_COLLISION_CLASS = EntityCollisionClass.ENTCOLL_ALL
@@ -201,7 +200,7 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, onEntityUpdate, BLOATS_SOUL
 ---@param npc EntityNPC
 local function onNpcDeath(_, npc)
     if npc.Variant ~= BLOATS_SOUL_VARIANT and npc.Variant ~= 10 and npc.Variant ~= 11 then --variants 10 and 11 are eyes
-        Resouled:SpawnSoulPickup(npc, SOUL)
+        Resouled:TrySpawnSoulPickup(Resouled.Souls.BLOAT, npc.Position)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNpcDeath,BLOATS_SOUL_TYPE)

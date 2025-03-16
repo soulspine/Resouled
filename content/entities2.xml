@@ -14,7 +14,7 @@
         <preload-snd id="234"/>
     </entity>
 
-    <entity anm2path="soul_pickup.anm2" id="5" variant="400" collisionRadius="16" name="Soul Pickup" shadowSize="14"/>
+    <entity anm2path="soul_card.anm2" id="5" variant="400" collisionRadius="16" name="Soul Pickup" shadowSize="14"/>
 
     <entity name="Cursed Gaper" id="10" variant="4" anm2path="cursed_gaper.anm2" baseHP="14" stageHP="3" collisionMass="5" collisionRadius="13" friction="1.2" numGridCollisionPoints="12" shadowSize="14" champion="0" collisionDamage="1" reroll="true">
         <beastiary anim="Idle" tramsform="0,0,1"/>

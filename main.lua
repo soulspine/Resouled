@@ -1,15 +1,6 @@
 ---@class ModReference
 Resouled = RegisterMod("Resouled", 1)
 
----@enum ResouledSouls
-ResouledSouls = {
-    MONSTRO = "Monstro's Soul",
-    DUKE = "Duke's Soul",
-    LITTLE_HORN = "Little Horn's Soul",
-    BLOAT = "Bloat's Soul",
-    WRATH = "Wrath's Soul",
-}
-
 include("scripts.utility.hud_helper")
 
 ---@type SaveManager
@@ -24,4 +15,3 @@ include("scripts.curses")
 include("scripts.enemies")
 include("scripts.challenges")
 include("scripts.pickups")
-include("scripts.souls")

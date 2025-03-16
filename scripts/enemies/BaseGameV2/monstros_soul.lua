@@ -147,7 +147,7 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, onNpcUpdate, EntityType.ENT
 ---@param npc EntityNPC
 local function onNpcDeath(_, npc)
     if npc.Variant ~= MONSTROS_SOUL_VARIANT then 
-        Resouled:SpawnSoulPickup(npc, SOUL)
+        Resouled:TrySpawnSoulPickup(Resouled.Souls.MONSTRO, npc.Position)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNpcDeath, EntityType.ENTITY_MONSTRO)

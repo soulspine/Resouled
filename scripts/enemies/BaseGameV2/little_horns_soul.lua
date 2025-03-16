@@ -3,7 +3,6 @@ local LITTLE_HORN_SOUL_VARIANT = Isaac.GetEntityVariantByName("Little Horn's Sou
 local LITTLE_HORN_SOUL_CLONE_SUBTYPE = 1
 
 local NORMAL = true
-local SOUL = "Little Horn's Soul"
 
 local SOUL_BALL_TYPE = Isaac.GetEntityTypeByName("Soul Ball")
 local SOUL_BALL_VARIANT = Isaac.GetEntityVariantByName("Soul Ball")
@@ -87,8 +86,6 @@ local function onNpcInit(_, npc)
         data.CurrentAnimation = ANIMATION_APPEAR
         data.attack = math.random(1,3)
         data.bombCount = 0
-
-        data.Soul = SOUL
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, LITTLE_HORN_SOUL_TYPE)
@@ -188,7 +185,7 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, onNpcUpdate, LITTLE_HORN_SO
 ---@param npc EntityNPC
 local function onNpcDeath(_, npc)
     if npc.Variant ~= LITTLE_HORN_SOUL_VARIANT and npc.Variant ~= 1 and npc.Variant ~= SOUL_BALL_VARIANT then --npc.Variant 1 is little horn's dark ball
-        Resouled:SpawnSoulPickup(npc, SOUL)
+        Resouled:TrySpawnSoulPickup(Resouled.Souls.LITTLE_HORN, npc.Position)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNpcDeath, LITTLE_HORN_SOUL_TYPE)

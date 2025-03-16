@@ -1,3 +1,51 @@
+local GFX_EMPTY_SOUL_CARD = "gfx/souls/cards/empty.png"
+local GFX_BLANK_SOUL_CARD = "gfx/souls/cards/blank.png"
+local GFX_NEON_SOUL_CARD = "gfx/souls/cards/neon.png"
+
+local SOUL_PICKUP_VARIANT = Isaac.GetEntityVariantByName("Soul Pickup")
+
+---@types <integer, Sprite>
+local soulCardSprites ={
+    [1] = Sprite(),
+    [2] = Sprite(),
+    [3] = Sprite(),
+    [4] = Sprite(),
+}
+local reloadSoulCards = false -- render optimization variable
+
+---@class ResouledSoul
+---@field Name string
+---@field Gfx string
+
+---@class ResouledSouls
+---@field MONSTRO ResouledSoul
+---@field DUKE ResouledSoul
+---@field LITTLE_HORN ResouledSoul
+---@field BLOAT ResouledSoul
+---@field WRATH ResouledSoul
+Resouled.Souls = {
+    MONSTRO = {
+        Name = "Monstro's Soul",
+        Gfx = GFX_NEON_SOUL_CARD,
+    },
+    DUKE = {
+        Name = "Duke's Soul",
+        Gfx = GFX_NEON_SOUL_CARD,
+    },
+    LITTLE_HORN = {
+        Name = "Little Horn's Soul",
+        Gfx = GFX_NEON_SOUL_CARD,
+    },
+    BLOAT = {
+        Name = "Bloat's Soul",
+        Gfx = GFX_NEON_SOUL_CARD,
+    },
+    WRATH = {
+        Name = "Wrath's Soul",
+        Gfx = GFX_NEON_SOUL_CARD,
+    },
+}
+
 ---@enum ResouledTearEffects
 Resouled.TearEffects = {
     CHEESE_GRATER = 0
@@ -386,32 +434,193 @@ end
 ---@param pickup EntityPickup
 local function onPickupUpdate(_, pickup)
     local noRerollData = SAVE_MANAGER.GetRoomFloorSave(pickup).NoReroll
-    if noRerollData and noRerollData.Type ~= pickup.Type and noRerollData.Variant ~= pickup.Variant and noRerollData.SubType ~= pickup.SubType and pickup.SubType ~= CollectibleType.COLLECTIBLE_NULL then
+    if noRerollData and (noRerollData.Type ~= pickup.Type or noRerollData.Variant ~= pickup.Variant or noRerollData.SubType ~= pickup.SubType) and pickup.SubType ~= CollectibleType.COLLECTIBLE_NULL then
         pickup:Morph(noRerollData.Type, noRerollData.Variant, noRerollData.SubType, false, true, true)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onPickupUpdate, PickupVariant.PICKUP_COLLECTIBLE)
 
----@param soul ResouledSouls
----@param position Vector
-function Resouled:TrySpawnSoulItem(soul, position)
-    local soulId = Isaac.GetItemIdByName(soul)
-    local runSave = SAVE_MANAGER.GetRunSave()
-    if not runSave.Souls then
-        runSave.Souls = {}
+local function prepareSoulContainerOnRunStart(_, isContinued)
+    if not isContinued then
+        local runSave = SAVE_MANAGER.GetRunSave()
+        runSave.Souls = {
+            Spawned = {},
+            Possessed = {
+                [1] = nil,
+                [2] = nil,
+                [3] = nil,
+                [4] = nil
+            },
+        }
+        reloadSoulCards = true
+        print("Soul container prepared")
     end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, prepareSoulContainerOnRunStart)
 
-    if not runSave.Souls[soul] then
-        runSave.Souls[soul] = true
-        local entity = Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, position, Vector.Zero, nil, soulId, Isaac.GetPlayer(0):GetCollectibleRNG(soulId):GetSeed())
-        local pickup = entity:ToPickup()
-        if pickup then
-            pickup:Morph(pickup.Type, pickup.Variant, pickup.SubType, false, true, true)
-            Resouled:SetNoReroll(pickup)
+---@param soul ResouledSoul
+---@return boolean
+function Resouled:WasSoulSpawned(soul)
+    local runSave = SAVE_MANAGER.GetRunSave()
+    return runSave.Souls.Spawned[soul.Name] == true
+end
+
+---@param soul ResouledSoul
+---@return boolean
+function Resouled:IsSoulPossessed(soul)
+    local runSave = SAVE_MANAGER.GetRunSave()
+    for _, possessedSoul in pairs(runSave.Souls.Possessed) do
+        if possessedSoul == soul.Name then
+            return true
         end
+    end
+    return false
+end
+
+---@param name string
+---@return ResouledSoul | nil
+function Resouled:GetSoulByName(name)
+    for _, soul in pairs(Resouled.Souls) do
+        if soul.Name == name then
+            return soul
+        end
+    end
+    return nil
+end
+
+
+---@return table<integer, nil | string>
+function Resouled:GetPossessedSouls()
+    local runSave = SAVE_MANAGER.GetRunSave()
+    return runSave.Souls.Possessed
+end
+
+---@param soul ResouledSoul
+---@return boolean
+function Resouled:TryAddSoulToPossessed(soul)
+    local runSave = SAVE_MANAGER.GetRunSave()
+    for i = 1, 4 do
+        if runSave.Souls.Possessed[i] == nil then
+            runSave.Souls.Possessed[i] = soul.Name
+            reloadSoulCards = true
+            return true
+        end
+    end
+    return false
+end
+
+---@param soul ResouledSoul
+function Resouled:MarkSoulAsSpawned(soul)
+    local runSave = SAVE_MANAGER.GetRunSave()
+    runSave.Souls.Spawned[soul.Name] = true
+end
+
+---@param soul ResouledSoul
+---@param position Vector
+---@return boolean
+function Resouled:TrySpawnSoulPickup(soul, position)
+    if not Resouled:WasSoulSpawned(soul) then
+        local seed = 0
+        while seed == 0 do
+            seed = Random()
+        end
+        local soulPickup = Game():Spawn(EntityType.ENTITY_PICKUP, SOUL_PICKUP_VARIANT, position, Vector.Zero, nil, 0, seed)
+        local floorSave = SAVE_MANAGER.GetRoomFloorSave(soulPickup)
+        floorSave.Soul = soul
+        Resouled:MarkSoulAsSpawned(soul)
+        return true
+    else
+        return false
     end
 end
 
+---@param pickup EntityPickup
+local function onSoulPickupInit(_, pickup)
+    local sprite = pickup:GetSprite()
+    sprite:Play("Idle", true)
+    pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
+    pickup.GridCollisionClass = GridCollisionClass.COLLISION_OBJECT
+    pickup.PositionOffset = Vector(0, -20)
+    --Resouled:SetNoReroll(pickup)
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onSoulPickupInit, SOUL_PICKUP_VARIANT)
+
+---@param pickup EntityPickup
+---@param collider Entity
+---@param low boolean
+local function onSoulPickupCollision(_, pickup, collider, low)
+    local player = collider:ToPlayer()
+    if pickup.Variant == SOUL_PICKUP_VARIANT and player then
+        local floorSave = SAVE_MANAGER.GetRoomFloorSave(pickup)
+        local added = Resouled:TryAddSoulToPossessed(floorSave.Soul)
+        if added then
+            pickup:Remove()
+        end
+        return added
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onSoulPickupCollision)
+
+local ANIMATION_SLIDE_UP = "SlideUp"
+local ANIMATION_SLIDE_UP_FRAME_NUM = 9
+local CARD_MARGIN = 20
+
+local function soulCardsHudRender()
+    if Game():GetHUD():IsVisible() then
+        for i, sprite in pairs(soulCardSprites) do
+
+            if not sprite:IsLoaded() or reloadSoulCards then
+                local preFrame = sprite:GetFrame()
+                sprite:Load("gfx/soul_card.anm2", false)
+                local runSave = SAVE_MANAGER.GetRunSave()
+                local soulName = runSave.Souls.Possessed[i]
+                if soulName then
+                    local soul = Resouled:GetSoulByName(soulName)
+                    if soul then
+                        sprite:ReplaceSpritesheet(0, soul.Gfx)
+                    end
+                end
+                sprite:LoadGraphics()
+                sprite:Play("SlideUp", true)
+                sprite:SetFrame(preFrame)
+            end
+
+            local frame = sprite:GetFrame()
+            if Resouled:IsAnyonePressingAction(ButtonAction.ACTION_MAP) then
+                frame = math.min(ANIMATION_SLIDE_UP_FRAME_NUM, frame + 1)
+            else
+                frame = math.max(0, frame - 1)
+            end
+
+            sprite:SetFrame(frame)
+
+            local screenDimensions = Vector(Isaac.GetScreenWidth(), Isaac.GetScreenHeight())
+
+            local w = screenDimensions.X - screenDimensions.X/4 + CARD_MARGIN*(i-3)
+            local h = screenDimensions.Y
+            sprite:Render(Vector(w, h), Vector.Zero, Vector.Zero)
+        end
+        reloadSoulCards = false
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, soulCardsHudRender)
+
+local function updateSoulCardsOnGlowingHourglass()
+    reloadSoulCards = true
+end
+Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, updateSoulCardsOnGlowingHourglass, CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS)
+
+---@param action ButtonAction
+function Resouled:IsAnyonePressingAction(action)
+    local isPressed = false
+    ---@param player EntityPlayer
+    Resouled:IterateOverPlayers(function(player)
+        if Input.IsActionPressed(action, player.ControllerIndex) then
+            isPressed = true
+        end
+    end)
+    return isPressed
+end
 
 -- THIS IS FROM EID'S CODE BUT MODIFIED A BIT
 -- https://github.com/wofsauge/External-Item-Descriptions/blob/9908279ec579f2b1ec128c9c513e4cb3c3138a93/main.lua#L221
@@ -608,15 +817,6 @@ function Resouled:GetCollectibleActiveSlot(player, collectibleId)
         end
     end
     return activeSlot
-end
-
-function Resouled:SpawnSoulPickup(npc, SOUL)
-    local soul = Game():Spawn(5, 400, npc.Position, Vector.Zero, nil, 0, npc.InitSeed)
-    local data = soul:GetData()
-    soul:GetSprite():Play("Idle", true)
-    soul.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYEROBJECTS
-    data.Soul = SOUL
-    soul:Update()
 end
 
 Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, function()

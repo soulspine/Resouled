@@ -29,14 +29,14 @@ local function onUpdate()
             roomSave.ChooseCooldown = roomSave.ChooseCooldown - 1
         end
 
-        if Input.IsActionPressed(ButtonAction.ACTION_LEFT, 0) and roomSave.ChooseCooldown == 0 then
+        if Resouled:IsAnyonePressingAction(ButtonAction.ACTION_LEFT) and roomSave.ChooseCooldown == 0 then
             roomSave.ChosenSoul = roomSave.ChosenSoul - 1
             roomSave.ChooseCooldown = 6
-            if runSave.Souls.Possessed[roomSave.ChosenSoul] == nil then
+            if Resouled:GetPossessedSouls()[roomSave.ChosenSoul] == nil then
                 roomSave.ChosenSoul = roomSave.ChosenSoul - 1
-                if runSave.Souls.Possessed[roomSave.ChosenSoul] == nil then
+                if Resouled:GetPossessedSouls()[roomSave.ChosenSoul] == nil then
                     roomSave.ChosenSoul = roomSave.ChosenSoul - 1
-                    if runSave.Souls.Possessed[roomSave.ChosenSoul] == nil then
+                    if Resouled:GetPossessedSouls()[roomSave.ChosenSoul] == nil then
                         roomSave.ChosenSoul = Resouled:GetLowestPossesedSoulIndex()
                     end
                 end
@@ -46,14 +46,14 @@ local function onUpdate()
             else
                 sfx:Play(SoundEffect.SOUND_CHARACTER_SELECT_LEFT)
             end
-        elseif Input.IsActionPressed(ButtonAction.ACTION_RIGHT, 0) and roomSave.ChooseCooldown == 0 then
+        elseif Resouled:IsAnyonePressingAction(ButtonAction.ACTION_RIGHT) and roomSave.ChooseCooldown == 0 then
             roomSave.ChosenSoul = roomSave.ChosenSoul + 1
             roomSave.ChooseCooldown = 6
-            if runSave.Souls.Possessed[roomSave.ChosenSoul] == nil then
+            if Resouled:GetPossessedSouls()[roomSave.ChosenSoul] == nil then
                 roomSave.ChosenSoul = roomSave.ChosenSoul + 1
-                if runSave.Souls.Possessed[roomSave.ChosenSoul] == nil then
+                if Resouled:GetPossessedSouls()[roomSave.ChosenSoul] == nil then
                     roomSave.ChosenSoul = roomSave.ChosenSoul + 1
-                    if runSave.Souls.Possessed[roomSave.ChosenSoul] == nil then
+                    if Resouled:GetPossessedSouls()[roomSave.ChosenSoul] == nil then
                         roomSave.ChosenSoul = Resouled:GetHighestPossesedSoulIndex()
                     end
                 end
@@ -65,13 +65,13 @@ local function onUpdate()
             end
         end
 
-        if Input.IsActionPressed(ButtonAction.ACTION_ITEM, 0) then
-            if runSave.Souls.Possessed[roomSave.ChosenSoul] == nil then
+        if Resouled:IsAnyonePressingAction(ButtonAction.ACTION_ITEM) then
+            if Resouled:GetPossessedSouls()[roomSave.ChosenSoul] == nil then
                 sfx:Play(SoundEffect.SOUND_DOGMA_GODHEAD)
             else
                 Resouled:TryRemoveSoulFromPossessed(roomSave.ChosenSoul)
                 roomSave.ChoosingSoul = nil
-                sfx:Play(SoundEffect.SOUND_DOGMA_BLACKHOLE_SHOOT)
+                sfx:Play(SoundEffect.SOUND_BEAST_GHOST_DASH, 1.2)
             end
         end
 

@@ -17,7 +17,7 @@ local CUSTOM_CURSE_CHANCE = 1
 
 include("scripts.curses.BaseGameV2.curse_of_greed")
 include("scripts.curses.BaseGameV2.curse_of_pain")
---include("scripts.curses.BaseGameV2.curse_of_loss")
+include("scripts.curses.BaseGameV2.curse_of_loss")
 
 include("scripts.curses.Requiem.blessing_of_isaac")
 include("scripts.curses.Requiem.blessing_of_maggy")

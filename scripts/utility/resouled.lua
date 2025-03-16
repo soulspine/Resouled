@@ -496,6 +496,7 @@ function Resouled:GetPossessedSouls()
     return runSave.Souls.Possessed
 end
 
+
 ---@return integer
 function Resouled:GetPossessedSoulsNum()
     local runSave = SAVE_MANAGER.GetRunSave()
@@ -506,6 +507,32 @@ function Resouled:GetPossessedSoulsNum()
         end
     end
     return num
+end
+
+---@return integer
+function Resouled:GetHighestPossesedSoulIndex()
+    local runSave = SAVE_MANAGER.GetRunSave()
+    local highestIndex = 0
+    for _ = 1, 4 do
+        if runSave.Souls.Possessed[_] ~= nil then
+            highestIndex = _
+        end
+    end
+    return highestIndex
+end
+
+---@return integer
+function Resouled:GetLowestPossesedSoulIndex()
+    local runSave = SAVE_MANAGER.GetRunSave()
+    local lowestIndex = 0
+    local foundLowest = false
+    for _ = 1, 4 do
+        if runSave.Souls.Possessed[_] ~= nil and not foundLowest then
+            lowestIndex = _
+            foundLowest = true
+        end
+    end
+    return lowestIndex
 end
 
 ---@param soul ResouledSoul
@@ -585,6 +612,7 @@ local function onSoulPickupInit(_, pickup)
     pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
     pickup.GridCollisionClass = GridCollisionClass.COLLISION_OBJECT
     pickup.PositionOffset = Vector(0, -20)
+    pickup:GetSprite():Play("Appear", true)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onSoulPickupInit, SOUL_PICKUP_VARIANT)
 
@@ -598,7 +626,9 @@ local function onSoulPickupRender(_, pickup, offset)
         local sprite = pickup:GetSprite()
         sprite:ReplaceSpritesheet(0, floorSave.Soul.Gfx)
         sprite:LoadGraphics()
-        sprite:Play("Idle", true)
+        if sprite:IsFinished("Appear") then
+            sprite:Play("Idle", true)
+        end
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_RENDER, onSoulPickupRender, SOUL_PICKUP_VARIANT)

@@ -9,22 +9,28 @@ local soulCardSprites ={
     [1] = {
         Sprite = Sprite(),
         Spritesheet = nil,
+        Reload = false,
+        FakeTabDuration = 0,
     },
     [2] = {
         Sprite = Sprite(),
         Spritesheet = nil,
+        Reload = false,
+        FakeTabDuration = 0,
     },
     [3] = {
         Sprite = Sprite(),
         Spritesheet = nil,
+        Reload = false,
+        FakeTabDuration = 0,
     },
     [4] = {
         Sprite = Sprite(),
         Spritesheet = nil,
+        Reload = false,
+        FakeTabDuration = 0,
     },
 }
-local reloadSoulCards = false -- render optimization variable
-local fakeTabPressDuration = 0 -- to make cards always visible
 
 ---@class ResouledSoul
 ---@field Name string
@@ -465,7 +471,7 @@ local function prepareSoulContainerOnRunStart(_, isContinued)
                 [4] = nil
             },
         }
-        reloadSoulCards = true
+        Resouled:ReloadAllSoulCardSprites()
         print("Soul container prepared")
     end
 end
@@ -548,17 +554,17 @@ function Resouled:GetLowestPossesedSoulIndex()
 end
 
 ---@param soul ResouledSoul
----@return boolean
+---@return integer | nil
 function Resouled:TryAddSoulToPossessed(soul)
     local runSave = SAVE_MANAGER.GetRunSave()
     for i = 1, 4 do
         if runSave.Souls.Possessed[i] == nil then
             runSave.Souls.Possessed[i] = soul.Name
-            reloadSoulCards = true
-            return true
+            
+            return i
         end
     end
-    return false
+    return nil
 end
 
 --- Index 1-4
@@ -583,7 +589,7 @@ function Resouled:TryRemoveSoulFromPossessed(index)
         end
     end
     if returnVal then
-        reloadSoulCards = true
+        Resouled:ReloadAllSoulCardSprites()
     end
     return returnVal
 end
@@ -615,8 +621,8 @@ end
 
 --duration in game frames
 ---@param duration integer
-function Resouled:MakeCardsExpandForDuration(duration)
-    fakeTabPressDuration = duration
+function Resouled:ForceExpandCard(i, duration)
+    soulCardSprites[i].FakeTabDuration = duration
 end
 
 ---@param pickup EntityPickup
@@ -652,22 +658,31 @@ local function onSoulPickupCollision(_, pickup, collider, low)
     local player = collider:ToPlayer()
     if pickup.Variant == SOUL_PICKUP_VARIANT and player then
         local floorSave = SAVE_MANAGER.GetRoomFloorSave(pickup)
-        local added = Resouled:TryAddSoulToPossessed(floorSave.Soul)
-        if added then
+        local addedIndex = Resouled:TryAddSoulToPossessed(floorSave.Soul)
+        if addedIndex then
             player:AnimatePickup(pickup:GetSprite(), true)
             Game():GetHUD():ShowItemText(floorSave.Soul.Name, Resouled:GetPossessedSoulsNum() .. "/4 souls collected")
             SFXManager():Play(SoundEffect.SOUND_HOLY)
-            Resouled:MakeCardsExpandForDuration(480)
+            Resouled:ForceExpandCard(addedIndex, 180)
+            Resouled:ReloadAllSoulCardSprites()
             pickup:Remove()
+            return true
+        else
+            return false
         end
-        return added
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onSoulPickupCollision)
 
-local ANIMATION_SLIDE_UP = "SlideUp"
-local ANIMATION_SLIDE_UP_FRAME_NUM = 9
+local ANIMATION_HUD_APPEAR = "HudAppear"
+local ANIMATION_HUD_IDLE = "HudIdle"
+local ANIMATION_HUD_DISAPPEAR = "HudDisappear"
+local ANIMATION_HUD_HIDE = "HudHide"
+local EVENT_TRIGGER_RESOULED_CARD_FLIP = "ResouledCardFlip"
+local SFX_CARD_FLIP = {SoundEffect.SOUND_MENU_NOTE_HIDE, SoundEffect.SOUND_MENU_NOTE_HIDE}
+local ANM2_SOUL_CARD = "gfx/soul_card.anm2"
 local CARD_MARGIN = 20
+local CARD_OFFSET = Vector(0, -18)
 
 local function soulCardsHudRender()
     if Game():GetHUD():IsVisible() then
@@ -675,76 +690,84 @@ local function soulCardsHudRender()
 
             local sprite = spriteData.Sprite
 
-            if not sprite:IsLoaded() or spriteData.Spritesheet == nil or reloadSoulCards then
-                local preFrame = sprite:GetFrame()
-                sprite:Load("gfx/soul_card.anm2", false)
+            --print(i, spriteData.Spritesheet, sprite:GetAnimation(), sprite:GetFrame())
+            if spriteData.Reload then
+
+                if not sprite:IsLoaded() then
+                    sprite:Load(ANM2_SOUL_CARD, true)
+                    sprite:Play(ANIMATION_HUD_HIDE, true)
+                end
+
                 local runSave = SAVE_MANAGER.GetRunSave()
 
                 if not runSave.Souls then
-                    prepareSoulContainerOnRunStart(nil, false)
+                    prepareSoulContainerOnRunStart(nil, true)
                 end
 
-                local soulName = runSave.Souls.Possessed[i]
-                if soulName then
-                    local soul = Resouled:GetSoulByName(soulName)
-                    if soul then
-                        sprite:ReplaceSpritesheet(0, soul.Gfx)
+                local soul = Resouled:GetSoulByName(Resouled:GetPossessedSouls()[i])
+
+                if soul then
+                    if soul.Gfx ~= spriteData.Spritesheet then
                         spriteData.Spritesheet = soul.Gfx
+                        sprite:ReplaceSpritesheet(0, soul.Gfx)
+                        sprite:LoadGraphics()
                     end
                 else
-                    spriteData.Spritesheet = GFX_BLANK_SOUL_CARD
+                    spriteData.Spritesheet = nil
                 end
-                sprite:LoadGraphics()
-                sprite:Play(ANIMATION_SLIDE_UP, true)
-                sprite:SetFrame(preFrame)
             end
+            spriteData.Reload = false -- reset reload after render is finished
 
-            if sprite:IsLoaded() and spriteData.Spritesheet ~= nil then
-                local roomSave = SAVE_MANAGER.GetRoomSave()
-                if roomSave.ChosenSoul then
-                    if i == roomSave.ChosenSoul then
-                        sprite.Color = Color(3, 3, 3, 1, 0, 0, 0)
-                    else
-                        sprite.Color = Color(1, 1, 1, 1, 0, 0, 0)
+            if spriteData.Spritesheet then
+
+                if sprite:IsEventTriggered(EVENT_TRIGGER_RESOULED_CARD_FLIP) then
+                    SFXManager():Play(SFX_CARD_FLIP[math.random(#SFX_CARD_FLIP)], 1, 10)
+                end
+
+                local animationName = sprite:GetAnimation()
+                if animationName == ANIMATION_HUD_HIDE then
+                    if (Resouled:IsAnyonePressingAction(ButtonAction.ACTION_MAP) or spriteData.FakeTabDuration > 0) then
+                        sprite.PlaybackSpeed = math.random(40, 100) / 100 -- to make them feel more random, otherwise they are just mega synced and it looks weird
+                        sprite:Play(ANIMATION_HUD_APPEAR, true)
+                    end
+                elseif animationName == ANIMATION_HUD_APPEAR then
+                    if sprite:IsFinished(ANIMATION_HUD_APPEAR) then
+                        sprite:Play(ANIMATION_HUD_IDLE, true)
+                        sprite:SetFrame(math.random(0, 30))
+                    end
+                elseif animationName == ANIMATION_HUD_IDLE then
+                    if not (Resouled:IsAnyonePressingAction(ButtonAction.ACTION_MAP) or spriteData.FakeTabDuration > 0) then
+                        sprite:Play(ANIMATION_HUD_DISAPPEAR, true)
+                    end
+                elseif animationName == ANIMATION_HUD_DISAPPEAR then
+                    if sprite:IsFinished(ANIMATION_HUD_DISAPPEAR) then
+                        sprite:Play(ANIMATION_HUD_HIDE, true)
                     end
                 end
-                if Resouled:IsAnyonePressingAction(ButtonAction.ACTION_ITEM) then
-                    sprite.Color = Color(1, 1, 1, 1, 0, 0, 0)
-                end
+            
+                sprite:Update()
+
+                local screenDimensions = Vector(Isaac.GetScreenWidth(), Isaac.GetScreenHeight())
+
+                local w = screenDimensions.X - screenDimensions.X/4 + CARD_MARGIN*(i-3)
+                local h = screenDimensions.Y + CARD_OFFSET.Y
+                sprite:Render(Vector(w, h), Vector.Zero, Vector.Zero)
             end
 
-            local frame = sprite:GetFrame()
-            if Resouled:IsAnyonePressingAction(ButtonAction.ACTION_MAP) or fakeTabPressDuration > 0 then
-                frame = math.min(ANIMATION_SLIDE_UP_FRAME_NUM, frame + 1)
-            else
-                frame = math.max(0, frame - 1)
+            if spriteData.FakeTabDuration > 0 then
+                spriteData.FakeTabDuration = spriteData.FakeTabDuration - 1
             end
-
-            if fakeTabPressDuration > 0 then
-                fakeTabPressDuration = fakeTabPressDuration - 1
-            end
-
-            if spriteData.Spritesheet == GFX_BLANK_SOUL_CARD then
-                frame = 0
-            end
-
-            sprite:SetFrame(frame)
-
-            local screenDimensions = Vector(Isaac.GetScreenWidth(), Isaac.GetScreenHeight())
-
-            local w = screenDimensions.X - screenDimensions.X/4 + CARD_MARGIN*(i-3)
-            local h = screenDimensions.Y
-            sprite:Render(Vector(w, h), Vector.Zero, Vector.Zero)
         end
-        reloadSoulCards = false
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, soulCardsHudRender)
 
-local function updateSoulCardsOnRoomEnter()
-    reloadSoulCards = true
+function Resouled:ReloadAllSoulCardSprites()
+    for _, spriteData in pairs(soulCardSprites) do
+        spriteData.Reload = true
+    end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, updateSoulCardsOnRoomEnter)
+Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, Resouled.ReloadAllSoulCardSprites)
 
 ---@param action ButtonAction
 function Resouled:IsAnyonePressingAction(action)

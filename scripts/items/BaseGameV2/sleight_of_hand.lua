@@ -102,7 +102,7 @@ local function onActiveUse(_, itemId, rng, player, useFlags, activeSlot, customV
             Curses = level:GetCurses(),
         }
 
-        Isaac.ExecuteCommand("curse 0")
+        level:RemoveCurses(runSave.SleightOfHand.Curses)
 
         local allDoors = Resouled:GetRoomDoors()
         for _, door in ipairs(allDoors) do
@@ -187,8 +187,15 @@ local function onPlayerUpdate(_, player)
                 end
 
                 if runSave.SleightOfHand.Curses > 0 then
-                    Isaac.ExecuteCommand("curse " .. runSave.SleightOfHand.Curses)
-                    runSave.SleightOfHand.Curses = 0
+                    print(runSave.SleightOfHand.Curses)
+                    local i = 1
+                    while runSave.SleightOfHand.Curses >0 do
+                        if runSave.SleightOfHand.Curses & i == i then
+                            Isaac.ExecuteCommand("curse " .. i)
+                            runSave.SleightOfHand.Curses = runSave.SleightOfHand.Curses & ~i
+                        end
+                        i = i << 1
+                    end
                 end
 
                 -- if pickup animation is playing we have to check if its the first time after using the item - then its definitely ghowing hourglass so we interrupt it

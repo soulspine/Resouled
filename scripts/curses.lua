@@ -5,26 +5,13 @@ Resouled.Curses = {
     CURSE_OF_LOSS = Isaac.GetCurseIdByName("Curse of Loss!"),
 }
 
----@enum ResouledBlessings
-Resouled.Blessings = {
-    BLESSING_OF_ISAAC = Isaac.GetCurseIdByName("Blessing of Isaac!"),
-    BLESSING_OF_MAGGY = Isaac.GetCurseIdByName("Blessing of Maggy!"),
-    BLESSING_OF_SAMSON = Isaac.GetCurseIdByName("Blessing of Samson!"),
-    BLESSING_OF_STEAM = Isaac.GetCurseIdByName("Blessing of Steam!"),
-}
-
 local CUSTOM_CURSE_CHANCE = 1
 
 include("scripts.curses.BaseGameV2.curse_of_greed")
 include("scripts.curses.BaseGameV2.curse_of_pain")
-include("scripts.curses.BaseGameV2.curse_of_loss")
+--include("scripts.curses.BaseGameV2.curse_of_loss")
 
-include("scripts.curses.Requiem.blessing_of_isaac")
-include("scripts.curses.Requiem.blessing_of_maggy")
-include("scripts.curses.Requiem.blessing_of_samson")
-include("scripts.curses.Requiem.blessing_of_steam")
-
----@param curse ResouledCurses | ResouledBlessings
+---@param curse ResouledCurses
 ---@return boolean
 function Resouled:CustomCursePresent(curse)
 
@@ -37,7 +24,7 @@ function Resouled:CustomCursePresent(curse)
 end
 
 ---@param rng RNG
----@return integer
+---@return LevelCurse
 local function rollCurse(rng)
     local cursesToRollFrom = {}
     for _, curseId in pairs(Resouled.Curses) do
@@ -45,14 +32,9 @@ local function rollCurse(rng)
             table.insert(cursesToRollFrom, curseId)
         end
     end
-    for _, blessingId in pairs(Resouled.Blessings) do
-        if blessingId ~= -1 then
-            table.insert(cursesToRollFrom, blessingId)
-        end
-    end
     -- TODO ADD RESTART CHECK - CURSES ARE NOT LOADED AFTER JUST ENABLING THE MOD,
     -- GAME HAS TO BE RESTARTED FOR IT TO WORK PROPERLY
-    return cursesToRollFrom[rng:RandomInt(#cursesToRollFrom) + 1] - 1
+    return cursesToRollFrom[rng:RandomInt(#cursesToRollFrom) + 1]
 end
 
 
@@ -64,10 +46,11 @@ local function onCurseEval(_, curses)
     local rng = RNG()
     rng:SetSeed(stageSeed, 0)
     if curses == 0 and rng:RandomFloat() < CUSTOM_CURSE_CHANCE then
-        local newCurse = rollCurse(rng)
-        curses = 1 << newCurse
+        curses = 1 << (rollCurse(rng) - 1)
         currentLevel:AddCurse(curses, false)
-        end
+        print(Game():GetLevel():GetCurses())
+        print(Game():GetLevel():GetCurseName())
+        end 
     return curses
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_CURSE_EVAL, onCurseEval)

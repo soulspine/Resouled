@@ -732,6 +732,9 @@ local function soulCardsHudRender()
                     else
                         sprite.Color = Color(1,1,1,1)
                     end
+                    if not roomSave.ChoosingSoul then
+                        sprite.Color = Color(1,1,1,1)
+                    end
                 end
                 
                 if sprite:IsEventTriggered(EVENT_TRIGGER_RESOULED_CARD_FLIP) then

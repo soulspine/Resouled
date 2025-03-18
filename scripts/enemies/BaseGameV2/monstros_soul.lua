@@ -11,6 +11,7 @@ local TEAR_SCALE = 1.5
 local TEAR_TRAJECTORY_MODIFIER = 1
 local TEAR_VARIANT = 6
 local TEAR_COLOR = Color(2, 5, 12.5, 0.5)
+local NORMAL_TEAR_COLOR = Color(1.5, 0.2, 0.2, 0.7)
 
 local LASER_VARIANT = LaserVariant.SHOOP
 local LASER_COUNT = 4
@@ -21,6 +22,7 @@ local LASER_MAX_DISTANCE = 100
 local LASER_TEAR_FLAGS = (TearFlags.TEAR_HOMING)
 local LASER_COLLISION_CLASS = EntityCollisionClass.ENTCOLL_ALL
 local LASER_COLOR = Color(1.3, 1.7, 9, 0.5)
+local NORMAL_LASER_COLOR = Color(1.5, 0.2, 0.2, 0.5)
 
 local CREEP_SCALE = 2
 local CREEP_TIMEOUT = 100
@@ -63,8 +65,12 @@ local function onNpcInit(_, npc)
         data.TearParams.BulletFlags = TEAR_BULLET_FLAGS
         data.TearParams.Scale = TEAR_SCALE
         data.TearParams.Variant = TEAR_VARIANT
-        data.TearParams.Color = TEAR_COLOR
-
+        if NORMAL then
+            data.TearParams.Color = NORMAL_TEAR_COLOR
+        else
+            data.TearParams.Color = TEAR_COLOR
+        end
+            
         data.MovementBlockCooldown = 0
     end
 end
@@ -136,8 +142,13 @@ local function onNpcUpdate(_, npc)
                 laser2:SetTimeout(LASER_TIMEOUT)
                 laser1:SetMaxDistance(LASER_MAX_DISTANCE)
                 laser2:SetMaxDistance(LASER_MAX_DISTANCE)
-                laser1.Color = LASER_COLOR
-                laser2.Color = LASER_COLOR
+                if NORMAL then
+                    laser1.Color = NORMAL_LASER_COLOR
+                    laser2.Color = NORMAL_LASER_COLOR
+                else
+                    laser1.Color = LASER_COLOR
+                    laser2.Color = LASER_COLOR
+                end
             end
         end
     end

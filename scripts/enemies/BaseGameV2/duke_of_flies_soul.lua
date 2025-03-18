@@ -19,6 +19,11 @@ local EVENT_TRIGGER_RESOULED_ATTACK1 = "ResouledAttack"
 local EVENT_TRIGGER_RESOULED_ATTACK2 = "ResouledAttack2"
 local EVENT_TRIGGER_RESOULED_ATTACK_3 = "ResouledAttack3"
 
+local IDLE = "Walk"
+local ATTACK01 = "Attack01"
+local ATTACK02 = "Attack02"
+local ATTACK03 = "Attack03"
+
 local ATTACK1_DUKIES_SPAWN_COUNT = 5
 local ATTACK1_DUKIES_SPAWN_OFFSET_RANGE = 75
 
@@ -26,6 +31,7 @@ local ATTACK2_PROJECTILE_COUNT = 12
 local ATTACK2_PROJECTILE_SCALE = 1.5
 local ATTACK2_PROJECTILE_VARIANT = 6
 local ATTACK2_PROJECTILE_COLOR = Color(2, 5, 12.5, 0.5)
+local NORMAL_ATTACK2_PROJECTILE_COLOR = Color(1.5, 0.2, 0.2, 0.7)
 local ATTACK2_PROJECTILE_SPEED_MULTIPLIER = 12.5
 
 local ATTACK_COOLDOWN = 3 --seconds
@@ -83,10 +89,28 @@ local function onNpcUpdate(_, npc)
             end
             data.attackTimer = 0
         end
-        if sprite:IsEventTriggered(EVENT_TRIGGER_RESOULED_ATTACK2) or data.attackTimer >= data.attackCooldown then
+        if sprite:GetAnimation() == IDLE and data.attackTimer >= data.attackCooldown + 30 then
             local projectileParams = ProjectileParams()
             projectileParams.Scale = ATTACK2_PROJECTILE_SCALE
-            projectileParams.Color = ATTACK2_PROJECTILE_COLOR
+            if NORMAL then
+                projectileParams.Color = NORMAL_ATTACK2_PROJECTILE_COLOR
+            else
+                projectileParams.Color = ATTACK2_PROJECTILE_COLOR
+            end
+            projectileParams.Variant = ATTACK2_PROJECTILE_VARIANT
+            for i = 1, ATTACK2_PROJECTILE_COUNT do
+                npc:FireProjectiles(npc.Position, Vector.FromAngle(i * 360 / ATTACK2_PROJECTILE_COUNT):Resized(1)*ATTACK2_PROJECTILE_SPEED_MULTIPLIER, 0, projectileParams)
+            end
+            data.attackTimer = 0
+        end
+        if sprite:IsEventTriggered(EVENT_TRIGGER_RESOULED_ATTACK2) then
+            local projectileParams = ProjectileParams()
+            projectileParams.Scale = ATTACK2_PROJECTILE_SCALE
+            if NORMAL then
+                projectileParams.Color = NORMAL_ATTACK2_PROJECTILE_COLOR
+            else
+                projectileParams.Color = ATTACK2_PROJECTILE_COLOR
+            end
             projectileParams.Variant = ATTACK2_PROJECTILE_VARIANT
             for i = 1, ATTACK2_PROJECTILE_COUNT do
                 npc:FireProjectiles(npc.Position, Vector.FromAngle(i * 360 / ATTACK2_PROJECTILE_COUNT):Resized(1)*ATTACK2_PROJECTILE_SPEED_MULTIPLIER, 0, projectileParams)

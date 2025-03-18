@@ -13,6 +13,7 @@ local TEAR_SCALE = 1.5
 local TEAR_TRAJECTORY_MODIFIER = 1
 local TEAR_VARIANT = 6
 local TEAR_COLOR = Color(2, 5, 12.5, 0.5)
+local NORMAL_TEAR_COLOR = Color(1.5, 0.2, 0.2, 0.7)
 
 local ATTACK_COOLDOWN = 3 --seconds
 local SECOND_PHASE_ATTACK_COOLDOWN = 3 -- seconds
@@ -30,6 +31,7 @@ local LASER_OFFSET = Vector(0, 0)
 local LASER_GRID_COLLISION_CLASS = EntityGridCollisionClass.GRIDCOLL_NONE
 local LASER_COLLISION_CLASS = EntityCollisionClass.ENTCOLL_PLAYERONLY
 local LASER_COLOR = Color(1.3, 1.7, 9, 0.5)
+local NORMAL_LASER_COLOR = Color(1.5, 0.2, 0.2, 0.5)
 local LASER_VARIANT = LaserVariant.SHOOP
 local LASER_ROTATION_SPEED = -1.5
 
@@ -57,6 +59,7 @@ local SECOND_PHASE_DEPTH_OFFSET = 100
 local SECOND_PHASE_TEAR_ATTACK_COOLDOWN = 4 --updates
 local SECOND_PHASE_LASER_VARIANT = LaserVariant.LIGHT_BEAM
 local SECOND_PHASE_LASER_COLOR = Color(1, 3, 6, 1)
+local NORMAL_SECOND_PHASE_LASER_COLOR = Color(1, 0.2, 0.2, 1)
 
 
 ---@param npc EntityNPC
@@ -82,13 +85,18 @@ local function onEntityInit(_, npc)
         data.brimstoneSpawned = false
 
         data.TearParams = ProjectileParams()
+        data.SecondTearParams = ProjectileParams()
         data.TearParams.BulletFlags = TEAR_BULLET_FLAGS
         data.TearParams.Scale = TEAR_SCALE
         data.TearParams.Variant = TEAR_VARIANT
-        data.TearParams.Color = TEAR_COLOR
+        if NORMAL then 
+            data.TearParams.Color = NORMAL_TEAR_COLOR
+            data.SecondTearParams.Color = NORMAL_TEAR_COLOR
+        else
+            data.TearParams.Color = TEAR_COLOR
+            data.SecondTearParams.Color = TEAR_COLOR
+        end
 
-        data.SecondTearParams = ProjectileParams()
-        data.SecondTearParams.Color = TEAR_COLOR
         data.SecondTearParams.Variant = TEAR_VARIANT
         data.SecondTearParams.HeightModifier = SECOND_PHASE_TEAR_HEIGHT
         data.SecondTearParams.DepthOffset = SECOND_PHASE_DEPTH_OFFSET
@@ -147,9 +155,15 @@ local function onEntityUpdate(_, npc)
                     laser1.PositionOffset = ATTACK_BRIMSTONE_LASER1_OFFSET
                     laser2.PositionOffset = ATTACK_BRIMSTONE_LASER2_OFFSET
                     laser3.PositionOffset = ATTACK_BRIMSTONE_LASER3_OFFSET
-                    laser1.Color = LASER_COLOR
-                    laser2.Color = LASER_COLOR
-                    laser3.Color = LASER_COLOR
+                    if NORMAL then
+                        laser1.Color = NORMAL_LASER_COLOR
+                        laser2.Color = NORMAL_LASER_COLOR
+                        laser3.Color = NORMAL_LASER_COLOR
+                    else
+                        laser1.Color = LASER_COLOR
+                        laser2.Color = LASER_COLOR
+                        laser3.Color = LASER_COLOR
+                    end
                     laser1:SetTimeout(ATTACK_BRIMSTONE_TIMEOUT)
                     laser2:SetTimeout(ATTACK_BRIMSTONE_TIMEOUT)
                     laser3:SetTimeout(ATTACK_BRIMSTONE_TIMEOUT)
@@ -186,7 +200,13 @@ local function onEntityUpdate(_, npc)
             if data.attackTimer == data.secondPhaseLaserAttackCooldown then
                 local laser = EntityLaser.ShootAngle(SECOND_PHASE_LASER_VARIANT, npc.Position, 90, 0, LASER_OFFSET, npc)
                 laser.GridCollisionClass = LASER_GRID_COLLISION_CLASS
-                laser.Color = SECOND_PHASE_LASER_COLOR
+                if NORMAL then
+                    laser.Color = NORMAL_SECOND_PHASE_LASER_COLOR 
+                else
+                    laser.Color = SECOND_PHASE_LASER_COLOR
+                end
+                laser.DepthOffset = 50
+                laser.PositionOffset = Vector(0, -30)
                 laser:SetActiveRotation(30, 180, LASER_ROTATION_SPEED, false)
                 laser.SplatColor = SECOND_PHASE_LASER_COLOR
             end

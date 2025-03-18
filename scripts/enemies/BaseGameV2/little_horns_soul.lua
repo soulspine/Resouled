@@ -34,6 +34,7 @@ local PARTICLE_OFFSET = Vector(0, -35)
 local LASER_OFFSET = Vector(0, -25)
 local LASER_GRID_COLLISION_CLASS = EntityGridCollisionClass.GRIDCOLL_NONE
 local LASER_COLOR = Color(1.3, 1.7, 9, 0.5)
+local NORMAL_LASER_COLOR = Color(1.5, 0.2, 0.2, 0.5)
 local LASER_VARIANT = LaserVariant.SHOOP
 
 local EVENT_TRIGGER_RESOULED_SHOOT = "ResouledShoot"
@@ -136,31 +137,24 @@ local function onNpcUpdate(_, npc)
                     local laser = EntityLaser.ShootAngle(LASER_VARIANT, ball.Position, randomDir, 300, LASER_OFFSET, ball)
                     data.attackTimer = 0
                     laser.GridCollisionClass = LASER_GRID_COLLISION_CLASS
-                    laser.Color = LASER_COLOR
+                    if NORMAL then
+                        laser.Color = NORMAL_LASER_COLOR
+                    else
+                        laser.Color = LASER_COLOR
+                    end
                     laser:SetActiveRotation(30, 180, -2, false)
                     data.attackTimer = 0
                     data.attack = math.random(1,3)
                 end
             elseif data.attack == 2 then
-                data.BOMB_POSITION_TRANSLATION = {
-                    [1] = npc:GetPlayerTarget().Position + Vector(100, 0),
-                    [2] = npc:GetPlayerTarget().Position + Vector(-100, 0),
-                    [3] = npc:GetPlayerTarget().Position + Vector(0, 100),
-                    [4] = npc:GetPlayerTarget().Position + Vector(0, -100),
-                    [5] = npc:GetPlayerTarget().Position + Vector(70, 70),
-                    [6] = npc:GetPlayerTarget().Position + Vector(-70, 70),
-                    [7] = npc:GetPlayerTarget().Position + Vector(70, -70),
-                    [8] = npc:GetPlayerTarget().Position + Vector(-70, -70),
-                }
                 sprite:Play(ANIMATION_BOMB)
                 data.CurrentAnimation = ANIMATION_BOMB
                 if sprite:IsEventTriggered(EVENT_TRIGGER_RESOULED_BOMB) then
                     npc:PlaySound(BOMB_SPAWN_SOUND, BOMB_SPAWN_VOLUME, BOMB_SPAWN_SOUND_DELAY, false, BOMB_SPAWN_PITCH)
-                    for i = 1, 8 do
-                        local effect = Game():Spawn(EntityType.ENTITY_EFFECT, BOMB_SPAWN_EFFECT, data.BOMB_POSITION_TRANSLATION[i], Vector.Zero, npc, 0, npc.InitSeed)
-                        local laBomba = Game():Spawn(EntityType.ENTITY_BOMB, BOMB_VARIANT, data.BOMB_POSITION_TRANSLATION[i], Vector.Zero, npc, BOMB_SUBTYPE, npc.InitSeed)
-                        laBomba.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYEROBJECTS
-                    end
+                    local bombPos = npc:GetPlayerTarget().Position + Vector(math.random(-100, 100), math.random(-100, 100))
+                    local effect = Game():Spawn(EntityType.ENTITY_EFFECT, BOMB_SPAWN_EFFECT, bombPos, Vector.Zero, npc, 0, npc.InitSeed)
+                    local laBomba = Game():Spawn(EntityType.ENTITY_BOMB, BOMB_VARIANT, bombPos, Vector.Zero, npc, BOMB_SUBTYPE, npc.InitSeed)
+                    laBomba.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYEROBJECTS
                     data.bombCount = data.bombCount + 1
                     if data.bombCount == 6 then
                         data.attack = math.random(1,3)

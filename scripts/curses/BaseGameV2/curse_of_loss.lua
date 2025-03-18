@@ -1,80 +1,86 @@
-local CARD_EXTEND_DURATION = 100
+local SFX_LEFT = SoundEffect.SOUND_CHARACTER_SELECT_LEFT
+local SFX_RIGHT = SoundEffect.SOUND_CHARACTER_SELECT_RIGHT
+
+local CURSE_MESSAGE=  "Curse of Loss - Choose a soul to lose"
+
+local TEXT_GAP = 20
+local TEXT_COLOR = KColor(1, 1, 1, 1)
+local TEXT_SCALE = Vector(0.5, 0.5)
+
+local render = false
+local soulString
+local font = Font()
+font:Load("font/upheaval.fnt")
 
 local function onNewFloor()
     if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_LOSS) then
         local roomSave = SAVE_MANAGER.GetRoomSave()
         if Resouled:GetPossessedSoulsNum() > 0 then
-            roomSave.ChoosingSoul = true
-            roomSave.ChosenSoul = Resouled:GetLowestPossesedSoulIndex()
-            roomSave.ChooseCooldown = 0
+
+            Resouled:SelectCard(Resouled:GetLowestPossesedSoulIndex())
+            soulString = Resouled:GetSelectedCardName()
+            print(Resouled:GetSelectedCardIndex())
+            roomSave.CurseOfLoss = {
+                ChoosingSoul = true,
+                SelectionChangeCooldown = 0,
+            }
         end
+        Resouled:ForceShutDoors()
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, onNewFloor)
 
 local function onUpdate()
-    local runSave = SAVE_MANAGER.GetRunSave()
     local roomSave = SAVE_MANAGER.GetRoomSave()
     local sfx = SFXManager()
-    if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_LOSS) and roomSave.ChoosingSoul then
-        Resouled:ForceShutDoors()
+    if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_LOSS) and roomSave.CurseOfLoss then
+        render = true
         ---@param player EntityPlayer
         Resouled:IterateOverPlayers(function(player)
-            if roomSave.ChoosingSoul then 
-                player:AddControlsCooldown(2)
-            end
+            player:AddControlsCooldown(2)
         end)
         
-        if roomSave.ChooseCooldown > 0 then 
-            roomSave.ChooseCooldown = roomSave.ChooseCooldown - 1
+        
+        if roomSave.CurseOfLoss.SelectionChangeCooldown > 0 then 
+            roomSave.CurseOfLoss.SelectionChangeCooldown = roomSave.CurseOfLoss.SelectionChangeCooldown - 1
         end
 
-        if Resouled:IsAnyonePressingAction(ButtonAction.ACTION_LEFT) and roomSave.ChooseCooldown == 0 then
-            roomSave.ChosenSoul = roomSave.ChosenSoul - 1
-            roomSave.ChooseCooldown = 6
-            if Resouled:GetPossessedSouls()[roomSave.ChosenSoul] == nil then
-                roomSave.ChosenSoul = roomSave.ChosenSoul - 1
-                if Resouled:GetPossessedSouls()[roomSave.ChosenSoul] == nil then
-                    roomSave.ChosenSoul = roomSave.ChosenSoul - 1
-                    if Resouled:GetPossessedSouls()[roomSave.ChosenSoul] == nil then
-                        roomSave.ChosenSoul = Resouled:GetLowestPossesedSoulIndex()
-                    end
-                end
+        local pressingLeft = Resouled:IsAnyonePressingAction(ButtonAction.ACTION_LEFT)
+        local pressingRight = Resouled:IsAnyonePressingAction(ButtonAction.ACTION_RIGHT)
+
+        if roomSave.CurseOfLoss.SelectionChangeCooldown == 0 and (pressingLeft or pressingRight) then
+            if pressingLeft then
+                Resouled:SelectPreviousCard()
+                sfx:Play(SFX_LEFT)
+            elseif pressingRight then
+                Resouled:SelectNextCard()
+                sfx:Play(SFX_RIGHT)
             end
-            if roomSave.ChosenSoul < Resouled:GetLowestPossesedSoulIndex() then
-                roomSave.ChosenSoul = Resouled:GetLowestPossesedSoulIndex()
-            else
-                sfx:Play(SoundEffect.SOUND_CHARACTER_SELECT_LEFT)
-            end
-        elseif Resouled:IsAnyonePressingAction(ButtonAction.ACTION_RIGHT) and roomSave.ChooseCooldown == 0 then
-            roomSave.ChosenSoul = roomSave.ChosenSoul + 1
-            roomSave.ChooseCooldown = 6
-            if Resouled:GetPossessedSouls()[roomSave.ChosenSoul] == nil then
-                roomSave.ChosenSoul = roomSave.ChosenSoul + 1
-                if Resouled:GetPossessedSouls()[roomSave.ChosenSoul] == nil then
-                    roomSave.ChosenSoul = roomSave.ChosenSoul + 1
-                    if Resouled:GetPossessedSouls()[roomSave.ChosenSoul] == nil then
-                        roomSave.ChosenSoul = Resouled:GetHighestPossesedSoulIndex()
-                    end
-                end
-            end
-            if roomSave.ChosenSoul > Resouled:GetHighestPossesedSoulIndex() then
-                roomSave.ChosenSoul = Resouled:GetHighestPossesedSoulIndex()
-            else 
-                sfx:Play(SoundEffect.SOUND_CHARACTER_SELECT_RIGHT)
-            end
+            soulString = Resouled:GetSelectedCardName()
+            roomSave.CurseOfLoss.SelectionChangeCooldown = 4
         end
-        
+
         if Resouled:IsAnyonePressingAction(ButtonAction.ACTION_ITEM) then
-            if Resouled:GetPossessedSouls()[roomSave.ChosenSoul] == nil then
-                sfx:Play(SoundEffect.SOUND_DOGMA_GODHEAD)
-            else
-                Resouled:TryRemoveSoulFromPossessed(roomSave.ChosenSoul)
-                roomSave.ChoosingSoul = nil
+            local selectedIndex = Resouled:GetSelectedCardIndex()
+            if selectedIndex then
+                Resouled:TryRemoveSoulFromPossessed(selectedIndex)
+                Resouled:ResetCardSelection()
+                roomSave.CurseOfLoss = nil
                 Resouled:ForceOpenDoors()
-                sfx:Play(SoundEffect.SOUND_BEAST_GHOST_DASH, 1.2)
             end
         end
+    else render = false
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
+
+local function onRender()
+    if render then
+        local screenDimensions = Resouled:GetScreenDimensions()
+        font:DrawStringScaledUTF8(CURSE_MESSAGE, screenDimensions.X / 2, (screenDimensions.Y - TEXT_GAP) / 2, TEXT_SCALE.X, TEXT_SCALE.Y, TEXT_COLOR, 5, true)
+        if soulString then
+            font:DrawStringScaledUTF8(soulString, screenDimensions.X / 2, (screenDimensions.Y + TEXT_GAP) / 2, TEXT_SCALE.X, TEXT_SCALE.Y, TEXT_COLOR, 5, true)
+        end
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, onRender)

@@ -12,6 +12,8 @@ local soulCardSprites ={
         Reload = false,
         FakeTabDuration = 0,
         Selected = false,
+        SelectionOngoing = false,
+        ExpandValue = 0,
     },
     [2] = {
         Sprite = Sprite(),
@@ -19,6 +21,8 @@ local soulCardSprites ={
         Reload = false,
         FakeTabDuration = 0,
         Selected = false,
+        SelectionOngoing = false,
+        ExpandValue = 0,
     },
     [3] = {
         Sprite = Sprite(),
@@ -26,6 +30,8 @@ local soulCardSprites ={
         Reload = false,
         FakeTabDuration = 0,
         Selected = false,
+        SelectionOngoing = false,
+        ExpandValue = 0,
     },
     [4] = {
         Sprite = Sprite(),
@@ -33,6 +39,8 @@ local soulCardSprites ={
         Reload = false,
         FakeTabDuration = 0,
         Selected = false,
+        SelectionOngoing = false,
+        ExpandValue = 0,
     },
 }
 
@@ -476,6 +484,7 @@ local function prepareSoulContainerOnRunStart(_, isContinued)
             },
         }
         Resouled:ReloadAllSoulCardSprites()
+        Resouled:ResetCardSelection()
         print("Soul container prepared")
     end
 end
@@ -625,8 +634,87 @@ end
 
 --duration in game frames
 ---@param duration integer
-function Resouled:ForceExpandCard(i, duration)
-    soulCardSprites[i].FakeTabDuration = duration
+function Resouled:ForceExpandCard(index, duration)
+    soulCardSprites[index].FakeTabDuration = duration
+end
+
+function Resouled:SelectCard(index)
+    for i, spriteData in pairs(soulCardSprites) do
+        if i == index then
+            spriteData.Selected = true
+        else
+            spriteData.Selected = false
+        end
+        spriteData.SelectionOngoing = true
+    end
+end
+
+function Resouled:SelectPreviousCard()
+    local selected = Resouled:GetSelectedCardIndex()
+    if selected then
+        local possessedSouls = Resouled:GetPossessedSouls()
+        local selection = nil
+
+        while not selection do
+            selected = selected - 1
+            if selected < 1 then
+                selected = 4
+            end
+            if possessedSouls[selected] then
+                selection = selected
+            end
+            if selected == Resouled:GetSelectedCardIndex() then
+                break
+            end
+        end
+        Resouled:SelectCard(selection)
+    end
+end
+
+function Resouled:SelectNextCard()
+    local selected = Resouled:GetSelectedCardIndex()
+    if selected then
+        local possessedSouls = Resouled:GetPossessedSouls()
+        local selection = nil
+
+        while not selection do
+            selected = selected + 1
+            if selected > 4 then
+                selected = 1
+            end
+            if possessedSouls[selected] then
+                selection = selected
+            end
+            if selected == Resouled:GetSelectedCardIndex() then
+                break
+            end
+        end
+        Resouled:SelectCard(selection)
+    end
+end
+
+function Resouled:ResetCardSelection()
+    for _, spriteData in pairs(soulCardSprites) do
+        spriteData.Selected = false
+        spriteData.SelectionOngoing = false
+    end
+end
+
+---@return integer | nil
+function Resouled:GetSelectedCardIndex()
+    for i, spriteData in pairs(soulCardSprites) do
+        if spriteData.Selected then
+            return i
+        end
+    end
+    return nil
+end
+
+function Resouled:GetSelectedCardName()
+    local selected = Resouled:GetSelectedCardIndex()
+    if selected then
+        return Resouled:GetPossessedSouls()[selected]
+    end
 end
 
 ---@param pickup EntityPickup
@@ -687,6 +775,8 @@ local SFX_CARD_FLIP = {SoundEffect.SOUND_MENU_NOTE_HIDE, SoundEffect.SOUND_MENU_
 local ANM2_SOUL_CARD = "gfx/soul_card.anm2"
 local CARD_MARGIN = 20
 local CARD_OFFSET = Vector(0, 18)
+local EXAPAND_STEP = 1
+local EXPAND_HEIGHT = 7
 
 local function soulCardsHudRender()
     if Game():GetHUD():IsVisible() then
@@ -725,19 +815,22 @@ local function soulCardsHudRender()
             
             if spriteData.Spritesheet then
                 local animationName = sprite:GetAnimation()
+                
+                local screenDimensions = Vector(Isaac.GetScreenWidth(), Isaac.GetScreenHeight())
+                local w = screenDimensions.X/2 + CARD_MARGIN*(i-2.5)
+                local h = CARD_OFFSET.Y + spriteData.ExpandValue
 
-                if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_LOSS) then
-                    local roomSave = SAVE_MANAGER.GetRoomSave()
-                    if roomSave.ChoosingSoul then
-                        spriteData.FakeTabDuration = 10
+                local targetSelectionHeight = CARD_OFFSET.Y + EXPAND_HEIGHT
+
+                if spriteData.Selected then
+                    if h < targetSelectionHeight then
+                        h = h + EXAPAND_STEP
+                        spriteData.ExpandValue = spriteData.ExpandValue + EXAPAND_STEP
                     end
-                    if i == roomSave.ChosenSoul then
-                        sprite.Color = Color(2,2,2,1)
-                    else
-                        sprite.Color = Color(1,1,1,1)
-                    end
-                    if not roomSave.ChoosingSoul then
-                        sprite.Color = Color(1,1,1,1)
+                else
+                    if h > CARD_OFFSET.Y then
+                        h = h - EXAPAND_STEP
+                        spriteData.ExpandValue = spriteData.ExpandValue - EXAPAND_STEP
                     end
                 end
                 
@@ -746,7 +839,7 @@ local function soulCardsHudRender()
                 end
                 
                 if animationName == ANIMATION_HUD_HIDE then
-                    if (Resouled:IsAnyonePressingAction(ButtonAction.ACTION_MAP) or spriteData.FakeTabDuration > 0) then
+                    if (Resouled:IsAnyonePressingAction(ButtonAction.ACTION_MAP) or spriteData.FakeTabDuration > 0 or spriteData.SelectionOngoing) then
                         sprite.PlaybackSpeed = math.random(40, 100) / 100 -- to make them feel more random, otherwise they are just mega synced and it looks weird
                         sprite:Play(ANIMATION_HUD_APPEAR, true)
                     end
@@ -756,7 +849,7 @@ local function soulCardsHudRender()
                         sprite:SetFrame(math.random(0, 30))
                     end
                 elseif animationName == ANIMATION_HUD_IDLE then
-                    if not (Resouled:IsAnyonePressingAction(ButtonAction.ACTION_MAP) or spriteData.FakeTabDuration > 0) then
+                    if not (Resouled:IsAnyonePressingAction(ButtonAction.ACTION_MAP) or spriteData.FakeTabDuration > 0 or spriteData.SelectionOngoing) then
                         sprite:Play(ANIMATION_HUD_DISAPPEAR, true)
                     end
                 elseif animationName == ANIMATION_HUD_DISAPPEAR then
@@ -766,11 +859,6 @@ local function soulCardsHudRender()
                 end
 
                 sprite:Update()
-
-                local screenDimensions = Vector(Isaac.GetScreenWidth(), Isaac.GetScreenHeight())
-
-                local w = screenDimensions.X/2 + CARD_MARGIN*(i-2.5)
-                local h = 0 + CARD_OFFSET.Y
                 sprite:Render(Vector(w, h), Vector.Zero, Vector.Zero)
             end
 
@@ -1011,3 +1099,8 @@ Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, function()
         end
     end)
 end)
+
+---@return Vector
+function Resouled:GetScreenDimensions()
+    return Vector(Isaac.GetScreenWidth(), Isaac.GetScreenHeight())
+end

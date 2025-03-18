@@ -717,14 +717,27 @@ local function soulCardsHudRender()
                 end
             end
             spriteData.Reload = false -- reset reload after render is finished
-
+            
+            
             if spriteData.Spritesheet then
+                local animationName = sprite:GetAnimation()
 
+                if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_LOSS) then
+                    local roomSave = SAVE_MANAGER.GetRoomSave()
+                    if roomSave.ChoosingSoul then
+                        spriteData.FakeTabDuration = 10
+                    end
+                    if i == roomSave.ChosenSoul then
+                        sprite.Color = Color(2,2,2,1)
+                    else
+                        sprite.Color = Color(1,1,1,1)
+                    end
+                end
+                
                 if sprite:IsEventTriggered(EVENT_TRIGGER_RESOULED_CARD_FLIP) then
                     SFXManager():Play(SFX_CARD_FLIP[math.random(#SFX_CARD_FLIP)], 1, 10)
                 end
-
-                local animationName = sprite:GetAnimation()
+                
                 if animationName == ANIMATION_HUD_HIDE then
                     if (Resouled:IsAnyonePressingAction(ButtonAction.ACTION_MAP) or spriteData.FakeTabDuration > 0) then
                         sprite.PlaybackSpeed = math.random(40, 100) / 100 -- to make them feel more random, otherwise they are just mega synced and it looks weird
@@ -744,7 +757,7 @@ local function soulCardsHudRender()
                         sprite:Play(ANIMATION_HUD_HIDE, true)
                     end
                 end
-            
+
                 sprite:Update()
 
                 local screenDimensions = Vector(Isaac.GetScreenWidth(), Isaac.GetScreenHeight())

@@ -18,7 +18,6 @@ local function onUpdate()
     local sfx = SFXManager()
     if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_LOSS) and roomSave.ChoosingSoul then
         Resouled:ForceShutDoors()
-        Resouled:MakeCardsExpandForDuration(CARD_EXTEND_DURATION)
         ---@param player EntityPlayer
         Resouled:IterateOverPlayers(function(player)
             if roomSave.ChoosingSoul then 

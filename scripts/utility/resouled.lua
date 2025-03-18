@@ -11,24 +11,28 @@ local soulCardSprites ={
         Spritesheet = nil,
         Reload = false,
         FakeTabDuration = 0,
+        Selected = false,
     },
     [2] = {
         Sprite = Sprite(),
         Spritesheet = nil,
         Reload = false,
         FakeTabDuration = 0,
+        Selected = false,
     },
     [3] = {
         Sprite = Sprite(),
         Spritesheet = nil,
         Reload = false,
         FakeTabDuration = 0,
+        Selected = false,
     },
     [4] = {
         Sprite = Sprite(),
         Spritesheet = nil,
         Reload = false,
         FakeTabDuration = 0,
+        Selected = false,
     },
 }
 
@@ -682,7 +686,7 @@ local EVENT_TRIGGER_RESOULED_CARD_FLIP = "ResouledCardFlip"
 local SFX_CARD_FLIP = {SoundEffect.SOUND_MENU_NOTE_HIDE, SoundEffect.SOUND_MENU_NOTE_HIDE}
 local ANM2_SOUL_CARD = "gfx/soul_card.anm2"
 local CARD_MARGIN = 20
-local CARD_OFFSET = Vector(0, -18)
+local CARD_OFFSET = Vector(0, 18)
 
 local function soulCardsHudRender()
     if Game():GetHUD():IsVisible() then
@@ -762,8 +766,8 @@ local function soulCardsHudRender()
 
                 local screenDimensions = Vector(Isaac.GetScreenWidth(), Isaac.GetScreenHeight())
 
-                local w = screenDimensions.X - screenDimensions.X/4 + CARD_MARGIN*(i-3)
-                local h = screenDimensions.Y + CARD_OFFSET.Y
+                local w = screenDimensions.X/2 + CARD_MARGIN*(i-2.5)
+                local h = 0 + CARD_OFFSET.Y
                 sprite:Render(Vector(w, h), Vector.Zero, Vector.Zero)
             end
 

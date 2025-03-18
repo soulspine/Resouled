@@ -5,8 +5,8 @@ local VELOCITY_MULTIPLIER = 1.2
 
 local SLAM_DAMAGE = 25
 local SLAM_COOLDOWN = 90
-local SLAM_VFX = EffectVariant.BIG_SPLASH
-local SLAM_SFX = SoundEffect.SOUND_MEATY_DEATHS
+local SLAM_VFX = EffectVariant.IMPACT
+local SLAM_SFX = SoundEffect.SOUND_POISON_HURT
 local SLAM_EFFECT_RADIUS = 70
 local SLAM_FEAR_CHANCE = 0.5
 local SLAM_FEAR_DURATION = 60

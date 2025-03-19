@@ -3,7 +3,6 @@ local WRATHS_SOUL_GHOST_VARIANT = Isaac.GetEntityVariantByName("Wrath's Soul Gho
 local WRATHS_SOUL_GHOST_SUBTYPE = 2
 
 local NORMAL = true
-local SOUL = "Wrath's Soul"
 
 local WRATHS_SOUL_SUBTYPE = 0
 
@@ -15,16 +14,11 @@ local TENTACLES_DEPTH_OFFSET = 100
 
 local GHOST_GRID_COLLISION_CLASS = EntityGridCollisionClass.GRIDCOLL_WALLS
 
-local DASH_ACTIVATION_DISTANCE = 75
-local DASH_VELOCITY_MULTIPLIER = 2.5
-local DASH_VELOCITY_DROP_STOP = 1.05
-local DASH_COOLDOWN = 0.75 --seconds
-
-local SPEED_MULTIPLIER = 3
-
 local MIN_SOULS = 1
 local MAX_SOULS = 3
 local SOULS_ENTITY_COLLISION_CLASS = EntityCollisionClass.ENTCOLL_PLAYEROBJECTS
+
+local PATHFIND_SPEED = 0.75
 
 local ATTACK_COOLDOWN = 5 * 30 --seconds
 
@@ -37,7 +31,7 @@ local function onNpcInit(_, npc)
         if NORMAL then
         end
         npc.GridCollisionClass = GHOST_GRID_COLLISION_CLASS
-
+        
         data.Dashing = false
         data.DashCooldown = 0
         data.DashVelocityDropStop = false
@@ -54,27 +48,9 @@ local function onNpcUpdate(_, npc)
     if npc.Variant == WRATHS_SOUL_GHOST_VARIANT and npc.SubType == WRATHS_SOUL_GHOST_SUBTYPE then
         local sprite = npc:GetSprite()
         local data = npc:GetData()
-        if not data.Dashing then
-            npc.Velocity = (npc:GetPlayerTarget().Position - npc.Position):Normalized() * (npc.Position:Distance(npc:GetPlayerTarget().Position) / (100/SPEED_MULTIPLIER))
-        end
+        
+        npc.Pathfinder:FindGridPath(npc:GetPlayerTarget().Position, PATHFIND_SPEED, 0, true)
 
-        if data.DashCooldown > 0 then
-            data.DashCooldown = data.DashCooldown - 1
-        end
-
-        if data.DashCooldown <= 0 and data.Dashing then
-            data.Dashing = false
-        end
-
-        if data.Dashing then
-            npc.Velocity = npc.Velocity / DASH_VELOCITY_DROP_STOP
-        end
-
-        if npc.Position:Distance(npc:GetPlayerTarget().Position) < DASH_ACTIVATION_DISTANCE and not data.Dashing then
-            data.Dashing = true
-            data.DashCooldown = DASH_COOLDOWN * 30
-            npc.Velocity = npc.Velocity * DASH_VELOCITY_MULTIPLIER
-        end
         data.tentacles.Position = npc.Position + TENTACLES_OFFSET
         data.tentacles.Velocity = npc.Velocity
 

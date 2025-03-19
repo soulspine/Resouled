@@ -50,6 +50,8 @@ local PARTICLE_HEIGHT = 0
 local PARTICLE_SUBTYPE = 0
 local PARTICLE_OFFSET = Vector(0, 0)
 
+local PATHFIND_SPEED = 0.2
+
 local SECOND_PHASE_HEALTH_PRECENT_TRESHHOLD = 25
 local SECOND_PHASE_MIN_TEAR_COUNT = 1
 local SECOND_PHASE_MAX_TEAR_COUNT = 3
@@ -101,8 +103,6 @@ local function onEntityInit(_, npc)
         data.SecondTearParams.HeightModifier = SECOND_PHASE_TEAR_HEIGHT
         data.SecondTearParams.DepthOffset = SECOND_PHASE_DEPTH_OFFSET
 
-        data.VelocityChangeTimer = 0
-
         data.Phase = "First"
 
     end
@@ -127,12 +127,9 @@ local function onEntityUpdate(_, npc)
         end
 
 
-        data.VelocityChangeTimer = data.VelocityChangeTimer + 1
         data.attackTimer = data.attackTimer + 1
-        if data.Phase == "First" and data.VelocityChangeTimer == 15 then
-            local randomMovement =  Vector(math.random(-15, 15), math.random(-15, 15))/15 + (npc:GetPlayerTarget().Position - npc.Position)/400
-            npc.Velocity = randomMovement
-            data.VelocityChangeTimer = 0
+        if data.Phase == "First" then
+            npc.Pathfinder:FindGridPath(npc:GetPlayerTarget().Position, PATHFIND_SPEED, 0, true)
         end
 
         if data.attackTimer >= data.attackCooldown * 30 and data.Phase == "First" then

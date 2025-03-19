@@ -617,7 +617,7 @@ end
 ---@param position Vector
 ---@return boolean
 function Resouled:TrySpawnSoulPickup(soul, position)
-    if not Resouled:WasSoulSpawned(soul) and Resouled:GetPossessedSoulsNum() ~= 4 then
+    if not Resouled:WasSoulSpawned(soul) and Resouled:GetPossessedSoulsNum() ~= 4 and not Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_LOSS) then
         local seed = 0
         while seed == 0 do
             seed = Random()

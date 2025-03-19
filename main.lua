@@ -9,6 +9,7 @@ SAVE_MANAGER.Init(Resouled)
 
 include("scripts.utility.resouled")
 
+include("scripts.character_start")
 include("scripts.items")
 include("scripts.pocketitems")
 include("scripts.curses")

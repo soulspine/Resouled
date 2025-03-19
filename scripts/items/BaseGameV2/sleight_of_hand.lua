@@ -36,14 +36,6 @@ local SFX_PICKUP_ANIM = SoundEffect.SOUND_FETUS_JUMP
 local SFX_USE = SoundEffect.SOUND_UNLOCK00
 local SFX_GLOWING_HOURGLASS_TELEPORT = SoundEffect.SOUND_HELL_PORTAL2
 
----@param player EntityPlayer
-local function onPlayerInit(_, player)
-    if player:GetPlayerType() == PlayerType.PLAYER_CAIN then
-        player:AddCollectible(SLEIGHT_OF_HAND, 0, true, ActiveSlot.SLOT_PRIMARY, 0)
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, onPlayerInit)
-
 ---@param itemId CollectibleType
 ---@param rng RNG
 ---@param player EntityPlayer

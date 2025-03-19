@@ -20,7 +20,7 @@ end
 ---@param luck number
 ---@return number
 local APPLY_TEAR_EFFECT_CHANCE = function(luck)
-    return ((6 + luck) / 18)^2
+    return math.max(0.1, 0.12*math.log(luck+1, 2.8) + 0.1)
 end
 
 ---@param tear EntityTear

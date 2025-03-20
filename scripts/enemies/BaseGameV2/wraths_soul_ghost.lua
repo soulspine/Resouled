@@ -39,6 +39,7 @@ local function onNpcInit(_, npc)
         data.tentacles.DepthOffset = TENTACLES_DEPTH_OFFSET
         data.minion = Game():Spawn(WRATHS_SOUL_GHOST_TYPE, WRATHS_SOUL_GHOST_VARIANT, npc.Position, Vector.Zero, npc, WRATHS_SOUL_SUBTYPE, npc.InitSeed)
         data.AttackCooldown = ATTACK_COOLDOWN
+
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, WRATHS_SOUL_GHOST_TYPE)
@@ -50,7 +51,7 @@ local function onNpcUpdate(_, npc)
         local data = npc:GetData()
         
         npc.Pathfinder:FindGridPath(npc:GetPlayerTarget().Position, PATHFIND_SPEED, 0, true)
-
+        
         data.tentacles.Position = npc.Position + TENTACLES_OFFSET
         data.tentacles.Velocity = npc.Velocity
 

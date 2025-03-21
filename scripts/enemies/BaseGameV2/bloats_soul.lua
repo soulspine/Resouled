@@ -26,6 +26,8 @@ local IDLE = "Idle"
 local ATTACK = "Attack"
 local ATTACK_BRIMSTONE = "AttackBrimstone"
 local IDLE_SECOND_PHASE = "IdleSecondPhase"
+local JUMP = "SecondPhaseJump"
+local LAND = "SecondPhaseLand"
 
 local LASER_OFFSET = Vector(0, 0)
 local LASER_GRID_COLLISION_CLASS = EntityGridCollisionClass.GRIDCOLL_NONE
@@ -104,7 +106,6 @@ local function onEntityInit(_, npc)
         data.SecondTearParams.DepthOffset = SECOND_PHASE_DEPTH_OFFSET
 
         data.Phase = "First"
-
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onEntityInit, BLOATS_SOUL_TYPE)
@@ -178,34 +179,47 @@ local function onEntityUpdate(_, npc)
         if npc.HitPoints <= npc.MaxHitPoints / (100/SECOND_PHASE_HEALTH_PRECENT_TRESHHOLD) then
             if data.Phase ~= "Second" then
                 data.Phase = "Second"
-                sprite:Play(IDLE_SECOND_PHASE, true)
-                npc.Position = Game():GetRoom():GetCenterPos()
-                data.attackTimer = 0
+                data.CanAttack = false
+                sprite:Play(JUMP, true)
             end
-
+            
             if npc.Velocity ~= Vector.Zero then
                 npc.Velocity = Vector.Zero
             end
-
-            data.SecondPhaseAttackTimer = data.SecondPhaseAttackTimer + 1
-
-            if data.Phase == "Second" and data.SecondPhaseAttackTimer == SECOND_PHASE_TEAR_ATTACK_COOLDOWN then
-                npc:FireBossProjectiles(math.random(SECOND_PHASE_MIN_TEAR_COUNT, SECOND_PHASE_MAX_TEAR_COUNT), npc.Position + Vector(math.random(-SECOND_PHASE_TEAR_SHOOT_RANGE, SECOND_PHASE_TEAR_SHOOT_RANGE), math.random(-SECOND_PHASE_TEAR_SHOOT_RANGE, SECOND_PHASE_TEAR_SHOOT_RANGE)), 2, data.SecondTearParams)
-                data.SecondPhaseAttackTimer = 0
+            
+            if sprite:IsFinished(JUMP) then
+                npc.Position = Game():GetRoom():GetCenterPos()
+                sprite:Play(LAND, true)
             end
+            
+            if sprite:IsFinished(LAND) then
+                data.CanAttack = true
+                data.attackTimer = 0
+                sprite:Play(IDLE_SECOND_PHASE, true)
+            end
+            
+            if data.CanAttack then
 
-            if data.attackTimer == data.secondPhaseLaserAttackCooldown then
-                local laser = EntityLaser.ShootAngle(SECOND_PHASE_LASER_VARIANT, npc.Position, 90, 0, LASER_OFFSET, npc)
-                laser.GridCollisionClass = LASER_GRID_COLLISION_CLASS
-                if NORMAL then
-                    laser.Color = NORMAL_SECOND_PHASE_LASER_COLOR 
-                else
-                    laser.Color = SECOND_PHASE_LASER_COLOR
+                data.SecondPhaseAttackTimer = data.SecondPhaseAttackTimer + 1
+
+                if data.Phase == "Second" and data.SecondPhaseAttackTimer == SECOND_PHASE_TEAR_ATTACK_COOLDOWN then
+                    npc:FireBossProjectiles(math.random(SECOND_PHASE_MIN_TEAR_COUNT, SECOND_PHASE_MAX_TEAR_COUNT), npc.Position + Vector(math.random(-SECOND_PHASE_TEAR_SHOOT_RANGE, SECOND_PHASE_TEAR_SHOOT_RANGE), math.random(-SECOND_PHASE_TEAR_SHOOT_RANGE, SECOND_PHASE_TEAR_SHOOT_RANGE)), 2, data.SecondTearParams)
+                    data.SecondPhaseAttackTimer = 0
                 end
-                laser.DepthOffset = 50
-                laser.PositionOffset = Vector(0, -30)
-                laser:SetActiveRotation(30, 180, LASER_ROTATION_SPEED, false)
-                laser.SplatColor = SECOND_PHASE_LASER_COLOR
+                
+                if data.attackTimer == data.secondPhaseLaserAttackCooldown then
+                    local laser = EntityLaser.ShootAngle(SECOND_PHASE_LASER_VARIANT, npc.Position, 90, 0, LASER_OFFSET, npc)
+                    laser.GridCollisionClass = LASER_GRID_COLLISION_CLASS
+                    if NORMAL then
+                        laser.Color = NORMAL_SECOND_PHASE_LASER_COLOR 
+                    else
+                        laser.Color = SECOND_PHASE_LASER_COLOR
+                    end
+                    laser.DepthOffset = 50
+                    laser.PositionOffset = Vector(0, -30)
+                    laser:SetActiveRotation(30, 180, LASER_ROTATION_SPEED, false)
+                    laser.SplatColor = SECOND_PHASE_LASER_COLOR
+                end
             end
         end
 

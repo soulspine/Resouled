@@ -88,24 +88,18 @@ end
 Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onPickupCollision, PickupVariant.PICKUP_COLLECTIBLE)
 
 local function onNewRoom()
-    local glitchPresent = false
-    local targetPlayer
     ---@param player EntityPlayer
     Resouled:IterateOverPlayers(function(player)
         if player:HasCollectible(GLITCH) then
-            targetPlayer = player
-            glitchPresent = true
+            local data = player:GetData()
+            player:GetEffects():AddCollectibleEffect(data.GlitchItemEffects[data.CurrentItemEffect], true, 1)
+            player:AddCacheFlags(CacheFlag.CACHE_ALL)
+            player:EvaluateItems()
+            data.CurrentItemEffect = data.CurrentItemEffect + 1
+            if data.CurrentItemEffect > #data.GlitchItemEffects then
+                data.CurrentItemEffect = 1
+            end
         end
     end)
-    if glitchPresent then
-        local data = targetPlayer:GetData()
-        targetPlayer:GetEffects():AddCollectibleEffect(data.GlitchItemEffects[data.CurrentItemEffect], true, 1)
-        targetPlayer:AddCacheFlags(CacheFlag.CACHE_ALL)
-        targetPlayer:EvaluateItems()
-        data.CurrentItemEffect = data.CurrentItemEffect + 1
-        if data.CurrentItemEffect > #data.GlitchItemEffects then
-            data.CurrentItemEffect = 1
-        end
-    end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onNewRoom)

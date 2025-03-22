@@ -26,6 +26,7 @@ local ROOM_CLEAR_WHITELISTED_PICKUPS = {
 local PICKUP_EFFECT_VARIANT = EffectVariant.HERETIC_PENTAGRAM
 local PICKUP_EFFECT_TIMEOUT = 1
 local PICKUP_EFFECT_SCALE = Vector(0.15, 0.15)
+local PICKUP_EFFECT_COLOR = Color(1.5,0.1,0.1,1)
 
 local ENEMY_KILL_BASE_PICKUP_DROP_CHANCE = 0.05
 local ENEMY_KILL_PICKUP_DROP_CHANCE_PER_1_LUCK = 0.0025
@@ -46,6 +47,7 @@ local function spawnEffect(spawner)
     if effect then
         effect:SetTimeout(PICKUP_EFFECT_TIMEOUT)
         effect:GetSprite().Scale = PICKUP_EFFECT_SCALE
+        effect:GetSprite().Color = PICKUP_EFFECT_COLOR
         effect:GetData().ResouledCeremonialBladeEffect = true
     end
 end

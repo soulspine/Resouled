@@ -18,7 +18,7 @@ local function onNpcDeath(_, npc)
     if ceremonialBladeAmount > 0 then
         if npc:IsEnemy() then
             local rng = RNG()
-            rng:SetSeed(npc.InitSeed, 0)
+            rng:SetSeed(npc.DropSeed, 0)
             for _ = 1, ceremonialBladeAmount do
                 local chance = rng:RandomFloat()
                 if chance <= BASE_PICKUP_DROP_CHANCE + (PICKUP_DROP_CHANCE_PER_1_LUCK * playerLuck) then

@@ -5,6 +5,7 @@ include("scripts.items.BaseGameV2.cheese_grater")
 -- Four Souls V2
 -- Requiem
 include("scripts.items.Requiem.ceremonial_blade")
+include("scripts.items.Requiem.glitch")
 --include("scripts.items.Requiem.auction_gavel")
 -- Summer Of Isaac
 --include("scripts.items.SummerOfIsaac.isaacs_last_will")

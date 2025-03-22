@@ -9,6 +9,7 @@
 <!-- Four Souls V2 -->
 <!-- Requiem -->
     <passive id="4" name="Ceremonial Blade" gfx="ceremonial_blade.png" description="" quality="2" craftquality="2"/>
+    <passive id="5" name="Glitch" gfx="glitch.png" description="৳🗐₧🏱『₢" quality="0" craftquality="0" tags="quest"/>
     <!--active id="447" name="Auction Gavel" gfx="auction_gavel.png" description="Sold!" quality="2"/-->
 <!-- Summer Of Isaac -->
     <!-- passive id="445" name="Isaac's last will" gfx="isaacs_last_will.png" description="I leave all that I own to my cat Guppy" quality="2"/-->

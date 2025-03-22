@@ -6,27 +6,20 @@ local PICKUP_VELOCITY = 2
 ---@param npc EntityNPC
 local function onNpcDeath(_, npc)
     local playerLuck = 0
-    local ceremonicalBladeAmmount = 0
+    local ceremonialBladeAmount = 0
     ---@param player EntityPlayer
     Resouled:IterateOverPlayers(function(player)
         if player:HasCollectible(CEREMONIAL_BLADE) then
-            ceremonicalBladeAmmount = ceremonicalBladeAmmount + player:GetCollectibleNum(CEREMONIAL_BLADE)
-        end
-
-        if player:GetPlayerType() == PlayerType.PLAYER_JUDAS_B then
-            ceremonicalBladeAmmount = ceremonicalBladeAmmount + 1
-        end
-
-        if player:HasCollectible(CEREMONIAL_BLADE) or player:GetPlayerType() == PlayerType.PLAYER_JUDAS_B then
+            ceremonialBladeAmount = ceremonialBladeAmount + player:GetCollectibleNum(CEREMONIAL_BLADE)
             playerLuck = playerLuck + player.Luck
         end
     end)
     
-    if ceremonicalBladeAmmount > 0 then
+    if ceremonialBladeAmount > 0 then
         if npc:IsEnemy() then
             local rng = RNG()
             rng:SetSeed(npc.InitSeed, 0)
-            for _ = 1, ceremonicalBladeAmmount do
+            for _ = 1, ceremonialBladeAmount do
                 local chance = rng:RandomFloat()
                 if chance <= BASE_PICKUP_DROP_CHANCE + (PICKUP_DROP_CHANCE_PER_1_LUCK * playerLuck) then
                     local pickup = rng:RandomInt(3)
@@ -45,21 +38,17 @@ end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNpcDeath)
 
 local function onRoomClear()
-    local ceremonicalBladeAmmount = 0
+    local ceremonialBladeAmount = 0
     ---@param player EntityPlayer
     Resouled:IterateOverPlayers(function(player)
         if player:HasCollectible(CEREMONIAL_BLADE) then
-            ceremonicalBladeAmmount = ceremonicalBladeAmmount + player:GetCollectibleNum(CEREMONIAL_BLADE)
-        end
-
-        if player:GetPlayerType() == PlayerType.PLAYER_JUDAS_B then
-            ceremonicalBladeAmmount = ceremonicalBladeAmmount + 1
+            ceremonialBladeAmount = ceremonialBladeAmount + player:GetCollectibleNum(CEREMONIAL_BLADE)
         end
     end)
-    if ceremonicalBladeAmmount > 0 then
+    if ceremonialBladeAmount > 0 then
         local player = Isaac.GetPlayer()
         if player:GetNumCoins() > 0 and player:GetNumBombs() > 0 and player:GetNumKeys() > 0 then
-            for _ = 1, ceremonicalBladeAmmount do
+            for _ = 1, ceremonialBladeAmount do
                 local rng = RNG()
                 rng:SetSeed(Game():GetRoom():GetSeededCollectible(Game():GetRoom():GetAwardSeed(), false), 0)
                 local pickupToAdd = rng:RandomInt(3)

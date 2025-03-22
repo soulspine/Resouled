@@ -77,6 +77,11 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, preNpcUpdate, CURSED_GAPER_
 ---@param countdown integer
 local function onPlayerTakeDamage(_, entity, amount, flags, source, countdown)
     local sourceEnt = source.Entity
+
+    if sourceEnt == nil then
+        return true
+    end
+
     local sourceData = sourceEnt:GetData()
     local entityData = entity:GetData()
     if sourceData.ResouledCurseGaperBuff and amount == 1 then

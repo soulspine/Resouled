@@ -1,5 +1,13 @@
 local GLITCH = Isaac.GetItemIdByName("Glitch")
-local CHOOSE_TIME = 25
+
+local MORPH_COOLDOWN = 25
+local ITEM_COUNT = 3
+local DEFAULT_COLLECTIBLE = Isaac.GetItemConfig():GetCollectible(CollectibleType.COLLECTIBLE_SAD_ONION)
+local GLITCH_GFX = Isaac.GetItemConfig():GetCollectible(GLITCH).GfxFileName
+
+local PICKUP_SFX = SoundEffect.SOUND_EDEN_GLITCH
+
+local EID_DESCRIPTION = "Limits pedestal options to " .. ITEM_COUNT .. " other passive items from current item pool and inherits those effects. Only one effect takes place at a time and it changes after clearing a room.#Having multiple copies of this item increases effect pool.#"
 
 local ITEM_BLACKLIST = {
     [CollectibleType.COLLECTIBLE_R_KEY] = true,
@@ -25,20 +33,39 @@ local ITEM_BLACKLIST = {
 
 ---@param pickup EntityPickup
 local function onPickupInit(_, pickup)
-    local data = pickup:GetData()
+    local roomFloorSave = SAVE_MANAGER.GetRoomFloorSave(pickup).NoRerollSave
     if pickup.SubType == GLITCH then
-        data.IsGlitch = true
-        data.GlitchItems = {}
-        data.MorphCooldown = 0
-        data.ChooseTime = 25
-        data.CurrentItem = 1
-    end
-    if data.IsGlitch then
-        local pool = Game():GetItemPool()
-        for i = 1, 4 do
-            local randomItem = pool:GetCollectible(ItemPoolType.POOL_SECRET, false)
-            if not ITEM_BLACKLIST[randomItem] then
-                table.insert(data.GlitchItems, randomItem)
+        if not roomFloorSave.Glitch then -- first spawn
+            roomFloorSave.Glitch = {
+                Cooldown = MORPH_COOLDOWN,
+                ItemIndex = 0,
+                Items = {},
+            }
+    
+            local pool = Game():GetItemPool()
+            for i = 1, ITEM_COUNT do
+                ::reroll::
+                local item = Isaac.GetItemConfig():GetCollectible(pool:GetCollectible(pool:GetLastPool(), false, nil,  DEFAULT_COLLECTIBLE.ID))
+                if not ITEM_BLACKLIST[item.ID] and item:IsAvailable() and item.MaxCharges == 0 and not item:HasTags(ItemConfig.TAG_QUEST) then
+                    table.insert(roomFloorSave.Glitch.Items, {
+                        Id = item.ID,
+                        Gfx = item.GfxFileName,
+                    })
+                else
+                    pool:AddRoomBlacklist(item.ID)
+                    goto reroll
+                end
+            end
+            pickup:Morph(pickup.Type, pickup.Variant, pickup.SubType, true, true, true)
+        else -- floor save has been initialized before
+            if not Resouled:IsQuestionMarkItem(pickup) then
+                local data = pickup:GetData()
+                data["EID_Description"] = EID_DESCRIPTION
+
+                for i = 1, #roomFloorSave.Glitch.Items do
+                    local item = Isaac.GetItemConfig():GetCollectible(roomFloorSave.Glitch.Items[i].Id)
+                    data["EID_Description"] = data["EID_Description"] .. "{{Blank}} {{Collectible" .. item.ID .. "}} "
+                end
             end
         end
     end
@@ -47,21 +74,20 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onPickupInit, PickupVaria
 
 ---@param pickup EntityPickup
 local function onPickupUpdate(_, pickup)
-    local data = pickup:GetData()
-    if data.IsGlitch then
-        if data.MorphCooldown > 0 then
-            data.MorphCooldown = data.MorphCooldown - 1
-        end
-        if data.MorphCooldown == 0 then
-            pickup:Morph(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, data.GlitchItems[data.CurrentItem], true, true, false)
-            local newData = pickup:GetData()
-            newData.IsGlitch = true
-            newData.MorphCooldown = CHOOSE_TIME
-            newData.CurrentItem = data.CurrentItem + 1
-            newData.GlitchItems = data.GlitchItems
-            if newData.CurrentItem > #newData.GlitchItems then
-                newData.CurrentItem = 1
-            end
+    local roomFloorSave = SAVE_MANAGER.GetRoomFloorSave(pickup).NoRerollSave
+    if roomFloorSave.Glitch and not Resouled:IsQuestionMarkItem(pickup) then
+        if roomFloorSave.Glitch.Cooldown > 0 then
+            roomFloorSave.Glitch.Cooldown = roomFloorSave.Glitch.Cooldown - 1
+            return
+        else
+            roomFloorSave.Glitch.ItemIndex = roomFloorSave.Glitch.ItemIndex == #roomFloorSave.Glitch.Items and 0 or roomFloorSave.Glitch.ItemIndex + 1
+            roomFloorSave.Glitch.Cooldown = MORPH_COOLDOWN
+
+            local sprite = pickup:GetSprite()
+            local newSpritesheet = roomFloorSave.Glitch.ItemIndex == 0 and GLITCH_GFX or roomFloorSave.Glitch.Items[roomFloorSave.Glitch.ItemIndex].Gfx
+
+            sprite:ReplaceSpritesheet(1, newSpritesheet)
+            sprite:LoadGraphics()
         end
     end
 end
@@ -70,36 +96,49 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onPickupUpdate, PickupV
 ---@param pickup EntityPickup
 ---@param collider Entity
 local function onPickupCollision(_, pickup, collider)
-    local data = pickup:GetData()
-    if data.IsGlitch and collider.Type == EntityType.ENTITY_PLAYER then
-        collider:ToPlayer():AnimateCollectible(GLITCH)
-        collider:ToPlayer():AddCollectible(GLITCH)
-        SFXManager():Play(SoundEffect.SOUND_EDEN_GLITCH)
-        if not collider:ToPlayer():GetData().GlitchItemEffects then
-            collider:ToPlayer():GetData().GlitchItemEffects = {}
+    local player = collider:ToPlayer()
+    if player then
+        local roomFloorSave = SAVE_MANAGER.GetRoomFloorSave(pickup).NoRerollSave
+        local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+        if roomFloorSave.Glitch then
+            local firstTime = false
+            if playerRunSave.Glitch == nil then
+                playerRunSave.Glitch = {
+                    Items = {},
+                    ItemIndex = 1,
+                }
+                firstTime = true
+            end
+            
+            for i = 1, #roomFloorSave.Glitch.Items do
+                table.insert(playerRunSave.Glitch.Items, roomFloorSave.Glitch.Items[i].Id)
+            end
+
+            player:AnimateCollectible(GLITCH)
+            player:AddCollectible(GLITCH)
+            if firstTime then
+                player:AddCollectible(roomFloorSave.Glitch.Items[roomFloorSave.Glitch.ItemIndex].Id)
+            end
+            SFXManager():Play(PICKUP_SFX)
+            pickup:Remove()
         end
-        for i = 1, #data.GlitchItems do
-            table.insert(collider:ToPlayer():GetData().GlitchItemEffects, data.GlitchItems[i])
-        end
-        collider:ToPlayer():GetData().CurrentItemEffect = 1
-        pickup:Remove()
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onPickupCollision, PickupVariant.PICKUP_COLLECTIBLE)
 
-local function onNewRoom()
+---@param rng RNG
+---@param spawnPos Vector
+local function onRoomClear(_, rng, spawnPos)
     ---@param player EntityPlayer
     Resouled:IterateOverPlayers(function(player)
         if player:HasCollectible(GLITCH) then
-            local data = player:GetData()
-            player:GetEffects():AddCollectibleEffect(data.GlitchItemEffects[data.CurrentItemEffect], true, 1)
-            player:AddCacheFlags(CacheFlag.CACHE_ALL)
-            player:EvaluateItems()
-            data.CurrentItemEffect = data.CurrentItemEffect + 1
-            if data.CurrentItemEffect > #data.GlitchItemEffects then
-                data.CurrentItemEffect = 1
+            local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+            if playerRunSave.Glitch then
+                player:RemoveCollectible(playerRunSave.Glitch.Items[playerRunSave.Glitch.ItemIndex])
+                playerRunSave.Glitch.ItemIndex = playerRunSave.Glitch.ItemIndex == #playerRunSave.Glitch.Items and 1 or playerRunSave.Glitch.ItemIndex + 1
+                player:AddCollectible(playerRunSave.Glitch.Items[playerRunSave.Glitch.ItemIndex], nil, false)
             end
         end
     end)
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onNewRoom)
+Resouled:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, onRoomClear)

@@ -15,8 +15,7 @@ font:Load("font/upheaval.fnt")
 local function onNewFloor()
     if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_LOSS) then
         local roomSave = SAVE_MANAGER.GetRoomSave()
-        if Resouled:GetPossessedSoulsNum() > 0 then
-
+        if Resouled:SoulContainerCreated() and Resouled:GetPossessedSoulsNum() > 0 then
             Resouled:SelectCard(Resouled:GetLowestPossesedSoulIndex())
             soulString = Resouled:GetSelectedCardName()
             print(Resouled:GetSelectedCardIndex())

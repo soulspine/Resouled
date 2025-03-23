@@ -490,6 +490,11 @@ local function prepareSoulContainerOnRunStart(_, isContinued)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, prepareSoulContainerOnRunStart)
 
+function Resouled:SoulContainerCreated()
+    local runSave = SAVE_MANAGER.GetRunSave()
+    return runSave.Souls ~= nil
+end
+
 ---@param soul ResouledSoul
 ---@return boolean
 function Resouled:WasSoulSpawned(soul)
@@ -1103,4 +1108,13 @@ end)
 ---@return Vector
 function Resouled:GetScreenDimensions()
     return Vector(Isaac.GetScreenWidth(), Isaac.GetScreenHeight())
+end
+
+---@return integer
+function Resouled:NewSeed()
+    local seed = 0
+    while seed == 0 do
+        seed = Random()
+    end
+    return seed
 end

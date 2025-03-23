@@ -25,10 +25,12 @@ end
 
 ---@param tear EntityTear
 local function onTearInit(_, tear)
-    local player = tear.SpawnerEntity:ToPlayer()
-    if player and player:HasCollectible(CHEESE_GRATER) and tear:GetDropRNG():RandomFloat() < APPLY_TEAR_EFFECT_CHANCE(player.Luck) then
-        Resouled:ApplyCustomTearEffect(tear, Resouled.TearEffects.CHEESE_GRATER)
-        tear:SetColor(SPECIAL_TEAR_COLOR, SPECIAL_TEAR_COLOR_DURATION, SPECIAL_TEAR_COLOR_PRIORITY, true, false)
+    if tear.SpawnerEntity then
+        local player = tear.SpawnerEntity:ToPlayer()
+        if player and player:HasCollectible(CHEESE_GRATER) and tear:GetDropRNG():RandomFloat() < APPLY_TEAR_EFFECT_CHANCE(player.Luck) then
+            Resouled:ApplyCustomTearEffect(tear, Resouled.TearEffects.CHEESE_GRATER)
+            tear:SetColor(SPECIAL_TEAR_COLOR, SPECIAL_TEAR_COLOR_DURATION, SPECIAL_TEAR_COLOR_PRIORITY, true, false)
+        end
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_TEAR_INIT, onTearInit)
@@ -44,7 +46,7 @@ local function onEntityTakeDamage(_, entity, amount, damageFlag, source, countdo
         local knife = source.Entity:ToKnife()
         local tear = source.Entity:ToTear()
 
-        if tear or knife then
+        if (tear or knife) and source.Entity.SpawnerEntity then
             player = source.Entity.SpawnerEntity:ToPlayer()
         end
 

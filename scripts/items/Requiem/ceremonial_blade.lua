@@ -25,11 +25,11 @@ local ROOM_CLEAR_WHITELISTED_PICKUPS = {
 
 local PICKUP_EFFECT_VARIANT = EffectVariant.HERETIC_PENTAGRAM
 local PICKUP_EFFECT_TIMEOUT = 1
-local PICKUP_EFFECT_SCALE = Vector(0.15, 0.15)
+local PICKUP_EFFECT_SCALE = Vector(0.2, 0.2)
 local PICKUP_EFFECT_COLOR = Color(1.5,0.1,0.1,1)
 
 local ENEMY_KILL_BASE_PICKUP_DROP_CHANCE = 0.05
-local ENEMY_KILL_PICKUP_DROP_CHANCE_PER_1_LUCK = 0.0025
+local ENEMY_KILL_PICKUP_DROP_CHANCE_PER_1_LUCK = 0.01
 local ENEMY_KILL_PICKUP_VELOCITY = 2
 local ENEMY_KILL_WHITELISTED_PICKUPS = {
     PickupVariant.PICKUP_COIN,
@@ -38,7 +38,7 @@ local ENEMY_KILL_WHITELISTED_PICKUPS = {
 }
 
 if EID then
-    EID:addCollectible(CEREMONIAL_BLADE, "Luck based chance to drop a {{Coin}} coin / {{Bomb}} bomb / {{Key}} key when killing an enemy.#On room clear makes Isaac drop 1 pickup with no way to pick it up and spawns a new random pickup.", "Ceremonial Blade")
+    EID:addCollectible(CEREMONIAL_BLADE, "5% chance to drop a {{Coin}} coin / {{Bomb}} bomb / {{Key}} key when killing an enemy.#On room clear makes Isaac drop 1 pickup with no way to pick it up and spawns a new random pickup.#{{Luck}} 15% chance at 10 luck", "Ceremonial Blade")
 end
 
 ---@param spawner Entity

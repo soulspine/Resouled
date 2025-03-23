@@ -1118,3 +1118,38 @@ function Resouled:NewSeed()
     end
     return seed
 end
+
+---@param pedestal Entity
+---@param variant? PickupVariant
+---@param subtype? integer
+function Resouled:ChangePedestalShopPrice(pedestal, newPrice, variant, subtype)
+    if variant == nil and subtype == nil then
+        if pedestal.Type == EntityType.ENTITY_PICKUP then
+            if pedestal:ToPickup().Price ~= 0 and pedestal:ToPickup():IsShopItem() then
+                pedestal:ToPickup():GetData().ChangedPrice = true
+                pedestal:ToPickup():GetData().NewPrice = newPrice
+            end
+        end
+    elseif variant ~= nil and subtype == nil then
+        if pedestal.Type == EntityType.ENTITY_PICKUP and pedestal.Variant == variant then
+            if pedestal:ToPickup().Price ~= 0 and pedestal:ToPickup():IsShopItem() then
+                pedestal:ToPickup():GetData().ChangedPrice = true
+                pedestal:ToPickup():GetData().NewPrice = newPrice
+            end
+        end
+    elseif variant ~= nil and subtype ~= nil then
+        if pedestal.Type == EntityType.ENTITY_PICKUP and pedestal.Variant == variant and pedestal.SubType == subtype then
+            if pedestal:ToPickup().Price ~= 0 and pedestal:ToPickup():IsShopItem() then
+                pedestal:ToPickup():GetData().ChangedPrice = true
+                pedestal:ToPickup():GetData().NewPrice = newPrice
+            end
+        end
+    end
+end
+
+---@param pedestal EntityPickup
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, function(_, pedestal)
+    if pedestal:GetData().ChangedPrice then
+        pedestal:ToPickup().Price = pedestal:GetData().NewPrice
+    end
+end)

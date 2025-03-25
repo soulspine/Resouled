@@ -28,14 +28,26 @@ local function onRender()
     Resouled:IterateOverPlayers(function(player)
         local data = player:GetData()
         if data.SiblingRivalrySpin then
+            local bodyColorTranslation = {
+                [-1] = "_grey.png",
+                [0] = "_grey.png",
+                [1] = "_black.png",
+                [2] = "_blue.png",
+                [3] = "_red.png",
+                [4] = "_green.png",
+                [5] = "_grey.png",
+                [6] = "_grey.png",
+            }
             if not data.TORNADO then
                 data.TORNADO_ANM_PATH = "gfx/spinjitzu.anm2"
                 data.TORNADO = Sprite()
             end
             if not data.TORNADO:IsLoaded() then
                 data.TORNADO:Load(data.TORNADO_ANM_PATH, true)
+                data.TORNADO:ReplaceSpritesheet(0, "gfx/effects/spinjitzu" .. bodyColorTranslation[player:GetBodyColor()])
                 data.TORNADO:Play("Spin", true)
             end
+            data.TORNADO.Scale = Vector(0.75, 0.75) + Vector(player.Velocity:Length() / 25, player.Velocity:Length() / 25)
             data.TORNADO:Update()
             data.TORNADO:Render(Isaac.WorldToRenderPosition(player.Position))
         end
@@ -44,7 +56,8 @@ end
 Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, onRender)
 
 ---@param player EntityPlayer
-local function prePlayerTakeDmg(_, player)
+---@param source EntityRef
+local function prePlayerTakeDmg(_, player, source)
     local data = player:GetData()
     if data.SiblingRivalrySpin then
         return false
@@ -119,7 +132,7 @@ local function onPlayerGridCollision(_, player, gridIndex)
         data.SiblingRivalrySpin = true
     end
     if data.SiblingRivalrySpin then
-        player:AddControlsCooldown(3)
+        player:AddControlsCooldown(1)
         player.Velocity = -(player.Velocity * 0.7)
     end
 end

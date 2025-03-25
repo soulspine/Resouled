@@ -24,6 +24,16 @@ local function onActiveUse(_, type, rng, player, flags, slot, data)
 end
 Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onActiveUse, SIBLING_RIVALRY)
 
+---@param player EntityPlayer
+---@param source EntityRef
+local function prePlayerTakeDmg(_, player, source)
+    local data = player:GetData()
+    if data.SiblingRivalrySpin then
+        return false
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_PRE_PLAYER_TAKE_DMG, prePlayerTakeDmg)
+
 local function onRender()
     Resouled:IterateOverPlayers(function(player)
         local data = player:GetData()
@@ -55,98 +65,94 @@ local function onRender()
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, onRender)
 
----@param player EntityPlayer
----@param source EntityRef
-local function prePlayerTakeDmg(_, player, source)
-    local data = player:GetData()
-    if data.SiblingRivalrySpin then
-        return false
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_PRE_PLAYER_TAKE_DMG, prePlayerTakeDmg)
-
 local function onUpdate()
     ---@param player EntityPlayer
     Resouled:IterateOverPlayers(function(player)
         local data = player:GetData()
+        --print(player.Velocity)
         if data.SiblingRivalry then
-            player.Velocity = player.Velocity * 1.15
-            if player:GetOtherTwin() then
+            if not data.SiblingRivalrySpin and player:GetOtherTwin() then
                 if player.Position:Distance(player:GetOtherTwin().Position) < 55 then
-                    if not data.SiblingRivalrySpin then
-                        data.SiblingRivalrySpin = true
-                        data.SiblingRivalry = false
-                    end
-                end
-            end
-        end
-        if data.SiblingRivalrySpin then
-            player.Visible = false
-            player.Friction = 1.2
-            player.Velocity = player.Velocity * 1.05
-            if data.SpinVelocity then
-                player.Velocity = data.SpinVelocity
-                data.SpinVelocity = data.SpinVelocity * 0.95
-                if data.SpinVelocity:Length() < 0.1 then
-                    data.SiblingRivalrySpin = false
+                    data.SiblingRivalrySpin = true
+                    player:GetOtherTwin():GetData().SiblingRivalrySpin = true
+                    data.SiblingRivalry = false
+                    player:GetOtherTwin():GetData().SiblingRivalry = false
+                    data.SRVelocity = player.Velocity * 3
+                    player:GetOtherTwin():GetData().SRVelocity = data.SRVelocity
                 end
             end
         else
+        end
+        if data.SiblingRivalrySpin then
+            player.Visible = false
+            if player:GetOtherTwin() then
+                player:GetOtherTwin().Visible = false
+                player:GetOtherTwin().Velocity = player:GetOtherTwin():GetData().SRVelocity
+                player:GetOtherTwin().EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
+                player:GetOtherTwin().Position = player.Position
+            end
+            player.Velocity = data.SRVelocity
+        else
             player.Visible = true
-            player.Friction = 1
+            if player:GetOtherTwin() then
+                player:GetOtherTwin().EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
+            end
         end
     end)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 
 ---@param player EntityPlayer
----@param collider Entity
-local function onPlayerCollision(_, player, collider)
-    local data = player:GetData()
-    local cData = collider:GetData()
-    if player and collider.Type == EntityType.ENTITY_PLAYER then
-        if data.SiblingRivalrySpin then
-            player.Velocity = -(player.Velocity * 0.7)
-        end
-        if cData.SiblingRivalrySpin then
-            collider.Velocity = -(collider.Velocity * 0.7)
-        end
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, onPlayerCollision)
-
-local function onNewRoom()
-    Resouled:IterateOverPlayers(function(player)
-        player:GetData().SiblingRivalrySpin = false
-        player:GetData().SiblingRivalry = false
-    end)
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onNewRoom)
-
----@param player EntityPlayer
 ---@param gridIndex integer
 local function onPlayerGridCollision(_, player, gridIndex)
     local data = player:GetData()
-    if data.SiblingRivalry then
-        data.SiblingRivalry = false
+    if not data.SiblingRivalrySpin and data.SiblingRivalry then
         data.SiblingRivalrySpin = true
+        data.SiblingRivalry = false
+        data.SRVelocity = player.Velocity * 3
     end
-    if data.SiblingRivalrySpin then
-        player:AddControlsCooldown(1)
-        player.Velocity = -(player.Velocity * 0.7)
+
+    Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.COIN_PARTICLE, Game():GetRoom():GetGridPosition(gridIndex) , Vector.Zero, nil, 0, player.InitSeed)
+    local dirHelper = Game():GetRoom():GetGridPosition(gridIndex) - player.Position
+    if data.SRVelocity then
+        if dirHelper.X > 0 and dirHelper.Y >= -20 and dirHelper.Y <= 20 then
+            data.SRVelocity.X = -data.SRVelocity.X
+        elseif dirHelper.X < 0 and dirHelper.Y >= -20 and dirHelper.Y <= 20 then
+            data.SRVelocity.X = -data.SRVelocity.X
+        elseif dirHelper.Y > 0 and dirHelper.X >= -20 and dirHelper.X <= 20 then
+            data.SRVelocity.Y = -data.SRVelocity.Y
+        elseif dirHelper.Y < 0 and dirHelper.X >= -20 and dirHelper.X <= 20 then
+            data.SRVelocity.Y = -data.SRVelocity.Y
+        end
+        Game():ShakeScreen(5)
+        data.SRVelocity = data.SRVelocity:Rotated(10)
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_PLAYER_GRID_COLLISION, onPlayerGridCollision)
+Resouled:AddCallback(ModCallbacks.MC_PRE_PLAYER_GRID_COLLISION, onPlayerGridCollision)
 
 ---@param npc EntityNPC
 ---@param collider Entity
 local function onNpcCollision(_, npc, collider)
     if collider.Type == EntityType.ENTITY_PLAYER then
-        if collider:ToPlayer():GetData().SiblingRivalry then
-            collider.Velocity = -(collider.Velocity * 3)
-            collider:ToPlayer():GetData().SiblingRivalry = false
-            collider:ToPlayer():GetData().SiblingRivalrySpin = true
-            collider:ToPlayer():GetData().SpinVelocity = collider.Velocity
+        local data = collider:GetData()
+        if data.SiblingRivalry then
+            data.SRVelocity = collider.Velocity * 3
+            data.SiblingRivalry = false
+            data.SiblingRivalrySpin = true
+        end
+        if data.SiblingRivalrySpin then
+            local dirHelper = npc.Position - collider.Position
+            if dirHelper.X > 0 then
+                data.SRVelocity.X = -data.SRVelocity.X
+            elseif dirHelper.X < 0 then
+                data.SRVelocity.X = -data.SRVelocity.X
+            elseif dirHelper.Y > 0 then
+                data.SRVelocity.Y = -data.SRVelocity.Y
+            elseif dirHelper.Y < 0 then
+                data.SRVelocity.Y = -data.SRVelocity.Y
+            end
+            Game():ShakeScreen(5)
+            data.SRVelocity = data.SRVelocity:Rotated(10)
         end
     end
 end

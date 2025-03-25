@@ -29,7 +29,8 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onPickupInit)
 local function onPickupCollision(_, pickup, collider, low)
     if pickup.Type == TRIPLE_COIN_TYPE and pickup.Variant == TRIPLE_COIN_VARIANT and pickup.SubType == TRIPLE_COIN_SUBTYPE then
         if collider.Type == EntityType.ENTITY_PLAYER then
-            collider:ToPlayer():AddCoins(3)
+            collider:ToPlayer():AddCoins(2)
+            SFXManager():Play(SoundEffect.SOUND_PENNYPICKUP, 1, 0, false, 1)
         end
     end
 end

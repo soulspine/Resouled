@@ -3,6 +3,7 @@ local FOREVER_ALONE = CollectibleType.COLLECTIBLE_FOREVER_ALONE
 local SPINDOWN_DICE = CollectibleType.COLLECTIBLE_SPINDOWN_DICE
 local KEEPERS_BARGAIN = TrinketType.TRINKET_KEEPERS_BARGAIN
 local CEREMONIAL_BLADE = Isaac.GetItemIdByName("Ceremonial Blade")
+local SIBLING_RIVALRY = Isaac.GetItemIdByName("Sibling Rivalry")
 
 ---@param player EntityPlayer
 local function onPlayerInit(_, player)
@@ -21,6 +22,12 @@ local function onPlayerInit(_, player)
     --FourSoulsV2
 
     --Requiem
+    if player:GetPlayerType() == PlayerType.PLAYER_JACOB then
+        if player:GetActiveItem(ActiveSlot.SLOT_PRIMARY) == CollectibleType.COLLECTIBLE_NULL then
+            player:AddCollectible(SIBLING_RIVALRY, 0, true, ActiveSlot.SLOT_PRIMARY, 0)
+        end
+    end
+
     if player:GetPlayerType() == PlayerType.PLAYER_ISAAC_B then
         if player:GetActiveItem(ActiveSlot.SLOT_POCKET) == CollectibleType.COLLECTIBLE_NULL then
             player:SetPocketActiveItem(SPINDOWN_DICE, ActiveSlot.SLOT_POCKET, false)

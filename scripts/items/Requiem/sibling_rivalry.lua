@@ -133,8 +133,6 @@ local function onPlayerGridCollision(_, player, gridIndex)
 
         data.ResouledSRVelocity = data.ResouledSRVelocity:Rotated(math.random(-10, 10))
         data.ResouledSRVelocity = data.ResouledSRVelocity * 0.9
-
-        Game():GetRoom():GetGridEntity(gridIndex):Destroy()
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_PLAYER_GRID_COLLISION, onPlayerGridCollision)

@@ -55,7 +55,7 @@ local function onRender()
         end
     end)
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, onRender)
+Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, onRender)
 
 local function onUpdate()
     ---@param player EntityPlayer
@@ -77,9 +77,9 @@ local function onUpdate()
 
         if data.ResouledSiblingRivalrySpin then
             player:SetShootingCooldown(2)
-            player.Visible = false
+            player.Color = Color(1,1,1,0)
             if player:GetOtherTwin() then
-                player:GetOtherTwin().Visible = false
+                player:GetOtherTwin().Color = Color(1,1,1,0)
                 if data.ResouledSRVelocity then
                     player:GetOtherTwin().Velocity = player:GetOtherTwin():GetData().SRVelocity
                 end
@@ -99,7 +99,7 @@ local function onUpdate()
                 end
             end
         else
-            player.Visible = true
+            player.Color = Color(1,1,1,1)
             if player:GetOtherTwin() then
                 player:GetOtherTwin().EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
             end

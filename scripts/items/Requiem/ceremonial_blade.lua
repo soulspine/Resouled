@@ -118,15 +118,9 @@ local function onRoomClear()
                 player0:AddKeys(-1)
             end
     
-            local newPickupSeed = 0
-    
-            while newPickupSeed == 0 do
-                newPickupSeed = Random()
-            end
-    
             local spawnPos = room:GetCenterPos()
     
-            local fadingPickup = Game():Spawn(EntityType.ENTITY_PICKUP, pickupToRemove, player0.Position, Vector(math.random(-ROOM_CLEAR_FADING_PICKUP_VELOCITY, ROOM_CLEAR_FADING_PICKUP_VELOCITY), math.random(-ROOM_CLEAR_FADING_PICKUP_VELOCITY,ROOM_CLEAR_FADING_PICKUP_VELOCITY)), nil, 1, newPickupSeed):ToPickup()
+            local fadingPickup = Game():Spawn(EntityType.ENTITY_PICKUP, pickupToRemove, player0.Position, Vector(math.random(-ROOM_CLEAR_FADING_PICKUP_VELOCITY, ROOM_CLEAR_FADING_PICKUP_VELOCITY), math.random(-ROOM_CLEAR_FADING_PICKUP_VELOCITY,ROOM_CLEAR_FADING_PICKUP_VELOCITY)), nil, 1, Resouled:NewSeed()):ToPickup()
 
             if fadingPickup then
                 fadingPickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
@@ -134,7 +128,7 @@ local function onRoomClear()
                 fadingPickup:GetData().ResouledCeremonialBladeCancelCollision = true
             end
 
-            local pickup = Game():Spawn(EntityType.ENTITY_PICKUP, ROOM_CLEAR_WHITELISTED_PICKUPS[roomRng:RandomInt(#ROOM_CLEAR_WHITELISTED_PICKUPS) + 1], room:FindFreePickupSpawnPosition(spawnPos), Vector.Zero, nil, 0, newPickupSeed):ToPickup()
+            local pickup = Game():Spawn(EntityType.ENTITY_PICKUP, ROOM_CLEAR_WHITELISTED_PICKUPS[roomRng:RandomInt(#ROOM_CLEAR_WHITELISTED_PICKUPS) + 1], room:FindFreePickupSpawnPosition(spawnPos), Vector.Zero, nil, 0, Resouled:NewSeed()):ToPickup()
             if pickup then
                 spawnEffect(pickup)
             end        

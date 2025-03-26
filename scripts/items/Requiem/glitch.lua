@@ -43,10 +43,10 @@ local function onPickupInit(_, pickup)
             }
     
             local pool = Game():GetItemPool()
-            for i = 1, ITEM_COUNT do
+            for _ = 1, ITEM_COUNT do
                 ::reroll::
                 local item = Isaac.GetItemConfig():GetCollectible(pool:GetCollectible(pool:GetLastPool(), false, nil,  DEFAULT_COLLECTIBLE.ID))
-                if not ITEM_BLACKLIST[item.ID] and item:IsAvailable() and item.MaxCharges == 0 and not item:HasTags(ItemConfig.TAG_QUEST) then
+                if not ITEM_BLACKLIST[item.ID] and item:IsAvailable() and item.MaxCharges == 0 and not item:HasTags(ItemConfig.TAG_QUEST) and item:HasTags(ItemConfig.TAG_OFFENSIVE) then
                     table.insert(roomFloorSave.Glitch.Items, {
                         Id = item.ID,
                         Gfx = item.GfxFileName,
@@ -101,13 +101,12 @@ local function onPickupCollision(_, pickup, collider)
         local roomFloorSave = SAVE_MANAGER.GetRoomFloorSave(pickup).NoRerollSave
         local playerRunSave = SAVE_MANAGER.GetRunSave(player)
         if roomFloorSave.Glitch then
-            local firstTime = false
             if playerRunSave.Glitch == nil then
                 playerRunSave.Glitch = {
                     Items = {},
                     ItemIndex = 1,
+                    HistoryTime = nil,
                 }
-                firstTime = true
             end
             
             for i = 1, #roomFloorSave.Glitch.Items do
@@ -116,9 +115,6 @@ local function onPickupCollision(_, pickup, collider)
 
             player:AnimateCollectible(GLITCH)
             player:AddCollectible(GLITCH)
-            if firstTime then
-                player:AddCollectible(roomFloorSave.Glitch.Items[roomFloorSave.Glitch.ItemIndex].Id)
-            end
             SFXManager():Play(PICKUP_SFX)
             pickup:Remove()
         end
@@ -134,9 +130,30 @@ local function onRoomClear(_, rng, spawnPos)
         if player:HasCollectible(GLITCH) then
             local playerRunSave = SAVE_MANAGER.GetRunSave(player)
             if playerRunSave.Glitch then
-                player:RemoveCollectible(playerRunSave.Glitch.Items[playerRunSave.Glitch.ItemIndex])
+                local itemConfig = Isaac.GetItemConfig()
+                local itemToDelete = itemConfig:GetCollectible(playerRunSave.Glitch.Items[playerRunSave.Glitch.ItemIndex])
+                
+                local history = player:GetHistory()
+                for i, historyItem in pairs(history:GetCollectiblesHistory()) do
+                    if historyItem:GetItemID() == itemToDelete.ID and playerRunSave.Glitch.HistoryTime == historyItem:GetTime() then
+                        player:RemoveCollectibleByHistoryIndex(i - 1)
+                        break
+                    end
+                end
+                
                 playerRunSave.Glitch.ItemIndex = playerRunSave.Glitch.ItemIndex == #playerRunSave.Glitch.Items and 1 or playerRunSave.Glitch.ItemIndex + 1
+                local itemToAdd = itemConfig:GetCollectible(playerRunSave.Glitch.Items[playerRunSave.Glitch.ItemIndex])
+                
+                itemToAdd.Tags = itemToDelete.Tags | ItemConfig.TAG_QUEST
                 player:AddCollectible(playerRunSave.Glitch.Items[playerRunSave.Glitch.ItemIndex], nil, false)
+                itemToAdd.Tags = itemToDelete.Tags & ~ ItemConfig.TAG_QUEST
+ 
+                history = player:GetHistory()
+                for i, historyItem in pairs(history:GetCollectiblesHistory()) do
+                    if historyItem:GetItemID() == itemToAdd.ID then
+                        playerRunSave.Glitch.HistoryTime = historyItem:GetTime()
+                    end
+                end
             end
         end
     end)

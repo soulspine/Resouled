@@ -57,7 +57,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CURSED_HORF_TYPE)
 ---@param source EntityRef
 ---@param type EntityType
 local function onEnemyHit(_, entity, amount, flags, source, frames, type)
-    if entity.Variant == CURSED_HORF_VARIANT and not entity:IsDead() and entity:GetDropRNG():RandomFloat() < REFLECT_CHANCE then
+    if entity.Variant == CURSED_HORF_VARIANT and not entity:IsDead() and entity:GetDropRNG():RandomFloat() < REFLECT_CHANCE and source.Entity then
         local PROJECTILE_PARAMS = ProjectileParams()
         PROJECTILE_PARAMS.BulletFlags = ON_HIT_TEAR_PROJECTILE_FLAGS
         PROJECTILE_PARAMS.HomingStrength = ON_HIT_TEAR_HOMING_STRENGTH

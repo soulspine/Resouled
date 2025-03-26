@@ -45,8 +45,13 @@ local function onPickupInit(_, pickup)
             local pool = Game():GetItemPool()
             for _ = 1, ITEM_COUNT do
                 ::reroll::
-                local item = Isaac.GetItemConfig():GetCollectible(pool:GetCollectible(pool:GetLastPool(), false, nil,  DEFAULT_COLLECTIBLE.ID))
-                if not ITEM_BLACKLIST[item.ID] and item:IsAvailable() and item.MaxCharges == 0 and not item:HasTags(ItemConfig.TAG_QUEST) and item:HasTags(ItemConfig.TAG_OFFENSIVE) then
+                local item = Isaac.GetItemConfig():GetCollectible(pool:GetCollectible(pool:GetLastPool(), false, Resouled:NewSeed(),  DEFAULT_COLLECTIBLE.ID))
+                if 
+                not ITEM_BLACKLIST[item.ID] and
+                item:IsAvailable() and
+                item.Type == ItemType.ITEM_PASSIVE and
+                not item:HasTags(ItemConfig.TAG_QUEST) and
+                (item:HasTags(ItemConfig.TAG_OFFENSIVE) or item.ID < 0) then
                     table.insert(roomFloorSave.Glitch.Items, {
                         Id = item.ID,
                         Gfx = item.GfxFileName,
@@ -135,7 +140,8 @@ local function onRoomClear(_, rng, spawnPos)
                 
                 local history = player:GetHistory()
                 for i, historyItem in pairs(history:GetCollectiblesHistory()) do
-                    if historyItem:GetItemID() == itemToDelete.ID and playerRunSave.Glitch.HistoryTime == historyItem:GetTime() then
+                    print(historyItem:GetTime())
+                    if playerRunSave.Glitch.HistoryTime == historyItem:GetTime() then
                         player:RemoveCollectibleByHistoryIndex(i - 1)
                         break
                     end

@@ -77,9 +77,7 @@ local function onUpdate()
 
         if data.ResouledSiblingRivalrySpin then
             player:SetShootingCooldown(2)
-            player.Color = Color(1,1,1,0)
             if player:GetOtherTwin() then
-                player:GetOtherTwin().Color = Color(1,1,1,0)
                 if data.ResouledSRVelocity then
                     player:GetOtherTwin().Velocity = player:GetOtherTwin():GetData().SRVelocity
                 end
@@ -99,7 +97,6 @@ local function onUpdate()
                 end
             end
         else
-            player.Color = Color(1,1,1,1)
             if player:GetOtherTwin() then
                 player:GetOtherTwin().EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
             end
@@ -169,6 +166,10 @@ local function onNpcCollision(_, npc, collider)
 
             local impact = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.IMPACT, collider.Position, Vector(0, 0), collider, 0, 0)
             impact.SpriteScale = Vector(math.floor(data.ResouledSRVelocity:Length())/5, math.floor(data.ResouledSRVelocity:Length())/5)
+            if data.ResouledSRVelocity:Length() > 10 then
+                Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.BLOOD_EXPLOSION, collider.Position, Vector(0, 0), collider, 0, 0)
+                Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.BLOOD_SPLAT, collider.Position, Vector(0, 0), collider, 0, 0)
+            end
         end
     end
 end

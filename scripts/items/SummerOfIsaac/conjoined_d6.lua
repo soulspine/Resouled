@@ -33,16 +33,15 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_USE_ITEM, preUseItem)
 local function onItemUse(_, collectibleType, rng, player, useFlags, activeSlot)
     if collectibleType == CONJOINED_D6 then
         local RunSave = SAVE_MANAGER.GetRunSave()
-        if not RunSave.ResouledCD6 then
-            RunSave.ResouledCD6 = {}
-        end
 
         if not RunSave.ResouledCD6Multiplier then
             RunSave.ResouledCD6Multiplier = {}
         end
+
         if not RunSave.ResouledCD6Multiplier[player.Index] then
             RunSave.ResouledCD6Multiplier[player.Index] = CONJOINED_CD6_BASE_MULTIPLIER
         end
+        
         local data = player:GetData()
         player:UseActiveItem(CollectibleType.COLLECTIBLE_D6)
         player:AnimateCollectible(CONJOINED_D6, "UseItem")
@@ -76,6 +75,7 @@ local function onCacheEval(_, player, cacheFlags)
     local data = player:GetData()
     if player:HasCollectible(CONJOINED_D6) then
         print(RunSave.ResouledCD6Multiplier[player.Index])
+
         if cacheFlags == CacheFlag.CACHE_DAMAGE then
             player.Damage = player.Damage * RunSave.ResouledCD6Multiplier[player.Index]
         end
@@ -91,3 +91,13 @@ local function onCacheEval(_, player, cacheFlags)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval)
+
+---@param player EntityPlayer
+local function postPlayerInit(_, player)
+    local RunSave = SAVE_MANAGER.GetRunSave()
+    local data = player:GetData()
+    if player:HasCollectible(CONJOINED_D6) and RunSave.ResouledCD6Multiplier[player.Index] then
+        player:AddCacheFlags(CacheFlag.CACHE_ALL)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, postPlayerInit)

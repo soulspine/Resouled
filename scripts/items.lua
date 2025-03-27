@@ -9,6 +9,7 @@ include("scripts.items.Requiem.glitch")
 include("scripts.items.Requiem.sibling_rivalry")
 --include("scripts.items.Requiem.auction_gavel")
 -- Summer Of Isaac
+include("scripts.items.SummerOfIsaac.conjoined_d6")
 --include("scripts.items.SummerOfIsaac.isaacs_last_will")
 -- Promotional Sets
 --include("scripts.items.PromotionalSets.focus")

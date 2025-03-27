@@ -57,7 +57,9 @@ local function onPickupInit(_, pickup)
                         Gfx = item.GfxFileName,
                     })
                 else
-                    pool:AddRoomBlacklist(item.ID)
+                    if item.ID > 0 then -- tmtrainder (negative id) items cannot be blacklisted
+                        pool:AddRoomBlacklist(item.ID)
+                    end
                     goto reroll
                 end
             end
@@ -140,7 +142,6 @@ local function onRoomClear(_, rng, spawnPos)
                 
                 local history = player:GetHistory()
                 for i, historyItem in pairs(history:GetCollectiblesHistory()) do
-                    print(historyItem:GetTime())
                     if playerRunSave.Glitch.HistoryTime == historyItem:GetTime() then
                         player:RemoveCollectibleByHistoryIndex(i - 1)
                         break

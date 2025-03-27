@@ -36,27 +36,6 @@ local function prePlayerTakeDmg(_, player, source)
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_PLAYER_TAKE_DMG, prePlayerTakeDmg)
 
-local function onRender()
-    Resouled:IterateOverPlayers(function(player)
-        local data = player:GetData()
-        if data.ResouledSiblingRivalrySpin then
-            if not data.ResouledTORNADO then
-                Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, player.Position, Vector(0, 0), player, 0, 0)
-                data.ResouledTORNADO_ANM_PATH = "gfx/spinjitzu.anm2"
-                data.ResouledTORNADO = Sprite()
-            end
-            if not data.ResouledTORNADO:IsLoaded() then
-                data.ResouledTORNADO:Load(data.ResouledTORNADO_ANM_PATH, true)
-                data.ResouledTORNADO:Play("Spin", true)
-            end
-            data.ResouledTORNADO.Scale = Vector(0.75, 0.75) + Vector(player.Velocity:Length() / 25, player.Velocity:Length() / 25)
-            data.ResouledTORNADO:Update()
-            data.ResouledTORNADO:Render(Isaac.WorldToRenderPosition(player.Position))
-        end
-    end)
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, onRender)
-
 local function onUpdate()
     ---@param player EntityPlayer
     Resouled:IterateOverPlayers(function(player)
@@ -76,6 +55,10 @@ local function onUpdate()
         end
 
         if data.ResouledSiblingRivalrySpin then
+            if not data.ResouledTornado then
+                print("Spawned")
+                data.ResouledTornado = Game():Spawn(Isaac.GetEntityTypeByName("Tornado"), Isaac.GetEntityVariantByName("Tornado"), player.Position, Vector.Zero, nil, 0, player.InitSeed)
+            end
             player:SetShootingCooldown(2)
             if player:GetOtherTwin() then
                 if data.ResouledSRVelocity then
@@ -85,15 +68,24 @@ local function onUpdate()
                 player:GetOtherTwin().Position = player.Position
             end
             if data.ResouledSRVelocity then
-                local smoke = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.DARK_BALL_SMOKE_PARTICLE, player.Position, Vector(0, 0), player, 0, 0)
+                local smoke = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.DARK_BALL_SMOKE_PARTICLE, player.Position, Vector.Zero, nil, 0, 0)
                 smoke.Color = Color(2,2,2,0.7)
                 smoke.SpriteScale = Vector(1.5, 1.5)
+                player.Visible = false
                 player.Velocity = data.ResouledSRVelocity
-                data.ResouledSRVelocity = data.ResouledSRVelocity * 0.99
+                if not player:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
+                    data.ResouledSRVelocity = data.ResouledSRVelocity * 0.99
+                else
+                    data.ResouledSRVelocity = data.ResouledSRVelocity * 0.995
+                end
+                data.ResouledTornado.Position = player.Position
+                data.ResouledTornado.SpriteScale = Vector(0.75 + data.ResouledSRVelocity:Length()/15, 0.75 + data.ResouledSRVelocity:Length()/15)
                 if data.ResouledSRVelocity:Length() < 3 then
                     Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, player.Position, Vector(0, 0), player, 0, 0)
+                    player.Visible = true
                     data.ResouledSiblingRivalrySpin = false
-                    data.ResouledTORNADO = nil
+                    data.ResouledTornado:Remove()
+                    data.ResouledTornado = nil
                 end
             end
         else
@@ -113,6 +105,9 @@ local function onPlayerGridCollision(_, player, gridIndex)
         data.ResouledSiblingRivalrySpin = true
         data.ResouledSiblingRivalry = false
         data.ResouledSRVelocity = player.Velocity * 3
+        if player:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
+            data.ResouledSRVelocity = data.ResouledSRVelocity * 2
+        end
     end
 
     local dirHelper = Game():GetRoom():GetGridPosition(gridIndex) - player.Position
@@ -129,7 +124,11 @@ local function onPlayerGridCollision(_, player, gridIndex)
         Game():ShakeScreen(math.floor(data.ResouledSRVelocity:Length())*2)
 
         data.ResouledSRVelocity = data.ResouledSRVelocity:Rotated(math.random(-10, 10))
-        data.ResouledSRVelocity = data.ResouledSRVelocity * 0.9
+        if not player:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
+            data.ResouledSRVelocity = data.ResouledSRVelocity * 0.9
+        else
+            data.ResouledSRVelocity = data.ResouledSRVelocity * 0.95
+        end
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_PLAYER_GRID_COLLISION, onPlayerGridCollision)
@@ -141,6 +140,9 @@ local function onNpcCollision(_, npc, collider)
         local data = collider:GetData()
         if data.ResouledSiblingRivalry then
             data.ResouledSRVelocity = collider.Velocity * 3
+            if collider:ToPlayer():HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
+                data.ResouledSRVelocity = data.ResouledSRVelocity * 2
+            end
             data.ResouledSiblingRivalry = false
             data.ResouledSiblingRivalrySpin = true
         end
@@ -158,7 +160,12 @@ local function onNpcCollision(_, npc, collider)
             Game():ShakeScreen(math.floor(data.ResouledSRVelocity:Length())*2)
 
             data.ResouledSRVelocity = data.ResouledSRVelocity:Rotated(math.random(-10, 10))
-            data.ResouledSRVelocity = data.ResouledSRVelocity * 1.2
+
+            if not collider:ToPlayer():HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
+                data.ResouledSRVelocity = data.ResouledSRVelocity * 1.2
+            else
+                data.ResouledSRVelocity = data.ResouledSRVelocity * 1.25
+            end
 
             if npc:IsEnemy() then
                 npc:TakeDamage(6 * data.ResouledSRVelocity:Length()/7, 0, EntityRef(npc), 1)
@@ -180,6 +187,8 @@ local function onNewRoom()
         local data = player:GetData()
         data.ResouledSiblingRivalry = false
         data.ResouledSiblingRivalrySpin = false
+        data.ResouledTornado:Remove()
+        data.ResouledTornado = nil
     end)
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NEW_ROOM, onNewRoom)

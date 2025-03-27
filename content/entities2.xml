@@ -67,6 +67,7 @@
 <!-- Four Souls V2 -->
 
 <!-- Requiem -->
+    <entity anm2path="spinjitzu.anm2" name="Tornado" id="1000" variant="200"/>
 
 <!-- Summer Of Isaac -->
 

@@ -41,7 +41,7 @@ local function onItemUse(_, collectibleType, rng, player, useFlags, activeSlot)
         if not RunSave.ResouledCD6Multiplier[player.Index] then
             RunSave.ResouledCD6Multiplier[player.Index] = CONJOINED_CD6_BASE_MULTIPLIER
         end
-        
+
         local data = player:GetData()
         player:UseActiveItem(CollectibleType.COLLECTIBLE_D6)
         player:AnimateCollectible(CONJOINED_D6, "UseItem")
@@ -54,10 +54,10 @@ local function onItemUse(_, collectibleType, rng, player, useFlags, activeSlot)
             end
         end)
         for i = 1, #data.ResouledCD6NewItems do
-            if Isaac.GetItemConfig():GetCollectible(data.ResouledCD6NewItems[i]).Quality > Isaac.GetItemConfig():GetCollectible(data.ResouledCD6OldItems[i]).Quality then
+            if Isaac.GetItemConfig():GetCollectible(data.ResouledCD6NewItems[i]).Quality < Isaac.GetItemConfig():GetCollectible(data.ResouledCD6OldItems[i]).Quality then
                 RunSave.ResouledCD6Multiplier[player.Index] = RunSave.ResouledCD6Multiplier[player.Index] + ON_USE_MULTIPLIER_GAIN
             end
-            if Isaac.GetItemConfig():GetCollectible(data.ResouledCD6NewItems[i]).Quality < Isaac.GetItemConfig():GetCollectible(data.ResouledCD6OldItems[i]).Quality then
+            if Isaac.GetItemConfig():GetCollectible(data.ResouledCD6NewItems[i]).Quality > Isaac.GetItemConfig():GetCollectible(data.ResouledCD6OldItems[i]).Quality then
                 RunSave.ResouledCD6Multiplier[player.Index] = RunSave.ResouledCD6Multiplier[player.Index] - ON_USE_MULTIPLIER_LOSS
             end
             player:AddCacheFlags(CacheFlag.CACHE_ALL)
@@ -74,8 +74,7 @@ local function onCacheEval(_, player, cacheFlags)
     local RunSave = SAVE_MANAGER.GetRunSave()
     local data = player:GetData()
     if player:HasCollectible(CONJOINED_D6) then
-        print(RunSave.ResouledCD6Multiplier[player.Index])
-
+        
         if cacheFlags == CacheFlag.CACHE_DAMAGE then
             player.Damage = player.Damage * RunSave.ResouledCD6Multiplier[player.Index]
         end
@@ -98,6 +97,7 @@ local function postPlayerInit(_, player)
     local data = player:GetData()
     if player:HasCollectible(CONJOINED_D6) and RunSave.ResouledCD6Multiplier[player.Index] then
         player:AddCacheFlags(CacheFlag.CACHE_ALL)
+        print(RunSave.ResouledCD6Multiplier[player.Index])
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, postPlayerInit)

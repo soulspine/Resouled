@@ -38,8 +38,8 @@ local function onItemUse(_, collectibleType, rng, player, useFlags, activeSlot)
             RunSave.ResouledCD6Multiplier = {}
         end
 
-        if not RunSave.ResouledCD6Multiplier[player.Index] then
-            RunSave.ResouledCD6Multiplier[player.Index] = CONJOINED_CD6_BASE_MULTIPLIER
+        if not RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())] then
+            RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())] = CONJOINED_CD6_BASE_MULTIPLIER
         end
 
         local data = player:GetData()
@@ -55,15 +55,16 @@ local function onItemUse(_, collectibleType, rng, player, useFlags, activeSlot)
         end)
         for i = 1, #data.ResouledCD6NewItems do
             if Isaac.GetItemConfig():GetCollectible(data.ResouledCD6NewItems[i]).Quality < Isaac.GetItemConfig():GetCollectible(data.ResouledCD6OldItems[i]).Quality then
-                RunSave.ResouledCD6Multiplier[player.Index] = RunSave.ResouledCD6Multiplier[player.Index] + ON_USE_MULTIPLIER_GAIN
+                RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())] = (RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())] + ON_USE_MULTIPLIER_GAIN)
             end
             if Isaac.GetItemConfig():GetCollectible(data.ResouledCD6NewItems[i]).Quality > Isaac.GetItemConfig():GetCollectible(data.ResouledCD6OldItems[i]).Quality then
-                RunSave.ResouledCD6Multiplier[player.Index] = RunSave.ResouledCD6Multiplier[player.Index] - ON_USE_MULTIPLIER_LOSS
+                RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())] = (RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())] - ON_USE_MULTIPLIER_LOSS)
             end
             player:AddCacheFlags(CacheFlag.CACHE_ALL)
         end
         data.ResouledCD6NewItems = nil
         data.ResouledCD6OldItems = nil
+        print(RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())])
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onItemUse)
@@ -73,19 +74,18 @@ Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onItemUse)
 local function onCacheEval(_, player, cacheFlags)
     local RunSave = SAVE_MANAGER.GetRunSave()
     local data = player:GetData()
-    if player:HasCollectible(CONJOINED_D6) then
-        
+    if player:HasCollectible(CONJOINED_D6) and RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())] then
         if cacheFlags == CacheFlag.CACHE_DAMAGE then
-            player.Damage = player.Damage * RunSave.ResouledCD6Multiplier[player.Index]
+            player.Damage = player.Damage * RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())]
         end
         if cacheFlags == CacheFlag.CACHE_FIREDELAY then
-            player.MaxFireDelay = player.MaxFireDelay / RunSave.ResouledCD6Multiplier[player.Index]
+            player.MaxFireDelay = player.MaxFireDelay / RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())]
         end
         if cacheFlags == CacheFlag.CACHE_SPEED then
-            player.MoveSpeed = player.MoveSpeed * RunSave.ResouledCD6Multiplier[player.Index]
+            player.MoveSpeed = player.MoveSpeed * RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())]
         end
         if cacheFlags == CacheFlag.CACHE_RANGE then
-            player.TearRange = player.TearRange * RunSave.ResouledCD6Multiplier[player.Index]
+            player.TearRange = player.TearRange * RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())]
         end
     end
 end
@@ -95,9 +95,9 @@ Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval)
 local function postPlayerInit(_, player)
     local RunSave = SAVE_MANAGER.GetRunSave()
     local data = player:GetData()
-    if player:HasCollectible(CONJOINED_D6) and RunSave.ResouledCD6Multiplier[player.Index] then
+    player:GetPlayerIndex()
+    if player:HasCollectible(CONJOINED_D6) and RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())] then
         player:AddCacheFlags(CacheFlag.CACHE_ALL)
-        print(RunSave.ResouledCD6Multiplier[player.Index])
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, postPlayerInit)

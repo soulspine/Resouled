@@ -70,7 +70,7 @@ local function onUpdate()
             if data.ResouledSRVelocity then
                 local smoke = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.DARK_BALL_SMOKE_PARTICLE, player.Position, Vector.Zero, nil, 0, 0)
                 smoke.Color = Color(2,2,2,0.7)
-                smoke.SpriteScale = Vector(1.5, 1.5)
+                smoke.SpriteScale = Vector(1.5 + data.ResouledSRVelocity:Length()/10, 1.5 + data.ResouledSRVelocity:Length()/10)
                 player.Visible = false
                 player.Velocity = data.ResouledSRVelocity
                 if not player:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then

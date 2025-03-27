@@ -187,8 +187,10 @@ local function onNewRoom()
         local data = player:GetData()
         data.ResouledSiblingRivalry = false
         data.ResouledSiblingRivalrySpin = false
-        data.ResouledTornado:Remove()
-        data.ResouledTornado = nil
+        if data.ResouledTornado then 
+            data.ResouledTornado:Remove()
+            data.ResouledTornado = nil
+        end
     end)
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NEW_ROOM, onNewRoom)

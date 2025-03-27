@@ -9,7 +9,7 @@ local function onNewFloor()
         end
     end)
     local seed = 1
-    if libraryCardPresent then
+    if libraryCardPresent and Game():GetLevel() ~= LevelStage.STAGE4_3 then --4_3 blue womb
         ::chooseAgain::
         local level = Game():GetLevel()
         local exploredRooms = {}
@@ -20,7 +20,7 @@ local function onNewFloor()
         end
         exploredRooms[randomRoom] = true
         local roomDescriptor = level:GetRoomByIdx(randomRoom)
-        if roomDescriptor.Data.Shape == RoomShape.ROOMSHAPE_1x1 and roomDescriptor.Data.Type == RoomType.ROOM_DEFAULT and Game():GetLevel() ~= LevelStage.STAGE4_3 then --4_3 blue womb
+        if roomDescriptor.Data.Shape == RoomShape.ROOMSHAPE_1x1 and roomDescriptor.Data.Type == RoomType.ROOM_DEFAULT then
             Game():GetLevel():GetRoomByIdx(randomRoom).Data = RoomConfigHolder.GetRoomByStageTypeAndVariant(StbType.SPECIAL_ROOMS, RoomType.ROOM_LIBRARY, 0)
         else
             seed = seed + 1

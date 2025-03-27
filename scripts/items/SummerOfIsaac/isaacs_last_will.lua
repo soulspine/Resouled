@@ -10,7 +10,7 @@ end
 local function onEntityDeath(_, entity)
     local player = entity:ToPlayer()
     if player and player:HasCollectible(ISAACS_LAST_WILL) then
-        Resouled:GrantGuppyTransformation(player)
+        player:IncrementPlayerFormCounter(PlayerForm.PLAYERFORM_GUPPY, 3)
         player:AddCoins(COINS)
     end
 end

@@ -142,20 +142,6 @@ function Resouled:SpawnChaosItemOfQuality(quality, rng, position, spawner)
     return nil
 end
 
---- Grants Guppy transformation to specified player
----@param player EntityPlayer
-function Resouled:GrantGuppyTransformation(player)
-    if not player:HasPlayerForm(PlayerForm.PLAYERFORM_GUPPY)
-    then
-        for _ = 1, 4 do
-            player:AddTrinket(TrinketType.TRINKET_KIDS_DRAWING, true)
-        end
-
-        player:TryRemoveTrinket(TrinketType.TRINKET_KIDS_DRAWING)
-        player:TryRemoveTrinket(TrinketType.TRINKET_KIDS_DRAWING)
-    end
-end
-
 --- Returns effective HP of the player. \
 --- Every half a `red` / `soul` / `black` heart counts as 1 HP. \
 --- Every `bone` / `rotten` / `eternal` heart counts as 1 HP.

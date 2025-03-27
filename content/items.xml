@@ -10,7 +10,7 @@
     <active id="6" name="Sibling Rivalry" gfx="sibling_rivalry.png" description="" quality="3" craftquality="3" maxcharges="2" chargetype="normal"/>
     <!--active id="447" name="Auction Gavel" gfx="auction_gavel.png" description="Sold!" quality="2"/-->
 <!-- Summer Of Isaac -->
-    <!-- passive id="445" name="Isaac's last will" gfx="isaacs_last_will.png" description="I leave all that I own to my cat Guppy" quality="2"/-->
+    <passive id="7" name="Isaac's last will" gfx="isaacs_last_will.png" description="I leave all that I own to my cat Guppy" quality="2"/>
 <!-- Promotional Sets -->
     <!--passive id="446" name="Focus" gfx="focus.png" description="" quality="3" cache="damage"/-->
 </items>

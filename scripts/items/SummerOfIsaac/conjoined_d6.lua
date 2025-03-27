@@ -74,6 +74,11 @@ Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onItemUse)
 local function onCacheEval(_, player, cacheFlags)
     local RunSave = SAVE_MANAGER.GetRunSave()
     local data = player:GetData()
+    
+    if RunSave.ResouledCD6Multiplier == nil then
+        return
+    end
+
     if RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())] then
         if cacheFlags == CacheFlag.CACHE_DAMAGE then
             player.Damage = player.Damage * RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())]
@@ -96,6 +101,11 @@ local function postPlayerInit(_, player)
     local RunSave = SAVE_MANAGER.GetRunSave()
     local data = player:GetData()
     player:GetPlayerIndex()
+
+    if RunSave.ResouledCD6Multiplier == nil then
+        return
+    end
+
     if RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())] then
         player:AddCacheFlags(CacheFlag.CACHE_ALL)
     end

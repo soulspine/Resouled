@@ -12,4 +12,5 @@ include("scripts.items.Requiem.sibling_rivalry")
 include("scripts.items.SummerOfIsaac.conjoined_d6")
 include("scripts.items.SummerOfIsaac.isaacs_last_will")
 -- Promotional Sets
+include("scripts.items.PromotionalSets.trinkets.library_card")
 --include("scripts.items.PromotionalSets.focus")

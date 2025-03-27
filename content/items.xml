@@ -13,5 +13,6 @@
         <active id="7" name="Conjoined D6" gfx="conjoined_d6.png" description="The dice of balance..." quality="4" craftquality="4" maxcharges="4" chargetype="normal"/>
         <passive id="8" name="Isaac's last will" gfx="isaacs_last_will.png" description="I leave all that I own to my cat Guppy" quality="2"/>
 <!-- Promotional Sets -->
+    <trinket id="0" name="Library Card" gfx="library_card.png"/>
     <!--passive id="446" name="Focus" gfx="focus.png" description="" quality="3" cache="damage"/-->
 </items>

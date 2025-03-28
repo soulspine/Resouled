@@ -1,6 +1,20 @@
 local SIBLING_RIVALRY = Isaac.GetItemIdByName("Sibling Rivalry")
 
-local EID_DESCRIPTION = "On use, player starts to accelerate. If the player hits anything, they start to spin dealing contact damage, while being invulnerable."
+if EID then
+    EID:addCollectible(SIBLING_RIVALRY, "On use, player starts to accelerate. If the player hits anything, they start to spin dealing contact damage, while being invulnerable.")
+end
+
+local GRID_BOUCE_VELOCITY_LOSS_MULTIPLIER = 0.1
+local ENEMY_BOUNCE_VELOCITY_GAIN_MULTIPLIER = 0.2
+local SPIN_START_VELOCITY_MULTIPLIER = 3
+local VELOCITY_LOSS_PER_TICK_MULTIPLIER = 0.01
+
+local CAR_BATTERY_GRID_BOUNCE_VELOCITY_LOSS_MULTIPLIER = 0.05
+local CAR_BATTERY_ENEMY_BOUNCE_VELOCITY_GAIN_MULTIPLIER = 0.25
+local CAR_BATTERY_SPIN_START_VELOCITY_MULTIPLIER = 2
+local CAR_BATTERY_VELOCITY_LOSS_PER_TICK = 0.005
+
+local TWIN_HUG_SPEED = 13
 
 ---@param type CollectibleType
 ---@param rng RNG
@@ -16,8 +30,8 @@ local function onActiveUse(_, type, rng, player, flags, slot, data)
     else
         player:AddControlsCooldown(6)
         player:GetOtherTwin():AddControlsCooldown(6)
-        player.Velocity = -(player.Position - player:GetOtherTwin().Position):Normalized() * (player.Position:Distance(player:GetOtherTwin().Position) / 13)
-        player:GetOtherTwin().Velocity = -(player:GetOtherTwin().Position - player.Position):Normalized() * (player:GetOtherTwin().Position:Distance(player.Position) / 13)
+        player.Velocity = -(player.Position - player:GetOtherTwin().Position):Normalized() * (player.Position:Distance(player:GetOtherTwin().Position) / TWIN_HUG_SPEED)
+        player:GetOtherTwin().Velocity = -(player:GetOtherTwin().Position - player.Position):Normalized() * (player:GetOtherTwin().Position:Distance(player.Position) / TWIN_HUG_SPEED)
         player:AnimateCollectible(SIBLING_RIVALRY, "UseItem")
         player:GetOtherTwin():AnimateCollectible(SIBLING_RIVALRY, "UseItem")
         data.ResouledSiblingRivalry = true
@@ -47,7 +61,7 @@ local function onUpdate()
                     player:GetOtherTwin():GetData().SiblingRivalrySpin = true
                     data.ResouledSiblingRivalry = false
                     player:GetOtherTwin():GetData().SiblingRivalry = false
-                    data.ResouledSRVelocity = player.Velocity * 3
+                    data.ResouledSRVelocity = player.Velocity * SPIN_START_VELOCITY_MULTIPLIER
                     player:GetOtherTwin():GetData().SRVelocity = data.ResouledSRVelocity
                 end
             end
@@ -74,9 +88,9 @@ local function onUpdate()
                 player.Visible = false
                 player.Velocity = data.ResouledSRVelocity
                 if not player:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
-                    data.ResouledSRVelocity = data.ResouledSRVelocity * 0.99
+                    data.ResouledSRVelocity = data.ResouledSRVelocity * (1 - VELOCITY_LOSS_PER_TICK_MULTIPLIER)
                 else
-                    data.ResouledSRVelocity = data.ResouledSRVelocity * 0.995
+                    data.ResouledSRVelocity = data.ResouledSRVelocity * (1 - CAR_BATTERY_VELOCITY_LOSS_PER_TICK)
                 end
                 data.ResouledTornado.Position = player.Position
                 data.ResouledTornado.SpriteScale = Vector(0.75 + data.ResouledSRVelocity:Length()/15, 0.75 + data.ResouledSRVelocity:Length()/15)
@@ -104,7 +118,7 @@ local function onPlayerGridCollision(_, player, gridIndex)
     if not data.ResouledSiblingRivalrySpin and data.ResouledSiblingRivalry then
         data.ResouledSiblingRivalrySpin = true
         data.ResouledSiblingRivalry = false
-        data.ResouledSRVelocity = player.Velocity * 3
+        data.ResouledSRVelocity = player.Velocity * SPIN_START_VELOCITY_MULTIPLIER
         if player:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
             data.ResouledSRVelocity = data.ResouledSRVelocity * 2
         end
@@ -125,9 +139,9 @@ local function onPlayerGridCollision(_, player, gridIndex)
 
         data.ResouledSRVelocity = data.ResouledSRVelocity:Rotated(math.random(-10, 10))
         if not player:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
-            data.ResouledSRVelocity = data.ResouledSRVelocity * 0.9
+            data.ResouledSRVelocity = data.ResouledSRVelocity * (1 - GRID_BOUCE_VELOCITY_LOSS_MULTIPLIER)
         else
-            data.ResouledSRVelocity = data.ResouledSRVelocity * 0.95
+            data.ResouledSRVelocity = data.ResouledSRVelocity * (1 - CAR_BATTERY_GRID_BOUNCE_VELOCITY_LOSS_MULTIPLIER)
         end
     end
 end
@@ -139,9 +153,9 @@ local function onNpcCollision(_, npc, collider)
     if collider.Type == EntityType.ENTITY_PLAYER then
         local data = collider:GetData()
         if data.ResouledSiblingRivalry then
-            data.ResouledSRVelocity = collider.Velocity * 3
+            data.ResouledSRVelocity = collider.Velocity * SPIN_START_VELOCITY_MULTIPLIER
             if collider:ToPlayer():HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
-                data.ResouledSRVelocity = data.ResouledSRVelocity * 2
+                data.ResouledSRVelocity = data.ResouledSRVelocity * CAR_BATTERY_SPIN_START_VELOCITY_MULTIPLIER
             end
             data.ResouledSiblingRivalry = false
             data.ResouledSiblingRivalrySpin = true
@@ -162,9 +176,9 @@ local function onNpcCollision(_, npc, collider)
             data.ResouledSRVelocity = data.ResouledSRVelocity:Rotated(math.random(-10, 10))
 
             if not collider:ToPlayer():HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
-                data.ResouledSRVelocity = data.ResouledSRVelocity * 1.2
+                data.ResouledSRVelocity = data.ResouledSRVelocity * (1 + ENEMY_BOUNCE_VELOCITY_GAIN_MULTIPLIER)
             else
-                data.ResouledSRVelocity = data.ResouledSRVelocity * 1.25
+                data.ResouledSRVelocity = data.ResouledSRVelocity * (1 + CAR_BATTERY_ENEMY_BOUNCE_VELOCITY_GAIN_MULTIPLIER)
             end
 
             if npc:IsEnemy() then
@@ -194,14 +208,3 @@ local function onNewRoom()
     end)
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NEW_ROOM, onNewRoom)
-
----@param pickup EntityPickup
-local function onPickupInit(_, pickup)
-    if pickup.SubType == SIBLING_RIVALRY then
-        if not Resouled:IsQuestionMarkItem(pickup) then
-            local data = pickup:GetData()
-            data["EID_Description"] = EID_DESCRIPTION
-        end
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onPickupInit, PickupVariant.PICKUP_COLLECTIBLE)

@@ -515,7 +515,7 @@ end
 ---@return table<integer, nil | string>
 function Resouled:GetPossessedSouls()
     local runSave = SAVE_MANAGER.GetRunSave()
-    return runSave.Souls.Possessed
+    return runSave.Souls and runSave.Souls.Possessed or {nil, nil, nil, nil}
 end
 
 

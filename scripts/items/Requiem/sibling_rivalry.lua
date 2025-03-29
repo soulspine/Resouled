@@ -35,7 +35,6 @@ local function onActiveUse(_, type, rng, player, flags, slot, data)
         player:AnimateCollectible(SIBLING_RIVALRY, "UseItem")
         player:GetOtherTwin():AnimateCollectible(SIBLING_RIVALRY, "UseItem")
         data.ResouledSiblingRivalry = true
-        player:GetOtherTwin():GetData().SiblingRivalry = true
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onActiveUse, SIBLING_RIVALRY)
@@ -44,7 +43,7 @@ Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onActiveUse, SIBLING_RIVALRY)
 ---@param source EntityRef
 local function prePlayerTakeDmg(_, player, source)
     local data = player:GetData()
-    if data.ResouledSiblingRivalrySpin then
+    if data.ResouledSiblingRivalrySpin or data.ResouledIsSiblingAndSpin then
         return false
     end
 end
@@ -63,6 +62,7 @@ local function onUpdate()
                     player:GetOtherTwin():GetData().SiblingRivalry = false
                     data.ResouledSRVelocity = player.Velocity * SPIN_START_VELOCITY_MULTIPLIER
                     player:GetOtherTwin():GetData().SRVelocity = data.ResouledSRVelocity
+                    player:GetOtherTwin():GetData().ResouledIsSiblingAndSpin = true
                 end
             end
         else
@@ -70,16 +70,15 @@ local function onUpdate()
 
         if data.ResouledSiblingRivalrySpin then
             if not data.ResouledTornado then
-                print("Spawned")
                 data.ResouledTornado = Game():Spawn(Isaac.GetEntityTypeByName("Tornado"), Isaac.GetEntityVariantByName("Tornado"), player.Position, Vector.Zero, nil, 0, player.InitSeed)
             end
             player:SetShootingCooldown(2)
+            player:GetOtherTwin():SetShootingCooldown(2)
             if player:GetOtherTwin() then
                 if data.ResouledSRVelocity then
-                    player:GetOtherTwin().Velocity = player:GetOtherTwin():GetData().SRVelocity
+                    player:GetOtherTwin().Position = player.Position
+                    player:GetOtherTwin().Visible = false
                 end
-                player:GetOtherTwin().EntityCollisionClass = EntityCollisionClass.ENTCOLL_ENEMIES
-                player:GetOtherTwin().Position = player.Position
             end
             if data.ResouledSRVelocity then
                 local smoke = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.DARK_BALL_SMOKE_PARTICLE, player.Position, Vector.Zero, nil, 0, 0)
@@ -98,8 +97,13 @@ local function onUpdate()
                     Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, player.Position, Vector(0, 0), player, 0, 0)
                     player.Visible = true
                     data.ResouledSiblingRivalrySpin = false
+                    data.ResouledSRVelocity = nil
                     data.ResouledTornado:Remove()
                     data.ResouledTornado = nil
+                    if player:GetOtherTwin() then
+                        player:GetOtherTwin():GetData().ResouledIsSiblingAndSpin = false
+                        player:GetOtherTwin().Visible = true
+                    end
                 end
             end
         else
@@ -125,23 +129,30 @@ local function onPlayerGridCollision(_, player, gridIndex)
     end
 
     local dirHelper = Game():GetRoom():GetGridPosition(gridIndex) - player.Position
-    if data.ResouledSiblingRivalrySpin then
-        if dirHelper.X > 0 and dirHelper.Y >= -20 and dirHelper.Y <= 20 then
-            data.ResouledSRVelocity.X = -data.ResouledSRVelocity.X
-        elseif dirHelper.X < 0 and dirHelper.Y >= -20 and dirHelper.Y <= 20 then
-            data.ResouledSRVelocity.X = -data.ResouledSRVelocity.X
-        elseif dirHelper.Y > 0 and dirHelper.X >= -20 and dirHelper.X <= 20 then
-            data.ResouledSRVelocity.Y = -data.ResouledSRVelocity.Y
-        elseif dirHelper.Y < 0 and dirHelper.X >= -20 and dirHelper.X <= 20 then
-            data.ResouledSRVelocity.Y = -data.ResouledSRVelocity.Y
+    if data.ResouledSRVelocity or data.ResouledIsSiblingAndSpin then
+        if data.ResouledSRVelocity then
+            if dirHelper.X > 0 and dirHelper.Y >= -20 and dirHelper.Y <= 20 then
+                data.ResouledSRVelocity.X = -data.ResouledSRVelocity.X
+            elseif dirHelper.X < 0 and dirHelper.Y >= -20 and dirHelper.Y <= 20 then
+                data.ResouledSRVelocity.X = -data.ResouledSRVelocity.X
+            elseif dirHelper.Y > 0 and dirHelper.X >= -20 and dirHelper.X <= 20 then
+                data.ResouledSRVelocity.Y = -data.ResouledSRVelocity.Y
+            elseif dirHelper.Y < 0 and dirHelper.X >= -20 and dirHelper.X <= 20 then
+                data.ResouledSRVelocity.Y = -data.ResouledSRVelocity.Y
+            end
         end
-        Game():ShakeScreen(math.floor(data.ResouledSRVelocity:Length())*2)
 
-        data.ResouledSRVelocity = data.ResouledSRVelocity:Rotated(math.random(-10, 10))
-        if not player:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
-            data.ResouledSRVelocity = data.ResouledSRVelocity * (1 - GRID_BOUCE_VELOCITY_LOSS_MULTIPLIER)
-        else
-            data.ResouledSRVelocity = data.ResouledSRVelocity * (1 - CAR_BATTERY_GRID_BOUNCE_VELOCITY_LOSS_MULTIPLIER)
+        
+        if data.ResouledSRVelocity then 
+            Game():ShakeScreen(math.floor(data.ResouledSRVelocity:Length())*2)
+
+            data.ResouledSRVelocity = data.ResouledSRVelocity:Rotated(math.random(-10, 10))
+
+            if not player:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
+                data.ResouledSRVelocity = data.ResouledSRVelocity * (1 - GRID_BOUCE_VELOCITY_LOSS_MULTIPLIER)
+            else
+                data.ResouledSRVelocity = data.ResouledSRVelocity * (1 - CAR_BATTERY_GRID_BOUNCE_VELOCITY_LOSS_MULTIPLIER)
+            end
         end
     end
 end
@@ -160,36 +171,43 @@ local function onNpcCollision(_, npc, collider)
             data.ResouledSiblingRivalry = false
             data.ResouledSiblingRivalrySpin = true
         end
-        if data.ResouledSiblingRivalrySpin then
+        if data.ResouledSRVelocity or data.ResouledIsSiblingAndSpin then
             local dirHelper = npc.Position - collider.Position
-            if dirHelper.X > 0 then
-                data.ResouledSRVelocity.X = -data.ResouledSRVelocity.X
-            elseif dirHelper.X < 0 then
-                data.ResouledSRVelocity.X = -data.ResouledSRVelocity.X
-            elseif dirHelper.Y > 0 then
-                data.ResouledSRVelocity.Y = -data.ResouledSRVelocity.Y
-            elseif dirHelper.Y < 0 then
-                data.ResouledSRVelocity.Y = -data.ResouledSRVelocity.Y
+            if data.ResouledSRVelocity then
+                if dirHelper.X > 0 then
+                    data.ResouledSRVelocity.X = -data.ResouledSRVelocity.X
+                elseif dirHelper.X < 0 then
+                    data.ResouledSRVelocity.X = -data.ResouledSRVelocity.X
+                elseif dirHelper.Y > 0 then
+                    data.ResouledSRVelocity.Y = -data.ResouledSRVelocity.Y
+                elseif dirHelper.Y < 0 then
+                    data.ResouledSRVelocity.Y = -data.ResouledSRVelocity.Y
+                end
             end
-            Game():ShakeScreen(math.floor(data.ResouledSRVelocity:Length())*2)
+            if data.ResouledSRVelocity then 
+                Game():ShakeScreen(math.floor(data.ResouledSRVelocity:Length())*2)
 
-            data.ResouledSRVelocity = data.ResouledSRVelocity:Rotated(math.random(-10, 10))
+                data.ResouledSRVelocity = data.ResouledSRVelocity:Rotated(math.random(-10, 10))
 
-            if not collider:ToPlayer():HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
-                data.ResouledSRVelocity = data.ResouledSRVelocity * (1 + ENEMY_BOUNCE_VELOCITY_GAIN_MULTIPLIER)
-            else
-                data.ResouledSRVelocity = data.ResouledSRVelocity * (1 + CAR_BATTERY_ENEMY_BOUNCE_VELOCITY_GAIN_MULTIPLIER)
-            end
+                if not collider:ToPlayer():HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
+                    data.ResouledSRVelocity = data.ResouledSRVelocity * (1 + ENEMY_BOUNCE_VELOCITY_GAIN_MULTIPLIER)
+                else
+                    data.ResouledSRVelocity = data.ResouledSRVelocity * (1 + CAR_BATTERY_ENEMY_BOUNCE_VELOCITY_GAIN_MULTIPLIER)
+                end
 
-            if npc:IsEnemy() then
-                npc:TakeDamage(6 * data.ResouledSRVelocity:Length()/7, 0, EntityRef(npc), 1)
+                if npc:IsEnemy() then
+                    npc:TakeDamage(6 * data.ResouledSRVelocity:Length()/7, 0, EntityRef(npc), 1)
+                end
             end
 
             local impact = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.IMPACT, collider.Position, Vector(0, 0), collider, 0, 0)
-            impact.SpriteScale = Vector(math.floor(data.ResouledSRVelocity:Length())/5, math.floor(data.ResouledSRVelocity:Length())/5)
-            if data.ResouledSRVelocity:Length() > 10 then
-                Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.BLOOD_EXPLOSION, collider.Position, Vector(0, 0), collider, 0, 0)
-                Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.BLOOD_SPLAT, collider.Position, Vector(0, 0), collider, 0, 0)
+            if data.ResouledSRVelocity then 
+                impact.SpriteScale = Vector(math.floor(data.ResouledSRVelocity:Length())/5, math.floor(data.ResouledSRVelocity:Length())/5)
+                
+                if data.ResouledSRVelocity:Length() > 10 then
+                    Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.BLOOD_EXPLOSION, collider.Position, Vector(0, 0), collider, 0, 0)
+                    Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.BLOOD_SPLAT, collider.Position, Vector(0, 0), collider, 0, 0)
+                end
             end
         end
     end
@@ -197,6 +215,7 @@ end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_COLLISION, onNpcCollision)
 
 local function onNewRoom()
+    ---@param player EntityPlayer
     Resouled:IterateOverPlayers(function(player)
         local data = player:GetData()
         data.ResouledSiblingRivalry = false
@@ -204,6 +223,9 @@ local function onNewRoom()
         if data.ResouledTornado then 
             data.ResouledTornado:Remove()
             data.ResouledTornado = nil
+        end
+        if player:GetOtherTwin() then
+            player:GetOtherTwin():GetData().ResouledIsSiblingAndSpin = false
         end
     end)
 end

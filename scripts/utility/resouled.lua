@@ -1105,37 +1105,40 @@ function Resouled:NewSeed()
     return seed
 end
 
----@param pedestal Entity
----@param variant? PickupVariant
----@param subtype? integer
-function Resouled:ChangePedestalShopPrice(pedestal, newPrice, variant, subtype)
-    if variant == nil and subtype == nil then
-        if pedestal.Type == EntityType.ENTITY_PICKUP then
-            if pedestal:ToPickup().Price ~= 0 and pedestal:ToPickup():IsShopItem() then
-                pedestal:ToPickup():GetData().ChangedPrice = true
-                pedestal:ToPickup():GetData().NewPrice = newPrice
-            end
-        end
-    elseif variant ~= nil and subtype == nil then
-        if pedestal.Type == EntityType.ENTITY_PICKUP and pedestal.Variant == variant then
-            if pedestal:ToPickup().Price ~= 0 and pedestal:ToPickup():IsShopItem() then
-                pedestal:ToPickup():GetData().ChangedPrice = true
-                pedestal:ToPickup():GetData().NewPrice = newPrice
-            end
-        end
-    elseif variant ~= nil and subtype ~= nil then
-        if pedestal.Type == EntityType.ENTITY_PICKUP and pedestal.Variant == variant and pedestal.SubType == subtype then
-            if pedestal:ToPickup().Price ~= 0 and pedestal:ToPickup():IsShopItem() then
-                pedestal:ToPickup():GetData().ChangedPrice = true
-                pedestal:ToPickup():GetData().NewPrice = newPrice
-            end
-        end
-    end
+---@param pickup EntityPickup
+---@param decrease integer
+---@param minPrice? integer --default `1` 
+function Resouled:FlatDecreaseShopPickupPrice(pickup, decrease, minPrice)
+    pickup:GetData().ResouledFlatPriceDecrease = {
+        Decrease = decrease,
+        MinPrice = minPrice and minPrice or 1,
+        OriginalPrice = nil -- will be set in the first update cycle
+    }
+    pickup.AutoUpdatePrice = true
 end
 
----@param pedestal EntityPickup
-Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, function(_, pedestal)
-    if pedestal:GetData().ChangedPrice then
-        pedestal:ToPickup().Price = pedestal:GetData().NewPrice
+---@param pickup EntityPickup
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, function(_, pickup)
+    local data = pickup:GetData()
+    if data.ResouledFlatPriceDecrease and pickup:IsShopItem() and pickup.Price > 0 then
+        if pickup.AutoUpdatePrice == true then
+            data.ResouledFlatPriceDecrease.OriginalPrice = pickup.Price
+            pickup.AutoUpdatePrice = false
+            pickup.Price = math.max(data.ResouledFlatPriceDecrease.MinPrice, data.ResouledFlatPriceDecrease.OriginalPrice - data.ResouledFlatPriceDecrease.Decrease)
+        else
+            pickup.AutoUpdatePrice = true
+        end
     end
 end)
+
+---@param pickup EntityPickup
+function Resouled:UndoShopPickupFlatPriceDecrease(pickup)
+    pickup:GetData().ResouledFlatPriceDecrease = nil
+    pickup.AutoUpdatePrice = true
+end
+
+---@param pickup EntityPickup
+---@return integer | nil
+function Resouled:GetPickupFlatPriceDecrease(pickup)
+    return pickup:GetData().ResouledFlatPriceDecrease and pickup:GetData().ResouledFlatPriceDecrease.Decrease or nil
+end

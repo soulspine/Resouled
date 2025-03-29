@@ -1,5 +1,9 @@
 local LIBRARY_CARD = Isaac.GetTrinketIdByName("Library Card")
 
+if EID then
+    EID:addTrinket(LIBRARY_CARD, "Spawns a library every floor")
+end
+
 local BLACKLISTED_STAGES = {
     [LevelStage.STAGE4_3] = true,
     [LevelStage.STAGE8] = true

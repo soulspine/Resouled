@@ -14,13 +14,46 @@ local SPRITE_OFFSET = Vector(0, -10)
 local ANIMATION_PLAYER_LIFT_ITEM = "LiftItem"
 local ANIMATION_PLAYER_HIDE_ITEM = "HideItem"
 
-local ANIMATION_PICKUP_PLAYER_PICKUP = "PlayerPickupSparkle"
+local ANIMATION_PICKUP_PLAYER_PICKUP = "PlayerPickup"
 
 local ANIMATIONS_BAG_SWING = {
     "Swing",
     "Swing2",
     "SwingDown",
     "SwingDown2"
+}
+
+local UNSPECIFIED_WEIGHT = 1
+
+local PICKUP_WHITELSIT = {
+    [PickupVariant.PICKUP_BOMB] = true,
+    [PickupVariant.PICKUP_COIN] = true,
+    [PickupVariant.PICKUP_TAROTCARD] = true,
+    [PickupVariant.PICKUP_KEY] = true,
+    [PickupVariant.PICKUP_PILL] = true,
+    [PickupVariant.PICKUP_HEART] = true,
+    [PickupVariant.PICKUP_LIL_BATTERY] = true,
+    [PickupVariant.PICKUP_POOP] = true,
+}
+
+local COIN_WEIGHT = {
+    [CoinSubType.COIN_STICKYNICKEL] = 0,
+    [CoinSubType.COIN_DOUBLEPACK] = 2,
+    [Isaac.GetEntitySubTypeByName("Triple Coin")] = 3,
+    [Isaac.GetEntitySubTypeByName("Quad Coin")] = 4,
+}
+
+local BOMB_WEIGHT = {
+    [BombSubType.BOMB_DOUBLEPACK] = 2,
+    [BombSubType.BOMB_GIGA] = 0,
+}
+
+local KEY_WEIGHT = {
+    [KeySubType.KEY_DOUBLEPACK] = 2,
+}
+
+local HEART_WEIGHT = {
+    [HeartSubType.HEART_DOUBLEPACK] = 2,
 }
 
 ---@param itemId CollectibleType
@@ -35,9 +68,15 @@ local function onActiveUse(_, itemId, rng, player, useFlags, activeSlot, customV
         return
     end
 
-    customVarData = customVarData + 1
-    player:SetActiveVarData(customVarData, activeSlot)
-    print(customVarData, activeSlot)
+    local sprite = player:GetSprite()
+    local data = player:GetData()
+    if sprite:GetOverlayAnimation() == "" then
+        player:AnimateCollectible(BAG_O_TRASH, ANIMATION_PLAYER_HIDE_ITEM, ANIMATION_PICKUP_PLAYER_PICKUP)
+        data.ResouledBagOfTrash = nil
+    else
+        player:AnimateCollectible(BAG_O_TRASH, ANIMATION_PLAYER_LIFT_ITEM, ANIMATION_PICKUP_PLAYER_PICKUP)
+        data.ResouledBagOfTrash = player:GetActiveItemDesc(activeSlot).VarData
+    end 
 end
 Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onActiveUse, BAG_O_TRASH)
 
@@ -57,15 +96,6 @@ local function onPlayerUpdate(_, player)
             knife.Parent = player
             knife.SpriteOffset = SPRITE_OFFSET - hitboxOffset/2
             knife.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
-            local capsule = knife:GetCollisionCapsule()
-            for _, entity in ipairs(Isaac.FindInCapsule(capsule, EntityPartition.PICKUP)) do
-                if entity:ToPickup() then
-                    entity:Remove()
-                    data.ResouledBagOfTrash = data.ResouledBagOfTrash + 1
-                    print("bag of trash", data.ResouledBagOfTrash)
-                    player:SetActiveVarData(data.ResouledBagOfTrash, ActiveSlot.SLOT_PRIMARY)
-                end
-            end
             local swingAnimation = ANIMATIONS_BAG_SWING[math.random(#ANIMATIONS_BAG_SWING)]
             knife:GetSprite():Play(swingAnimation, true)
             knife.SpriteRotation = Vector(aimDirection.Y, -aimDirection.X):GetAngleDegrees()
@@ -79,8 +109,27 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, onPlayerUpdate)
 ---@param knife EntityKnife
 local function onKniufeUpdate(_, knife)
     if knife.Variant == KNIFE_VARIANT then
+        local player = knife.Parent
+        local data = player:GetData()
 
         knife.Position = knife.Parent.Position + knife:GetData().ResouledBagOfTrashHitboxOffset
+
+        local capsule = knife:GetCollisionCapsule()
+        for _, entity in ipairs(Isaac.FindInCapsule(capsule, EntityPartition.PICKUP)) do
+            if entity:ToPickup() and PICKUP_WHITELSIT[entity.Variant] then
+                local weight = UNSPECIFIED_WEIGHT
+                if entity.Variant == PickupVariant.PICKUP_COIN then
+                    weight = (COIN_WEIGHT[entity.SubType] == nil and 1 or COIN_WEIGHT[entity.SubType])
+                end
+
+                if weight ~= 0 then
+                    data.ResouledBagOfTrash = data.ResouledBagOfTrash + weight
+                    entity:Remove()
+                    print("bag of trash", data.ResouledBagOfTrash)
+                    player:SetActiveVarData(data.ResouledBagOfTrash, ActiveSlot.SLOT_PRIMARY)
+                end
+            end
+        end
 
         if knife:GetSprite():IsFinished() then
             knife:Remove()
@@ -98,8 +147,3 @@ local function onKnifeCollision(_, knife, collider, low)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_KNIFE_COLLISION, onKnifeCollision)
-
-local function onPickupCollision(_, pickup, collider, low)
-        print("pickup collision", collider.Type, collider.Variant, low)
-end
-Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onPickupCollision)

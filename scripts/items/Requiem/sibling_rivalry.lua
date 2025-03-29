@@ -73,8 +73,8 @@ local function onUpdate()
                 data.ResouledTornado = Game():Spawn(Isaac.GetEntityTypeByName("Tornado"), Isaac.GetEntityVariantByName("Tornado"), player.Position, Vector.Zero, nil, 0, player.InitSeed)
             end
             player:SetShootingCooldown(2)
-            player:GetOtherTwin():SetShootingCooldown(2)
             if player:GetOtherTwin() then
+                player:GetOtherTwin():SetShootingCooldown(2)
                 if data.ResouledSRVelocity then
                     player:GetOtherTwin().Position = player.Position
                     player:GetOtherTwin().Visible = false
@@ -94,6 +94,9 @@ local function onUpdate()
                 data.ResouledTornado.Position = player.Position
                 data.ResouledTornado.SpriteScale = Vector(0.75 + data.ResouledSRVelocity:Length()/15, 0.75 + data.ResouledSRVelocity:Length()/15)
                 if data.ResouledSRVelocity:Length() < 3 then
+                    if SFXManager():IsPlaying(SoundEffect.SOUND_ULTRA_GREED_SPINNING) then
+                        SFXManager():Stop(SoundEffect.SOUND_ULTRA_GREED_SPINNING)
+                    end
                     Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, player.Position, Vector(0, 0), player, 0, 0)
                     player.Visible = true
                     data.ResouledSiblingRivalrySpin = false
@@ -120,12 +123,18 @@ Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 local function onPlayerGridCollision(_, player, gridIndex)
     local data = player:GetData()
     if not data.ResouledSiblingRivalrySpin and data.ResouledSiblingRivalry then
+        if player:GetOtherTwin() then
+            if player:GetOtherTwin():GetData().SiblingRivalry then
+                SFXManager():Play(SoundEffect.SOUND_ULTRA_GREED_SPINNING, 1, 0, true, 1, 0)
+            end
+        end
         data.ResouledSiblingRivalrySpin = true
         data.ResouledSiblingRivalry = false
         data.ResouledSRVelocity = player.Velocity * SPIN_START_VELOCITY_MULTIPLIER
         if player:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
             data.ResouledSRVelocity = data.ResouledSRVelocity * 2
         end
+        SFXManager():Play(SoundEffect.SOUND_ULTRA_GREED_SPINNING, 1, 0, true, 1, 0)
     end
 
     local dirHelper = Game():GetRoom():GetGridPosition(gridIndex) - player.Position
@@ -143,7 +152,8 @@ local function onPlayerGridCollision(_, player, gridIndex)
         end
 
         
-        if data.ResouledSRVelocity then 
+        if data.ResouledSRVelocity then
+            SFXManager():Play(SoundEffect.SOUND_ROCK_CRUMBLE, 1, 0, false, 1, 0)
             Game():ShakeScreen(math.floor(data.ResouledSRVelocity:Length())*2)
 
             data.ResouledSRVelocity = data.ResouledSRVelocity:Rotated(math.random(-10, 10))
@@ -164,12 +174,18 @@ local function onNpcCollision(_, npc, collider)
     if collider.Type == EntityType.ENTITY_PLAYER then
         local data = collider:GetData()
         if data.ResouledSiblingRivalry then
+            if collider:ToPlayer():GetOtherTwin() then
+                if collider:ToPlayer():GetOtherTwin():GetData().SiblingRivalry then
+                    SFXManager():Play(SoundEffect.SOUND_ULTRA_GREED_SPINNING, 1, 0, true, 1, 0)
+                end
+            end
             data.ResouledSRVelocity = collider.Velocity * SPIN_START_VELOCITY_MULTIPLIER
             if collider:ToPlayer():HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
                 data.ResouledSRVelocity = data.ResouledSRVelocity * CAR_BATTERY_SPIN_START_VELOCITY_MULTIPLIER
             end
             data.ResouledSiblingRivalry = false
             data.ResouledSiblingRivalrySpin = true
+            SFXManager():Play(SoundEffect.SOUND_ULTRA_GREED_SPINNING, 1, 0, true, 1, 0)
         end
         if data.ResouledSRVelocity or data.ResouledIsSiblingAndSpin then
             local dirHelper = npc.Position - collider.Position
@@ -184,7 +200,8 @@ local function onNpcCollision(_, npc, collider)
                     data.ResouledSRVelocity.Y = -data.ResouledSRVelocity.Y
                 end
             end
-            if data.ResouledSRVelocity then 
+            if data.ResouledSRVelocity then
+                SFXManager():Play(SoundEffect.SOUND_MEATY_DEATHS, 1, 0, false, 1, 0)
                 Game():ShakeScreen(math.floor(data.ResouledSRVelocity:Length())*2)
 
                 data.ResouledSRVelocity = data.ResouledSRVelocity:Rotated(math.random(-10, 10))
@@ -215,17 +232,23 @@ end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_COLLISION, onNpcCollision)
 
 local function onNewRoom()
+    if SFXManager():IsPlaying(SoundEffect.SOUND_ULTRA_GREED_SPINNING) then
+        SFXManager():Stop(SoundEffect.SOUND_ULTRA_GREED_SPINNING)
+    end
     ---@param player EntityPlayer
     Resouled:IterateOverPlayers(function(player)
         local data = player:GetData()
         data.ResouledSiblingRivalry = false
         data.ResouledSiblingRivalrySpin = false
-        if data.ResouledTornado then 
+        data.ResouledSRVelocity = nil
+        if data.ResouledTornado then
             data.ResouledTornado:Remove()
             data.ResouledTornado = nil
         end
         if player:GetOtherTwin() then
+            player:GetOtherTwin():GetData().ResouledSiblingRivalry = false
             player:GetOtherTwin():GetData().ResouledIsSiblingAndSpin = false
+            player:GetOtherTwin():GetData().ResouledSRVelocity = nil
         end
     end)
 end

@@ -8,6 +8,7 @@ include("scripts.items.Requiem.ceremonial_blade")
 include("scripts.items.Requiem.glitch")
 include("scripts.items.Requiem.sibling_rivalry")
 include("scripts.items.Requiem.trick_penny")
+include("scripts.items.Requiem.soulbond")
 --include("scripts.items.Requiem.auction_gavel")
 -- Summer Of Isaac
 include("scripts.items.SummerOfIsaac.conjoined_d6")

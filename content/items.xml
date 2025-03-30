@@ -9,6 +9,7 @@
     <passive id="5" name="Glitch" gfx="glitch.png" description="␀" quality="0" craftquality="0" tags="quest"/>
     <active id="6" name="Sibling Rivalry" gfx="sibling_rivalry.png" description="" quality="3" craftquality="3" maxcharges="2" chargetype="normal"/>
     <passive id="9" name="Trick Penny" gfx="trick_penny.png" description="" quality="1" craftquality="1"/>
+    <passive id="10" name="Soulbond" gfx="soulbond.png" descrition="" quality="2" craftquality="2"/>
     <!--active id="447" name="Auction Gavel" gfx="auction_gavel.png" description="Sold!" quality="2"/-->
 <!-- Summer Of Isaac -->
         <active id="7" name="Conjoined D6" gfx="conjoined_d6.png" description="The dice of balance..." quality="4" craftquality="4" maxcharges="4" chargetype="normal"/>

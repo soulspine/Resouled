@@ -4,6 +4,7 @@ local SPINDOWN_DICE = CollectibleType.COLLECTIBLE_SPINDOWN_DICE
 local KEEPERS_BARGAIN = TrinketType.TRINKET_KEEPERS_BARGAIN
 local CEREMONIAL_BLADE = Isaac.GetItemIdByName("Ceremonial Blade")
 local SIBLING_RIVALRY = Isaac.GetItemIdByName("Sibling Rivalry")
+local SOULBOND = Isaac.GetItemIdByName("Soulbond")
 
 ---@param player EntityPlayer
 local function onPlayerInit(_, player)
@@ -41,6 +42,10 @@ local function onPlayerInit(_, player)
     
     if playerType == PlayerType.PLAYER_KEEPER_B then
         player:AddTrinket(KEEPERS_BARGAIN, true)
+    end
+
+    if playerType == PlayerType.PLAYER_THELOST_B then
+        player:AddCollectible(SOULBOND)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, onPlayerInit)

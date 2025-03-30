@@ -34,7 +34,10 @@ local function onUpdate()
     if PlayerManager.AnyoneHasCollectible(TRICK_PENNY) then
         local player = Isaac.GetPlayer(0)
         local data = player:GetData()
-        data.ResouledTPCoinsPostUpdate = player:GetNumCoins()
+        if not data.ResouledTPCoins then
+            data.ResouledTPCoins = {}
+        end
+        data.ResouledTPCoins.PostUpdate = player:GetNumCoins()
         if data.ResouledTPCoins.PreUpdate then
             if data.ResouledTPCoins.PostUpdate == data.ResouledTPCoins.PreUpdate -1 then
                 local chance = math.random()

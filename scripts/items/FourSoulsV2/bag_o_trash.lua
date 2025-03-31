@@ -16,23 +16,32 @@ local BAG_ITEM_SPRITE_EMPTY_FRAME = 1
 local BAG_ITEM_SPRITE_FULL_FRAME = 0
 local BAG_ITEM_SPRITE_WIDTH_HEIGHT = 32
 
+local FONT_SCALE = 0.4
+local FONT_OFFSET = Vector(-5, -12)
+local FONT_COLOR = KColor(1, 1, 1, 1)
+local FONT = Font()
+FONT:Load("font/teammeatfont16bold.fnt")
+
 local VFX_PICKUP_VARIANT = EffectVariant.POOF01
 local VFX_PICKUP_SCALE = Vector(0.5, 0.5)
 
 local SFX_SWING = SoundEffect.SOUND_BIRD_FLAP
 
-local HITBOX_OFFSET = 36
-local HITBOX_SCALE = Vector(1.9, 1.9)
-local SPRITE_OFFSET = Vector(0, -10)
+local KNIFE_HITBOX_OFFSET = 36
+local KNIFE_HITBOX_SCALE = Vector(1.9, 1.9)
+local KNIFE_SPRITE_OFFSET = Vector(0, -10)
 
 local ANIMATION_PLAYER_LIFT_ITEM = "LiftItem"
 local ANIMATION_PLAYER_HIDE_ITEM = "HideItem"
 
 local ANIMATION_PICKUP_PLAYER_PICKUP = "PlayerPickup"
 
-local CHARGEBAR_SPRITE_HEIGHT = 16
-local ANIMATION_CHARGEBAR_EMPTY = "BarEmpty"
-local ANIMATION_CHARGEBAR_FULL = "BarFull"
+local ANIMATION_CHARGEBAR = "Charging"
+local ANIMATION_CHARGEBAR_FRAME_NUM = 101
+local CHARGEBAR_SPRITE = Sprite()
+CHARGEBAR_SPRITE:Load("gfx/chargebar.anm2", true)
+CHARGEBAR_SPRITE:Play(ANIMATION_CHARGEBAR, true)
+CHARGEBAR_SPRITE.Offset = Vector(12,-40)
 local INPUT_IGNORE_DURATION = 4
 
 local ANIMATIONS_BAG_SWING = {
@@ -141,13 +150,13 @@ local function onPlayerUpdate(_, player)
             data.ResouledBagOfTrash.Swung = true
             player:AnimateCollectible(BAG_O_TRASH, ANIMATION_PLAYER_HIDE_ITEM, ANIMATION_PICKUP_PLAYER_PICKUP)
             SFXManager():Play(SFX_SWING)
-            local hitboxOffset = HITBOX_OFFSET*aimDirection
+            local hitboxOffset = KNIFE_HITBOX_OFFSET*aimDirection
             local knife = Game():Spawn(EntityType.ENTITY_KNIFE, KNIFE_VARIANT, player.Position + hitboxOffset, Vector.Zero, player, 0, Resouled:NewSeed()):ToKnife()
             if knife then
-                knife.SizeMulti = HITBOX_SCALE
+                knife.SizeMulti = KNIFE_HITBOX_SCALE
                 knife.DepthOffset = player.DepthOffset - 1
                 knife.Parent = player
-                knife.SpriteOffset = SPRITE_OFFSET - hitboxOffset/2
+                knife.SpriteOffset = KNIFE_SPRITE_OFFSET - hitboxOffset/2
                 knife.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
                 local swingAnimation = ANIMATIONS_BAG_SWING[math.random(#ANIMATIONS_BAG_SWING)]
                 local sprite = knife:GetSprite()
@@ -297,20 +306,30 @@ local function onActiveItemRender(_, player, activeSlot, offset, alpha, scale, c
         BAG_ITEM_SPRITE.Color = Color(1, 1, 1, alpha)
         BAG_ITEM_SPRITE.Scale = Vector(scale, scale)
         BAG_ITEM_SPRITE:Render(Vector.Zero)
-        local text = tostring(itemDesc.VarData)
-        local textWidth = Isaac.GetTextWidth(text)
-        local textPosition = BAG_ITEM_SPRITE.Offset - Vector(textWidth/2, 0)
-        Isaac.RenderScaledText(text, textPosition.X, textPosition.Y, scale, scale, 1, 1, 1, alpha)
-
-        local playerData = player:GetData()
-        if (activeSlot == ActiveSlot.SLOT_PRIMARY or activeSlot == ActiveSlot.SLOT_POCKET) and playerData.ResouledBagOfTrash and playerData.ResouledBagOfTrash.SpacebarHoldDuration > 0 and itemDesc.VarData >= USE_CHARGE then
-            local chargeBarSprite = Game():GetHUD():GetChargeBarSprite()
-            chargeBarSprite:Play(ANIMATION_CHARGEBAR_FULL, true)
-            chargeBarSprite.Scale = Vector(scale, scale)
-            local percentageHeld = playerData.ResouledBagOfTrash.SpacebarHoldDuration / ACTIVATE_HOLD_DURATION
-            chargeBarSprite:Render(chargebarOffset, Vector(0, (1-percentageHeld)*CHARGEBAR_SPRITE_HEIGHT)*2)
+        
+        if activeSlot == ActiveSlot.SLOT_PRIMARY or activeSlot == ActiveSlot.SLOT_POCKET then
+            local text = "x" .. tostring(itemDesc.VarData)
+            local textWidth = Isaac.GetTextWidth(text)
+            local textPosition = BAG_ITEM_SPRITE.Offset - Vector(textWidth/2, 0)
+            FONT:DrawStringScaled(text, textPosition.X + FONT_OFFSET.X, textPosition.Y + FONT_OFFSET.Y, scale*FONT_SCALE, scale*FONT_SCALE, FONT_COLOR)
         end
+
         return true
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_PLAYERHUD_RENDER_ACTIVE_ITEM, onActiveItemRender)
+
+---@param player EntityPlayer
+---@param offset Vector
+local function onPlayerRender(_, player, offset)
+    local data = player:GetData()
+    if data.ResouledBagOfTrash then
+        local itemDesc = player:GetActiveItemDesc(data.ResouledBagOfTrash.ActiveSlot)
+        if data.ResouledBagOfTrash.SpacebarHoldDuration > 0 and itemDesc.VarData >= USE_CHARGE then
+            local percentageHeld = data.ResouledBagOfTrash.SpacebarHoldDuration / ACTIVATE_HOLD_DURATION
+            CHARGEBAR_SPRITE:SetFrame(ANIMATION_CHARGEBAR, math.floor(percentageHeld*ANIMATION_CHARGEBAR_FRAME_NUM))
+            CHARGEBAR_SPRITE:Render(Isaac.WorldToScreen(player.Position))
+        end
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, onPlayerRender)

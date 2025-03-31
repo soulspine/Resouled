@@ -4,7 +4,7 @@ local USE_CHARGE = 3
 
 local KNIFE_VARIANT =  KnifeVariant.BAG_OF_CRAFTING
 
-local BAG_ENTITY_SPRITESHEET = "gfx/effects/effect_bagofcrafting.png"
+local BAG_ENTITY_SPRITESHEET = "gfx/effects/bag_o_trash_knife.png"
 local BAG_ENTITY_SPRITE_PLAYBACK_SPEED = 0.5
 
 local BAG_ITEM_SPRITE = Sprite()

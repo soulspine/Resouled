@@ -16,7 +16,7 @@
     <active id="10" name="Conjoined D6" gfx="conjoined_d6.png" description="The dice of balance..." quality="4" craftquality="4" maxcharges="4" chargetype="normal"/>
     <passive id="11" name="Isaac's last will" gfx="isaacs_last_will.png" description="I leave all that I own to my cat Guppy" quality="2"/>
 <!-- Promotional Sets -->
-    <!--trinket id="1" name="Handicapped Placard" gfx="handicapped_placard.png"/-->
+    <trinket id="1" name="Handicapped Placard" gfx="handicapped_placard.png"/>
     <trinket id="2" name="Hand Me Downs" gfx="hand_me_downs.png"/>
     <trinket id="3" name="Mugger Bean" gfx="mugger_bean.png"/>
     <trinket id="4" name="Recycling Sticker" gfx="recycling_sticker.png"/>

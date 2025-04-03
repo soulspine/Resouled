@@ -21,5 +21,4 @@
     <trinket id="3" name="Mugger Bean" gfx="mugger_bean.png"/>
     <trinket id="4" name="Recycling Sticker" gfx="recycling_sticker.png"/>
     <trinket id="5" name="Library Card" gfx="library_card.png"/>
-    <!--passive id="446" name="Focus" gfx="focus.png" description="" quality="3" cache="damage"/-->
 </items>

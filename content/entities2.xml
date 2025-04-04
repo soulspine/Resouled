@@ -70,6 +70,7 @@
     <entity anm2path="spinjitzu.anm2" name="Tornado" id="1000" variant="200"/>
 
 <!-- Summer Of Isaac -->
+    <entity name="A Friend" id="3" variant="228" subtype="1" anm2path="a_friend.anm2" collisionMass="5" collisionRadius="7" friction="1" numGridCollisionPoints="12" shadowSize="16"/>
 
 <!-- Promotional Sets -->
     <!-- variant 444 becasue 4souls -->

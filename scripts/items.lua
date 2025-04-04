@@ -14,6 +14,7 @@ include("scripts.items.Requiem.soulbond")
 -- Summer Of Isaac
 include("scripts.items.SummerOfIsaac.conjoined_d6")
 include("scripts.items.SummerOfIsaac.isaacs_last_will")
+include("scripts.items.SummerOfIsaac.a_friend")
 -- Promotional Sets
 include("scripts.trinkets.PromotionalSets.library_card")
 --include("scripts.items.PromotionalSets.focus")

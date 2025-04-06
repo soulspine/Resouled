@@ -57,6 +57,8 @@
     <entity name="Wrath's Soul Ghost" id="48" variant="2" subtype="2" anm2path="souls/wraths_soul_ghost.anm2" baseHP="4000" boss="1" champion="0" collisionDamage="1" collisionMass="30" collisionRadius="18" friction="1" numGridCollisionPoints="12" shadowSize="14" portrait="16"/>
     <entity name="Wrath's Soul Tentacles" id="48" variant="2" subtype="3" anm2path="souls/wraths_soul_tentacles.anm2" boss="0" champion="0" collisionRadius="0" friction="1" numGridCollisionPoints="12" portrait="16"/>
 
+    <entity name="Widow's Soul" id="100" variant="2" subtype="0" anm2path="souls/widows_soul.anm2" baseHP="4000" boss="1" champion="0" collisionDamage="1" collisionMass="38" collisionRadius="35" friction="1" numGridCollisionPoints="12" shadowSize="54" stageHP="0" portrait="100"/>
+
     <entity anm2path="daddy_haunt.anm2" name="Daddy Haunt" id="3" variant="872" subtype="0" collisionRadius="100" shadowSize="15" friction="1"/>
     <entity anm2path="pizza_toppings.anm2" name="Mushroom Familiar" id="3" variant="445" subtype="0" shadowSize="15" friction="1.5"/>
     <entity anm2path="pizza_toppings.anm2" name="Cheese Familiar" id="3" variant="445" subtype="1" shadowSize="15" friction="1.5"/>

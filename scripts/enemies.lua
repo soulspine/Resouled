@@ -14,6 +14,7 @@ include("scripts.enemies.BaseGameV2.bloats_soul")
 include("scripts.enemies.BaseGameV2.wraths_soul")
 include("scripts.enemies.BaseGameV2.wraths_soul_ghost")
 include("scripts.enemies.BaseGameV2.wraths_giga_bomb")
+include("scripts.enemies.BaseGameV2.widows_soul")
 -- Four Souls V2
 -- Requiem
 -- Summer Of Isaac

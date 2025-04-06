@@ -1,5 +1,5 @@
 <AnimatedActor>
-	<Info CreatedBy="robot" CreatedOn="4/1/2025 4:47:17 PM" Version="104" Fps="30"/>
+	<Info CreatedBy="robot" CreatedOn="4/5/2025 1:46:23 PM" Version="105" Fps="30"/>
 	<Content>
 		<Spritesheets>
 			<Spritesheet Path="widows_soul.png" Id="0"/>
@@ -18,9 +18,10 @@
 		<Events>
 			<Event Name="BloodStart" Id="0"/>
 			<Event Name="Explosion" Id="1"/>
-			<Event Name="Shoot" Id="2"/>
-			<Event Name="Jump" Id="3"/>
-			<Event Name="Land" Id="4"/>
+			<Event Name="Jump" Id="2"/>
+			<Event Name="Land" Id="3"/>
+			<Event Name="Attack01" Id="4"/>
+			<Event Name="Attack02" Id="5"/>
 		</Events>
 	</Content>
 	<Animations DefaultAnimation="Idle">
@@ -334,8 +335,8 @@
 				</NullAnimation>
 			</NullAnimations>
 			<Triggers>
-				<Trigger EventId="3" AtFrame="7"/>
-				<Trigger EventId="4" AtFrame="19"/>
+				<Trigger EventId="2" AtFrame="7"/>
+				<Trigger EventId="3" AtFrame="19"/>
 			</Triggers>
 		</Animation>
 		<Animation Name="Attack01" FrameNum="58" Loop="false">
@@ -410,8 +411,7 @@
 				</NullAnimation>
 			</NullAnimations>
 			<Triggers>
-				<Trigger EventId="2" AtFrame="18"/>
-				<Trigger EventId="3" AtFrame="26"/>
+				<Trigger EventId="4" AtFrame="18"/>
 			</Triggers>
 		</Animation>
 		<Animation Name="Attack02" FrameNum="30" Loop="false">
@@ -458,8 +458,7 @@
 				</NullAnimation>
 			</NullAnimations>
 			<Triggers>
-				<Trigger EventId="3" AtFrame="3"/>
-				<Trigger EventId="2" AtFrame="6"/>
+				<Trigger EventId="5" AtFrame="6"/>
 			</Triggers>
 		</Animation>
 	</Animations>

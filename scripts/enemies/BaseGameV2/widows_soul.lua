@@ -1,6 +1,7 @@
-local WIDOWS_SOUL_TYPE = Isaac.GetEntityTypeByName("Widow's Soul")
-local WIDOWS_SOUL_VARIANT = Isaac.GetEntityVariantByName("Widow's Soul")
-local WIDOWS_SOUL_SUBTYPE = 0
+local stringName = "Widow's Sou"
+local WIDOWS_SOUL_TYPE = Isaac.GetEntityTypeByName(stringName)
+local WIDOWS_SOUL_VARIANT = Isaac.GetEntityVariantByName(stringName)
+local WIDOWS_SOUL_SUBTYPE = Isaac.GetEntitySubTypeByName(stringName)
 
 local NORMAL = true
 
@@ -23,8 +24,9 @@ local function onNpcInit(_, npc)
     if npc.Variant == WIDOWS_SOUL_VARIANT and npc.SubType == WIDOWS_SOUL_SUBTYPE then
         local sprite = npc:GetSprite()
         if NORMAL then
-            sprite:ReplaceSpritesheet(0, "gfx/souls/widows_soul_normal.png")
-            sprite:ReplaceSpritesheet(1, "gfx/souls/widows_soul_normal.png")
+            for _, i in pairs({0,1,3}) do
+                sprite:ReplaceSpritesheet(i, "gfx/souls/widows_soul_normal.png")
+            end
             sprite:LoadGraphics()
         end
         sprite:Play(IDLE, true)
@@ -87,7 +89,7 @@ local function onNpcUpdate(_, npc)
         end
         
         if sprite:IsEventTriggered(TRIGGER_ATTACK1) then
-            for i = 1, ATTACK1_SPIDER_COUNT do
+            for _ = 1, ATTACK1_SPIDER_COUNT do
                 local spider = Game():Spawn(EntityType.ENTITY_ROCK_SPIDER, 0, npc.Position, Vector.Zero, nil, 0, npc.InitSeed)
                 spider.MaxHitPoints = spider.MaxHitPoints * 2
                 spider.HitPoints = spider.MaxHitPoints
@@ -104,3 +106,11 @@ local function onNpcUpdate(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, onNpcUpdate, WIDOWS_SOUL_TYPE)
+
+---@param npc EntityNPC
+local function onNpcDeath(_, npc)
+    if npc.Variant ~= WIDOWS_SOUL_VARIANT then 
+        Resouled:TrySpawnSoulPickup(Resouled.Souls.WIDOW, npc.Position)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNpcDeath, EntityType.ENTITY_WIDOW)

@@ -4,6 +4,45 @@ local GFX_NEON_SOUL_CARD = "gfx/souls/cards/neon.png"
 
 local SOUL_PICKUP_VARIANT = Isaac.GetEntityVariantByName("Soul Pickup")
 
+---@class ResouledSoul
+---@field Name string
+---@field Gfx string
+
+--- ADD NEW SOULS HERE
+---@class ResouledSouls
+---@field MONSTRO ResouledSoul
+---@field DUKE ResouledSoul
+---@field LITTLE_HORN ResouledSoul
+---@field BLOAT ResouledSoul
+---@field WRATH ResouledSoul
+Resouled.Souls = {
+    MONSTRO = {
+        Name = "Monstro's Soul",
+        Gfx = GFX_NEON_SOUL_CARD,
+    },
+    DUKE = {
+        Name = "Duke's Soul",
+        Gfx = GFX_NEON_SOUL_CARD,
+    },
+    LITTLE_HORN = {
+        Name = "Little Horn's Soul",
+        Gfx = GFX_NEON_SOUL_CARD,
+    },
+    BLOAT = {
+        Name = "Bloat's Soul",
+        Gfx = GFX_NEON_SOUL_CARD,
+    },
+    WRATH = {
+        Name = "Wrath's Soul",
+        Gfx = GFX_NEON_SOUL_CARD,
+    },
+    WIDOW = {
+        Name = "Widow's Soul",
+        Gfx = GFX_NEON_SOUL_CARD,
+    },
+}
+
+--- THESE HANDLE SOUL CARDS IN THE HUD
 ---@types <integer, Sprite>
 local soulCardSprites ={
     [1] = {
@@ -41,39 +80,6 @@ local soulCardSprites ={
         Selected = false,
         SelectionOngoing = false,
         ExpandValue = 0,
-    },
-}
-
----@class ResouledSoul
----@field Name string
----@field Gfx string
-
----@class ResouledSouls
----@field MONSTRO ResouledSoul
----@field DUKE ResouledSoul
----@field LITTLE_HORN ResouledSoul
----@field BLOAT ResouledSoul
----@field WRATH ResouledSoul
-Resouled.Souls = {
-    MONSTRO = {
-        Name = "Monstro's Soul",
-        Gfx = GFX_NEON_SOUL_CARD,
-    },
-    DUKE = {
-        Name = "Duke's Soul",
-        Gfx = GFX_NEON_SOUL_CARD,
-    },
-    LITTLE_HORN = {
-        Name = "Little Horn's Soul",
-        Gfx = GFX_NEON_SOUL_CARD,
-    },
-    BLOAT = {
-        Name = "Bloat's Soul",
-        Gfx = GFX_NEON_SOUL_CARD,
-    },
-    WRATH = {
-        Name = "Wrath's Soul",
-        Gfx = GFX_NEON_SOUL_CARD,
     },
 }
 

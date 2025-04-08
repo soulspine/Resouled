@@ -50,9 +50,9 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, preNpcUpdate, CURSED_PSY_HO
 ---@param activeSlot ActiveSlot
 local function onActiveItemUse(_, type, rng, player, activeSlot)
     Resouled:IterateOverRoomEntities(
-    ---@param npc EntityRef
-    function(npc)
-        if npc.Type == CURSED_PSY_HORF_TYPE and npc.Variant == CURSED_PSY_HORF_VARIANT then 
+    ---@param entity Entity
+    function(entity)
+        if entity.Type == CURSED_PSY_HORF_TYPE and entity.Variant == CURSED_PSY_HORF_VARIANT then 
             player:AddControlsCooldown(150)
         end
     end)

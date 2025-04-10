@@ -115,7 +115,7 @@ local function onFamiliarUpdate(_, familiar)
     
 
     if sprite:IsEventTriggered(EVENT_TRIGGER_RESOULED_SLAM) then
-        Game():Spawn(EntityType.ENTITY_EFFECT, SLAM_VFX, familiar.Position, Vector(0, 0), familiar, 0, 0)
+        Game():Spawn(EntityType.ENTITY_EFFECT, Isaac.GetEntityVariantByName("Air Shockwave"), familiar.Position, Vector(0, 0), familiar, Isaac.GetEntitySubTypeByName("Air Shockwave"), 0)
         SFXManager():Play(SLAM_SFX, 1, 0, false, 1)
 
         ---@param entity EntityEffect

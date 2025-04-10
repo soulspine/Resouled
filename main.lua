@@ -11,6 +11,7 @@ if REPENTOGON then
     include("scripts.character_start")
     include("scripts.items")
     include("scripts.pocketitems")
+    include("scripts.effects")
     include("scripts.curses")
     include("scripts.enemies")
     include("scripts.challenges")

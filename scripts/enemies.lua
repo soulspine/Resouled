@@ -19,4 +19,9 @@ include("scripts.enemies.BaseGameV2.widows_soul")
 -- Four Souls V2
 -- Requiem
 -- Summer Of Isaac
+include("scripts.enemies.SummerOfIsaac.cursed_haunt")
 -- Promotional Sets
+
+
+
+include("scripts.enemies.resouled_dummy")

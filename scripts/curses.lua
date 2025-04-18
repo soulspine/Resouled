@@ -3,6 +3,8 @@ Resouled.Curses = {
     CURSE_OF_GREED = Isaac.GetCurseIdByName("Curse of Greed!"),
     CURSE_OF_PAIN = Isaac.GetCurseIdByName("Curse of Pain!"),
     CURSE_OF_LOSS = Isaac.GetCurseIdByName("Curse of Loss!"),
+    CURSE_OF_BLOOD_LUST = Isaac.GetCurseIdByName("Curse of Blood Lust!"),
+    CURSE_OF_SOULLESS = Isaac.GetCurseIdByName("Curse of Soulless!"),
 }
 
 local CUSTOM_CURSE_CHANCE = 1
@@ -10,6 +12,7 @@ local CUSTOM_CURSE_CHANCE = 1
 include("scripts.curses.BaseGameV2.curse_of_greed")
 include("scripts.curses.BaseGameV2.curse_of_pain")
 include("scripts.curses.BaseGameV2.curse_of_loss")
+include("scripts.curses.BaseGameV2.curse-of_blood_lust")
 
 ---@param curse ResouledCurses
 ---@return boolean

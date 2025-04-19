@@ -82,7 +82,7 @@ local function onNpcUpdate(_, npc)
         local data = npc:GetData()
         local sprite = npc:GetSprite()
 
-        
+
         sprite.PlaybackSpeed = SPRITE_PLAYBACK_SPEED_MULTIPLIER
         
         if data.MovementBlockCooldown > 0 then

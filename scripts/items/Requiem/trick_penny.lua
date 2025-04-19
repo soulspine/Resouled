@@ -1,5 +1,9 @@
 local TRICK_PENNY = Isaac.GetItemIdByName("Trick Penny")
 
+if EID then
+    EID:addCollectible(TRICK_PENNY, "Removes 1 cent from all shop prices,# Has a 50% chance to give back a coin if a coin was used")
+end
+
 local DECREASE = 1
 local MIN_PRICE = 1
 
@@ -17,18 +21,18 @@ local function onPickupUpdate(_, pickup) --Post steam sale
         Resouled:UndoShopPickupFlatPriceDecrease(pickup)
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onPickupUpdate)
+--Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onPickupUpdate)
 
 ---@param variant integer
 ---@param subtype integer
 ---@param shopItemId integer
 ---@param price integer
 local function onGetShopItemPrice(_, variant, subtype, shopItemId, price) --Pre steam sale
-    if PlayerManager.AnyoneHasCollectible(TRICK_PENNY) then
+    if PlayerManager.AnyoneHasCollectible(TRICK_PENNY) and price > 0 then
         return math.max(price - DECREASE, MIN_PRICE)
     end
 end
---Resouled:AddCallback(ModCallbacks.MC_GET_SHOP_ITEM_PRICE, onGetShopItemPrice)
+Resouled:AddCallback(ModCallbacks.MC_GET_SHOP_ITEM_PRICE, onGetShopItemPrice)
 
 local function onUpdate()
     if PlayerManager.AnyoneHasCollectible(TRICK_PENNY) then

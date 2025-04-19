@@ -1,3 +1,15 @@
+local mapId = Resouled.CursesMapId[Resouled.Curses.CURSE_OF_PAIN]
+
+MinimapAPI:AddMapFlag(
+    mapId,
+    function()
+        return Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_PAIN)
+    end,
+    Resouled.CursesSprite,
+    mapId,
+    1
+)
+
 ---@param entity Entity
 ---@param amount number
 ---@param flags integer

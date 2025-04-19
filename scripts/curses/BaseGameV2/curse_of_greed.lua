@@ -4,6 +4,18 @@ local COIN_TIMEOUT = 60 -- frames
 local COIN_POSITION_STEP = 10
 local COIN_SPAWN_VECTOR_SIZE = 2
 
+local mapId = Resouled.CursesMapId[Resouled.Curses.CURSE_OF_GREED]
+
+MinimapAPI:AddMapFlag(
+    mapId,
+    function()
+        return Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_GREED)
+    end,
+    Resouled.CursesSprite,
+    mapId,
+    1
+)
+
 ---@param entity Entity
 ---@param amount number
 ---@param flags integer

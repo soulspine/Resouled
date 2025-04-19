@@ -12,6 +12,18 @@ local soulString
 local font = Font()
 font:Load("font/upheaval.fnt")
 
+local mapId = Resouled.CursesMapId[Resouled.Curses.CURSE_OF_LOSS]
+
+MinimapAPI:AddMapFlag(
+    mapId,
+    function()
+        return Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_LOSS)
+    end,
+    Resouled.CursesSprite,
+    mapId,
+    1
+)
+
 local function onNewFloor()
     if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_LOSS) then
         local roomSave = SAVE_MANAGER.GetRoomSave()

@@ -7,12 +7,24 @@ Resouled.Curses = {
     CURSE_OF_SOULLESS = Isaac.GetCurseIdByName("Curse of Soulless!"),
 }
 
+Resouled.CursesMapId = {
+    [Resouled.Curses.CURSE_OF_GREED] = "ResouledCurseOfGreed",
+    [Resouled.Curses.CURSE_OF_PAIN] = "ResouledCurseOfPain",
+    [Resouled.Curses.CURSE_OF_LOSS] = "ResouledCurseOfLoss",
+    [Resouled.Curses.CURSE_OF_BLOOD_LUST] = "ResouledCurseOfBloodLust",
+    [Resouled.Curses.CURSE_OF_SOULLESS] = "ResouledCurseOfSoulless",
+}
+
+Resouled.CursesSprite = Sprite()
+Resouled.CursesSprite:Load("gfx/curses.anm2", true)
+
 local CUSTOM_CURSE_CHANCE = 1
 
 include("scripts.curses.BaseGameV2.curse_of_greed")
 include("scripts.curses.BaseGameV2.curse_of_pain")
 include("scripts.curses.BaseGameV2.curse_of_loss")
-include("scripts.curses.BaseGameV2.curse-of_blood_lust")
+include("scripts.curses.BaseGameV2.curse_of_blood_lust")
+include("scripts.curses.Requiem.curse_of_soulless")
 
 ---@param curse ResouledCurses
 ---@return boolean

@@ -1,21 +1,21 @@
-<items gfxroot="gfx/items/" deathanim2="gfx/custom_death_items.anm2" version="1">
+<items gfxroot="gfx/items/" deathanm2="gfx/death_items.anm2" version="1">
 <!-- Base Game V2 -->
-    <active id="1" name="Sleight of Hand" gfx="sleight_of_hand.png" description="Peek beyond closed doors" quality="2" craftquality="2" maxcharges="4" chargetype="normal"/>
-    <familiar id="2" name="Daddy Haunt" gfx="daddy_haunt.png" description="Menace hanging over your enemies" quality="3" craftquality="3" cache="familiars"/>
-    <passive id="3" name="Cheese Grater" gfx="cheese_grater.png" description="Shred foes, expose secrets" quality="2" craftquality="2"/>
+    <active id="0" name="Sleight of Hand" gfx="sleight_of_hand.png" description="Peek beyond closed doors" quality="2" craftquality="2" maxcharges="4" chargetype="normal"/>
+    <familiar id="1" name="Daddy Haunt" gfx="daddy_haunt.png" description="Menace hanging over your enemies" quality="3" craftquality="3" cache="familiars"/>
+    <passive id="2" name="Cheese Grater" gfx="cheese_grater.png" description="Shred foes, expose secrets" quality="2" craftquality="2"/>
 <!-- Four Souls V2 -->
-    <active id="4" name="Bag-O-Trash" gfx="trashbagphase1.png" description="Dumpster in your hands" quality="0" craftquality="0" maxcharges="0" special="true"/>
+    <active id="3" name="Bag-O-Trash" gfx="trashbagphase1.png" description="Dumpster in your hands" quality="0" craftquality="0" maxcharges="0" special="true"/>
 <!-- Requiem -->
-    <passive id="5" name="Ceremonial Blade" gfx="ceremonial_blade.png" description="" quality="2" craftquality="2"/>
-    <passive id="6" name="Glitch" gfx="glitch.png" description="␀" quality="0" craftquality="0" tags="quest"/>
-    <active id="7" name="Sibling Rivalry" gfx="sibling_rivalry.png" description="" quality="3" craftquality="3" maxcharges="2" chargetype="normal"/>
-    <passive id="8" name="Trick Penny" gfx="trick_penny.png" description="" quality="1" craftquality="1"/>
-    <passive id="9" name="Soulbond" gfx="soulbond.png" descrition="" quality="2" craftquality="2"/>
+    <passive id="4" name="Ceremonial Blade" gfx="ceremonial_blade.png" description="" quality="2" craftquality="2"/>
+    <passive id="5" name="Glitch" gfx="glitch.png" description="␀" quality="0" craftquality="0" tags="quest"/>
+    <active id="6" name="Sibling Rivalry" gfx="sibling_rivalry.png" description="" quality="3" craftquality="3" maxcharges="2" chargetype="normal"/>
+    <passive id="7" name="Trick Penny" gfx="trick_penny.png" description="" quality="1" craftquality="1"/>
+    <passive id="8" name="Soulbond" gfx="soulbond.png" descrition="" quality="2" craftquality="2"/>
     <!--active id="447" name="Auction Gavel" gfx="auction_gavel.png" description="Sold!" quality="2"/-->
 <!-- Summer Of Isaac -->
-    <active id="10" name="Conjoined D6" gfx="conjoined_d6.png" description="The dice of balance..." quality="4" craftquality="4" maxcharges="4" chargetype="normal"/>
-    <passive id="11" name="Isaac's last will" gfx="isaacs_last_will.png" description="I leave all that I own to my cat Guppy" quality="2"/>
-    <passive id="12" name="A Friend" gfx="a_friend.png" description="A friend to the end" quality="1" craftquality="1" cache="familiars"/>
+    <active id="9" name="Conjoined D6" gfx="conjoined_d6.png" description="The dice of balance..." quality="4" craftquality="4" maxcharges="4" chargetype="normal"/>
+    <passive id="10" name="Isaac's last will" gfx="isaacs_last_will.png" description="I leave all that I own to my cat Guppy" quality="2"/>
+    <passive id="11" name="A Friend" gfx="a_friend.png" description="A friend to the end" quality="1" craftquality="1" cache="familiars"/>
 <!-- Promotional Sets -->
     <trinket id="1" name="Handicapped Placard" gfx="handicapped_placard.png"/>
     <trinket id="2" name="Hand Me Downs" gfx="hand_me_downs.png"/>

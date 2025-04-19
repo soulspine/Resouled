@@ -32,15 +32,15 @@ local function onUpdate()
         if FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer > 0 then
             FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer = FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer - 1
         end
-        if FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer <= 0 and Isaac.GetFrameCount() % 60 == 0 then
+        if FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer <= 0  then
             ---@param player EntityPlayer
             Resouled:IterateOverPlayers(function(player)
                 player:TakeDamage(1, DamageFlag.DAMAGE_COUNTDOWN, EntityRef(player), 0)
             end)
+            FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer = TIME_BEFORE_TAKING_DAMAGE / 2
         end
         cachedTimer = (FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer + FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer//30)//30 --not FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer//30 because frame 46 wouldn't appear
     end
-
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 

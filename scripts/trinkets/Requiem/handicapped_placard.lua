@@ -1,6 +1,7 @@
 local HANDICAPPED_PLACARD = Isaac.GetTrinketIdByName("Handicapped Placard")
 
-local SLOW_DOWN_PER_SOUL = 0.0375
+local BASE_SLOW_DOWN = 0.05
+local SLOW_DOWN_PER_SOUL = 0.025
 
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
@@ -87,9 +88,10 @@ Resouled:AddPriorityCallback(ModCallbacks.MC_PRE_PROJECTILE_UPDATE, CallbackPrio
 local function postPickupUpdate(_, pickup)
     if pickup.SubType == HANDICAPPED_PLACARD then
         if EID then
-            local precent = tostring(SLOW_DOWN_PER_SOUL * 100)
-            local currentPrecent = tostring(SLOW_DOWN_PER_SOUL * Resouled:GetPossessedSoulsNum() * 100)
-            EID:addTrinket(HANDICAPPED_PLACARD, "Slows down enemies by "..precent.."% for every soul you posess,# Enemies will currently be slowed down by: {{ColorError}}"..currentPrecent.."%")
+            local precent = tostring(BASE_SLOW_DOWN * 100)
+            local soulPrecent = tostring(SLOW_DOWN_PER_SOUL * 100)
+            local currentPrecent = tostring((SLOW_DOWN_PER_SOUL * Resouled:GetPossessedSoulsNum() + BASE_SLOW_DOWN) * 100)
+            EID:addTrinket(HANDICAPPED_PLACARD, "Slows down enemies by "..precent.."% + "..soulPrecent.."% for every soul you posess,# Enemies will currently be slowed down by: {{ColorError}}"..currentPrecent.."%")
         end
     end
 end

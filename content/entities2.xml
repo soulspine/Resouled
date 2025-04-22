@@ -79,6 +79,7 @@
     <entity anm2path="effects/air_shockwave.anm2" name="Air Shockwave" id="1000" variant="200"/>
     <entity anm2path="galaxy_portal.anm2" name="Galaxy Portal" id="1000" variant="200"/>
 <!-- Four Souls V2 -->
+    <entity name="Dingle's Soul" id="261" variant="2" subtype="0" anm2path="souls/dingles_soul.anm2" boss="1" baseHP="4000" collisionDamage="1" collisionMass="75" collisionRadius="20" friction="1" numGridCollisionPoints="12" portrait="65" shadowSize="28"/>
 
 <!-- Requiem -->
     <entity anm2path="spinjitzu.anm2" name="Tornado" id="1000" variant="200"/>

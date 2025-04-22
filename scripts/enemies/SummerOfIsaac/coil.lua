@@ -34,6 +34,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, COIL)
 ---@param npc EntityNPC
 local function onNpcUpdate(_, npc)
     local dirVector = (npc:GetPlayerTarget().Position - npc.Position)
+    local sprite = npc:GetSprite()
     if npc.Variant == COIL_VARIANT and npc.SubType == COIL_SUBTYPE then -- COIL
         if npc:GetPlayerTarget().Position:Distance(npc.Position) > 100 then
             npc.Velocity = npc.Velocity * PLAYER_FOLLOW_VELOCITY_MULT + dirVector * PLAYER_FOLLOW_SPEED
@@ -47,6 +48,16 @@ local function onNpcUpdate(_, npc)
             end
         end
         npc.Pathfinder:EvadeTarget(npc:GetPlayerTarget().Position)
+
+        if npc.Position.X - npc:GetPlayerTarget().Position.X < 0 then
+            if sprite:GetLayer(1):GetFlipX() == false then
+                sprite:GetLayer(1):SetFlipX(true)
+            end
+        else
+            if sprite:GetLayer(1):GetFlipX() == true then
+                sprite:GetLayer(1):SetFlipX(false)
+            end
+        end
     end
 
     if npc.Variant == COIL_VARIANT and npc.SubType == COIL_FETUS_SUBTYPE then -- FETUS
@@ -58,7 +69,8 @@ Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onNpcUpdate, COIL)
 ---@param npc EntityNPC
 local function postNpcDeath(_, npc)
     if npc.Variant == COIL_VARIANT and npc.SubType == COIL_SUBTYPE then
-        Game():Spawn(COIL, COIL_VARIANT, npc.Position, Vector.Zero, npc, COIL_FETUS_SUBTYPE, npc.InitSeed)
+        local fetus = Game():Spawn(COIL, COIL_VARIANT, npc.Position, Vector.Zero, npc, COIL_FETUS_SUBTYPE, npc.InitSeed)
+        fetus.FlipX = npc:GetSprite():GetLayer(1):GetFlipX()
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath, COIL)

@@ -88,6 +88,8 @@
 
     <entity name="Cursed Haunt" boss="1" id="260" variant="1" anm2path="cursed_haunt.anm2" collisionMass="50" collisionDamage="2" collisionRadius="26" friction="1" gridCollision="walls" numGridCollisionPoints="12" shadowSize="28" tags="ghost" baseHP="300"/>
 
+    <entity name="Coil" id="414" anm2path="coil.anm2" collisionMass="25" collisionRadius="18" friction="1" numGridCollisionPoints="12" shadowSize="16" baseHP="15" collisionDamage="1" stageHP="1"/>
+
 <!-- Promotional Sets -->
     <!-- variant 444 becasue 4souls -->
     <entity anm2path="strawberries.anm2" name="Red Strawberry Pickup" id="5" variant="450" subtype="0" collisionRadius="24" collisionMass="0" shadowSize="15" friction="1.5"/>

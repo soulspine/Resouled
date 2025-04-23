@@ -7,7 +7,14 @@ MinimapAPI:AddMapFlag(
     end,
     Resouled.CursesSprite,
     mapId,
-    1
+    function()
+        local FLOOR_SAVE_MANAGER = SAVE_MANAGER.GetFloorSave()
+        if FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue then
+            return FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue
+        else
+            return 0
+        end
+    end
 )
 
 ---@param player EntityPlayer

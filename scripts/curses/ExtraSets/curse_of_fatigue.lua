@@ -1,5 +1,7 @@
 local mapId = Resouled.CursesMapId[Resouled.Curses.CURSE_OF_FATIGUE]
 
+local cachedIndicatorFrame = 0
+
 MinimapAPI:AddMapFlag(
     mapId,
     function()
@@ -8,42 +10,43 @@ MinimapAPI:AddMapFlag(
     Resouled.CursesSprite,
     mapId,
     function()
-        local FLOOR_SAVE_MANAGER = SAVE_MANAGER.GetFloorSave()
-        if FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue then
-            return FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue
-        else
-            return 0
-        end
+        return cachedIndicatorFrame
     end
 )
 
----@param player EntityPlayer
-local function prePlayerUpdate(_, player)
+local function onUpdate()
     local FLOOR_SAVE_MANAGER = SAVE_MANAGER.GetFloorSave()
-    if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_FATIGUE) then
-
+    if (Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_FATIGUE)) then
         if not FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue then
             FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue = 0
-        end
-
-        if not player:GetData().ResouledCurseOfFatigue then
-            player:GetData().ResouledCurseOfFatigue = {}
-        end
-
-        if not player:GetData().ResouledCurseOfFatigue then
-            player:GetData().ResouledCurseOfFatigue = {}
-        end
-
-        for i = 0, 3 do
-            player:GetData().ResouledCurseOfFatigue[i] = player:GetActiveCharge(i)
+            cachedIndicatorFrame = 0
         end
     else
         if FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue then
             FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue = nil
+        end        
+
+        Resouled:IterateOverPlayers(function(player)
+            local playerData = player:GetData()
+            if playerData.ResouledCurseOfFatigue then
+                playerData.ResouledCurseOfFatigue = nil
+            end
+        end)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
+
+---@param player EntityPlayer
+local function prePlayerUpdate(_, player)
+    local FLOOR_SAVE_MANAGER = SAVE_MANAGER.GetFloorSave()
+    local playerData = player:GetData()
+    if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_FATIGUE) then
+        if not playerData.ResouledCurseOfFatigue then
+            playerData.ResouledCurseOfFatigue = {}
         end
 
-        if player:GetData().ResouledCurseOfFatigue then
-            player:GetData().ResouledCurseOfFatigue = nil
+        for i = 0, 3 do
+            playerData.ResouledCurseOfFatigue[i] = player:GetActiveCharge(i)
         end
     end
 end
@@ -59,21 +62,23 @@ local function preClearReward()
                 for i = 0, 3 do
                     if player:GetActiveCharge(i) ~= player:GetData().ResouledCurseOfFatigue[i] then
                         player:SetActiveCharge(player:GetActiveCharge(i)-1, i)
-                        if SFXManager():IsPlaying(SoundEffect.SOUND_BEEP) then
-                            SFXManager():Stop(SoundEffect.SOUND_BEEP)
-                        end
-                        
-                        if SFXManager():IsPlaying(SoundEffect.SOUND_BATTERYCHARGE) then
-                            SFXManager():Stop(SoundEffect.SOUND_BATTERYCHARGE)
-                        end
-
-                        FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue = 0
                     end
                 end
             end)
+            
+            if SFXManager():IsPlaying(SoundEffect.SOUND_BEEP) then
+                SFXManager():Stop(SoundEffect.SOUND_BEEP)
+            end
+            
+            if SFXManager():IsPlaying(SoundEffect.SOUND_BATTERYCHARGE) then
+                SFXManager():Stop(SoundEffect.SOUND_BATTERYCHARGE)
+            end
+
+            FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue = 0
         else
             FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue = FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue + 1
         end
+        cachedIndicatorFrame = FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, preClearReward)

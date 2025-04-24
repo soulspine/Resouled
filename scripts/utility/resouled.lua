@@ -1,6 +1,7 @@
 local GFX_EMPTY_SOUL_CARD = "gfx/souls/cards/empty.png"
 local GFX_BLANK_SOUL_CARD = "gfx/souls/cards/blank.png"
 local GFX_NEON_SOUL_CARD = "gfx/souls/cards/neon.png"
+local GFX_NEW_CARD = "gfx/souls/cards/card.png"
 
 local SOUL_PICKUP_VARIANT = Isaac.GetEntityVariantByName("Soul Pickup")
 
@@ -18,27 +19,27 @@ local SOUL_PICKUP_VARIANT = Isaac.GetEntityVariantByName("Soul Pickup")
 Resouled.Souls = {
     MONSTRO = {
         Name = "Monstro's Soul",
-        Gfx = GFX_NEON_SOUL_CARD,
+        Gfx = GFX_NEW_CARD,
     },
     DUKE = {
         Name = "Duke's Soul",
-        Gfx = GFX_NEON_SOUL_CARD,
+        Gfx = GFX_NEW_CARD,
     },
     LITTLE_HORN = {
         Name = "Little Horn's Soul",
-        Gfx = GFX_NEON_SOUL_CARD,
+        Gfx = GFX_NEW_CARD,
     },
     BLOAT = {
         Name = "Bloat's Soul",
-        Gfx = GFX_NEON_SOUL_CARD,
+        Gfx = GFX_NEW_CARD,
     },
     WRATH = {
         Name = "Wrath's Soul",
-        Gfx = GFX_NEON_SOUL_CARD,
+        Gfx = GFX_NEW_CARD,
     },
     WIDOW = {
         Name = "Widow's Soul",
-        Gfx = GFX_NEON_SOUL_CARD,
+        Gfx = GFX_NEW_CARD,
     },
 }
 
@@ -770,7 +771,7 @@ local ANIMATION_HUD_HIDE = "HudHide"
 local EVENT_TRIGGER_RESOULED_CARD_FLIP = "ResouledCardFlip"
 local SFX_CARD_FLIP = {SoundEffect.SOUND_MENU_NOTE_HIDE, SoundEffect.SOUND_MENU_NOTE_HIDE}
 local ANM2_SOUL_CARD = "gfx/soul_card.anm2"
-local CARD_MARGIN = 20
+local CARD_MARGIN = 26
 local CARD_OFFSET = Vector(0, 18)
 local EXAPAND_STEP = 1
 local EXPAND_HEIGHT = 7

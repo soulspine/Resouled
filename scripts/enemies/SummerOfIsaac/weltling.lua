@@ -38,6 +38,8 @@ local function onNpcUpdate(_, npc)
         local sprite = npc:GetSprite()
         local data = npc:GetData()
 
+        npc:UpdateDirtColor(false)
+        
         if sprite:IsFinished(EMERGE) then
             sprite:Play(IDLE, true)
         end

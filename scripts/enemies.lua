@@ -21,6 +21,7 @@ include("scripts.enemies.BaseGameV2.widows_soul")
 -- Summer Of Isaac
 include("scripts.enemies.SummerOfIsaac.cursed_haunt")
 include("scripts.enemies.SummerOfIsaac.coil")
+include("scripts.enemies.SummerOfIsaac.weltling")
 -- Promotional Sets
 
 

@@ -91,6 +91,7 @@
 
     <entity name="Coil" id="414" variant="0" subtype="0" anm2path="coil.anm2" collisionMass="25" collisionRadius="13" friction="1" numGridCollisionPoints="12" shadowSize="16" baseHP="15" collisionDamage="1" stageHP="1"/>
     <entity name="Coil Fetus" id="414" variant="0" subtype="1" anm2path="coil_fetus.anm2" collisionMass="5" collisionRadius="7" friction="1" numGridCollisionPoints="12" shadowSize="5" baseHP="10" collisionDamage="1" stageHP="2"/>
+    <entity name="Weltling" id="415" variant="0" subtype="0" anm2path="weltling.anm2" collisionMass="12" collisionRadius="16" friction="0" numGridCollisionPoints="12" shadowSize="16" baseHP="20" collisionDamage="1" stageHP="2"/>
 
 <!-- Promotional Sets -->
     <!-- variant 444 becasue 4souls -->

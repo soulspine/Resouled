@@ -37,7 +37,7 @@ local function preNpcUpdate(_, npc)
     if npc.Variant == CURSED_PSY_HORF_VARIANT then
         local sprite = npc:GetSprite()
         local data = npc:GetData()
-        if sprite:WasEventTriggered(SHOOT) then
+        if sprite:IsEventTriggered(SHOOT) then
             npc:FireProjectiles(npc.Position, (npc:GetPlayerTarget().Position - npc.Position) / 25, 0, data.ProjectileParams)
         end
     end

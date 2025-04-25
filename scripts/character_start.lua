@@ -1,7 +1,6 @@
 local SLEIGHT_OF_HAND = Isaac.GetItemIdByName("Sleight of Hand")
 local FOREVER_ALONE = CollectibleType.COLLECTIBLE_FOREVER_ALONE
 local SPINDOWN_DICE = CollectibleType.COLLECTIBLE_SPINDOWN_DICE
-local KEEPERS_BARGAIN = TrinketType.TRINKET_KEEPERS_BARGAIN
 local CEREMONIAL_BLADE = Isaac.GetItemIdByName("Ceremonial Blade")
 local SIBLING_RIVALRY = Isaac.GetItemIdByName("Sibling Rivalry")
 local SOULBOND = Isaac.GetItemIdByName("Soulbond")
@@ -38,10 +37,6 @@ local function onPlayerInit(_, player)
 
     if playerType == PlayerType.PLAYER_JUDAS_B then
         player:AddCollectible(CEREMONIAL_BLADE)
-    end
-    
-    if playerType == PlayerType.PLAYER_KEEPER_B then
-        player:AddTrinket(KEEPERS_BARGAIN, true)
     end
 
     if playerType == PlayerType.PLAYER_THELOST_B then

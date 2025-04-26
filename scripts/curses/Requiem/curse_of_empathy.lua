@@ -10,7 +10,7 @@ MinimapAPI:AddMapFlag(
     1
 )
 
-local FEAR_TIME = 10
+local FEAR_TIME = 15
 
 ---@param entity Entity
 ---@param amount integer

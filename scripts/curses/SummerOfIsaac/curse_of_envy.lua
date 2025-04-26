@@ -84,6 +84,7 @@ local function npcUpdate(_, npc)
                     
                     splitEnemy1:ToNPC():MakeChampion(npc.InitSeed, championColor, false)
                     splitEnemy2:ToNPC():MakeChampion(npc.InitSeed, championColor, false)
+                    
                 end
             end
         end

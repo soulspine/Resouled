@@ -7,6 +7,7 @@ Resouled.Curses = {
     CURSE_OF_SOULLESS = Isaac.GetCurseIdByName("Curse of Soulless!"),
     CURSE_OF_FATIGUE = Isaac.GetCurseIdByName("Curse of Fatigue!"),
     CURSE_OF_ENVY = Isaac.GetCurseIdByName("Curse of Envy!"),
+    CURSE_OF_EMPATHY = Isaac.GetCurseIdByName("Curse of Empathy!"),
 }
 
 Resouled.CursesMapId = {
@@ -17,6 +18,7 @@ Resouled.CursesMapId = {
     [Resouled.Curses.CURSE_OF_SOULLESS] = "ResouledCurseOfSoulless",
     [Resouled.Curses.CURSE_OF_FATIGUE] = "ResouledCurseOfFatigue",
     [Resouled.Curses.CURSE_OF_ENVY] = "ResouledCurseOfEnvy",
+    [Resouled.Curses.CURSE_OF_EMPATHY] = "ResouledCurseOfEmpathy",
 }
 
 Resouled.CursesSprite = Sprite()
@@ -29,6 +31,7 @@ include("scripts.curses.BaseGameV2.curse_of_pain")
 include("scripts.curses.BaseGameV2.curse_of_loss")
 include("scripts.curses.BaseGameV2.curse_of_blood_lust")
 include("scripts.curses.Requiem.curse_of_soulless")
+include("scripts.curses.Requiem.curse_of_empathy")
 include("scripts.curses.ExtraSets.curse_of_fatigue")
 include("scripts.curses.SummerOfIsaac.curse_of_envy")
 

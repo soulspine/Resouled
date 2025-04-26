@@ -80,3 +80,11 @@ local function preEntitySpawn(_, type, variant, subtype, position, velocity, spa
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_ENTITY_SPAWN, preEntitySpawn)
+
+---@param npc EntityNPC
+local function onNpcDeath(_, npc)
+    if npc.Variant == CURSED_HAUNT_VARIANT then
+        Resouled:TrySpawnSoulPickup(Resouled.Souls.CURSED_HAUNT, npc.Position)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNpcDeath,CURSED_HAUNT_TYPE)

@@ -1,7 +1,6 @@
-local GFX_EMPTY_SOUL_CARD = "gfx/souls/cards/empty.png"
-local GFX_BLANK_SOUL_CARD = "gfx/souls/cards/blank.png"
-local GFX_NEON_SOUL_CARD = "gfx/souls/cards/neon.png"
-local GFX_NEW_CARD = "gfx/souls/cards/card.png"
+local GFX_CARD_NORMAL = "gfx/souls/cards/card.png"
+local GFX_CARD_CURSED = "gfx/souls/cards/card_cursed.png"
+local GFX_CARD_SOUL = "gfx/souls/cards/card_soul.png"
 
 local SOUL_PICKUP_VARIANT = Isaac.GetEntityVariantByName("Soul Pickup")
 
@@ -16,31 +15,37 @@ local SOUL_PICKUP_VARIANT = Isaac.GetEntityVariantByName("Soul Pickup")
 ---@field LITTLE_HORN ResouledSoul
 ---@field BLOAT ResouledSoul
 ---@field WRATH ResouledSoul
+---@field WIDOW ResouledSoul
+---@field CURSED_HAUNT ResouledSoul
 Resouled.Souls = {
     MONSTRO = {
         Name = "Monstro's Soul",
-        Gfx = GFX_NEW_CARD,
+        Gfx = GFX_CARD_NORMAL,
     },
     DUKE = {
         Name = "Duke's Soul",
-        Gfx = GFX_NEW_CARD,
+        Gfx = GFX_CARD_NORMAL,
     },
     LITTLE_HORN = {
         Name = "Little Horn's Soul",
-        Gfx = GFX_NEW_CARD,
+        Gfx = GFX_CARD_NORMAL,
     },
     BLOAT = {
         Name = "Bloat's Soul",
-        Gfx = GFX_NEW_CARD,
+        Gfx = GFX_CARD_NORMAL,
     },
     WRATH = {
         Name = "Wrath's Soul",
-        Gfx = GFX_NEW_CARD,
+        Gfx = GFX_CARD_NORMAL,
     },
     WIDOW = {
         Name = "Widow's Soul",
-        Gfx = GFX_NEW_CARD,
+        Gfx = GFX_CARD_NORMAL,
     },
+    CURSED_HAUNT = {
+        Name = "Cursed Haunt's Soul",
+        Gfx = GFX_CARD_CURSED,
+    }
 }
 
 --- THESE HANDLE SOUL CARDS IN THE HUD

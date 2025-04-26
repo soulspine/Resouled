@@ -87,6 +87,8 @@
 <!-- Summer Of Isaac -->
     <entity name="A Friend" id="3" variant="228" subtype="1" anm2path="a_friend.anm2" collisionMass="5" collisionRadius="7" friction="1" numGridCollisionPoints="12" shadowSize="16"/>
 
+    <entity name="The Monster" id="3" variant="244" subtype="0" anm2path="the_monster.anm2" collisionMass="0" collisionRadius="0" friction="1" numGridCollisionPoints="12" shadowSize="16" tags="noreroll"/>
+
     <entity name="Cursed Haunt" boss="1" id="260" variant="1" anm2path="cursed_haunt.anm2" collisionMass="50" collisionDamage="2" collisionRadius="26" friction="1" gridCollision="walls" numGridCollisionPoints="12" shadowSize="28" tags="ghost" baseHP="300"/>
 
     <entity name="Coil" id="414" variant="0" subtype="0" anm2path="coil.anm2" collisionMass="25" collisionRadius="13" friction="1" numGridCollisionPoints="12" shadowSize="16" baseHP="15" collisionDamage="1" stageHP="1"/>

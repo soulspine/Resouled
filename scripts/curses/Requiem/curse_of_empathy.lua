@@ -19,11 +19,11 @@ local FEAR_TIME = 15
 ---@param countdown integer
 local function entityTakeDamage(_, entity, amount, flags, source, countdown)
     if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_EMPATHY) then
-        if entity.HitPoints - amount <= 0 and source.Type == EntityType.ENTITY_PLAYER then
+        if entity.HitPoints - amount <= 0 and source.Type == EntityType.ENTITY_PLAYER and entity:IsActiveEnemy() then
             source.Entity:ToPlayer():AddFear(EntityRef(entity), FEAR_TIME)
         end
 
-        if entity.HitPoints - amount <= 0 and source.Entity.SpawnerEntity then
+        if entity.HitPoints - amount <= 0 and source.Entity.SpawnerEntity and entity:IsActiveEnemy() then
             if source.Entity.SpawnerEntity.Type == EntityType.ENTITY_PLAYER then
                 source.Entity.SpawnerEntity:ToPlayer():AddFear(EntityRef(entity), FEAR_TIME)
             end

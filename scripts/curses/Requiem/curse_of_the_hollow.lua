@@ -10,7 +10,6 @@ MinimapAPI:AddMapFlag(
     1
 )
 
-local CURSE_ACTIVATION_CHANCE = 0.1
 local SCREEN_SHAKE = 25
 local DARKNESS_TIMEOUT = 100
 local DARKNESS_STRENGTH = 1
@@ -23,9 +22,9 @@ local function postNewRoom()
         if room:IsFirstVisit() then
             if type == RoomType.ROOM_DEFAULT or type == RoomType.ROOM_BOSS or type == RoomType.ROOM_MINIBOSS then
             else
-                print("A")
+                local curseActivationChance = 0.05 + (0.025 * Resouled:GetPossessedSoulsNum())
                 local randomNum = math.random()
-                if randomNum < CURSE_ACTIVATION_CHANCE then
+                if randomNum < curseActivationChance then
                     ---@param entity Entity
                     Resouled:IterateOverRoomEntities(function(entity)
                         if entity.Type ~= EntityType.ENTITY_PLAYER then

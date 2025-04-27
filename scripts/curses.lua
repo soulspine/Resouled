@@ -23,6 +23,10 @@ Resouled.CursesMapId = {
     [Resouled.Curses.CURSE_OF_THE_HOLLOW] = "ResouledCurseOfTheHollow",
 }
 
+local CURSES_BLACKLIST = {
+    [7] = true, -- curse of giant
+}
+
 Resouled.CursesSprite = Sprite()
 Resouled.CursesSprite:Load("gfx/curses.anm2", true)
 
@@ -38,46 +42,35 @@ include("scripts.curses.ExtraSets.curse_of_fatigue")
 include("scripts.curses.SummerOfIsaac.curse_of_envy")
 include("scripts.curses.Requiem.curse_of_the_hollow")
 
----@param curse ResouledCurses
----@return boolean
-function Resouled:CustomCursePresent(curse)
-
-    if curse == -1 then
-        return false
-    end
-
-    local curseShifted = 1 << (curse - 1)
-    return Game():GetLevel():GetCurses() & curseShifted == curseShifted
-end
-
----@param rng RNG
----@return LevelCurse
-local function rollCurse(rng)
-    local cursesToRollFrom = {}
-    for _, curseId in pairs(Resouled.Curses) do
-        if curseId ~= -1 then -- not found
-            table.insert(cursesToRollFrom, curseId)
-        end
-    end
-    -- TODO ADD RESTART CHECK - CURSES ARE NOT LOADED AFTER JUST ENABLING THE MOD,
-    -- GAME HAS TO BE RESTARTED FOR IT TO WORK PROPERLY
-    return cursesToRollFrom[rng:RandomInt(#cursesToRollFrom) + 1]
-end
-
-
 ---@param curses integer
 local function onCurseEval(_, curses)
-    local currentLevel = Game():GetLevel()
-    local currentStage = currentLevel:GetStage()
-    local stageSeed = Game():GetSeeds():GetStageSeed(currentStage)
+    local level = Game():GetLevel()
+    local stage = level:GetStage()
+    local stageSeed = Game():GetSeeds():GetStageSeed(stage)
     local rng = RNG()
     rng:SetSeed(stageSeed, 0)
-    if curses == 0 and rng:RandomFloat() < CUSTOM_CURSE_CHANCE then
-        curses = 1 << (rollCurse(rng) - 1)
-        currentLevel:AddCurse(curses, false)
-        print(Game():GetLevel():GetCurses())
-        print(Game():GetLevel():GetCurseName())
-        end 
+
+    if curses ~= 0 and Resouled:GetCursesNum(curses) == 1 then -- CHALLNGE CURSES ARE APPLIED AFTER THIS SO NO NEED TO CHECK HOW MANY CURSES ARE ALREADY PRESENT BUT I ADDED IT JUST SO IT DOESNT MESS WITH OTHER MODS
+        local validCurses = {}
+        -- VANILLA CURSES
+        for i = 1, LevelCurse.NUM_CURSES - 1 do
+            if not CURSES_BLACKLIST[i] then
+                table.insert(validCurses, i)
+            end
+        end
+
+        --RESOULED CURSES
+        for _, curseId in pairs(Resouled.Curses) do
+            if not CURSES_BLACKLIST[curseId] then
+                table.insert(validCurses, curseId)
+            end
+        end
+
+        local newCurseId = validCurses[rng:RandomInt(#validCurses) + 1]
+        curses = 1 << (newCurseId - 1)
+        level:AddCurse(curses, false)
+    end
+
     return curses
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_CURSE_EVAL, onCurseEval)

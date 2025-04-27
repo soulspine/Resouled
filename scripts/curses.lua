@@ -24,8 +24,8 @@ Resouled.CursesMapId = {
 }
 
 local CURSES_BLACKLIST = {
-    [LevelCurse.CURSE_OF_GIANT] = true,
-    [LevelCurse.CURSE_OF_THE_CURSED] = true,
+    [4] = true, -- curse of the cursed
+    [7] = true, -- curse of giant
 }
 
 Resouled.CursesSprite = Sprite()
@@ -55,19 +55,16 @@ local function onCurseEval(_, curses)
         local validCurses = {}
 
         for i = 1, XMLData.GetNumEntries(XMLNode.CURSE) do
-            print(i)
-            if (1 << i - 1) ~= CURSES_BLACKLIST[i] then
+            i = i - 1 -- CURSES ARE SHIFTED BY 1 FOR SOME REASON ????? E.G. CURSE OF THE CURSED HAS ID 5 BUT ITS BIT IS 16 SO IT SHOULD BE 4 LOL?????
+            if not CURSES_BLACKLIST[i] then
                 table.insert(validCurses, i)
             end
         end
 
         local newCurseId = validCurses[rng:RandomInt(#validCurses) + 1]
-        curses = 1 << (newCurseId - 1)
+        curses = 1 << (newCurseId)
         level:AddCurse(curses, false)
     end
-
-    print(XMLData.GetNumEntries(XMLNode.CURSE))
-    print(XMLData.GetEntryById(XMLNode.CURSE, 1 << (1 - 1)))
 
     return curses
 end

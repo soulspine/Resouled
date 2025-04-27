@@ -13,20 +13,6 @@ MinimapAPI:AddMapFlag(
 local HEAL_CHANCE = 0.15
 local TEAR_COOLDOWN_PER_PLAYER = 3
 
-local function postUpdate()
-    local FLOOR_SAVE = SAVE_MANAGER.GetFloorSave()
-    if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_THE_SUSPICIOUS) then
-        if not FLOOR_SAVE.ResouledCurseOfTheSuspiciousCooldown then
-            FLOOR_SAVE.ResouledCurseOfTheSuspiciousCooldown = TEAR_COOLDOWN_PER_PLAYER + Game():GetNumPlayers()
-        end
-    else
-        if FLOOR_SAVE.ResouledCurseOfTheSuspiciousCooldown then
-            FLOOR_SAVE.ResouledCurseOfTheSuspiciousCooldown = nil
-        end
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, postUpdate)
-
 ---@param entity Entity
 ---@param amount number
 ---@param flags DamageFlag
@@ -35,25 +21,27 @@ local function entityTakeDmg(_, entity, amount, flags, source)
     if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_THE_SUSPICIOUS) then
         if entity.Type ~= EntityType.ENTITY_PLAYER and entity:IsActiveEnemy() then
             
-            local FLOOR_SAVE = SAVE_MANAGER.GetFloorSave()
+            local data = entity:GetData()
 
-            if FLOOR_SAVE.ResouledCurseOfTheSuspiciousCooldown > 0 then
-                FLOOR_SAVE.ResouledCurseOfTheSuspiciousCooldown = FLOOR_SAVE.ResouledCurseOfTheSuspiciousCooldown - 1
+            if not data.ResouledCurseOfTheSuspiciousCooldown then
+                data.ResouledCurseOfTheSuspiciousCooldown = TEAR_COOLDOWN_PER_PLAYER + Game():GetNumPlayers()
             end
-            
-            if true ~= false then
-                if FLOOR_SAVE.ResouledCurseOfTheSuspiciousCooldown <= 0 then
-                    local randomNum = math.random()
-                    
-                    if randomNum < HEAL_CHANCE then
-                        entity.HitPoints = entity.HitPoints + (amount / 2)
-                        if entity.HitPoints > entity.MaxHitPoints then
-                            entity.HitPoints = entity.MaxHitPoints
-                        end
-                        FLOOR_SAVE.ResouledCurseOfTheSuspiciousCooldown = TEAR_COOLDOWN_PER_PLAYER + Game():GetNumPlayers()
-                        SFXManager():Play(SoundEffect.SOUND_HOLY)
-                        return false
+
+            if data.ResouledCurseOfTheSuspiciousCooldown > 0 then
+                data.ResouledCurseOfTheSuspiciousCooldown = data.ResouledCurseOfTheSuspiciousCooldown - 1
+            end
+
+            if data.ResouledCurseOfTheSuspiciousCooldown <= 0 then
+                local randomNum = math.random()
+                
+                if randomNum < HEAL_CHANCE then
+                    entity.HitPoints = entity.HitPoints + (amount / 2)
+                    if entity.HitPoints > entity.MaxHitPoints then
+                        entity.HitPoints = entity.MaxHitPoints
                     end
+                    data.ResouledCurseOfTheSuspiciousCooldown = TEAR_COOLDOWN_PER_PLAYER + Game():GetNumPlayers()
+                    SFXManager():Play(SoundEffect.SOUND_HOLY)
+                    return false
                 end
             end
         end

@@ -9,14 +9,15 @@
 <!-- Requiem -->
     <curse id="6" name="Curse of Empathy!"/>
     <curse id="7" name="Curse of Soulless!"/>
+    <curse id="8" name="Curse of the Hollow!"/>
     <!--curse id="4" name="Blessing of Isaac!"/-->
     <!--curse id="5" name="Blessing of Maggy!"/-->
     <!--curse id="6" name="Blessing of Samson!"/-->
     <!--curse id="7" name="Blessing of Steam!"/-->
 <!-- Summer Of Isaac -->
-    <curse id="8" name="Curse of Envy!"/>
+    <curse id="9" name="Curse of Envy!"/>
 
 <!-- Promotional Sets -->
-    <curse id="9" name="Curse of Fatigue!"/>
+    <curse id="10" name="Curse of Fatigue!"/>
 
 </curses>

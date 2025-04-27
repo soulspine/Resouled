@@ -13,7 +13,7 @@ MinimapAPI:AddMapFlag(
 local SCREEN_SHAKE = 25
 local DARKNESS_TIMEOUT = 100
 local DARKNESS_STRENGTH = 1
-local CURSE_SOUND = SoundEffect.SOUND_DEATH_CARD
+local CURSE_SOUND = SoundEffect.SOUND_MOM_VOX_EVILLAUGH
 
 local function postNewRoom()
     if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_THE_HOLLOW) then
@@ -22,8 +22,14 @@ local function postNewRoom()
         if room:IsFirstVisit() then
             if type == RoomType.ROOM_DEFAULT or type == RoomType.ROOM_BOSS or type == RoomType.ROOM_MINIBOSS then
             else
-                local curseActivationChance = 0.05 + (0.025 * Resouled:GetPossessedSoulsNum())
-                local randomNum = math.random()
+                local curseActivationChance = 0.15 + (0.025 * Resouled:GetPossessedSoulsNum())
+
+                local rng = RNG()
+
+                rng:SetSeed(room:GetAwardSeed())
+
+                local randomNum = rng:RandomFloat()
+                
                 if randomNum < curseActivationChance then
                     ---@param entity Entity
                     Resouled:IterateOverRoomEntities(function(entity)

@@ -23,14 +23,20 @@ local function entityTakeDamage(_, entity, amount, flags, source, countdown)
             source.Entity:ToPlayer():AddFear(EntityRef(entity), FEAR_TIME)
         end
 
-        if entity.HitPoints - amount <= 0 and source.Entity.SpawnerEntity and entity:IsActiveEnemy() then
-            if source.Entity.SpawnerEntity.Type == EntityType.ENTITY_PLAYER then
-                source.Entity.SpawnerEntity:ToPlayer():AddFear(EntityRef(entity), FEAR_TIME)
-            end
-            
-            if source.Entity.SpawnerEntity.SpawnerEntity then
-                if source.Entity.SpawnerEntity.SpawnerEntity.Type == EntityType.ENTITY_PLAYER then
-                    source.Entity.SpawnerEntity.SpawnerEntity:ToPlayer():AddFear(EntityRef(entity), FEAR_TIME)
+        if entity.HitPoints - amount <= 0 and entity:IsActiveEnemy() then
+            if source.Entity then
+                
+                if source.Entity.SpawnerEntity then
+                    
+                    if source.Entity.SpawnerEntity.Type == EntityType.ENTITY_PLAYER then
+                        source.Entity.SpawnerEntity:ToPlayer():AddFear(EntityRef(entity), FEAR_TIME)
+                    end
+                    
+                    if source.Entity.SpawnerEntity.SpawnerEntity then
+                        if source.Entity.SpawnerEntity.SpawnerEntity.Type == EntityType.ENTITY_PLAYER then
+                            source.Entity.SpawnerEntity.SpawnerEntity:ToPlayer():AddFear(EntityRef(entity), FEAR_TIME)
+                        end
+                    end
                 end
             end
         end

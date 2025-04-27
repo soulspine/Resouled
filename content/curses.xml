@@ -19,5 +19,6 @@
 
 <!-- Promotional Sets -->
     <curse id="10" name="Curse of Fatigue!"/>
+    <curse id="11" name="Curse of the Suspicious!"/>
 
 </curses>

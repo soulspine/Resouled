@@ -11,13 +11,13 @@ MinimapAPI:AddMapFlag(
 )
 
 local HEAL_CHANCE = 0.15
-local TEAR_COOLDOWN_PER_PLAYER = 2
+local TEAR_COOLDOWN_PER_PLAYER = 3
 
 local function postUpdate()
     local FLOOR_SAVE = SAVE_MANAGER.GetFloorSave()
     if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_THE_SUSPICIOUS) then
         if not FLOOR_SAVE.ResouledCurseOfTheSuspiciousCooldown then
-            FLOOR_SAVE.ResouledCurseOfTheSuspiciousCooldown = TEAR_COOLDOWN_PER_PLAYER * Game():GetNumPlayers()
+            FLOOR_SAVE.ResouledCurseOfTheSuspiciousCooldown = TEAR_COOLDOWN_PER_PLAYER + Game():GetNumPlayers()
         end
     else
         if FLOOR_SAVE.ResouledCurseOfTheSuspiciousCooldown then
@@ -47,7 +47,7 @@ local function entityTakeDmg(_, entity, amount, flags, source)
                     
                     if randomNum < HEAL_CHANCE then
                         entity.HitPoints = entity.HitPoints + (amount / 2)
-                        FLOOR_SAVE.ResouledCurseOfTheSuspiciousCooldown = TEAR_COOLDOWN_PER_PLAYER * Game():GetNumPlayers()
+                        FLOOR_SAVE.ResouledCurseOfTheSuspiciousCooldown = TEAR_COOLDOWN_PER_PLAYER + Game():GetNumPlayers()
                         SFXManager():Play(SoundEffect.SOUND_HOLY)
                         return false
                     end

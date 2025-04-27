@@ -10,7 +10,7 @@ MinimapAPI:AddMapFlag(
     1
 )
 
-local FEAR_TIME = 15
+local BASE_FEAR_TIME = 1.5
 
 ---@param entity Entity
 ---@param amount integer
@@ -20,7 +20,7 @@ local FEAR_TIME = 15
 local function entityTakeDamage(_, entity, amount, flags, source, countdown)
     if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_EMPATHY) then
         if entity.HitPoints - amount <= 0 and source.Type == EntityType.ENTITY_PLAYER and entity:IsActiveEnemy() then
-            source.Entity:ToPlayer():AddFear(EntityRef(entity), FEAR_TIME)
+            source.Entity:ToPlayer():AddFear(EntityRef(entity), math.floor(BASE_FEAR_TIME * source.Entity:ToPlayer().MaxFireDelay))
         end
 
         if entity.HitPoints - amount <= 0 and entity:IsActiveEnemy() then
@@ -29,12 +29,12 @@ local function entityTakeDamage(_, entity, amount, flags, source, countdown)
                 if source.Entity.SpawnerEntity then
                     
                     if source.Entity.SpawnerEntity.Type == EntityType.ENTITY_PLAYER then
-                        source.Entity.SpawnerEntity:ToPlayer():AddFear(EntityRef(entity), FEAR_TIME)
+                        source.Entity.SpawnerEntity:ToPlayer():AddFear(EntityRef(entity), math.floor(BASE_FEAR_TIME * source.Entity.SpawnerEntity:ToPlayer().MaxFireDelay))
                     end
                     
                     if source.Entity.SpawnerEntity.SpawnerEntity then
                         if source.Entity.SpawnerEntity.SpawnerEntity.Type == EntityType.ENTITY_PLAYER then
-                            source.Entity.SpawnerEntity.SpawnerEntity:ToPlayer():AddFear(EntityRef(entity), FEAR_TIME)
+                            source.Entity.SpawnerEntity.SpawnerEntity:ToPlayer():AddFear(EntityRef(entity), math.floor(BASE_FEAR_TIME * source.Entity.SpawnerEntity.SpawnerEntity:ToPlayer().MaxFireDelay))
                         end
                     end
                 end

@@ -24,7 +24,8 @@ Resouled.CursesMapId = {
 }
 
 local CURSES_BLACKLIST = {
-    [7] = true, -- curse of giant
+    [LevelCurse.CURSE_OF_GIANT] = true,
+    [LevelCurse.CURSE_OF_THE_CURSED] = true,
 }
 
 Resouled.CursesSprite = Sprite()
@@ -52,17 +53,11 @@ local function onCurseEval(_, curses)
 
     if curses ~= 0 and Resouled:GetCursesNum(curses) == 1 then -- CHALLNGE CURSES ARE APPLIED AFTER THIS SO NO NEED TO CHECK HOW MANY CURSES ARE ALREADY PRESENT BUT I ADDED IT JUST SO IT DOESNT MESS WITH OTHER MODS
         local validCurses = {}
-        -- VANILLA CURSES
-        for i = 1, LevelCurse.NUM_CURSES - 1 do
-            if not CURSES_BLACKLIST[i] then
-                table.insert(validCurses, i)
-            end
-        end
 
-        --RESOULED CURSES
-        for _, curseId in pairs(Resouled.Curses) do
-            if not CURSES_BLACKLIST[curseId] then
-                table.insert(validCurses, curseId)
+        for i = 1, XMLData.GetNumEntries(XMLNode.CURSE) do
+            print(i)
+            if (1 << i - 1) ~= CURSES_BLACKLIST[i] then
+                table.insert(validCurses, i)
             end
         end
 
@@ -70,6 +65,9 @@ local function onCurseEval(_, curses)
         curses = 1 << (newCurseId - 1)
         level:AddCurse(curses, false)
     end
+
+    print(XMLData.GetNumEntries(XMLNode.CURSE))
+    print(XMLData.GetEntryById(XMLNode.CURSE, 1 << (1 - 1)))
 
     return curses
 end

@@ -47,6 +47,9 @@ local function entityTakeDmg(_, entity, amount, flags, source)
                     
                     if randomNum < HEAL_CHANCE then
                         entity.HitPoints = entity.HitPoints + (amount / 2)
+                        if entity.HitPoints > entity.MaxHitPoints then
+                            entity.HitPoints = entity.MaxHitPoints
+                        end
                         FLOOR_SAVE.ResouledCurseOfTheSuspiciousCooldown = TEAR_COOLDOWN_PER_PLAYER + Game():GetNumPlayers()
                         SFXManager():Play(SoundEffect.SOUND_HOLY)
                         return false

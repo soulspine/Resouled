@@ -18,6 +18,7 @@ include("scripts.enemies.BaseGameV2.wraths_giga_bomb")
 include("scripts.enemies.BaseGameV2.widows_soul")
 -- Four Souls V2
 -- Requiem
+include("scripts.enemies.Requiem.hunter")
 -- Summer Of Isaac
 include("scripts.enemies.SummerOfIsaac.cursed_haunt")
 include("scripts.enemies.SummerOfIsaac.coil")
@@ -27,3 +28,4 @@ include("scripts.enemies.SummerOfIsaac.weltling")
 
 
 include("scripts.enemies.resouled_dummy")
+include("scripts.enemies.resouled_hitbox")

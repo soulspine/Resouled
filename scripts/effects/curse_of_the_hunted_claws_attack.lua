@@ -10,6 +10,7 @@ local ATTACK_DISTANCE_FROM_CENTER = 10
 ---@param effect EntityEffect
 local function postEffectInit(_, effect)
     effect.SpriteRotation = (Game():GetNearestPlayer(effect.Position).Position - effect.Position):Normalized():GetAngleDegrees() + 90
+    effect.Position = effect.Position + Vector(50, 0):Rotated(effect.SpriteRotation - 90)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, postEffectInit, COTH_VARIANT)
 
@@ -27,10 +28,6 @@ local function postEffectUpdate(_, effect)
             
         data.ResouledHitbox = Game():Spawn(HITBOX_TYPE, HITBOX_VARIANT, effect.Position + (HITBOX_OFFSET):Rotated(effect.SpriteRotation), Vector.Zero, effect, HITBOX_SUBTYPE, effect.InitSeed)
             data.ResouledHitbox.Size = HITBOX_SIZE
-            local smoke = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.DARK_BALL_SMOKE_PARTICLE, effect.Position + (HITBOX_OFFSET):Rotated(effect.SpriteRotation), Vector.Zero, nil, 0, effect.InitSeed)
-            smoke.Color = Color(1, 0, 0, 0.5)
-            smoke.SpriteScale = Vector(1.5, 1.5)
-            smoke:GetSprite().PlaybackSpeed = 0.75
         end
         
     if sprite:GetFrame() == 6 then
@@ -41,10 +38,6 @@ local function postEffectUpdate(_, effect)
             
         data.ResouledHitbox = Game():Spawn(HITBOX_TYPE, HITBOX_VARIANT, effect.Position + (HITBOX_OFFSET):Rotated(effect.SpriteRotation), Vector.Zero, effect, HITBOX_SUBTYPE, effect.InitSeed)
             data.ResouledHitbox.Size = HITBOX_SIZE
-            local smoke = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.DARK_BALL_SMOKE_PARTICLE, effect.Position + (HITBOX_OFFSET):Rotated(effect.SpriteRotation), Vector.Zero, nil, 0, effect.InitSeed)
-            smoke.Color = Color(2, 1, 1, 0.6)
-            smoke.SpriteScale = Vector(1.5, 1.5)
-            smoke:GetSprite().PlaybackSpeed = 0.75
         end
         
     if sprite:GetFrame() == 7 then
@@ -55,10 +48,6 @@ local function postEffectUpdate(_, effect)
             
         data.ResouledHitbox = Game():Spawn(HITBOX_TYPE, HITBOX_VARIANT, effect.Position + (HITBOX_OFFSET):Rotated(effect.SpriteRotation), Vector.Zero, effect, HITBOX_SUBTYPE, effect.InitSeed)
             data.ResouledHitbox.Size = HITBOX_SIZE
-            local smoke = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.DARK_BALL_SMOKE_PARTICLE, effect.Position + (HITBOX_OFFSET):Rotated(effect.SpriteRotation), Vector.Zero, nil, 0, effect.InitSeed)
-            smoke.Color = Color(3, 1, 1, 0.7)
-            smoke.SpriteScale = Vector(1.5, 1.5)
-            smoke:GetSprite().PlaybackSpeed = 0.75
         end
         
         if sprite:GetFrame() == 8 then
@@ -69,10 +58,6 @@ local function postEffectUpdate(_, effect)
             
         data.ResouledHitbox = Game():Spawn(HITBOX_TYPE, HITBOX_VARIANT, effect.Position + (HITBOX_OFFSET):Rotated(effect.SpriteRotation), Vector.Zero, effect, HITBOX_SUBTYPE, effect.InitSeed)
             data.ResouledHitbox.Size = HITBOX_SIZE
-            local smoke = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.DARK_BALL_SMOKE_PARTICLE, effect.Position + (HITBOX_OFFSET):Rotated(effect.SpriteRotation), Vector.Zero, nil, 0, effect.InitSeed)
-            smoke.Color = Color(4, 1, 1, 0.8)
-            smoke.SpriteScale = Vector(1.5, 1.5)
-            smoke:GetSprite().PlaybackSpeed = 0.75
         end
         
     if sprite:GetFrame() == 9 then
@@ -83,10 +68,6 @@ local function postEffectUpdate(_, effect)
             
         data.ResouledHitbox = Game():Spawn(HITBOX_TYPE, HITBOX_VARIANT, effect.Position + (HITBOX_OFFSET):Rotated(effect.SpriteRotation), Vector.Zero, effect, HITBOX_SUBTYPE, effect.InitSeed)
             data.ResouledHitbox.Size = HITBOX_SIZE
-            local smoke = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.DARK_BALL_SMOKE_PARTICLE, effect.Position + (HITBOX_OFFSET):Rotated(effect.SpriteRotation), Vector.Zero, nil, 0, effect.InitSeed)
-            smoke.Color = Color(5, 1, 1, 0.9)
-            smoke.SpriteScale = Vector(1.5, 1.5)
-            smoke:GetSprite().PlaybackSpeed = 0.75
         end
         
     if sprite:GetFrame() == 10 then
@@ -97,14 +78,10 @@ local function postEffectUpdate(_, effect)
             
         data.ResouledHitbox = Game():Spawn(HITBOX_TYPE, HITBOX_VARIANT, effect.Position + (HITBOX_OFFSET):Rotated(effect.SpriteRotation), Vector.Zero, effect, HITBOX_SUBTYPE, effect.InitSeed)
             data.ResouledHitbox.Size = HITBOX_SIZE
-            local smoke = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.DARK_BALL_SMOKE_PARTICLE, effect.Position + (HITBOX_OFFSET):Rotated(effect.SpriteRotation), Vector.Zero, nil, 0, effect.InitSeed)
-            smoke.Color = Color(6, 1, 1, 1)
-            smoke.SpriteScale = Vector(1.5, 1.5)
-            smoke:GetSprite().PlaybackSpeed = 0.75
         end
         
     if sprite:GetFrame() == 10 then
             data.ResouledHitbox:Remove()
-        end
+    end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, postEffectUpdate, COTH_VARIANT)

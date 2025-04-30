@@ -1178,3 +1178,56 @@ end
 function Resouled:GetPickupFlatPriceDecrease(pickup)
     return pickup:GetData().ResouledFlatPriceDecrease and pickup:GetData().ResouledFlatPriceDecrease.Decrease or nil
 end
+
+---@param entity EntityNPC
+---@param radius number
+---@param visualColor? Color
+---@return boolean
+function Resouled:TryEnableCustomPlayerPulling(entity, radius, visualColor)
+    local data = entity:GetData()
+    if not data.ResouledPlayerPulling then
+        local effect = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.PULLING_EFFECT, entity.Position, Vector.Zero, entity, 0, 0)
+        effect.Parent = entity
+        effect.Color = visualColor or Color(1, 1, 1, 1)
+        
+        data.ResouledPlayerPulling = {
+            Radius = radius,
+            Visual = EntityRef(effect),
+        }
+        return true
+    end
+    return false
+end
+
+---@param effect EntityEffect
+Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, function (_, effect)
+    if effect.Parent then
+        local parentData = effect.Parent:GetData()
+        if parentData.ResouledPlayerPulling then
+            effect.Position = effect.Parent.Position
+
+            ---@param player EntityPlayer
+            Resouled:IterateOverPlayers(function(player)
+                local distance = player.Position:Distance(effect.Position)
+                if distance < parentData.ResouledPlayerPulling.Radius then
+                    local penaltyMult = 1 - distance / parentData.ResouledPlayerPulling.Radius
+                    local penaltyVec = (effect.Position - player.Position):Normalized() * penaltyMult
+                    player.Velocity = player.Velocity + penaltyVec
+                end
+            end)
+
+        end
+    end
+end)
+
+---@param entity EntityNPC
+---@return boolean
+function Resouled:TryDisableCustomPlayerPulling(entity)
+    local data = entity:GetData()
+    if data.ResouledPlayerPulling then
+        data.ResouledPlayerPulling.Visual.Entity:Remove()
+        data.ResouledPlayerPulling = nil
+        return true
+    end
+    return false
+end

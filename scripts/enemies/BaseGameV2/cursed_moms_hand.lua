@@ -2,6 +2,8 @@ local CURSED_MOMS_HAND_TYPE = EntityType.ENTITY_MOMS_HAND
 local CURSED_MOMS_HAND_VARIANT = Isaac.GetEntityVariantByName("Cursed Mom's Hand")
 
 local PULLING_DURATION = 180
+local PULLING_RADIUS = 300
+local PULLING_COLOR = Color(255, 0, 255)
 
 local EVENT_TRIGGER_RESOULED_LAND = "ResouledLand"
 local EVENT_TRIGGER_RESOULED_JUMP = "ResouledJump"
@@ -36,11 +38,8 @@ local function onNpcUpdate(_, npc)
                     data.ResouledCursedMomsHand.StunLock = data.ResouledCursedMomsHand.StunLock - 1
                 else
                     data.ResouledCursedMomsHand.StunLock = nil
+                    Resouled:TryDisableCustomPlayerPulling(npc)
                     npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
-                    if npc.Child then
-                        npc.Child:Remove()
-                        npc.Child = nil
-                    end
                     sprite:Play(ANIMATION_JUMP_UP, true)
                 end
                 return true -- ignore internal AI
@@ -67,14 +66,7 @@ local function onNpcUpdate(_, npc)
             if sprite:IsPlaying(ANIMATION_STUNNED) then
                 data.ResouledCursedMomsHand.StunLock = PULLING_DURATION
                 npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
-                if not npc.Child then
-                    local pullingEffect = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.PULLING_EFFECT, npc.Position, Vector.Zero, npc, 0, Resouled:NewSeed()):ToEffect()
-                    if pullingEffect then
-                        pullingEffect.Parent = npc
-                        npc.Child = pullingEffect
-                        pullingEffect.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
-                    end
-                end
+                Resouled:TryEnableCustomPlayerPulling(npc, PULLING_RADIUS, PULLING_COLOR)
             end
         end
     end

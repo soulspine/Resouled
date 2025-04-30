@@ -12,6 +12,7 @@ Resouled.Curses = {
     CURSE_OF_THE_SUSPICIOUS = Isaac.GetCurseIdByName("Curse of the Suspicious!"),
     CURSE_OF_TINY_HANDS = Isaac.GetCurseIdByName("Curse of Tiny Hands!"),
     CURSE_OF_THE_HUNTED = Isaac.GetCurseIdByName("Curse of the Hunted!"),
+    CURSE_OF_IMPULSE = Isaac.GetCurseIdByName("Curse of Impulse!"),
 }
 
 Resouled.CursesMapId = {
@@ -27,6 +28,7 @@ Resouled.CursesMapId = {
     [Resouled.Curses.CURSE_OF_THE_SUSPICIOUS] = "ResouledCurseOfTheSuspicious",
     [Resouled.Curses.CURSE_OF_TINY_HANDS] = "ResouledCurseOfTinyHands",
     [Resouled.Curses.CURSE_OF_THE_HUNTED] = "ResouledCurseOfTheHunted",
+    [Resouled.Curses.CURSE_OF_IMPULSE] = "ResouledCurseOfImpulse",
 }
 
 local CURSES_BLACKLIST = {
@@ -42,7 +44,7 @@ local CUSTOM_CURSE_CHANCE = 1
 include("scripts.curses.BaseGameV2.curse_of_greed")
 include("scripts.curses.BaseGameV2.curse_of_pain")
 include("scripts.curses.BaseGameV2.curse_of_loss")
-include("scripts.curses.BaseGameV2.curse_of_blood_lust")
+include("scripts.curses.FourSoulsV2.curse_of_blood_lust")
 include("scripts.curses.Requiem.curse_of_soulless")
 include("scripts.curses.Requiem.curse_of_empathy")
 include("scripts.curses.ExtraSets.curse_of_fatigue")
@@ -51,6 +53,7 @@ include("scripts.curses.Requiem.curse_of_the_hollow")
 include("scripts.curses.ExtraSets.curse_of_the_suspicious")
 include("scripts.curses.ExtraSets.curse_of_tiny_hands")
 include("scripts.curses.Requiem.curse_of_the_hunted")
+include("scripts.curses.FourSoulsV2.curse_of_impulse")
 
 ---@param curses integer
 local function onCurseEval(_, curses)

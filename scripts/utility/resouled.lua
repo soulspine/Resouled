@@ -1231,3 +1231,28 @@ function Resouled:TryDisableCustomPlayerPulling(entity)
     end
     return false
 end
+
+---@param vector Vector
+---@param normal Vector
+function Resouled:GetReflectionVector(vector, normal)
+    local dot = vector:Dot(normal)
+    return vector - (normal * 2 * dot)
+end
+
+---@param vector Vector
+---@return Vector
+function Resouled:SnapDirectionToAxis(vector)
+    if vector:Length() == 0 then
+        return Vector(0, 0)
+    end
+
+    local angle = vector:GetAngleDegrees()
+    local snappedAngle = math.floor((angle + 45) / 90) * 90 % 360
+
+    if snappedAngle == 0 then return Vector(1, 0) end
+    if snappedAngle == 90 then return Vector(0, 1) end
+    if snappedAngle == 180 then return Vector(-1, 0) end
+    if snappedAngle == 270 then return Vector(0, -1) end
+
+    return Vector(0, 0) -- fallback
+end

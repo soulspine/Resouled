@@ -18,10 +18,6 @@ local TIME_BEFORE_ATTACKING = 90
 local POST_TELEPORT_COOLDOWN = 10
 local POST_ATTACK_DISAPPEAR_COOLDOWN = 20
 
-local BEAM_SPRITE = Sprite()
-BEAM_SPRITE:Load("gfx/effects/spear_indicator_beam.anm2")
-BEAM_SPRITE:Play("Idle", true)
-
 ---@param npc EntityNPC
 local function postNpcInit(_, npc)
     if npc.Variant == HUNTER_VARIANT then
@@ -42,6 +38,12 @@ local function postNpcInit(_, npc)
             data.ResouledRandomPlayer = math.random(0, Game():GetNumPlayers()-1)
             data.ResouledRandomPlayerColor = 0
         end
+
+        if data.ResouledHunterAttack == 2 then
+            data.ResouledIndicatorBeamAlpha = 0
+        end
+
+        sprite:GetLayer(8):SetColor(Color(1, 1, 1, 0))
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, HUNTER_TYPE)
@@ -102,6 +104,25 @@ local function npcUpdate(_, npc)
             data.ResouledPostTeleportCooldown = POST_TELEPORT_COOLDOWN
         end
 
+        if data.ResouledHunterAttack == 2 then
+            if not data.ResouledHunterAttacking then
+                
+                if data.ResouledIndicatorBeamAlpha < 120 then
+                    data.ResouledIndicatorBeamAlpha = data.ResouledIndicatorBeamAlpha + 1
+                end
+                
+                sprite:GetLayer(8):SetRotation((Game():GetNearestPlayer(npc.Position).Position - npc.Position):Normalized():GetAngleDegrees())
+                sprite:GetLayer(8):SetColor(Color(1, 1, 1, data.ResouledIndicatorBeamAlpha/120))
+            else
+                if data.ResouledIndicatorBeamAlpha then
+                    if data.ResouledIndicatorBeamAlpha > 0 then
+                        data.ResouledIndicatorBeamAlpha = data.ResouledIndicatorBeamAlpha - 6
+                        sprite:GetLayer(8):SetColor(Color(1, 1, 1, data.ResouledIndicatorBeamAlpha/120))
+                    end
+                end
+            end
+        end
+
         if data.ResouledRandomPlayer then
             data.ResouledRandomPlayerColor = data.ResouledRandomPlayerColor + 0.0025
             local player = Isaac.GetPlayer(data.ResouledRandomPlayer)
@@ -116,16 +137,6 @@ local function npcUpdate(_, npc)
 
         if sprite:IsFinished(TELEPORT) then
             sprite:Play(IDLE, true)
-        end
-
-        if sprite:IsPlaying(IDLE) and data.ResouledHunterAttack == 2 and not data.ResouledHunterAttacking then
-            if not data.ResouledIndicatorBeam then
-                data.ResouledIndicatorBeam = Beam(BEAM_SPRITE, 0, false, false)
-            end
-        else
-            if data.ResouledIndicatorBeam then
-                data.ResouledIndicatorBeam = nil
-            end
         end
 
         if data.ResouledHunterAttacking then
@@ -172,19 +183,3 @@ local function npcUpdate(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, npcUpdate, HUNTER_TYPE)
-
----@param npc EntityNPC
-local function postNpcRender(_, npc)
-    if npc.Variant == HUNTER_VARIANT then
-        local data = npc:GetData()
-        if data.ResouledIndicatorBeam then
-            ---@type Beam
-            local beam = data.ResouledIndicatorBeam
-            beam:GetSprite():PlayOverlay("Idle", true)
-            beam:Add(Isaac.WorldToScreen(npc.Position), 0)
-            beam:Add(Isaac.WorldToScreen(Game():GetNearestPlayer(npc.Position).Position), 64)
-            beam:Render()
-        end
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_NPC_RENDER, postNpcRender, HUNTER_TYPE)

@@ -17,6 +17,7 @@ local SOUL_PICKUP_VARIANT = Isaac.GetEntityVariantByName("Soul Pickup")
 ---@field WRATH ResouledSoul
 ---@field WIDOW ResouledSoul
 ---@field CURSED_HAUNT ResouledSoul
+---@field THE_BONE ResouledSoul
 Resouled.Souls = {
     MONSTRO = {
         Name = "Monstro's Soul",
@@ -45,7 +46,11 @@ Resouled.Souls = {
     CURSED_HAUNT = {
         Name = "Cursed Haunt's Soul",
         Gfx = GFX_CARD_CURSED,
-    }
+    },
+    THE_BONE = {
+        Name = "Soul of the Bones",
+        Gfx = GFX_CARD_SOUL,
+    },
 }
 
 --- THESE HANDLE SOUL CARDS IN THE HUD

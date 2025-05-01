@@ -17,6 +17,8 @@ if REPENTOGON and MinimapAPI then
     include("scripts.challenges")
     include("scripts.pickups")
 
+    include("scripts.special_souls")
+
 else
     local messages = {
         "Please enable REPENTOGON script extender,",

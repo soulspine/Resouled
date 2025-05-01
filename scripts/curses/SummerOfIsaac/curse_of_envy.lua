@@ -1,4 +1,4 @@
-local SPLIT_CHANCE = 0.05
+local SPLIT_CHANCE = 0.075
 
 local mapId = Resouled.CursesMapId[Resouled.Curses.CURSE_OF_ENVY]
 

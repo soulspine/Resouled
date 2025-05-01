@@ -1,6 +1,6 @@
 local HUNTER_TYPE = Isaac.GetEntityTypeByName("Hunter")
 local HUNTER_VARIANT = Isaac.GetEntityVariantByName("Hunter")
-local HUNTER_SUBTYPE = Isaac.GetEntityTypeByName("Haunt")
+local HUNTER_SUBTYPE = Isaac.GetEntityTypeByName("Hunter")
 
 local ATTACK_TYPE = Isaac.GetEntityTypeByName("COTH attack claws")
 local CLAW_ATTACK_VARIANT = Isaac.GetEntityVariantByName("COTH attack claws")
@@ -15,12 +15,12 @@ local OPEN_TRIGGER = "ResouledOpen"
 local TELEPORT_TRIGGER = "ResouledTeleport"
 
 local TIME_BEFORE_ATTACKING = 90
-local POST_TELEPORT_COOLDOWN = 10
+local POST_TELEPORT_COOLDOWN = 15
 local POST_ATTACK_DISAPPEAR_COOLDOWN = 20
 
 ---@param npc EntityNPC
 local function postNpcInit(_, npc)
-    if npc.Variant == HUNTER_VARIANT then
+    if npc.Variant == HUNTER_VARIANT and npc.SubType == HUNTER_SUBTYPE then
         local sprite = npc:GetSprite()
         local data = npc:GetData()
 
@@ -50,7 +50,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, HUNTER_TYPE)
 
 ---@param npc EntityNPC
 local function npcUpdate(_, npc)
-    if npc.Variant == HUNTER_VARIANT then
+    if npc.Variant == HUNTER_VARIANT and npc.SubType == HUNTER_SUBTYPE then
         local sprite = npc:GetSprite()
         local data = npc:GetData()
 

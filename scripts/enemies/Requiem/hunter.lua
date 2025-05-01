@@ -20,7 +20,7 @@ local POST_ATTACK_DISAPPEAR_COOLDOWN = 20
 
 ---@param npc EntityNPC
 local function postNpcInit(_, npc)
-    if npc.Variant == HUNTER_VARIANT and npc.SubType == HUNTER_SUBTYPE then
+    if npc.Variant == HUNTER_VARIANT then
         local sprite = npc:GetSprite()
         local data = npc:GetData()
 
@@ -50,7 +50,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, HUNTER_TYPE)
 
 ---@param npc EntityNPC
 local function npcUpdate(_, npc)
-    if npc.Variant == HUNTER_VARIANT and npc.SubType == HUNTER_SUBTYPE then
+    if npc.Variant == HUNTER_VARIANT then
         local sprite = npc:GetSprite()
         local data = npc:GetData()
 
@@ -124,7 +124,7 @@ local function npcUpdate(_, npc)
         end
 
         if data.ResouledRandomPlayer then
-            data.ResouledRandomPlayerColor = data.ResouledRandomPlayerColor + 0.0025
+            data.ResouledRandomPlayerColor = data.ResouledRandomPlayerColor - 0.005
             local player = Isaac.GetPlayer(data.ResouledRandomPlayer)
             player.Color = Color(player.Color.R, player.Color.G, player.Color.B, player.Color.A, data.ResouledRandomPlayerColor, data.ResouledRandomPlayerColor, data.ResouledRandomPlayerColor)
         end

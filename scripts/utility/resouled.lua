@@ -18,6 +18,7 @@ local SOUL_PICKUP_VARIANT = Isaac.GetEntityVariantByName("Soul Pickup")
 ---@field WIDOW ResouledSoul
 ---@field CURSED_HAUNT ResouledSoul
 ---@field THE_BONE ResouledSoul
+---@field THE_CHEST ResouledSoul
 Resouled.Souls = {
     MONSTRO = {
         Name = "Monstro's Soul",
@@ -48,9 +49,13 @@ Resouled.Souls = {
         Gfx = GFX_CARD_CURSED,
     },
     THE_BONE = {
-        Name = "Soul of the Bones",
+        Name = "Bone's Soul",
         Gfx = GFX_CARD_SOUL,
     },
+    THE_CHEST = {
+        Name = "Mimic's Soul",
+        Gfx = GFX_CARD_NORMAL,
+    }
 }
 
 --- THESE HANDLE SOUL CARDS IN THE HUD
@@ -650,11 +655,7 @@ end
 ---@return boolean
 function Resouled:TrySpawnSoulPickup(soul, position)
     if not Resouled:WasSoulSpawned(soul) and Resouled:GetPossessedSoulsNum() ~= 4 and not Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_SOULLESS) then
-        local seed = 0
-        while seed == 0 do
-            seed = Random()
-        end
-        local soulPickup = Game():Spawn(EntityType.ENTITY_PICKUP, SOUL_PICKUP_VARIANT, position, Vector.Zero, nil, 0, seed)
+        local soulPickup = Game():Spawn(EntityType.ENTITY_PICKUP, SOUL_PICKUP_VARIANT, position, Vector.Zero, nil, 0, Resouled:NewSeed())
         local floorSave = SAVE_MANAGER.GetRoomFloorSave(soulPickup)
         floorSave.Soul = soul
         Resouled:MarkSoulAsSpawned(soul)
@@ -815,8 +816,6 @@ local function soulCardsHudRender()
         for i, spriteData in pairs(soulCardSprites) do
 
             local sprite = spriteData.Sprite
-
-            --print(i, spriteData.Spritesheet, sprite:GetAnimation(), sprite:GetFrame())
             if spriteData.Reload then
 
                 if not sprite:IsLoaded() then

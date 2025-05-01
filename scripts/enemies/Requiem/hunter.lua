@@ -111,7 +111,7 @@ local function npcUpdate(_, npc)
                     data.ResouledIndicatorBeamAlpha = data.ResouledIndicatorBeamAlpha + 1
                 end
                 
-                sprite:GetLayer(8):SetRotation((Game():GetNearestPlayer(npc.Position).Position - npc.Position):Normalized():GetAngleDegrees())
+                sprite:GetLayer(8):SetRotation((Game():GetNearestPlayer(npc.Position).Position - npc.Position):Normalized():GetAngleDegrees() + (math.random() * math.random(-1, 1)))
                 sprite:GetLayer(8):SetColor(Color(1, 1, 1, data.ResouledIndicatorBeamAlpha/120))
             else
                 if data.ResouledIndicatorBeamAlpha then

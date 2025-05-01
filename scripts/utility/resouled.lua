@@ -1233,10 +1233,20 @@ function Resouled:TryDisableCustomPlayerPulling(entity)
 end
 
 ---@param vector Vector
----@param normal Vector
-function Resouled:GetReflectionVector(vector, normal)
-    local dot = vector:Dot(normal)
-    return vector - (normal * 2 * dot)
+---@param entity1Pos Vector
+---@param entity2Pos Vector
+function Resouled:GetBounceOffGridElementVector(vector, entity1Pos, entity2Pos)
+    local dirHelper = entity2Pos - entity1Pos
+    if dirHelper.X > 0 and dirHelper.Y >= -20 and dirHelper.Y <= 20 then
+        vector.X = -vector.X
+    elseif dirHelper.X < 0 and dirHelper.Y >= -20 and dirHelper.Y <= 20 then
+        vector.X = -vector.X
+    elseif dirHelper.Y > 0 and dirHelper.X >= -20 and dirHelper.X <= 20 then
+        vector.Y = -vector.Y
+    elseif dirHelper.Y < 0 and dirHelper.X >= -20 and dirHelper.X <= 20 then
+        vector.Y = -vector.Y
+    end
+    return vector
 end
 
 ---@param vector Vector

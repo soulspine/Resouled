@@ -14,6 +14,8 @@ local CAR_BATTERY_ENEMY_BOUNCE_VELOCITY_GAIN_MULTIPLIER = 0.25
 local CAR_BATTERY_SPIN_START_VELOCITY_MULTIPLIER = 2
 local CAR_BATTERY_VELOCITY_LOSS_PER_TICK = 0.005
 
+local CURSE_OF_IMPULSE_VELOCITY_MULTIPLIER = 1.125
+
 local TWIN_HUG_SPEED = 13
 
 ---@param type CollectibleType
@@ -159,9 +161,17 @@ local function onPlayerGridCollision(_, player, gridIndex)
             data.ResouledSRVelocity = data.ResouledSRVelocity:Rotated(math.random(-10, 10))
 
             if not player:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
-                data.ResouledSRVelocity = data.ResouledSRVelocity * (1 - GRID_BOUCE_VELOCITY_LOSS_MULTIPLIER)
+                if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_IMPULSE) then
+                    data.ResouledSRVelocity = data.ResouledSRVelocity * (1 - GRID_BOUCE_VELOCITY_LOSS_MULTIPLIER) * CURSE_OF_IMPULSE_VELOCITY_MULTIPLIER
+                else
+                    data.ResouledSRVelocity = data.ResouledSRVelocity * (1 - GRID_BOUCE_VELOCITY_LOSS_MULTIPLIER)
+                end
             else
-                data.ResouledSRVelocity = data.ResouledSRVelocity * (1 - CAR_BATTERY_GRID_BOUNCE_VELOCITY_LOSS_MULTIPLIER)
+                if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_IMPULSE) then
+                    data.ResouledSRVelocity = data.ResouledSRVelocity * (1 - CAR_BATTERY_GRID_BOUNCE_VELOCITY_LOSS_MULTIPLIER) * CURSE_OF_IMPULSE_VELOCITY_MULTIPLIER
+                else
+                    data.ResouledSRVelocity = data.ResouledSRVelocity * (1 - CAR_BATTERY_GRID_BOUNCE_VELOCITY_LOSS_MULTIPLIER)
+                end
             end
         end
     end

@@ -2,6 +2,8 @@ local FORGOTTEN_BODY_TYPE = 3
 local FORGOTTEN_BODY_VARIANT = 900
 local FORGOTTEN_BODY_SUBTYPE = 0
 
+local BURY_MAX_DISTANCE = 75
+
 ---@param player EntityPlayer
 local function onActiveUse(_, type, rng, player)
     local RUN_SAVE = SAVE_MANAGER.GetRunSave()
@@ -14,12 +16,14 @@ local function onActiveUse(_, type, rng, player)
                         ---@param entity Entity
                         Resouled:IterateOverRoomEntities(function(entity)
                             if entity.Type == FORGOTTEN_BODY_TYPE and entity.Variant == FORGOTTEN_BODY_VARIANT and entity.SubType == FORGOTTEN_BODY_SUBTYPE then
-                                entity:Remove()
-                                player:AddBoneHearts(-12)
-                                RUN_SAVE.ResouledForgottenSacrificed = {}
-                                RUN_SAVE.ResouledForgottenSacrificed[tostring(player:GetPlayerIndex())] = 1
-                                Resouled:TrySpawnSoulPickup(Resouled.Souls.THE_BONE, entity.Position)
-                                SFXManager():Play(SoundEffect.SOUND_BONE_SNAP)
+                                if entity.Position:Distance(player.Position) < BURY_MAX_DISTANCE then
+                                    entity:Remove()
+                                    player:AddBoneHearts(-12)
+                                    RUN_SAVE.ResouledForgottenSacrificed = {}
+                                    RUN_SAVE.ResouledForgottenSacrificed[tostring(player:GetPlayerIndex())] = 1
+                                    Resouled:TrySpawnSoulPickup(Resouled.Souls.THE_BONE, entity.Position)
+                                    SFXManager():Play(SoundEffect.SOUND_BONE_SNAP)
+                                end
                             end
                         end)
                     end

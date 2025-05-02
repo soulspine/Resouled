@@ -20,7 +20,7 @@ local function postNewRoom()
         local room = Game():GetRoom()
         local type = room:GetType()
         if room:IsFirstVisit() then
-            if type == RoomType.ROOM_DEFAULT or type == RoomType.ROOM_BOSS or type == RoomType.ROOM_MINIBOSS then
+            if (type == RoomType.ROOM_DEFAULT or type == RoomType.ROOM_BOSS or type == RoomType.ROOM_MINIBOSS) or (room:IsMirrorWorld() and type == RoomType.ROOM_TREASURE) then
             else
                 local curseActivationChance = 0.15 + (0.025 * Resouled:GetPossessedSoulsNum())
 

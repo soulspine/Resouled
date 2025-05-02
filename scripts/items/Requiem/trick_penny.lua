@@ -11,14 +11,14 @@ local PENNY_OBTAIN_CHANCE = 0.25
 
 ---@param pickup EntityPickup
 local function onPickupUpdate(_, pickup) --Post steam sale
-    local currentDecrease = Resouled:GetPickupFlatPriceDecrease(pickup)
+    local currentDecrease = Resouled.Prices:GetPickupFlatPriceDecrease(pickup)
     local anyoneHasCollectible = PlayerManager.AnyoneHasCollectible(TRICK_PENNY)
     if anyoneHasCollectible and not currentDecrease then
-        Resouled:FlatDecreaseShopPickupPrice(pickup, DECREASE)
+        Resouled.Prices:FlatDecreaseShopPickupPrice(pickup, DECREASE)
     end
 
     if not anyoneHasCollectible and currentDecrease then
-        Resouled:UndoShopPickupFlatPriceDecrease(pickup)
+        Resouled.Prices:UndoShopPickupFlatPriceDecrease(pickup)
     end
 end
 --Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onPickupUpdate)

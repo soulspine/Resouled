@@ -26,7 +26,7 @@ local function onUpdate()
             FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue = nil
         end        
 
-        Resouled:IterateOverPlayers(function(player)
+        Resouled.Iterators:IterateOverPlayers(function(player)
             local playerData = player:GetData()
             if playerData.ResouledCurseOfFatigue then
                 playerData.ResouledCurseOfFatigue = nil
@@ -58,7 +58,7 @@ local function preClearReward()
 
         if FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue == 1 then
             ---@param player EntityPlayer
-            Resouled:IterateOverPlayers(function(player)
+            Resouled.Iterators:IterateOverPlayers(function(player)
                 for i = 0, 3 do
                     if player:GetActiveCharge(i) ~= player:GetData().ResouledCurseOfFatigue[i] then
                         player:SetActiveCharge(player:GetActiveCharge(i)-1, i)

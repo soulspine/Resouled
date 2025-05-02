@@ -6,7 +6,20 @@ if REPENTOGON and MinimapAPI then
     SAVE_MANAGER = include("scripts.utility.save_manager")
     SAVE_MANAGER.Init(Resouled)
 
-    include("scripts.utility.resouled")
+    Resouled.AccurateStats = include("scripts.utility.accurate_stats")
+    Resouled.Iterators = include("scripts.utility.iterators")
+    Resouled.Collectiblextension = include("scripts.utility.collectiblextension")
+    Resouled.FamiliarTargeting = include("scripts.utility.familiar_targeting")
+    Resouled.NpcHalo = include("scripts.utility.npc_halo")
+    Resouled.Vector = include("scripts.utility.vector")
+    Resouled.Pulling = include("scripts.utility.pulling")
+    Resouled.Prices = include("scripts.utility.prices")
+
+    include("scripts.utility.resouled.souls")
+    include("scripts.utility.resouled.tear_effects")
+    include("scripts.utility.resouled.curses")
+    include("scripts.utility.resouled.misc")
+
 
     include("scripts.character_start")
     include("scripts.items")

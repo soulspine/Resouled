@@ -7,7 +7,7 @@ local SLOW_DOWN_PER_SOUL = 0.025
 local function onNpcInit(_, npc)
     local handicappedPlacardPresent
     ---@param player EntityPlayer
-    Resouled:IterateOverPlayers(function(player)
+    Resouled.Iterators:IterateOverPlayers(function(player)
         if player:HasTrinket(HANDICAPPED_PLACARD) then
             handicappedPlacardPresent = true
         end
@@ -26,7 +26,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit)
 local function preNpcUpdate(_, npc)
     local handicappedPlacardPresent
     ---@param player EntityPlayer
-    Resouled:IterateOverPlayers(function(player)
+    Resouled.Iterators:IterateOverPlayers(function(player)
         if player:HasTrinket(HANDICAPPED_PLACARD) then
             handicappedPlacardPresent = true
         end
@@ -45,7 +45,7 @@ Resouled:AddPriorityCallback(ModCallbacks.MC_PRE_NPC_UPDATE, CallbackPriority.LA
 local function postProjectileInit(_, projectile)
     local handicappedPlacardPresent
     ---@param player EntityPlayer
-    Resouled:IterateOverPlayers(function(player)
+    Resouled.Iterators:IterateOverPlayers(function(player)
         if player:HasTrinket(HANDICAPPED_PLACARD) then
             handicappedPlacardPresent = true
         end
@@ -67,7 +67,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PROJECTILE_INIT, postProjectileInit)
 local function preProjectileUpdate(_, projectile)
     local handicappedPlacardPresent
     ---@param player EntityPlayer
-    Resouled:IterateOverPlayers(function(player)
+    Resouled.Iterators:IterateOverPlayers(function(player)
         if player:HasTrinket(HANDICAPPED_PLACARD) then
             handicappedPlacardPresent = true
         end

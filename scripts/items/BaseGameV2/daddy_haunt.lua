@@ -66,7 +66,7 @@ local function onFamiliarUpdate(_, familiar)
     if room:GetAliveEnemiesCount() > 0 then
         local room = Game():GetRoom()
         if room:GetAliveEnemiesCount() > 0 then
-            local target = Resouled:GetEnemyTarget(familiar)
+            local target = Resouled.FamiliarTargeting:GetEnemyTarget(familiar)
             if target then
 
                 if familiar.IsFollower then
@@ -84,7 +84,7 @@ local function onFamiliarUpdate(_, familiar)
                     data.ResouledCooldown = data.ResouledCooldown - 1
                 end
             else
-                Resouled:SelectRandomEnemyTarget(familiar)
+                Resouled.FamiliarTargeting:SelectRandomEnemyTarget(familiar)
                 if sprite:IsPlaying(ANIMATION_IDLE) then
                     familiar.PositionOffset = POSITION_OFFSET_ENEMY_HOVER
                 end
@@ -119,7 +119,7 @@ local function onFamiliarUpdate(_, familiar)
         SFXManager():Play(SLAM_SFX, 1, 0, false, 1)
 
         ---@param entity EntityEffect
-        Resouled:IterateOverRoomEntities(function(entity)
+        Resouled.Iterators:IterateOverRoomEntities(function(entity)
             local npc = entity:ToNPC()
             if npc and npc:IsVulnerableEnemy() and npc:IsActiveEnemy() and not npc:IsDead() then
                 local distance = (entity.Position - familiar.Position):Length()

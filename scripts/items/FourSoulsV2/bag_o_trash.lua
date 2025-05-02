@@ -180,13 +180,11 @@ local function onPlayerUpdate(_, player)
             local rng = player:GetCollectibleRNG(BAG_O_TRASH)
             local effectNum = rng:RandomInt(3)
 
-            print("EffectNum: " .. effectNum)
-
             if effectNum == 0 then -- spawn 6 flies
                 player:AddBlueFlies(6, player.Position, nil)
             elseif effectNum == 1 then -- spawn a trinket
                 game:Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, room:FindFreePickupSpawnPosition(player.Position), Vector.Zero, player, 0, Resouled:NewSeed())
-            elseif effectNum == 2 then
+            elseif effectNum == 2 then -- spawn a pickup from set pool
                 local targetPickup = SPAWN_PICKUPS[rng:RandomInt(#SPAWN_PICKUPS) + 1]
                 game:Spawn(EntityType.ENTITY_PICKUP, targetPickup[1], room:FindFreePickupSpawnPosition(player.Position), Vector.Zero, player, targetPickup[2], Resouled:NewSeed())
             end

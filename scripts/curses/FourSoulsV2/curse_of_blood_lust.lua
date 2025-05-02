@@ -34,7 +34,7 @@ local function onUpdate()
         end
         if FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer <= 0  then
             ---@param player EntityPlayer
-            Resouled:IterateOverPlayers(function(player)
+            Resouled.Iterators:IterateOverPlayers(function(player)
                 player:TakeDamage(1, DamageFlag.DAMAGE_COUNTDOWN, EntityRef(player), 0)
             end)
             FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer = TIME_BEFORE_TAKING_DAMAGE / 2

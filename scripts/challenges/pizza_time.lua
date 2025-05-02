@@ -56,7 +56,7 @@ local function onUpdate()
 
         if runSave.PizzaTime.Score == 0 then
             ---@param player EntityPlayer
-            Resouled:IterateOverPlayers(function(player)
+            Resouled.Iterators:IterateOverPlayers(function(player)
                 player:Kill()
             end)
         end

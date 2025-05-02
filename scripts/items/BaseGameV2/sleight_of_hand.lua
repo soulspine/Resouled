@@ -57,7 +57,7 @@ local function onActiveUse(_, itemId, rng, player, useFlags, activeSlot, customV
         return returnTable
     end
 
-    local door = Resouled:GetClosestDoor(player.Position)
+    local door = Resouled.Doors:GetClosestDoor(player.Position)
 
     if door then
         returnTable.Discharge = true
@@ -74,7 +74,7 @@ local function onActiveUse(_, itemId, rng, player, useFlags, activeSlot, customV
         
         -- we save all player positions to move them back later
         ---@param player EntityPlayer
-        Resouled:IterateOverPlayers(function(player)
+        Resouled.Iterators:IterateOverPlayers(function(player)
             local position = player.Position
             table.insert(playerPositions, position)
         end)
@@ -84,7 +84,7 @@ local function onActiveUse(_, itemId, rng, player, useFlags, activeSlot, customV
             TargetRoomSafeIndex = targetRoomSafeIndex,
             CurrentRoomSafeIndex = level:GetRoomByIdx(level:GetCurrentRoomIndex()).SafeGridIndex,
             PlayerPositions = playerPositions,
-            Doors = Resouled:GetRoomDoors(),
+            Doors = Resouled.Doors:GetRoomDoors(),
             Pickups = {},
             PlayerIndex = player.Index,
             InterruptedGlowingHourglass = false,
@@ -96,7 +96,7 @@ local function onActiveUse(_, itemId, rng, player, useFlags, activeSlot, customV
 
         level:RemoveCurses(runSave.SleightOfHand.Curses)
 
-        local allDoors = Resouled:GetRoomDoors()
+        local allDoors = Resouled.Doors:GetRoomDoors()
         for _, door in ipairs(allDoors) do
             if (door.TargetRoomType == RoomType.ROOM_DEVIL or door.TargetRoomType == RoomType.ROOM_ANGEL) and not player:HasCollectible(CollectibleType.COLLECTIBLE_GOAT_HEAD) then
                 runSave.SleightOfHand.AddedGoatHead = true
@@ -123,7 +123,7 @@ local function onNewRoomEnter()
         elseif runSave.SleightOfHand.NewRoomCount == 1 then
             -- we save all pickups data
             ---@param entity Entity
-            Resouled:IterateOverRoomEntities(function(entity)
+            Resouled.Iterators:IterateOverRoomEntities(function(entity)
                 if entity.Type == EntityType.ENTITY_PICKUP then
                     local entitySprite = entity:GetSprite()
                     table.insert(runSave.SleightOfHand.Pickups, {

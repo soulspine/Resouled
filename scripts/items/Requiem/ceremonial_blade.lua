@@ -56,7 +56,7 @@ local function onNpcDeath(_, npc)
     local playerLuck = 0
     local ceremonialBladeAmount = 0
     ---@param player EntityPlayer
-    Resouled:IterateOverPlayers(function(player)
+    Resouled.Iterators:IterateOverPlayers(function(player)
         if player:HasCollectible(CEREMONIAL_BLADE) then
             ceremonialBladeAmount = ceremonialBladeAmount + player:GetCollectibleNum(CEREMONIAL_BLADE)
             playerLuck = playerLuck + player.Luck
@@ -87,7 +87,7 @@ end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNpcDeath)
 
 local function onRoomClear()
-    if Resouled:CollectiblePresent(CEREMONIAL_BLADE) then
+    if Resouled.Collectiblextension:CollectiblePresent(CEREMONIAL_BLADE) then
         local room = Game():GetRoom()
         local roomRng = RNG()
         roomRng:SetSeed(room:GetAwardSeed(), 4) -- random 4 shift because why not

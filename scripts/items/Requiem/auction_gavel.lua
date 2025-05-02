@@ -47,7 +47,7 @@ local function onUpdate()
         for _, item in ipairs(roomSave.AuctionGavel.Items) do
             Game():Spawn(EntityType.ENTITY_PICKUP, item.Variant, item.Position, Vector.Zero, nil, item.Subtype, Game():GetRoom():GetSpawnSeed())
         end
-        Resouled:ForceOpenDoors()
+        Resouled.Doors:ForceOpenDoors()
 
         Isaac.GetPlayer(0):AddCoins(-roomSave.AuctionGavel.BidValue)
 
@@ -100,7 +100,7 @@ local function onActiveUse(_, itemID, rng, player, useFlags, activeSlot, customV
         return false
     end
 
-    Resouled:ForceShutDoors()
+    Resouled.Doors:ForceShutDoors()
 
     
     roomSave.AuctionGavel = {

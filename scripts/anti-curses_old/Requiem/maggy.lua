@@ -68,7 +68,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, onPlayerUpdate)
 ---@param position Vector
 local function onRoomClear(_, rng, position)
     ---@param player EntityPlayer
-    Resouled:IterateOverPlayers(function(player)
+    Resouled.Iterators:IterateOverPlayers(function(player)
         if Resouled:HasBlessing(player, Resouled.Blessings.Maggy) then
             player = player:ToPlayer():GetMainTwin()
             local playerRunSave = SAVE_MANAGER.GetRunSave(player)

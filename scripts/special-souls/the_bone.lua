@@ -14,7 +14,7 @@ local function onActiveUse(_, type, rng, player)
                 if room:GetType() == RoomType.ROOM_BOSSRUSH then
                     if player:GetSubPlayer():GetPlayerType() == PlayerType.PLAYER_THEFORGOTTEN then
                         ---@param entity Entity
-                        Resouled:IterateOverRoomEntities(function(entity)
+                        Resouled.Iterators:IterateOverRoomEntities(function(entity)
                             if entity.Type == FORGOTTEN_BODY_TYPE and entity.Variant == FORGOTTEN_BODY_VARIANT and entity.SubType == FORGOTTEN_BODY_SUBTYPE then
                                 if entity.Position:Distance(player.Position) < BURY_MAX_DISTANCE then
                                     entity:Remove()
@@ -39,11 +39,11 @@ local function postNewRoom()
     local removedForgottens = 0
     if RUN_SAVE.ResouledForgottenSacrificed then
         ---@param player EntityPlayer
-        Resouled:IterateOverPlayers(function(player)
+        Resouled.Iterators:IterateOverPlayers(function(player)
             if RUN_SAVE.ResouledForgottenSacrificed then
                 if RUN_SAVE.ResouledForgottenSacrificed[tostring(player:GetPlayerIndex())] then
                     ---@param entity Entity
-                    Resouled:IterateOverRoomEntities(function(entity)
+                    Resouled.Iterators:IterateOverRoomEntities(function(entity)
                         if entity.Type == FORGOTTEN_BODY_TYPE and entity.Variant == FORGOTTEN_BODY_VARIANT and entity.SubType == FORGOTTEN_BODY_SUBTYPE then
                             if removedForgottens < RUN_SAVE.ResouledForgottenSacrificed[tostring(player:GetPlayerIndex())] then
                                 removedForgottens = removedForgottens + 1

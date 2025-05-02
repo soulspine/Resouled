@@ -65,7 +65,7 @@ local function onPickupInit(_, pickup)
             end
             pickup:Morph(pickup.Type, pickup.Variant, pickup.SubType, true, true, true)
         else -- floor save has been initialized before
-            if not Resouled:IsQuestionMarkItem(pickup) then
+            if not Resouled.Collectiblextension:IsQuestionMarkItem(pickup) then
                 local data = pickup:GetData()
                 data["EID_Description"] = EID_DESCRIPTION
 
@@ -82,7 +82,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onPickupInit, PickupVaria
 ---@param pickup EntityPickup
 local function onPickupUpdate(_, pickup)
     local roomFloorSave = SAVE_MANAGER.GetRoomFloorSave(pickup).NoRerollSave
-    if roomFloorSave.Glitch and not Resouled:IsQuestionMarkItem(pickup) then
+    if roomFloorSave.Glitch and not Resouled.Collectiblextension:IsQuestionMarkItem(pickup) then
         if roomFloorSave.Glitch.Cooldown > 0 then
             roomFloorSave.Glitch.Cooldown = roomFloorSave.Glitch.Cooldown - 1
             return
@@ -133,7 +133,7 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onPickupCollision, Pi
 ---@param spawnPos Vector
 local function onRoomClear(_, rng, spawnPos)
     ---@param player EntityPlayer
-    Resouled:IterateOverPlayers(function(player)
+    Resouled.Iterators:IterateOverPlayers(function(player)
         if player:HasCollectible(GLITCH) then
             local playerRunSave = SAVE_MANAGER.GetRunSave(player)
             if playerRunSave.Glitch then

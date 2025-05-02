@@ -23,7 +23,7 @@ local function onUpdate()
         local totalEnemies = 0
         local bindableEnemies = {}
         ---@param entity Entity
-        Resouled:IterateOverRoomEntities(function(entity)
+        Resouled.Iterators:IterateOverRoomEntities(function(entity)
             if entity:IsVulnerableEnemy() and entity:IsActiveEnemy() then
                 totalEnemies = totalEnemies + 1
                 local data = entity:GetData()

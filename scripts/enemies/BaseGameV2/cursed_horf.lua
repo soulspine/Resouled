@@ -47,7 +47,7 @@ local function onNpcInit(_, npc)
 
     --Add halo
     if npc.Variant == CURSED_HORF_VARIANT then
-        Resouled:AddHaloToNpc(npc, HALO_SUBTYPE, HALO_SCALE, HALO_OFFSET)
+        Resouled.NpcHalo:AddHaloToNpc(npc, HALO_SUBTYPE, HALO_SCALE, HALO_OFFSET)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CURSED_HORF_TYPE)

@@ -27,7 +27,7 @@ local function onNpcInit(_, npc)
         local data = npc:GetData()
         PROJECTILE_PARAMS.BulletFlags = PROJECTILE_FLAGS
         data.ProjectileParams = PROJECTILE_PARAMS
-        Resouled:AddHaloToNpc(npc, HALO_SUBTYPE, HALO_SCALE, HALO_OFFSET)
+        Resouled.NpcHalo:AddHaloToNpc(npc, HALO_SUBTYPE, HALO_SCALE, HALO_OFFSET)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CURSED_PSY_HORF_TYPE)
@@ -49,7 +49,7 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, preNpcUpdate, CURSED_PSY_HO
 ---@param player EntityPlayer
 ---@param activeSlot ActiveSlot
 local function onActiveItemUse(_, type, rng, player, activeSlot)
-    Resouled:IterateOverRoomEntities(
+    Resouled.Iterators:IterateOverRoomEntities(
     ---@param entity Entity
     function(entity)
         if entity.Type == CURSED_PSY_HORF_TYPE and entity.Variant == CURSED_PSY_HORF_VARIANT then 

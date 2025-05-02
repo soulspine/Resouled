@@ -2,7 +2,7 @@ local SPAWN_CHANCE_PER_PEDESTAL = 0.33
 
 local function onNewRoomEnter()
     ---@param player EntityPlayer
-    Resouled:IterateOverPlayers(function(player)
+    Resouled.Iterators:IterateOverPlayers(function(player)
         if Resouled:CustomCursePresent(Resouled.Blessings.BLESSING_OF_ISAAC) then
             local room = Game():GetRoom()
             if room:IsFirstVisit() then

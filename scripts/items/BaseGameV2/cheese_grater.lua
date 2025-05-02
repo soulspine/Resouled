@@ -78,9 +78,9 @@ Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, onEntityTakeDamage)
 ---@param pickup EntityPickup
 local function oncCollectibleUpdate(_, pickup)
 -- THIS HAS TO BE POST UPDATE BECAUSE POST INIT THERE IS NO SPRITE LOADED YET
--- POST RENDER ALSO DOES NOT WORK CORRECTLY BECAUSE IT GOES BACK AND FORTH BETWEEN BEING A QUESTION MARK AND NOT
-    if Resouled:CollectiblePresent(CHEESE_GRATER) then
-        Resouled:TryRevealQuestionMarkItem(pickup)
+-- POST RENDER ALSO DOES NOT WORK CORRECTLY BECAUSE IT GOES BACK AND FORTH BETWEEN BEING A QUESTION MARK AND NOT   
+if Resouled.Collectiblextension:CollectiblePresent(CHEESE_GRATER) then
+        Resouled.Collectiblextension:TryRevealQuestionMarkItem(pickup)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, oncCollectibleUpdate, PickupVariant.PICKUP_COLLECTIBLE)

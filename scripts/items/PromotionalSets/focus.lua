@@ -39,7 +39,7 @@ local function onEntitySpawn(_, entityType, variant, subtype, position, velocity
         -- cannot update just the spawner
         -- it says AddCacheFlags is null for this object ?????
 
-        Resouled:IterateOverPlayers(function(player)
+        Resouled.Iterators:IterateOverPlayers(function(player)
             if player:HasCollectible(FOCUS) then
                 miniIsaacJustSpawned = true
                 player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
@@ -139,12 +139,12 @@ end
 
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM,
     function()
-        Resouled:IterateOverPlayers(onNewRoomEnter)
+        Resouled.Iterators:IterateOverPlayers(onNewRoomEnter)
     end
 )
 Resouled:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, 
     function()
-        Resouled:IterateOverPlayers(onRoomClear)
+        Resouled.Iterators:IterateOverPlayers(onRoomClear)
     end
 )
 Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheUpdate)

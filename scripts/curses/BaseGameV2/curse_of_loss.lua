@@ -36,7 +36,7 @@ local function onNewFloor()
                 SelectionChangeCooldown = 0,
             }
         end
-        Resouled:ForceShutDoors()
+        Resouled.Doors:ForceShutDoors()
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, onNewFloor)
@@ -47,7 +47,7 @@ local function onUpdate()
     if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_LOSS) and roomSave.CurseOfLoss then
         render = true
         ---@param player EntityPlayer
-        Resouled:IterateOverPlayers(function(player)
+        Resouled.Iterators:IterateOverPlayers(function(player)
             player:AddControlsCooldown(2)
         end)
         
@@ -77,7 +77,7 @@ local function onUpdate()
                 Resouled:TryRemoveSoulFromPossessed(selectedIndex)
                 Resouled:ResetCardSelection()
                 roomSave.CurseOfLoss = nil
-                Resouled:ForceOpenDoors()
+                Resouled.Doors:ForceOpenDoors()
             end
         end
     else render = false
@@ -87,7 +87,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 
 local function onRender()
     if render then
-        local screenDimensions = Resouled:GetScreenDimensions()
+        local screenDimensions = Resouled.Vector:GetScreenDimensions()
         font:DrawStringScaledUTF8(CURSE_MESSAGE, screenDimensions.X / 2, (screenDimensions.Y - TEXT_GAP) / 2, TEXT_SCALE.X, TEXT_SCALE.Y, TEXT_COLOR, 5, true)
         if soulString then
             font:DrawStringScaledUTF8(soulString, screenDimensions.X / 2, (screenDimensions.Y + TEXT_GAP) / 2, TEXT_SCALE.X, TEXT_SCALE.Y, TEXT_COLOR, 5, true)

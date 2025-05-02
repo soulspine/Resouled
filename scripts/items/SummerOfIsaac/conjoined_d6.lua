@@ -18,7 +18,7 @@ local function preUseItem(_, collectibleType, rng, player, useFlags, activeSlot)
         local data = player:GetData()
         data.ResouledCD6OldItems = {}
         ---@param entity Entity
-        Resouled:IterateOverRoomEntities(function(entity)
+        Resouled.Iterators:IterateOverRoomEntities(function(entity)
             if entity.Type == EntityType.ENTITY_PICKUP and entity.Variant == PickupVariant.PICKUP_COLLECTIBLE then
                 if entity.SubType ~= 0 and entity.SubType ~= nil then
                     table.insert(data.ResouledCD6OldItems, entity.SubType)
@@ -50,7 +50,7 @@ local function onItemUse(_, collectibleType, rng, player, useFlags, activeSlot)
         player:UseActiveItem(CollectibleType.COLLECTIBLE_D6)
         player:AnimateCollectible(CONJOINED_D6, "UseItem")
         data.ResouledCD6NewItems = {}
-        Resouled:IterateOverRoomEntities(function(entity)
+        Resouled.Iterators:IterateOverRoomEntities(function(entity)
             if entity.Type == EntityType.ENTITY_PICKUP and entity.Variant == PickupVariant.PICKUP_COLLECTIBLE then
                 if entity.SubType ~= 0 and entity.SubType ~= nil then
                     table.insert(data.ResouledCD6NewItems, entity.SubType)

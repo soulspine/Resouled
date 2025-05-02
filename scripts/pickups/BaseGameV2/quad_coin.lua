@@ -8,7 +8,7 @@ local function onPickupInit(_, pickup)
     local humbleingBundlePresent = false
     local greedsGulletPresent = false
     local deepPocketsPresent = false
-    Resouled:IterateOverPlayers(
+    Resouled.Iterators:IterateOverPlayers(
         ---@param player EntityPlayer
     function(player)
         if player:HasCollectible(CollectibleType.COLLECTIBLE_HUMBLEING_BUNDLE) then

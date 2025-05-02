@@ -148,7 +148,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, onPlayerInit)
 
 local function onUpdate()
     if Isaac.GetChallenge() == ISAAC8 then
-        Resouled:IterateOverPlayers(function(player)
+        Resouled.Iterators:IterateOverPlayers(function(player)
             -- TODO replace jump animation with custom one
 
             local playerRunSave = SAVE_MANAGER.GetRunSave(player)
@@ -549,7 +549,7 @@ local function onTrophySpawn(_, pickup)
     if Isaac.GetChallenge() == ISAAC8 then
         local _1upCount = 0
         ---@param player EntityPlayer
-        Resouled:IterateOverPlayers(function(player)
+        Resouled.Iterators:IterateOverPlayers(function(player)
             _1upCount = _1upCount + player:GetCollectibleNum(CollectibleType.COLLECTIBLE_1UP)
         end)
 
@@ -564,7 +564,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onTrophySpawn, PickupVari
 local function onNewFloorEnter()
     if Isaac.GetChallenge() == ISAAC8 then
         ---@param player EntityPlayer
-        Resouled:IterateOverPlayers(function(player)
+        Resouled.Iterators:IterateOverPlayers(function(player)
             Game():Spawn(EntityType.ENTITY_FAMILIAR, STRAWBERRY_VARIANT, player.Position, Vector.Zero, player, STRAWBERRY_SUBTYPE.GOLDEN, player.DropSeed)
         end)
     end

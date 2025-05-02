@@ -53,7 +53,7 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_PLAYER_TAKE_DMG, prePlayerTakeDmg)
 
 local function onUpdate()
     ---@param player EntityPlayer
-    Resouled:IterateOverPlayers(function(player)
+    Resouled.Iterators:IterateOverPlayers(function(player)
         local data = player:GetData()
         if data.ResouledSiblingRivalry then
             if not data.ResouledSiblingRivalrySpin and player:GetOtherTwin() then
@@ -246,7 +246,7 @@ local function onNewRoom()
         SFXManager():Stop(SoundEffect.SOUND_ULTRA_GREED_SPINNING)
     end
     ---@param player EntityPlayer
-    Resouled:IterateOverPlayers(function(player)
+    Resouled.Iterators:IterateOverPlayers(function(player)
         local data = player:GetData()
         data.ResouledSiblingRivalry = false
         data.ResouledSiblingRivalrySpin = false

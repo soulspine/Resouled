@@ -29,7 +29,7 @@ local function onNpcInit(_, npc)
     end
 
     if npc.Variant == CURSED_KEEPER_HEAD_VARIANT then
-        Resouled:AddHaloToNpc(npc, HALO_SUBTYPE, HALO_SCALE, HALO_OFFSET)
+        Resouled.NpcHalo:AddHaloToNpc(npc, HALO_SUBTYPE, HALO_SCALE, HALO_OFFSET)
         npc:GetData().Cooldown = COOLDOWN
     end
 end
@@ -61,7 +61,7 @@ local function preNpcUpdate(_, npc)
         end
 
         ---@param player EntityPlayer
-        Resouled:IterateOverPlayers(function(player)
+        Resouled.Iterators:IterateOverPlayers(function(player)
             if data.Cooldown == 0 and player.Position:Distance(npc.Position) < ACTIVATION_DISTANCE then
                 local playerCoins = player:GetNumCoins()
                 if npc:GetDropRNG():RandomFloat() < COIN_DROP_CHANCE and playerCoins > 0 then

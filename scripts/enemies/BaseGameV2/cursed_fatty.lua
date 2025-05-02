@@ -46,7 +46,7 @@ local function onNpcInit(_, npc)
 
     if npc.Variant == CURSED_FATTY_VARIANT then
         npc:AddEntityFlags(EntityFlag.FLAG_NO_PHYSICS_KNOCKBACK)
-        Resouled:AddHaloToNpc(npc, HALO_SUBTYPE, HALO_SCALE, HALO_OFFSET)
+        Resouled.NpcHalo:AddHaloToNpc(npc, HALO_SUBTYPE, HALO_SCALE, HALO_OFFSET)
         npc:GetData().Cooldown = COOLDOWN
     end
 end
@@ -61,9 +61,9 @@ local function preNpcUpdate(_, npc)
         end
 
         ---@param player EntityPlayer
-        Resouled:IterateOverPlayers(function(player)
+        Resouled.Iterators:IterateOverPlayers(function(player)
             if data.Cooldown == 0 and player.Position:Distance(npc.Position) < ACTIVATION_DISTANCE then
-                local itemToDrop = Resouled:ChooseRandomPlayerItemID(player, npc:GetDropRNG())
+                local itemToDrop = Resouled.Collectiblextension:ChooseRandomPlayerItemID(player, npc:GetDropRNG())
                 if itemToDrop and npc:GetDropRNG():RandomFloat() <= ITEM_DROP_CHANCE then
                     local itemCharge = 0
                     if player:GetActiveItem(ActiveSlot.SLOT_PRIMARY) == itemToDrop then

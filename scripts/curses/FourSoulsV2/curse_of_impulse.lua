@@ -22,7 +22,7 @@ local PUSH_VELOCITY_MULT = 1.2
 local function onPlayerCollision(_, player, gridIndex, gridEntity)
     local data = player:GetData()
     if Resouled:CustomCursePresent(curse) and gridEntity and not data.ResouledCurseOfImpulsePushCooldown and gridEntity:GetType() ~= GridEntityType.GRID_PIT and not data.ResouledSRVelocity then --data.ResouledSRVelocity is from sibling rivalry
-        player:AddKnockback(EntityRef(player), Resouled:GetBounceOffGridElementVector(player.Velocity, player.Position, gridEntity.Position) * PUSH_VELOCITY_MULT, PUSH_DURATION, false)
+        player:AddKnockback(EntityRef(player), Resouled.Vector:GetBounceOffGridElementVector(player.Velocity, player.Position, gridEntity.Position) * PUSH_VELOCITY_MULT, PUSH_DURATION, false)
         data.ResouledCurseOfImpulsePushCooldown = PUSH_DURATION
     end
 end

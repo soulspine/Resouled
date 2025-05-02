@@ -9,7 +9,7 @@ local CLASSIC_ROLLER = Isaac.GetItemIdByName("Classic Roller")
 local function onActiveUse(_, type, rng, player, flags, slot, data)
     player:AnimateCollectible(CLASSIC_ROLLER, "UseItem", "PlayerPickupSparkle")
     ---@param entity Entity
-    Resouled:IterateOverRoomEntities(function(entity)
+    Resouled.Iterators:IterateOverRoomEntities(function(entity)
         local pickup = entity:ToPickup()
         if pickup then
             if pickup.Variant == PickupVariant.PICKUP_COLLECTIBLE then

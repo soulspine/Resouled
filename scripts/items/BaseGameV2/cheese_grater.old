@@ -80,7 +80,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, resetScoreOnNewFloor)
 
 local function tryGrantPizzaFamiliar()
     ---@param player EntityPlayer
-    Resouled:IterateOverPlayers(function(player)
+    Resouled.Iterators:IterateOverPlayers(function(player)
         if player:HasCollectible(CHEESE_GRATER) then
             local playerRunSave = SAVE_MANAGER.GetRunSave(player)
             local toppingCount = 0
@@ -108,7 +108,7 @@ end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, tryGrantPizzaFamiliar)
 
 local function updateScoreOnGameUpdate()
-    if Resouled:CollectiblePresent(CHEESE_GRATER) then
+    if Resouled.Collectiblextension:CollectiblePresent(CHEESE_GRATER) then
         local runSave = SAVE_MANAGER.GetRunSave()
 
         if runSave.CheeseGrater then
@@ -125,7 +125,7 @@ local function updateScoreOnGameUpdate()
                 globalScore = runSave.CheeseGrater.Score
             elseif not runSave.CheeseGrater.SpawnedRewards and runSave.CheeseGrater.BossKilled and runSave.CheeseGrater.FinalScore > 0 then -- and finalscore == 0
                 ---@param player EntityPlayer
-                Resouled:IterateOverPlayers(function(player)
+                Resouled.Iterators:IterateOverPlayers(function(player)
                     if player:HasCollectible(CHEESE_GRATER) then
                         local playerRunSave = SAVE_MANAGER.GetRunSave(player)
                         if not playerRunSave.CheeseGrater then
@@ -204,16 +204,16 @@ local function onToppingFamiliarUpdate(_, familiar)
             end
 
             familiar.SpriteRotation = (familiar.SpriteRotation + PIZZA_ROTATION_GAIN + math.random(-10, 10))%360
-            local target = Resouled:GetEnemyTarget(familiar)
+            local target = Resouled.FamiliarTargeting:GetEnemyTarget(familiar)
             if target then
                 familiar:RemoveFromFollowers()
                 if familiar.Position:Distance(target.Position) < PIZZA_COLLISION_DISTANCE_MARGIN or target:IsDead() then
-                    Resouled:ClearEnemyTarget(familiar)
+                    Resouled.FamiliarTargeting:ClearEnemyTarget(familiar)
                 else
                     familiar.Velocity = (target.Position - familiar.Position):Normalized() * PIZZA_VELOCITY_MULTIPLIER
                 end
             else
-                Resouled:SelectRandomEnemyTarget(familiar)
+                Resouled.FamiliarTargeting:SelectRandomEnemyTarget(familiar)
             end
         else
 
@@ -346,7 +346,7 @@ end
 Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, playerSpeedUp)
 
 local function drawScore()
-    if Resouled:CollectiblePresent(CHEESE_GRATER) and globalScore > 0 then
+    if Resouled.Collectiblextension:CollectiblePresent(CHEESE_GRATER) and globalScore > 0 then
         SCORE_TEXT_POSITION = Vector(Isaac.GetScreenWidth()/2, 10)
         FONT:DrawString(tostring(globalScore), SCORE_TEXT_POSITION.X, SCORE_TEXT_POSITION.Y, SCORE_TEXT_COLOR, SCORE_TEXT_BOX_WIDTH, SCORE_TEXT_CENTER)
     end

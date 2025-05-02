@@ -8,7 +8,7 @@ local function onEffectInit(_, effect)
     end
 
     ---@param entity Entity
-    Resouled:IterateOverRoomEntities(function(entity)
+    Resouled.Iterators:IterateOverRoomEntities(function(entity)
         local pickup = entity:ToPickup()
         if pickup and pickup.Position:Distance(effect.Position) < BLAST_RADIUS and pickup.Variant == PickupVariant.PICKUP_LOCKEDCHEST then
             pickup:TryOpenChest()
@@ -26,7 +26,7 @@ local function onPickupUpdate(_, pickup)
 
     local open = false
 
-    local closestDoor = Resouled:GetClosestDoor(pickup.Position)
+    local closestDoor = Resouled.Doors:GetClosestDoor(pickup.Position)
     if closestDoor and closestDoor.TargetRoomType == RoomType.ROOM_CURSE and not closestDoor:IsLocked() and not closestDoor:IsBusted() and closestDoor.Position:Distance(pickup.Position) < DOOR_DETECTION_RADIUS then
         open = true
     end

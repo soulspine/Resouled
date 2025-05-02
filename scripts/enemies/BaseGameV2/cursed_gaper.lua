@@ -28,7 +28,7 @@ local function onEntityKill(_, entity)
 
         -- remove buff from every entity
         -- will be reapplied by other cursed gaapers so removeing it for 1 update is not that big of a deal
-        Resouled:IterateOverRoomEntities(function(entity)
+        Resouled.Iterators:IterateOverRoomEntities(function(entity)
             local entityData = entity:GetData()
             if entityData.ResouledCurseGaperBuff then
                 entityData.ResouledCurseGaperBuff = false
@@ -48,7 +48,7 @@ local function onNpcInit(_, npc)
 
     --Add halo
     if npc.Variant == CURSED_GAPER_VARIANT then
-        Resouled:AddHaloToNpc(npc, HALO_SUBTYPE, HALO_SCALE, HALO_OFFSET)
+        Resouled.NpcHalo:AddHaloToNpc(npc, HALO_SUBTYPE, HALO_SCALE, HALO_OFFSET)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CURSED_GAPER_TYPE)
@@ -57,7 +57,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CURSED_GAPER_TYPE
 local function preNpcUpdate(_, npc)
     if npc.Variant == CURSED_GAPER_VARIANT then
         ---@param entity Entity
-        Resouled:IterateOverRoomEntities(function(entity)
+        Resouled.Iterators:IterateOverRoomEntities(function(entity)
             local otherNpc = entity:ToNPC()
             local entityData = entity:GetData()
             if otherNpc and otherNpc:IsActiveEnemy() and not otherNpc:IsDead() and npc.Position:Distance(otherNpc.Position) < ACTIVATION_DISTANCE then

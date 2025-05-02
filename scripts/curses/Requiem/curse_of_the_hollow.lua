@@ -32,7 +32,7 @@ local function postNewRoom()
                 
                 if randomNum < curseActivationChance then
                     ---@param entity Entity
-                    Resouled:IterateOverRoomEntities(function(entity)
+                    Resouled.Iterators:IterateOverRoomEntities(function(entity)
                         if entity.Type ~= EntityType.ENTITY_PLAYER then
                             if entity.SpawnerEntity then
                                 if entity.SpawnerEntity.Type == EntityType.ENTITY_PLAYER then

@@ -34,9 +34,9 @@ local function postUpdate()
                 local player = Isaac.GetPlayer(randomPlayerID)
                 local playerPos = player.Position
                 local randomAngle = math.random(0, 360)
-                local distanceFromPlayer = math.random(250, 450)
+                local distanceFromPlayer = math.random(75, 150)
                 local spawnPos = playerPos + Vector(1, 0):Normalized():Rotated(randomAngle) * distanceFromPlayer
-                Game():Spawn(HUNTER_TYPE, HUNTER_VARIANT, Isaac.GetFreeNearPosition(spawnPos, 0), Vector.Zero, nil, HUNTER_SUBTYPE, room:GetSpawnSeed())
+                Game():Spawn(HUNTER_TYPE, HUNTER_VARIANT, spawnPos, Vector.Zero, nil, HUNTER_SUBTYPE, room:GetSpawnSeed())
                 FLOOR_SAVE.ResouledCurseOfTheHuntedCooldown = math.random(MIN_COOLDOWN, MAX_COOLDOWN) * 30
             end
         end

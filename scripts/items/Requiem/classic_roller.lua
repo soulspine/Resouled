@@ -1,5 +1,9 @@
 local CLASSIC_ROLLER = Isaac.GetItemIdByName("Classic Roller")
 
+if EID then
+    EID:addCollectible(CLASSIC_ROLLER, "Rerolls items into items with the same quality")
+end
+
 ---@param type CollectibleType
 ---@param rng RNG
 ---@param player EntityPlayer

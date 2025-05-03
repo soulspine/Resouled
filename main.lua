@@ -7,6 +7,7 @@ if REPENTOGON and MinimapAPI then
     SAVE_MANAGER.Init(Resouled)
 
     Resouled.AccurateStats = include("scripts.utility.accurate_stats")
+    Resouled.Doors = include("scripts.utility.doors")
     Resouled.Iterators = include("scripts.utility.iterators")
     Resouled.Collectiblextension = include("scripts.utility.collectiblextension")
     Resouled.FamiliarTargeting = include("scripts.utility.familiar_targeting")

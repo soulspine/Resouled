@@ -1,5 +1,7 @@
 local CLASSIC_ROLLER = Isaac.GetItemIdByName("Classic Roller")
 
+local DEFAULT_ITEM = CollectibleType.COLLECTIBLE_BREAKFAST
+
 if EID then
     EID:addCollectible(CLASSIC_ROLLER, "Rerolls items into items with the same quality")
 end
@@ -26,9 +28,8 @@ local function onActiveUse(_, type, rng, player, flags, slot, data)
                         table.insert(validItems, id)
                     end
                 end
-
-                local randomNum = rng:RandomInt(#validItems) + 1
-                local newItemID = validItems[randomNum]
+                
+                local newItemID = #validItems > 0 and validItems[rng:RandomInt(#validItems) + 1] or DEFAULT_ITEM
 
                 Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, pickup.Position, Vector.Zero, nil, 0, pickup.InitSeed)
                 if newItemID then

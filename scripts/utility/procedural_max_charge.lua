@@ -32,7 +32,6 @@ function(_, player, activeSlot, offset, alpha, scale, chargebarOffset)
         separatorSprite.Color = Color(1, 1, 1, alpha)
         
         separatorSprite.Scale.Y = separatorSprite.Scale.Y * math.min(1, 12 / maxCharge)
-        print(maxCharge, separatorSprite.Scale.Y)
 
         local startingOffset = chargebarOffset + Vector(0, 12) * scale
         local offsetDelta = Vector(0, -23 / maxCharge) * scale

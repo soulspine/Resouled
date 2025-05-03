@@ -18,7 +18,7 @@ local function onActiveUse(_, type, rng, player, flags, slot, data)
     Resouled.Iterators:IterateOverRoomEntities(function(entity)
         local pickup = entity:ToPickup()
         if pickup then
-            if pickup.Variant == PickupVariant.PICKUP_COLLECTIBLE and pickup.SubType ~= 0 then
+            if pickup.Variant == PickupVariant.PICKUP_COLLECTIBLE and pickup.SubType ~= 0 and not Isaac.GetItemConfig():GetCollectible(pickup.SubType):HasTags(ItemConfig.TAG_QUEST) then
                 local targetQuality = Isaac.GetItemConfig():GetCollectible(pickup.SubType).Quality
                 local itemsFromCurrectPool = Game():GetItemPool():GetCollectiblesFromPool(Game():GetRoom():GetItemPool(Game():GetRoom():GetAwardSeed()))
                 local validItems = {}

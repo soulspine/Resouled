@@ -1,5 +1,8 @@
 local KEEPERS_PENNY = Isaac.GetItemIdByName("Keeper's Penny")
 
+local MAX_CHARGE = 12
+local CHARGE_INCREMENT = 1
+
 ---@param type CollectibleType
 ---@param rng RNG
 ---@param player EntityPlayer
@@ -12,10 +15,9 @@ local function onActiveUse(_, type, rng, player, flags, slot, data)
     for _ = 1, itemDesc.VarData do
         Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, Isaac.GetFreeNearPosition(player.Position, 0), Vector.Zero, nil, CoinSubType.COIN_PENNY, Resouled:NewSeed())
     end
-    if itemDesc.VarData + 1 > 12 then
-        itemDesc.VarData = player:GetActiveMaxCharge(slot)
-    else
-        itemDesc.VarData = player:GetActiveMaxCharge(slot) + 1
+
+    if itemDesc.VarData < MAX_CHARGE then
+        itemDesc.VarData = math.min(MAX_CHARGE ,itemDesc.VarData + CHARGE_INCREMENT)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onActiveUse, KEEPERS_PENNY)

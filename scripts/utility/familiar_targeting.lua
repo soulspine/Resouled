@@ -48,3 +48,5 @@ end
 function familiarTargeting:ClearEnemyTarget(familiar)
     familiar:GetData().familiarTargetingTarget = nil
 end
+
+return familiarTargeting

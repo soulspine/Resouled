@@ -16,6 +16,8 @@ if REPENTOGON and MinimapAPI then
     Resouled.Pulling = require("scripts.utility.pulling")
     Resouled.Prices = require("scripts.utility.prices")
 
+    include("scripts.utility.procedural_max_charge")
+
     include("scripts.utility.resouled.souls")
     include("scripts.utility.resouled.tear_effects")
     include("scripts.utility.resouled.curses")

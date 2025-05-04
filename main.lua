@@ -15,8 +15,7 @@ if REPENTOGON and MinimapAPI then
     Resouled.Vector = include("scripts.utility.vector")
     Resouled.Pulling = include("scripts.utility.pulling")
     Resouled.Prices = include("scripts.utility.prices")
-
-    include("scripts.utility.procedural_max_charge")
+    Resouled.ProceduralMaxCharge = include("scripts.utility.procedural_max_charge")
 
     include("scripts.utility.resouled.souls")
     include("scripts.utility.resouled.tear_effects")

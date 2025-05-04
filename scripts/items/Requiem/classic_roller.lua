@@ -31,7 +31,7 @@ local function onActiveUse(_, type, rng, player, flags, slot, data)
                 
                 local newItemID = #validItems > 0 and validItems[rng:RandomInt(#validItems) + 1] or DEFAULT_ITEM
 
-                Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, pickup.Position, Vector.Zero, nil, 0, pickup.InitSeed)
+                Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, pickup.Position, Vector.Zero, nil, 0, Resouled:NewSeed())
                 if newItemID then
                     pickup:Morph(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, newItemID, true, true, false)
                     Game():GetItemPool():RemoveCollectible(newItemID)

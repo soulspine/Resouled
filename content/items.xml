@@ -11,7 +11,7 @@
     <active id="6" name="Sibling Rivalry" gfx="sibling_rivalry.png" description="" quality="3" craftquality="3" maxcharges="2" chargetype="normal"/>
     <passive id="7" name="Trick Penny" gfx="trick_penny.png" description="Gambler's favorite coin" quality="1" craftquality="1"/>
     <passive id="8" name="Soulbond" gfx="soulbond.png" description="Friends till the end" quality="2" craftquality="2"/>
-    <active id="9" name="Keeper's Penny" gfx="keepers_penny.png" description="Powered by Keeper Co." quality="2" craftquality="2" maxcharges="1" chargetype="normal"/>
+    <active id="9" name="Keeper's Penny" gfx="keepers_penny.png" description="Powered by Keeper Co." quality="2" craftquality="2" maxcharges="1" chargetype="normal" customtags="alwaysproceduralcharge"/>
     <active id="10" name="Classic Roller" gfx="classic_roller.png" description="" quality="4" craftquality="2" maxcharges="6" chargetype="normal"/>
     <!--active id="447" name="Auction Gavel" gfx="auction_gavel.png" description="Sold!" quality="2"/-->
 <!-- Summer Of Isaac -->

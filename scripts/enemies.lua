@@ -25,6 +25,9 @@ include("scripts.enemies.SummerOfIsaac.coil")
 include("scripts.enemies.SummerOfIsaac.weltling")
 -- Promotional Sets
 
+--Challenges
+include("scripts.enemies.Challenges.blank_canvas_mulligan")
+
 
 
 include("scripts.enemies.resouled_dummy")

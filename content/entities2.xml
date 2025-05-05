@@ -109,4 +109,7 @@
 
     <entity name="ResouledDummy" id="999" variant="0" subtype="0"/>
     <entity name="ResouledHitbox" id="999" variant="0" subtype="1" collisionRadius="1" numGridCollisionPoints="12" collisionDamage="1" collisionMass="999" friction="0"/>
+
+<!-- Challenges-->
+    <entity name="Blank Canvas Mulligan" id="416" variant="0" subtype="0" anm2path="blank_canvas_mulligan.anm2" collisionMass="1" collisionRadius="14" collisionDamage="1" friction="1" numGridCollisionPoints="12" shadowSize="14" baseHP="20"/>
 </entities>

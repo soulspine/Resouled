@@ -27,6 +27,8 @@ include("scripts.enemies.SummerOfIsaac.weltling")
 
 --Challenges
 include("scripts.enemies.Challenges.blank_canvas_mulligan")
+include("scripts.enemies.Challenges.blank_canvas_gaper")
+include("scripts.enemies.Challenges.blank_canvas_fly")
 
 
 

@@ -111,5 +111,7 @@
     <entity name="ResouledHitbox" id="999" variant="0" subtype="1" collisionRadius="1" numGridCollisionPoints="12" collisionDamage="1" collisionMass="999" friction="0"/>
 
 <!-- Challenges-->
-    <entity name="Blank Canvas Mulligan" id="416" variant="0" subtype="0" anm2path="blank_canvas_mulligan.anm2" collisionMass="1" collisionRadius="14" collisionDamage="1" friction="1" numGridCollisionPoints="12" shadowSize="14" baseHP="20"/>
+    <entity name="Blank Canvas Mulligan" id="417" variant="0" subtype="0" anm2path="blank_canvas_mulligan.anm2" collisionMass="1" collisionRadius="14" collisionDamage="0" friction="1" numGridCollisionPoints="12" shadowSize="14" baseHP="20"/>
+    <entity name="Blank Canvas Gaper" id="417" variant="1" subtype="0" anm2path="blank_canvas_gaper.anm2" collisionMass="1" collisionRadius="14" collisionDamage="1" friction="1" numGridCollisionPoints="12" shadowSize="14" baseHP="20"/>
+    <entity name="Blank Canvas Fly" id="417" variant="2" subtype="0" anm2path="blank_canvas_fly.anm2" collisionMass="1" collisionRadius="6" collisionDamage="1" friction="1" numGridCollisionPoints="12" shadowSize="6" baseHP="8"/>
 </entities>

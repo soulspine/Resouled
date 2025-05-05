@@ -12,7 +12,7 @@
     <passive id="7" name="Trick Penny" gfx="trick_penny.png" description="Gambler's favorite coin" quality="1" craftquality="1"/>
     <passive id="8" name="Soulbond" gfx="soulbond.png" description="Friends till the end" quality="2" craftquality="2"/>
     <active id="9" name="Keeper's Penny" gfx="keepers_penny.png" description="Powered by Keeper Co." quality="2" craftquality="2" maxcharges="1" chargetype="normal" customtags="alwaysproceduralcharge"/>
-    <active id="10" name="Classic Roller" gfx="classic_roller.png" description="" quality="4" craftquality="2" maxcharges="6" chargetype="normal"/>
+    <active id="10" name="Classic Roller" gfx="classic_roller.png" description="Rolling since 2011" quality="4" craftquality="2" maxcharges="6" chargetype="normal"/>
     <!--active id="447" name="Auction Gavel" gfx="auction_gavel.png" description="Sold!" quality="2"/-->
 <!-- Summer Of Isaac -->
     <active id="11" name="Conjoined D6" gfx="conjoined_d6.png" description="The dice of balance..." quality="4" craftquality="4" maxcharges="4" chargetype="normal"/>
@@ -20,9 +20,9 @@
     <passive id="13" name="A Friend" gfx="a_friend.png" description="A friend to the end" quality="1" craftquality="1" cache="familiars"/>
     <familiar id="14" name="The Monster" gfx="the_monster.png" description="Unleash the beast" quality="3" craftquality="3" cache="familiars"/>
 <!-- Promotional Sets -->
-    <trinket id="1" name="Handicapped Placard" gfx="handicapped_placard.png"/>
-    <trinket id="2" name="Hand Me Downs" gfx="hand_me_downs.png"/>
-    <trinket id="3" name="Mugger Bean" gfx="mugger_bean.png"/>
-    <trinket id="4" name="Recycling Sticker" gfx="recycling_sticker.png"/>
-    <trinket id="5" name="Library Card" gfx="library_card.png"/>
+    <trinket id="1" name="Handicapped Placard" description="" gfx="handicapped_placard.png"/>
+    <trinket id="2" name="Hand Me Downs" description="" gfx="hand_me_downs.png"/>
+    <trinket id="3" name="Mugger Bean" description="" gfx="mugger_bean.png"/>
+    <trinket id="4" name="Recycling Sticker" description="" gfx="recycling_sticker.png"/>
+    <trinket id="5" name="Library Card" description="Common libraries" gfx="library_card.png"/>
 </items>

@@ -1,4 +1,16 @@
 <sounds root="sfx/">
+    <sound name="Paper Flip">
+        <sample weight="1" path="paper_flip.wav"/>
+    </sound>
+    <sound name="Paper Death 1">
+        <sample weight="1" path="paper_death_1.wav"/>
+    </sound>
+    <sound name="Paper Death 2">
+        <sample weight="1" path="paper_death_2.wav"/>
+    </sound>
+    <sound name="Paper Death 3">
+        <sample weight="1" path="paper_death_3.wav"/>
+    </sound>
 <!-- Base Game V2 -->
 
 <!-- Four Souls V2 -->

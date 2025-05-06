@@ -5,9 +5,7 @@ local function postNewRoom()
             if entity:IsEnemy() and entity:IsActiveEnemy() and not entity:IsBoss() then
                 local npc = entity:ToNPC()
                 if npc then
-                    local hp = npc.HitPoints
                     npc:MakeChampion(npc.InitSeed, ChampionColor.TRANSPARENT, false)
-                    npc.HitPoints = hp
                 end
             end
         end)

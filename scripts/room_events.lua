@@ -10,6 +10,7 @@ Resouled.RoomEvents = {
     BUTTER_FINGERS = "Butter Fingers",
 }
 
+
 local RoomEvents = {
     [1] = Resouled.RoomEvents.ALL_HALLOWS_EVE,
     [2] = Resouled.RoomEvents.ANGELIC_INTERVENTION,
@@ -23,6 +24,10 @@ local RoomEvents = {
 
 local BOSS_ROOM_BLACKLIST = {
     [4] = true,
+}
+
+local ROOM_EVENTS_DESPAWN_BLACKLIST = {
+    [Resouled.RoomEvents.BUTTER_FINGERS] = true,
 }
 
 --local ROOM_EVENT_CHANCE = 0.005
@@ -59,7 +64,9 @@ local function postNewRoom()
             Game():GetHUD():ShowFortuneText(ROOM_SAVE.RoomEvent)
         end
     else
-        ROOM_SAVE.RoomEvent = "Null"
+        if not ROOM_EVENTS_DESPAWN_BLACKLIST[ROOM_SAVE.RoomEvent] then
+            ROOM_SAVE.RoomEvent = "Null"
+        end
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)
@@ -67,7 +74,9 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)
 local function preNewRoom()
     local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
     if ROOM_SAVE.RoomEvent then
-        ROOM_SAVE.RoomEvent = "Null"
+        if not ROOM_EVENTS_DESPAWN_BLACKLIST[ROOM_SAVE.RoomEvent] then
+            ROOM_SAVE.RoomEvent = "Null"
+        end
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NEW_ROOM, preNewRoom)

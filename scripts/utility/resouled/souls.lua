@@ -36,13 +36,17 @@ Resouled:AddCallback(ModCallbacks.MC_HUD_RENDER, hudRenderer)
 
 ---@param isContinued boolean
 local function createSoulsContainerOnRunStart(_, isContinued)
+    local runSave = SAVE_MANAGER.GetRunSave()
     if not isContinued then
-        local runSave = SAVE_MANAGER.GetRunSave()
         runSave.Souls = {
             Spawned = {},
             Possessed = 0,
         }
         cachedSoulsNum = 0
+    else
+        if runSave.Souls then
+            cachedSoulsNum = runSave.Souls.Possessed
+        end
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, createSoulsContainerOnRunStart)

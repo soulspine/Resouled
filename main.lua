@@ -31,6 +31,7 @@ if REPENTOGON and MinimapAPI then
     include("scripts.enemies")
     include("scripts.challenges")
     include("scripts.pickups")
+    include("scripts.room_events")
 
     include("scripts.special_souls")
 

@@ -39,8 +39,6 @@ local CURSES_BLACKLIST = {
 Resouled.CursesSprite = Sprite()
 Resouled.CursesSprite:Load("gfx/curses.anm2", true)
 
-local CUSTOM_CURSE_CHANCE = 1
-
 include("scripts.curses.BaseGameV2.curse_of_greed")
 include("scripts.curses.BaseGameV2.curse_of_pain")
 include("scripts.curses.BaseGameV2.curse_of_loss")

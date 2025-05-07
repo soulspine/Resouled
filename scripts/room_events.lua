@@ -99,7 +99,7 @@ local function postNewRoom()
 
             if (roomType == RoomType.ROOM_BOSS and BOSS_ROOM_BLACKLIST[randomNum]) or
             tLostPresent or (randomNum == 6 and not pickupsPresent) or
-            (randomNum == 12 and roomType ~= RoomType.ROOM_BOSS) then
+            (BOSS_ROOM_ONLY[randomNum] and roomType ~= RoomType.ROOM_BOSS) then
                 goto RollRoomEvent
             end
 

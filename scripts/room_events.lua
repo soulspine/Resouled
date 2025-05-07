@@ -18,6 +18,9 @@ Resouled.RoomEvents = {
     SPLASH_DAMAGE = "Splash Damage",
     EDENS_BLESSING = "Eden's Blessing",
     GREED_LOOMS = "Greed Looms",
+    TAX_FOR_THE_MIGHTY = "Tax for The Mighty",
+    SHADOW_OF_FAMINE = "Shadow of Famine",
+    BLESSING_OF_STEAM = "Blessing of Steam",
 }
 
 
@@ -40,6 +43,9 @@ local RoomEvents = {
     [16] = Resouled.RoomEvents.SPLASH_DAMAGE,
     [17] = Resouled.RoomEvents.EDENS_BLESSING,
     [18] = Resouled.RoomEvents.GREED_LOOMS,
+    [19] = Resouled.RoomEvents.TAX_FOR_THE_MIGHTY,
+    [20] = Resouled.RoomEvents.SHADOW_OF_FAMINE,
+    [21] = Resouled.RoomEvents.BLESSING_OF_STEAM,
 }
 
 local ENEMY_ONLY = {
@@ -74,6 +80,8 @@ local ITEM_IN_ROOM_ONLY = {
 
 local SHOP_ONLY = {
     [18] = true,
+    [19] = true,
+    [21] = true,
 }
 
 local TAINTED_LOST_BLACKLIST = {
@@ -85,6 +93,8 @@ local ROOM_EVENTS_DESPAWN_BLACKLIST = {
     [Resouled.RoomEvents.SHADOW_OF_WAR] = true,
     [Resouled.RoomEvents.STATIC_SHOCK] = true,
     [Resouled.RoomEvents.GREED_LOOMS] = true,
+    [Resouled.RoomEvents.TAX_FOR_THE_MIGHTY] = true,
+    [Resouled.RoomEvents.BLESSING_OF_STEAM] = true,
 }
 
 local BASE_ROOM_EVENT_NUM_PER_FLOOR = 2
@@ -137,7 +147,7 @@ local function postNewRoom()
         end
     end
     
-    if not ROOM_SAVE.RoomEvent and ROOM_SAVE.ResouledSpawnRoomEvent then
+    if not ROOM_SAVE.RoomEvent then
         local rng = RNG(room:GetAwardSeed())
         local pickupsPresent = false
         local itemsPresent = false
@@ -171,7 +181,7 @@ local function postNewRoom()
         
         Resouled:NewSeed()
         local randomNum = rng:RandomInt(#RoomEvents) + 1
-        --local randomNum = 18
+        --local randomNum = 20
         
         
         
@@ -238,3 +248,6 @@ include("scripts.room_events.red_vise")
 include("scripts.room_events.splash_damage")
 include("scripts.room_events.edens_blessing")
 include("scripts.room_events.greed_looms")
+include("scripts.room_events.tax_for_the_mighty")
+include("scripts.room_events.shadow_of_famine")
+include("scripts.room_events.blessing_of_steam")

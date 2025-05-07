@@ -139,7 +139,6 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
 local function postNewRoom()
     local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
     local room = Game():GetRoom()
-    local roomType = room:GetType()
     
     if ROOM_SAVE.RoomEvent then
         if ROOM_SAVE.RoomEvent == "Null" then
@@ -149,6 +148,7 @@ local function postNewRoom()
     
     if not ROOM_SAVE.RoomEvent and ROOM_SAVE.ResouledSpawnRoomEvent then
         local rng = RNG(room:GetAwardSeed())
+        local roomType = room:GetType()
         local pickupsPresent = false
         local itemsPresent = false
         local tLostPresent = false
@@ -165,7 +165,7 @@ local function postNewRoom()
                 end
             end
             
-            if entity:IsEnemy() then
+            if entity:IsEnemy() and entity:IsActiveEnemy() then
                 enemiesPresent = true
             end
         end)
@@ -184,13 +184,12 @@ local function postNewRoom()
         --local randomNum = 20
         
         
-        
         if (roomType == RoomType.ROOM_BOSS and BOSS_ROOM_BLACKLIST[randomNum]) or
         (tLostPresent and TAINTED_LOST_BLACKLIST[randomNum]) or
         (PICKUP_ONLY[randomNum] and not pickupsPresent) or
         (BOSS_ROOM_ONLY[randomNum] and roomType ~= RoomType.ROOM_BOSS) or
         (ITEM_IN_ROOM_ONLY[randomNum] and not itemsPresent) or
-        (SHOP_ONLY[randomNum] and not roomType == RoomType.ROOM_SHOP) or
+        (SHOP_ONLY[randomNum] and roomType ~= RoomType.ROOM_SHOP) or
         (ENEMY_ONLY[randomNum] and not enemiesPresent) or
         (UNCLEAR_ROOM_ONLY[randomNum] and roomClear)
         then

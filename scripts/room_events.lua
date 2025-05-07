@@ -147,7 +147,7 @@ local function postNewRoom()
         end
     end
     
-    if not ROOM_SAVE.RoomEvent then
+    if not ROOM_SAVE.RoomEvent and ROOM_SAVE.ResouledSpawnRoomEvent then
         local rng = RNG(room:GetAwardSeed())
         local pickupsPresent = false
         local itemsPresent = false

@@ -15,6 +15,9 @@ Resouled.RoomEvents = {
     MAGGYS_BLESSING = "Maggy's Blessing",
     SAMSONS_BLESSING = "Samson's Blessing",
     RED_VISE = "Red Vise",
+    SPLASH_DAMAGE = "Splash Damage",
+    EDENS_BLESSING = "Eden's Blessing",
+    GREED_LOOMS = "Greed Looms",
 }
 
 
@@ -34,6 +37,9 @@ local RoomEvents = {
     [13] = Resouled.RoomEvents.MAGGYS_BLESSING,
     [14] = Resouled.RoomEvents.SAMSONS_BLESSING,
     [15] = Resouled.RoomEvents.RED_VISE,
+    [16] = Resouled.RoomEvents.SPLASH_DAMAGE,
+    [17] = Resouled.RoomEvents.EDENS_BLESSING,
+    [18] = Resouled.RoomEvents.GREED_LOOMS,
 }
 
 local BOSS_ROOM_BLACKLIST = {
@@ -44,10 +50,19 @@ local BOSS_ROOM_ONLY = {
     [12] = true,
 }
 
+local ITEM_IN_ROOM_ONLY = {
+    [17] = true,
+}
+
+local SHOP_ONLY = {
+    [18] = true,
+}
+
 local ROOM_EVENTS_DESPAWN_BLACKLIST = {
     [Resouled.RoomEvents.BUTTER_FINGERS] = true,
     [Resouled.RoomEvents.SHADOW_OF_WAR] = true,
     [Resouled.RoomEvents.STATIC_SHOCK] = true,
+    [Resouled.RoomEvents.GREED_LOOMS] = true,
 }
 
 --local ROOM_EVENT_CHANCE = 0.005
@@ -72,6 +87,7 @@ local function postNewRoom()
         if randomFloat < ROOM_EVENT_CHANCE then
 
             local pickupsPresent = false
+            local itemsPresent = false
             local tLostPresent = false
 
             ---@param entity Entity
@@ -79,6 +95,9 @@ local function postNewRoom()
                 local pickup = entity:ToPickup()
                 if pickup then
                     pickupsPresent = true
+                    if pickup.Variant == PickupVariant.PICKUP_COLLECTIBLE then
+                        itemsPresent = true
+                    end
                 end
             end)
 
@@ -93,13 +112,16 @@ local function postNewRoom()
 
             Resouled:NewSeed()
             local randomNum = rng:RandomInt(#RoomEvents) + 1
-            --local randomNum = 14
+            --local randomNum = 18
 
 
 
             if (roomType == RoomType.ROOM_BOSS and BOSS_ROOM_BLACKLIST[randomNum]) or
             tLostPresent or (randomNum == 6 and not pickupsPresent) or
-            (BOSS_ROOM_ONLY[randomNum] and roomType ~= RoomType.ROOM_BOSS) then
+            (BOSS_ROOM_ONLY[randomNum] and roomType ~= RoomType.ROOM_BOSS) or
+            (ITEM_IN_ROOM_ONLY[randomNum] and not itemsPresent) or
+            (SHOP_ONLY[randomNum] and not roomType == RoomType.ROOM_SHOP)
+            then
                 goto RollRoomEvent
             end
 
@@ -152,3 +174,6 @@ include("scripts.room_events.spoils_of_war")
 include("scripts.room_events.maggys_blessing")
 include("scripts.room_events.samsons_blessing")
 include("scripts.room_events.red_vise")
+include("scripts.room_events.splash_damage")
+include("scripts.room_events.edens_blessing")
+include("scripts.room_events.greed_looms")

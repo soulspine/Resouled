@@ -6,18 +6,20 @@ function vectorModule:GetScreenDimensions()
     return Vector(Isaac.GetScreenWidth(), Isaac.GetScreenHeight())
 end
 
+local DISTANCE_FROM_GRID_ENTITY_CENTER = 25
+
 ---@param vector Vector
 ---@param entity1Pos Vector
 ---@param entity2Pos Vector
 function vectorModule:GetBounceOffGridElementVector(vector, entity1Pos, entity2Pos)
     local dirHelper = entity2Pos - entity1Pos
-    if dirHelper.X > 0 and dirHelper.Y >= -20 and dirHelper.Y <= 20 then
+    if dirHelper.X > 0 and dirHelper.Y >= -DISTANCE_FROM_GRID_ENTITY_CENTER and dirHelper.Y <= DISTANCE_FROM_GRID_ENTITY_CENTER then
         vector.X = -vector.X
-    elseif dirHelper.X < 0 and dirHelper.Y >= -20 and dirHelper.Y <= 20 then
+    elseif dirHelper.X < 0 and dirHelper.Y >= -DISTANCE_FROM_GRID_ENTITY_CENTER and dirHelper.Y <= DISTANCE_FROM_GRID_ENTITY_CENTER then
         vector.X = -vector.X
-    elseif dirHelper.Y > 0 and dirHelper.X >= -20 and dirHelper.X <= 20 then
+    elseif dirHelper.Y > 0 and dirHelper.X >= -DISTANCE_FROM_GRID_ENTITY_CENTER and dirHelper.X <= DISTANCE_FROM_GRID_ENTITY_CENTER then
         vector.Y = -vector.Y
-    elseif dirHelper.Y < 0 and dirHelper.X >= -20 and dirHelper.X <= 20 then
+    elseif dirHelper.Y < 0 and dirHelper.X >= -DISTANCE_FROM_GRID_ENTITY_CENTER and dirHelper.X <= DISTANCE_FROM_GRID_ENTITY_CENTER then
         vector.Y = -vector.Y
     end
     return vector

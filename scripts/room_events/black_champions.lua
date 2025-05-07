@@ -2,7 +2,7 @@ local function postNewRoom()
     if Resouled:RoomEventPresent(Resouled.RoomEvents.BLACK_CHAMPIONS) then
         ---@param entity Entity
         Resouled.Iterators:IterateOverRoomEntities(function(entity)
-            if entity:IsEnemy() and entity:IsActiveEnemy() and not entity:IsBoss() then
+            if entity:IsEnemy() and entity:IsActiveEnemy() and not entity:IsBoss() and entity:IsVulnerableEnemy() then
                 local npc = entity:ToNPC()
                 if npc then
                     local hp = npc.HitPoints

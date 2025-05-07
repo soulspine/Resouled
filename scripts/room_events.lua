@@ -91,6 +91,9 @@ local BASE_ROOM_EVENT_NUM_PER_FLOOR = 2
 local ROOM_EVENTS_TO_ADD_PER_STAGE = 1
 
 local function postNewFloor()
+    if Game():GetLevel():GetStage() == 9 then --HUSH
+        return
+    end
     local rooms = Game():GetLevel():GetRooms()
     local roomEventsToAdd = (Game():GetLevel():GetStage()+1)//2
     local roomEventsToAppear = BASE_ROOM_EVENT_NUM_PER_FLOOR + roomEventsToAdd * ROOM_EVENTS_TO_ADD_PER_STAGE

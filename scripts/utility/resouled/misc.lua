@@ -39,6 +39,31 @@ function Resouled:SpawnChaosItemOfQuality(quality, rng, position, spawner)
     return nil
 end
 
+---@param pool ItemPoolType
+---@param rng RNG
+---@param position Vector
+---@param spawner? Entity
+function Resouled:SpawnItemFromPool(pool, rng, position, spawner)
+    local DEFAULT_ITEM = CollectibleType.COLLECTIBLE_BREAKFAST
+    local itemsFromTargetPool = Game():GetItemPool():GetCollectiblesFromPool(pool)
+    local validItems = {}
+    for i = 1, #itemsFromTargetPool do
+        local id = itemsFromTargetPool[i].itemID
+        if not Isaac.GetItemConfig():GetCollectible(id):HasTags(ItemConfig.TAG_QUEST) and Game():GetItemPool():CanSpawnCollectible(id, false) then
+            table.insert(validItems, id)
+        end
+    end
+    
+    local itemID = #validItems > 0 and validItems[rng:RandomInt(#validItems) + 1] or DEFAULT_ITEM
+
+    Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, position, Vector.Zero, spawner, 0, Resouled:NewSeed())
+    if itemID then
+        Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, position, Vector.Zero, spawner, itemID, rng:GetSeed())
+        Game():GetItemPool():RemoveCollectible(itemID)
+        Resouled:NewSeed()
+    end
+end
+
 function Resouled:GetRoomPickupsValue()
     local roomValue = 0
     ---@param entity Entity

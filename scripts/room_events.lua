@@ -87,8 +87,41 @@ local ROOM_EVENTS_DESPAWN_BLACKLIST = {
     [Resouled.RoomEvents.GREED_LOOMS] = true,
 }
 
---local ROOM_EVENT_CHANCE = 0.005
-local ROOM_EVENT_CHANCE = 1
+local BASE_ROOM_EVENT_NUM_PER_FLOOR = 2
+local ROOM_EVENTS_TO_ADD_PER_STAGE = 1
+
+local function postNewFloor()
+    local rooms = Game():GetLevel():GetRooms()
+    local roomEventsToAdd = (Game():GetLevel():GetStage()+1)//2
+    local roomEventsToAppear = BASE_ROOM_EVENT_NUM_PER_FLOOR + roomEventsToAdd * ROOM_EVENTS_TO_ADD_PER_STAGE
+    local rng = RNG()
+    local correctRooms = {}
+
+    for i = 0, rooms.Size-1 do
+        local room = rooms:Get(i)
+        table.insert(correctRooms, room.ListIndex)
+    end
+
+    rng:SetSeed(Game():GetLevel():GetDevilAngelRoomRNG():GetSeed())
+
+    for _ = 1, roomEventsToAppear do
+        ::RollRoom::
+        Resouled:NewSeed()
+
+        local randomRoomIndex = rng:RandomInt(#correctRooms)
+        local roomGridIndex = correctRooms[randomRoomIndex]
+
+        if correctRooms[randomRoomIndex] == nil then
+            goto RollRoom
+        end
+        
+        local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(nil, false, roomGridIndex)
+        ROOM_SAVE.ResouledSpawnRoomEvent = true
+
+        table.remove(correctRooms, randomRoomIndex)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
 
 local function postNewRoom()
     local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
@@ -101,65 +134,59 @@ local function postNewRoom()
         end
     end
     
-    if not ROOM_SAVE.RoomEvent then
+    if not ROOM_SAVE.RoomEvent and ROOM_SAVE.ResouledSpawnRoomEvent then
         local rng = RNG(room:GetAwardSeed())
+        local pickupsPresent = false
+        local itemsPresent = false
+        local tLostPresent = false
+        local enemiesPresent = false
+        local roomClear = room:IsClear()
         
-        local randomFloat = rng:RandomFloat()
-        
-        if randomFloat < ROOM_EVENT_CHANCE then
-
-            local pickupsPresent = false
-            local itemsPresent = false
-            local tLostPresent = false
-            local enemiesPresent = false
-            local roomClear = room:IsClear()
-
-            ---@param entity Entity
-            Resouled.Iterators:IterateOverRoomEntities(function(entity)
-                local pickup = entity:ToPickup()
-                if pickup then
-                    pickupsPresent = true
-                    if pickup.Variant == PickupVariant.PICKUP_COLLECTIBLE then
-                        itemsPresent = true
-                    end
+        ---@param entity Entity
+        Resouled.Iterators:IterateOverRoomEntities(function(entity)
+            local pickup = entity:ToPickup()
+            if pickup then
+                pickupsPresent = true
+                if pickup.Variant == PickupVariant.PICKUP_COLLECTIBLE then
+                    itemsPresent = true
                 end
-
-                if entity:IsEnemy() then
-                    enemiesPresent = true
-                end
-            end)
-
-            ---@param player EntityPlayer
-            Resouled.Iterators:IterateOverPlayers(function(player)
-                if player:GetPlayerType() == PlayerType.PLAYER_THELOST_B then
-                    tLostPresent = true
-                end
-            end)
-            
-            ::RollRoomEvent::
-
-            Resouled:NewSeed()
-            local randomNum = rng:RandomInt(#RoomEvents) + 1
-            --local randomNum = 18
-
-
-
-            if (roomType == RoomType.ROOM_BOSS and BOSS_ROOM_BLACKLIST[randomNum]) or
-            (tLostPresent and TAINTED_LOST_BLACKLIST[randomNum]) or
-            (PICKUP_ONLY[randomNum] and not pickupsPresent) or
-            (BOSS_ROOM_ONLY[randomNum] and roomType ~= RoomType.ROOM_BOSS) or
-            (ITEM_IN_ROOM_ONLY[randomNum] and not itemsPresent) or
-            (SHOP_ONLY[randomNum] and not roomType == RoomType.ROOM_SHOP) or
-            (ENEMY_ONLY[randomNum] and not enemiesPresent) or
-            (UNCLEAR_ROOM_ONLY[randomNum] and roomClear)
-            then
-                goto RollRoomEvent
             end
-
-            ROOM_SAVE.RoomEvent = RoomEvents[randomNum]
             
-            Game():GetHUD():ShowFortuneText(ROOM_SAVE.RoomEvent)
+            if entity:IsEnemy() then
+                enemiesPresent = true
+            end
+        end)
+        
+        ---@param player EntityPlayer
+        Resouled.Iterators:IterateOverPlayers(function(player)
+            if player:GetPlayerType() == PlayerType.PLAYER_THELOST_B then
+                tLostPresent = true
+            end
+        end)
+        
+        ::RollRoomEvent::
+        
+        Resouled:NewSeed()
+        local randomNum = rng:RandomInt(#RoomEvents) + 1
+        --local randomNum = 18
+        
+        
+        
+        if (roomType == RoomType.ROOM_BOSS and BOSS_ROOM_BLACKLIST[randomNum]) or
+        (tLostPresent and TAINTED_LOST_BLACKLIST[randomNum]) or
+        (PICKUP_ONLY[randomNum] and not pickupsPresent) or
+        (BOSS_ROOM_ONLY[randomNum] and roomType ~= RoomType.ROOM_BOSS) or
+        (ITEM_IN_ROOM_ONLY[randomNum] and not itemsPresent) or
+        (SHOP_ONLY[randomNum] and not roomType == RoomType.ROOM_SHOP) or
+        (ENEMY_ONLY[randomNum] and not enemiesPresent) or
+        (UNCLEAR_ROOM_ONLY[randomNum] and roomClear)
+        then
+            goto RollRoomEvent
         end
+        
+        ROOM_SAVE.RoomEvent = RoomEvents[randomNum]
+        
+        Game():GetHUD():ShowFortuneText(ROOM_SAVE.RoomEvent)
     else
         if not ROOM_EVENTS_DESPAWN_BLACKLIST[ROOM_SAVE.RoomEvent] then
             ROOM_SAVE.RoomEvent = "Null"

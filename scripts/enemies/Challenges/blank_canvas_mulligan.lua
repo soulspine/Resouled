@@ -4,6 +4,9 @@ local MULLIGAN_VARIANT = Isaac.GetEntityVariantByName("Blank Canvas Mulligan")
 local FLY_TYPE = Isaac.GetEntityTypeByName("Blank Canvas Fly")
 local FLY_VARIANT = Isaac.GetEntityVariantByName("Blank Canvas Fly")
 
+local GORE_VARIANT = Isaac.GetEntityVariantByName("Paper Gore Particle 1")
+local GORE_PARTICLE_COUNT = 15
+
 local IDLE = "Idle"
 local WALK = "Walk"
 local FLIP = "Flip"
@@ -84,8 +87,11 @@ local function postNpcDeath(_, npc)
     if npc.Variant == MULLIGAN_VARIANT then
         for i = 1, DEATH_FLY_COUNT do
             Game():Spawn(FLY_TYPE, FLY_VARIANT, npc.Position + Vector(math.random(-2, 2), math.random(-2, 2)), Vector.Zero, nil, 0, npc.InitSeed)
-            local randomNum = math.random(1, 3)
-            SFXManager():Play(DEATH_SOUND_TABLE[randomNum])
+        end
+        local randomNum = math.random(1, 3)
+        SFXManager():Play(DEATH_SOUND_TABLE[randomNum])
+        for _ = 1, GORE_PARTICLE_COUNT + math.random(-1, 1) do
+            Game():SpawnParticles(npc.Position, GORE_VARIANT, 1, math.random(3, 11), Color.Default, 0, math.random(1, 10)-1)
         end
     end
 end

@@ -42,6 +42,24 @@ local RoomEvents = {
     [18] = Resouled.RoomEvents.GREED_LOOMS,
 }
 
+local ENEMY_ONLY = {
+    [1] = true,
+    [3] = true,
+    [5] = true,
+    [7] = true,
+    [9] = true,
+    [16] = true,
+}
+
+local PICKUP_ONLY = {
+    [6] = true,
+}
+
+local UNCLEAR_ROOM_ONLY = {
+    [4] = true,
+    [7] = true,
+}
+
 local BOSS_ROOM_BLACKLIST = {
     [4] = true,
 }
@@ -56,6 +74,10 @@ local ITEM_IN_ROOM_ONLY = {
 
 local SHOP_ONLY = {
     [18] = true,
+}
+
+local TAINTED_LOST_BLACKLIST = {
+    [2] = true,
 }
 
 local ROOM_EVENTS_DESPAWN_BLACKLIST = {
@@ -89,6 +111,8 @@ local function postNewRoom()
             local pickupsPresent = false
             local itemsPresent = false
             local tLostPresent = false
+            local enemiesPresent = false
+            local roomClear = room:IsClear()
 
             ---@param entity Entity
             Resouled.Iterators:IterateOverRoomEntities(function(entity)
@@ -98,6 +122,10 @@ local function postNewRoom()
                     if pickup.Variant == PickupVariant.PICKUP_COLLECTIBLE then
                         itemsPresent = true
                     end
+                end
+
+                if entity:IsEnemy() then
+                    enemiesPresent = true
                 end
             end)
 
@@ -117,10 +145,13 @@ local function postNewRoom()
 
 
             if (roomType == RoomType.ROOM_BOSS and BOSS_ROOM_BLACKLIST[randomNum]) or
-            tLostPresent or (randomNum == 6 and not pickupsPresent) or
+            (tLostPresent and TAINTED_LOST_BLACKLIST[randomNum]) or
+            (PICKUP_ONLY[randomNum] and not pickupsPresent) or
             (BOSS_ROOM_ONLY[randomNum] and roomType ~= RoomType.ROOM_BOSS) or
             (ITEM_IN_ROOM_ONLY[randomNum] and not itemsPresent) or
-            (SHOP_ONLY[randomNum] and not roomType == RoomType.ROOM_SHOP)
+            (SHOP_ONLY[randomNum] and not roomType == RoomType.ROOM_SHOP) or
+            (ENEMY_ONLY[randomNum] and not enemiesPresent) or
+            (UNCLEAR_ROOM_ONLY[randomNum] and roomClear)
             then
                 goto RollRoomEvent
             end

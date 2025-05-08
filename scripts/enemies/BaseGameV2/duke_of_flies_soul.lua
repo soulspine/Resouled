@@ -143,11 +143,3 @@ local function onFlyDeathEffectInit(_, effect)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, onFlyDeathEffectInit, 1) -- effect idx that duke spawns
-
----@param npc EntityNPC
-local function onNpcDeath(_, npc)
-    if npc.Variant ~= DUKE_OF_FLIES_SOUL_VARIANT then
-        Resouled:TrySpawnSoulPickup(Resouled.Souls.DUKE, npc.Position)
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNpcDeath, EntityType.ENTITY_DUKE)

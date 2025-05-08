@@ -175,11 +175,3 @@ local function onNpcUpdate(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, onNpcUpdate, LITTLE_HORN_SOUL_TYPE)
-
----@param npc EntityNPC
-local function onNpcDeath(_, npc)
-    if npc.Variant ~= LITTLE_HORN_SOUL_VARIANT and npc.Variant ~= 1 and npc.Variant ~= SOUL_BALL_VARIANT then --npc.Variant 1 is little horn's dark ball
-        Resouled:TrySpawnSoulPickup(Resouled.Souls.LITTLE_HORN, npc.Position)
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNpcDeath, LITTLE_HORN_SOUL_TYPE)

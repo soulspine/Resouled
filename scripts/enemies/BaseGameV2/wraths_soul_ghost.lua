@@ -98,11 +98,3 @@ local function disableTentacleAI(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, disableTentacleAI, WRATHS_SOUL_GHOST_TYPE)
-
----@param npc EntityNPC
-local function onNpcDeath(_, npc)
-    if npc.Variant ~= WRATHS_SOUL_GHOST_VARIANT then
-        Resouled:TrySpawnSoulPickup(Resouled.Souls.WRATH, npc.Position)
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNpcDeath, WRATHS_SOUL_GHOST_TYPE)

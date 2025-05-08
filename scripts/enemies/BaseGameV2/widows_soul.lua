@@ -106,11 +106,3 @@ local function onNpcUpdate(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, onNpcUpdate, WIDOWS_SOUL_TYPE)
-
----@param npc EntityNPC
-local function onNpcDeath(_, npc)
-    if npc.Variant ~= WIDOWS_SOUL_VARIANT then 
-        Resouled:TrySpawnSoulPickup(Resouled.Souls.WIDOW, npc.Position)
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNpcDeath, EntityType.ENTITY_WIDOW)

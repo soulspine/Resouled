@@ -227,11 +227,3 @@ local function onEntityUpdate(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, onEntityUpdate, BLOATS_SOUL_TYPE)
-
----@param npc EntityNPC
-local function onNpcDeath(_, npc)
-    if npc.Variant ~= BLOATS_SOUL_VARIANT and npc.Variant ~= 10 and npc.Variant ~= 11 then --variants 10 and 11 are eyes
-        Resouled:TrySpawnSoulPickup(Resouled.Souls.BLOAT, npc.Position)
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNpcDeath,BLOATS_SOUL_TYPE)

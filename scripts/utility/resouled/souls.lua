@@ -88,16 +88,9 @@ Resouled.Souls = {
     THE_BEAST = 82,
 }
 
-include("scripts.utility.resouled.soul_spawning")
-
 local DEFAULT_WEIGHT = 1
-local CUSTOM_WEIGHTS = {
-    --[Resouled.Souls.MONSTRO] = 3, -- EXAMPLE
-}
 
-
-
-
+local BASIC_SPAWN_LOOKUP_TABLE = {} -- NOT STATIC, POPULATED AT RUNTIME by Resouled:AddNewBasicSoulSpawnRule
 
 local font = Font()
 font:Load("font/luaminioutlined.fnt")
@@ -146,18 +139,20 @@ end
 
 ---@param soul ResouledSoul
 ---@param position Vector
+---@param weight? integer -- default 1
 ---@return boolean
-function Resouled:TrySpawnSoulPickup(soul, position)
+function Resouled:TrySpawnSoulPickup(soul, position, weight)
     local runSave = SAVE_MANAGER.GetRunSave()
     if
     runSave.Souls and
-    not runSave.Souls.Spawned[soul] and
+    not runSave.Souls.Spawned[tostring(soul)] and
     not Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_SOULLESS) then
         local pickup = Game():Spawn(EntityType.ENTITY_PICKUP, SOUL_PICKUP_VARIANT, position, Vector.Zero, nil, 0, Resouled:NewSeed())
-        if CUSTOM_WEIGHTS[soul] then
+        if weight and weight ~= DEFAULT_WEIGHT then
             local pickupSave = SAVE_MANAGER.GetRoomFloorSave(pickup)
-            pickupSave.SoulWeight = CUSTOM_WEIGHTS[soul]
+            pickupSave.SoulWeight = weight
         end
+        runSave.Souls.Spawned[tostring(soul)] = true
         return true
     else
         return false
@@ -166,7 +161,7 @@ end
 
 ---@param pickup EntityPickup
 local function onSoulPickupInit(_, pickup)
-    pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
+    pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onSoulPickupInit, SOUL_PICKUP_VARIANT)
 
@@ -186,3 +181,59 @@ local function onSoulPickupCollision(_, pickup, collider, low)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onSoulPickupCollision, SOUL_PICKUP_VARIANT)
+
+local function makeLookupTableKey(type, variant, subtype)
+    return string.format("%d_%d_%d", type, variant, subtype)
+end
+
+---@param type EntityType
+---@param variant integer
+---@param subtype integer
+---@param soul ResouledSoul
+---@param weight? integer -- default 1
+---@param filter? function -- default nil
+function Resouled:AddNewBasicSoulSpawnRule(type, variant, subtype, soul, weight, filter)
+    weight = weight or DEFAULT_WEIGHT
+    local key = makeLookupTableKey(type, variant, subtype)
+
+    if not BASIC_SPAWN_LOOKUP_TABLE[key] then
+        BASIC_SPAWN_LOOKUP_TABLE[key] = {}
+    end
+
+    table.insert(
+        BASIC_SPAWN_LOOKUP_TABLE[key], 
+        {
+            Soul = soul,
+            Weight = weight,
+            Filter = filter,
+        }
+    )
+end
+
+---@param npc EntityNPC
+local function basicSoulSpawnHandler(_, npc)
+    local key = makeLookupTableKey(npc.Type, npc.Variant, npc.SubType)
+    local spawnRules = BASIC_SPAWN_LOOKUP_TABLE[key]
+    if spawnRules then
+        for _, rule in ipairs(spawnRules) do
+
+            if rule.Filter and not rule.Filter(npc) then
+                goto continue -- skip this rule if the filter is not met
+            end
+
+            Resouled:TrySpawnSoulPickup(rule.Soul, npc.Position, rule.Weight)
+            ::continue::
+        end
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, basicSoulSpawnHandler)
+
+function Resouled:GetNumBasicSoulSpawnRules()
+    local num = 0
+    for _, rules in pairs(BASIC_SPAWN_LOOKUP_TABLE) do
+        for _, rule in ipairs(rules) do
+            num = num + rule.Weight
+        end
+    end
+    return num
+end

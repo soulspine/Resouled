@@ -2,26 +2,53 @@
 Resouled = RegisterMod("Resouled", 1)
 
 if REPENTOGON and MinimapAPI then
+
+    -- ALL EXTERNAL IMPORTS
+
     ---@type SaveManager
     SAVE_MANAGER = include("scripts.utility.save_manager")
     SAVE_MANAGER.Init(Resouled)
 
+    ---@type AccurateStatsModule
     Resouled.AccurateStats = include("scripts.utility.accurate_stats")
+
+    ---@type DoorsModule
     Resouled.Doors = include("scripts.utility.doors")
+
+    ---@type IteratorsModule
     Resouled.Iterators = include("scripts.utility.iterators")
+
+    ---@type CollectiblextensionModule
     Resouled.Collectiblextension = include("scripts.utility.collectiblextension")
+
+    ---@type FamiliarTargetingModule
     Resouled.FamiliarTargeting = include("scripts.utility.familiar_targeting")
+
+    ---@type NpcHaloModule
     Resouled.NpcHalo = include("scripts.utility.npc_halo")
+
+    ---@type VectorModule
     Resouled.Vector = include("scripts.utility.vector")
+
+    ---@type PullingModule
     Resouled.Pulling = include("scripts.utility.pulling")
+
+    ---@type PricesModule
     Resouled.Prices = include("scripts.utility.prices")
+
+    ---@type ProceduralMaxChargeModule
     Resouled.ProceduralMaxCharge = include("scripts.utility.procedural_max_charge")
+
+
+    -- ALL MODULES UNIQUE TO RESOULED
 
     include("scripts.utility.resouled.souls")
     include("scripts.utility.resouled.tear_effects")
     include("scripts.utility.resouled.curses")
     include("scripts.utility.resouled.misc")
 
+
+    --- ALL RESOULED SCRIPTS
 
     include("scripts.character_start")
     include("scripts.items")
@@ -32,10 +59,9 @@ if REPENTOGON and MinimapAPI then
     include("scripts.challenges")
     include("scripts.pickups")
     include("scripts.room_events")
+    include("scripts.souls")
 
-    include("scripts.special_souls")
-
-else
+else -- REPENTOGON AND MINIMAPI NOT FOUND
     local messages = {
         "Please enable REPENTOGON script extender,",
         "Install MiniMAPI: A Minimap API",

@@ -1,3 +1,7 @@
+function Resouled:Log(...)
+    print("[Resouled]", ...)
+end
+
 --- Spawns a random chaos pool item of the specified quality at specified position
 ---@param quality integer
 ---@param rng RNG
@@ -43,8 +47,11 @@ end
 ---@param rng RNG
 ---@param position Vector
 ---@param spawner? Entity
-function Resouled:SpawnItemFromPool(pool, rng, position, spawner)
-    local DEFAULT_ITEM = CollectibleType.COLLECTIBLE_BREAKFAST
+---@param defaultItem? CollectibleType @Item that will spawn if pool is exhausted, defaults to CollectibleType.COLLECTIBLE_BREAKFAST
+---@return EntityPickup | nil @Item that was spawned or `nil` if no item was spawned
+function Resouled:SpawnItemFromPool(pool, rng, position, spawner, defaultItem)
+    local game = Game()
+    local DEFAULT_ITEM = defaultItem or CollectibleType.COLLECTIBLE_BREAKFAST
     local itemsFromTargetPool = Game():GetItemPool():GetCollectiblesFromPool(pool)
     local validItems = {}
     for i = 1, #itemsFromTargetPool do
@@ -56,12 +63,10 @@ function Resouled:SpawnItemFromPool(pool, rng, position, spawner)
     
     local itemID = #validItems > 0 and validItems[rng:RandomInt(#validItems) + 1] or DEFAULT_ITEM
 
-    Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, position, Vector.Zero, spawner, 0, Resouled:NewSeed())
-    if itemID then
-        Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, position, Vector.Zero, spawner, itemID, rng:GetSeed())
-        Game():GetItemPool():RemoveCollectible(itemID)
-        Resouled:NewSeed()
-    end
+    game:Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, position, Vector.Zero, spawner, 0, Resouled:NewSeed())
+    game:GetItemPool():RemoveCollectible(itemID)
+    local newItem = game:Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, position, Vector.Zero, spawner, itemID, rng:GetSeed())
+    return newItem and newItem:ToPickup() or nil -- return pickup if spawned, nil otherwise
 end
 
 function Resouled:GetRoomPickupsValue()

@@ -132,6 +132,10 @@ local function postNewFloor()
         
     rng:SetSeed(Game():GetLevel():GetDevilAngelRoomRNG():GetSeed())
     
+    if roomEventsThisFloor == nil then
+        roomEventsThisFloor = 1
+    end
+
     for _ = 1, roomEventsThisFloor do
         ::RollRoom::
         Resouled:NewSeed()

@@ -101,8 +101,7 @@ local BASE_ROOM_EVENT_NUM_PER_FLOOR = 2
 local ROOM_EVENTS_TO_ADD_PER_STAGE = 1
 
 local function postNewFloor()
-    print((Game():GetLevel():GetStage()+1)//2)
-    if Game():GetLevel():GetStage() == 9 then --HUSH
+    if Game():GetLevel():GetStage() == 9 or Game():GetLevel():GetStage() == 1 or Game():GetLevel():GetStage() == 2 then --HUSH and no basement
         return
     end
     local RUN_SAVE = SAVE_MANAGER.GetRunSave()
@@ -123,7 +122,6 @@ local function postNewFloor()
         roomEventsThisFloor = RUN_SAVE.ResouledRoomEventsForThisChapter
     end
         
-    print(RUN_SAVE.ResouledRoomEventsForThisChapter, roomEventsThisFloor)
     
     for i = 0, rooms.Size-1 do
         local room = rooms:Get(i)

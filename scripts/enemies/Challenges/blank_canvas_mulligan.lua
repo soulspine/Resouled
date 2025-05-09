@@ -20,6 +20,8 @@ local DEATH1_SFX = Isaac.GetSoundIdByName("Paper Death 1")
 local DEATH2_SFX = Isaac.GetSoundIdByName("Paper Death 2")
 local DEATH3_SFX = Isaac.GetSoundIdByName("Paper Death 3")
 
+local SFX_VOLUME = 1.5
+
 local DEATH_SOUND_TABLE = {
     [1] = DEATH1_SFX,
     [2] = DEATH2_SFX,
@@ -74,7 +76,7 @@ local function npcUpdate(_, npc)
         end
 
         if sprite:IsEventTriggered(FLIP_START_TRIGGER) then
-            SFXManager():Play(FLIP_SFX)
+            SFXManager():Play(FLIP_SFX, SFX_VOLUME)
         end
 
         npc.Velocity = (npc.Velocity + (npc.Position - npc:GetPlayerTarget().Position):Normalized()) * VELOCITY_MULTIPLIER
@@ -89,7 +91,7 @@ local function postNpcDeath(_, npc)
             Game():Spawn(FLY_TYPE, FLY_VARIANT, npc.Position + Vector(math.random(-2, 2), math.random(-2, 2)), Vector.Zero, nil, 0, npc.InitSeed)
         end
         local randomNum = math.random(1, 3)
-        SFXManager():Play(DEATH_SOUND_TABLE[randomNum])
+        SFXManager():Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
         for _ = 1, GORE_PARTICLE_COUNT + math.random(-1, 1) do
             Game():SpawnParticles(npc.Position, GORE_VARIANT, 1, math.random(3, 11), Color.Default, 0, math.random(1, 10)-1)
         end

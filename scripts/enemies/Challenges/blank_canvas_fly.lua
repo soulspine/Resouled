@@ -14,6 +14,8 @@ local DEATH1_SFX = Isaac.GetSoundIdByName("Paper Death 1")
 local DEATH2_SFX = Isaac.GetSoundIdByName("Paper Death 2")
 local DEATH3_SFX = Isaac.GetSoundIdByName("Paper Death 3")
 
+local SFX_VOLUME = 1.5
+
 local DEATH_SOUND_TABLE = {
     [1] = DEATH1_SFX,
     [2] = DEATH2_SFX,
@@ -49,7 +51,7 @@ Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, npcUpdate, FLY_TYPE)
 local function postNpcDeath(_, npc)
     if npc.Variant == FLY_VARIANT then
         local randomNum = math.random(1, 3)
-        SFXManager():Play(DEATH_SOUND_TABLE[randomNum])
+        SFXManager():Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
         for _ = 1, GORE_PARTICLE_COUNT + math.random(-1, 1) do
             Game():SpawnParticles(npc.Position, GORE_VARIANT, 1, math.random(3, 11), Color.Default, 0, math.random(1, 10)-1)
         end

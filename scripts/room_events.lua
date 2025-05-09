@@ -21,6 +21,7 @@ Resouled.RoomEvents = {
     TAX_FOR_THE_MIGHTY = "Tax for The Mighty",
     SHADOW_OF_FAMINE = "Shadow of Famine",
     BLESSING_OF_STEAM = "Blessing of Steam",
+    BLESSING_OF_INNER_EYE = "Blessing of Inner Eye",
 }
 
 
@@ -46,6 +47,7 @@ local RoomEvents = {
     [19] = Resouled.RoomEvents.TAX_FOR_THE_MIGHTY,
     [20] = Resouled.RoomEvents.SHADOW_OF_FAMINE,
     [21] = Resouled.RoomEvents.BLESSING_OF_STEAM,
+    [22] = Resouled.RoomEvents.BLESSING_OF_INNER_EYE,
 }
 
 local ENEMY_ONLY = {
@@ -265,3 +267,4 @@ include("scripts.room_events.greed_looms")
 include("scripts.room_events.tax_for_the_mighty")
 include("scripts.room_events.shadow_of_famine")
 include("scripts.room_events.blessing_of_steam")
+include("scripts.room_events.blessing_of_the_inner_eye")

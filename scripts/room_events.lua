@@ -101,43 +101,60 @@ local BASE_ROOM_EVENT_NUM_PER_FLOOR = 2
 local ROOM_EVENTS_TO_ADD_PER_STAGE = 1
 
 local function postNewFloor()
+    print((Game():GetLevel():GetStage()+1)//2)
     if Game():GetLevel():GetStage() == 9 then --HUSH
         return
     end
+    local RUN_SAVE = SAVE_MANAGER.GetRunSave()
     local rooms = Game():GetLevel():GetRooms()
     local roomEventsToAdd = (Game():GetLevel():GetStage()+1)//2
-    local roomEventsToAppear = BASE_ROOM_EVENT_NUM_PER_FLOOR + roomEventsToAdd * ROOM_EVENTS_TO_ADD_PER_STAGE
+    if (Game():GetLevel():GetStage()+1)//2 ~= (Game():GetLevel():GetStage())//2 then
+        RUN_SAVE.ResouledRoomEventsForThisChapter = BASE_ROOM_EVENT_NUM_PER_FLOOR + roomEventsToAdd * ROOM_EVENTS_TO_ADD_PER_STAGE
+    end
+    
     local rng = RNG()
     local correctRooms = {}
-
+    rng:SetSeed(Game():GetLevel():GetDevilAngelRoomRNG():GetSeed())
+    
+    local roomEventsThisFloor
+    if (Game():GetLevel():GetStage()+1)//2 ~= (Game():GetLevel():GetStage())//2 then
+        roomEventsThisFloor = rng:RandomInt(RUN_SAVE.ResouledRoomEventsForThisChapter)
+    else
+        roomEventsThisFloor = RUN_SAVE.ResouledRoomEventsForThisChapter
+    end
+        
+    print(RUN_SAVE.ResouledRoomEventsForThisChapter, roomEventsThisFloor)
+    
     for i = 0, rooms.Size-1 do
         local room = rooms:Get(i)
         table.insert(correctRooms, room.ListIndex)
     end
-
+        
     rng:SetSeed(Game():GetLevel():GetDevilAngelRoomRNG():GetSeed())
-
-    for _ = 1, roomEventsToAppear do
+    
+    for _ = 1, roomEventsThisFloor do
         ::RollRoom::
         Resouled:NewSeed()
-
+        
         local randomRoomIndex = rng:RandomInt(#correctRooms)
         local roomGridIndex = correctRooms[randomRoomIndex]
-
+        
         if correctRooms[randomRoomIndex] == nil then
             goto RollRoom
         end
         
         local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(nil, false, roomGridIndex)
         ROOM_SAVE.ResouledSpawnRoomEvent = true
-
+        
         table.remove(correctRooms, randomRoomIndex)
     end
+    
+    RUN_SAVE.ResouledRoomEventsForThisChapter = RUN_SAVE.ResouledRoomEventsForThisChapter - roomEventsThisFloor
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
-
-local function postNewRoom()
-    local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
+    
+    local function postNewRoom()
+        local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
     local room = Game():GetRoom()
     
     if ROOM_SAVE.RoomEvent then

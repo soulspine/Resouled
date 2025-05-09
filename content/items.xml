@@ -25,4 +25,5 @@
     <trinket id="3" name="Mugger Bean" description="" gfx="mugger_bean.png"/>
     <trinket id="4" name="Recycling Sticker" description="" gfx="recycling_sticker.png"/>
     <trinket id="5" name="Library Card" description="Common libraries" gfx="library_card.png"/>
+    <trinket id="6" name="Game Squid" description="" gfx="game_squid.png"/>
 </items>

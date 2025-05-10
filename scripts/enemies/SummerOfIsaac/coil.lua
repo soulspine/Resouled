@@ -27,6 +27,7 @@ local function postNpcInit(_, npc)
         local sprite = npc:GetSprite()
         sprite:Play("Idle", true)
         npc.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_WALLS
+        npc:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, COIL)

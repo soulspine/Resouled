@@ -23,6 +23,8 @@ Resouled.RoomEvents = {
     BLESSING_OF_STEAM = "Blessing of Steam",
     BLESSING_OF_INNER_EYE = "Blessing of Inner Eye",
     CONJOINED_TWIN = "Conjoined Twin",
+    BLOOD_MONEY = "Blood Money",
+    HEAVY_IS_THE_HEAD = "Heavy is The Head",
 }
 
 
@@ -50,6 +52,8 @@ local RoomEvents = {
     [21] = Resouled.RoomEvents.BLESSING_OF_STEAM,
     [22] = Resouled.RoomEvents.BLESSING_OF_INNER_EYE,
     [23] = Resouled.RoomEvents.CONJOINED_TWIN,
+    [24] = Resouled.RoomEvents.BLOOD_MONEY,
+    [25] = Resouled.RoomEvents.HEAVY_IS_THE_HEAD,
 }
 
 local ENEMY_ONLY = {
@@ -101,6 +105,7 @@ local ROOM_EVENTS_DESPAWN_BLACKLIST = {
     [Resouled.RoomEvents.TAX_FOR_THE_MIGHTY] = true,
     [Resouled.RoomEvents.BLESSING_OF_STEAM] = true,
     [Resouled.RoomEvents.CONJOINED_TWIN] = true,
+    [Resouled.RoomEvents.BLOOD_MONEY] = true,
 }
 
 local BASE_ROOM_EVENT_NUM_PER_FLOOR = 2
@@ -206,7 +211,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
         
         Resouled:NewSeed()
         local randomNum = rng:RandomInt(#RoomEvents) + 1
-        --local randomNum = 20
+        --local randomNum = 24
         
         
         if (roomType == RoomType.ROOM_BOSS and BOSS_ROOM_BLACKLIST[randomNum]) or
@@ -277,3 +282,5 @@ include("scripts.room_events.shadow_of_famine")
 include("scripts.room_events.blessing_of_steam")
 include("scripts.room_events.blessing_of_the_inner_eye")
 include("scripts.room_events.conjoined_twin")
+include("scripts.room_events.blood_money")
+include("scripts.room_events.heavy_is_the_head")

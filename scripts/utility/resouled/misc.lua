@@ -126,3 +126,15 @@ function Resouled:NewSeed()
     end
     return seed
 end
+
+---@param position Vector
+---@param velocity Vector
+---@param spriteOffset? Vector
+---@param spawner Entity
+function Resouled:SpawnPaperTear(position, velocity, spriteOffset, spawner)
+    local tear = Game():Spawn(Isaac.GetEntityTypeByName("Blank Canvas Tear"), Isaac.GetEntityVariantByName("Blank Canvas Tear"), position, velocity, spawner, Isaac.GetEntitySubTypeByName("Blank Canvas Tear"), spawner.InitSeed)
+    if spriteOffset then
+        tear.SpriteOffset = spriteOffset
+    end
+    return tear
+end

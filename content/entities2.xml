@@ -114,6 +114,9 @@
     <entity name="Blank Canvas Mulligan" id="417" variant="0" subtype="0" anm2path="blank_canvas_mulligan.anm2" collisionMass="1" collisionRadius="14" collisionDamage="0" friction="1" numGridCollisionPoints="12" shadowSize="14" baseHP="20"/>
     <entity name="Blank Canvas Gaper" id="417" variant="1" subtype="0" anm2path="blank_canvas_gaper.anm2" collisionMass="1" collisionRadius="14" collisionDamage="1" friction="1" numGridCollisionPoints="12" shadowSize="14" baseHP="20"/>
     <entity name="Blank Canvas Fly" id="417" variant="2" subtype="0" anm2path="blank_canvas_fly.anm2" collisionMass="1" collisionRadius="6" collisionDamage="1" friction="1" numGridCollisionPoints="12" shadowSize="6" baseHP="8"/>
+    <entity name="Blank Canvas Pooter" id="417" variant="3" subtype="0" anm2path="blank_canvas_pooter.anm2" collisionMass="1" collisionRadius="10" collisionDamage="1" friction="1" numGridCollisionPoints="12" shadowSize="10" baseHP="14"/>
+    <entity name="Blank Canvas Tear" id="417" variant="4" subtype="0" anm2path="blank_canvas_tear.anm2" collisionMass="1" collisionRadius="6" friction="1" numGridCollisionPoints="12" shadowSize="6" baseHP="1"/>
+    <entity name="Blank Canvas Dip" id="417" variant="5" subtype="0" anm2path="blank_canvas_dip.anm2" collisionMass="1" collisionRadius="8" collisionDamage="1" friction="1" numGridCollisionPoints="12" shadowSize="12" baseHP="8"/> 
     <entity name="Paper Gore Particle 1" id="1000" variant="207" subtype="0" anm2path="paper_gore_1.anm2" friction="1"/>
     <entity name="Paper Gore Particle 2" id="1000" variant="207" subtype="1" anm2path="paper_gore_2.anm2" friction="1"/>
     <entity name="Paper Gore Particle 3" id="1000" variant="207" subtype="2" anm2path="paper_gore_3.anm2" friction="1"/>

@@ -33,21 +33,12 @@ local function postNewRoom()
                 if randomNum < curseActivationChance then
                     ---@param entity Entity
                     Resouled.Iterators:IterateOverRoomEntities(function(entity)
-                        if entity.Type ~= EntityType.ENTITY_PLAYER then
-                            if entity.SpawnerEntity then
-                                if entity.SpawnerEntity.Type == EntityType.ENTITY_PLAYER then
-                                else
-                                    entity:Remove()
-                                    Game():ShakeScreen(SCREEN_SHAKE)
-                                    Game():Darken(DARKNESS_STRENGTH, DARKNESS_TIMEOUT)
-                                    SFXManager():Play(CURSE_SOUND)
-                                end
-                            else
-                                entity:Remove()
-                                Game():ShakeScreen(SCREEN_SHAKE)
-                                Game():Darken(DARKNESS_STRENGTH, DARKNESS_TIMEOUT)
-                                SFXManager():Play(CURSE_SOUND)
-                            end
+                        local player = Resouled:TryFindPlayerSpawner(entity)
+                        if not player then
+                            entity:Remove()
+                            Game():ShakeScreen(SCREEN_SHAKE)
+                            Game():Darken(DARKNESS_STRENGTH, DARKNESS_TIMEOUT)
+                            SFXManager():Play(CURSE_SOUND)
                         end
                     end)
                 end

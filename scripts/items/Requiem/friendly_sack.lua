@@ -1,6 +1,6 @@
 local FRIENDLY_SACK = Isaac.GetItemIdByName("Friendly Sack")
 
-local ROOMS_TO_SPAWN_PICKUP = 6
+local ROOMS_TO_SPAWN_PICKUP = 1
 
 local PICKUP_SPAWNING_TRANSLATOR = {
     [1] = PickupVariant.PICKUP_BOMB,
@@ -23,30 +23,48 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, postPlayerUpdate)
 
 local function postNewRoom()
     local RUN_SAVE = SAVE_MANAGER.GetRunSave()
+    
     if RUN_SAVE.ResouledFriendlySack then
+
         ---@param player EntityPlayer
         Resouled.Iterators:IterateOverPlayers(function(player)
+
             local playerIndex = player:GetPlayerIndex()
+
             if RUN_SAVE.ResouledFriendlySack[playerIndex] then
+
                 RUN_SAVE.ResouledFriendlySack[playerIndex] = RUN_SAVE.ResouledFriendlySack[playerIndex] + 1
 
                 if RUN_SAVE.ResouledFriendlySack[playerIndex] >= ROOMS_TO_SPAWN_PICKUP then
+
                     RUN_SAVE.ResouledFriendlySack[playerIndex] = 0
+
                     local rng = RNG()
+
                     rng:SetSeed(Game():GetRoom():GetSpawnSeed())
+
                     ---@param entity Entity
                     Resouled.Iterators:IterateOverRoomEntities(function(entity)
+
                         local familiar = entity:ToFamiliar()
+
                         if familiar then
-                            local spawnerPlayerIndex = familiar.SpawnerEntity:ToPlayer():GetPlayerIndex()
-                            if spawnerPlayerIndex == playerIndex then
-                                local pickupSpawnPos = familiar.Position
-                                for _ = 1, Isaac.GetPlayer(spawnerPlayerIndex):GetCollectibleNum(FRIENDLY_SACK) do
-                                    Resouled:NewSeed()
+                            local spawnerPlayer = Resouled:TryFindPlayerSpawner(familiar)
+                            if spawnerPlayer then
 
-                                    local chosenPickup = PICKUP_SPAWNING_TRANSLATOR[rng:RandomInt(#PICKUP_SPAWNING_TRANSLATOR) + 1]
+                                local spawnerPlayerIndex = spawnerPlayer:GetPlayerIndex()
 
-                                    Game():Spawn(EntityType.ENTITY_PICKUP, chosenPickup, pickupSpawnPos, Vector.Zero, nil, 0, rng:GetSeed())
+                                if spawnerPlayerIndex == playerIndex then
+
+                                    local pickupSpawnPos = familiar.Position
+
+                                    for _ = 1, Isaac.GetPlayer(spawnerPlayerIndex):GetCollectibleNum(FRIENDLY_SACK) do
+                                        Resouled:NewSeed()
+                                        
+                                        local chosenPickup = PICKUP_SPAWNING_TRANSLATOR[rng:RandomInt(#PICKUP_SPAWNING_TRANSLATOR) + 1]
+                                        
+                                        Game():Spawn(EntityType.ENTITY_PICKUP, chosenPickup, pickupSpawnPos, Vector.Zero, nil, 0, rng:GetSeed())
+                                    end
                                 end
                             end
                         end

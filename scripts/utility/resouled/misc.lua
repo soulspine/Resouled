@@ -138,3 +138,29 @@ function Resouled:SpawnPaperTear(position, velocity, spriteOffset, spawner)
     end
     return tear
 end
+
+---@param entity Entity
+---@return EntityPlayer | nil
+function Resouled:TryFindPlayerSpawner(entity)
+    if entity.Type == EntityType.ENTITY_PLAYER then
+        return entity:ToPlayer()
+    end
+
+    if entity.SpawnerEntity then
+        local spawner = entity.SpawnerEntity
+        ::TryFindSpawnerPlayer::
+
+        if spawner ~= nil then
+            if spawner.Type ==EntityType.ENTITY_PLAYER then
+                return spawner:ToPlayer()
+            end
+
+            if spawner.SpawnerEntity then
+                spawner = spawner.SpawnerEntity
+                goto TryFindSpawnerPlayer
+            end
+        end
+    end
+
+    return nil
+end

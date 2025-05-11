@@ -1,6 +1,10 @@
 local FRIENDLY_SACK = Isaac.GetItemIdByName("Friendly Sack")
 
-local ROOMS_TO_SPAWN_PICKUP = 1
+if EID then
+    EID:addCollectible(FRIENDLY_SACK, "After clearing 6 rooms, each familiar spawns a pickup")
+end
+
+local ROOMS_TO_SPAWN_PICKUP = 6
 
 local PICKUP_SPAWNING_TRANSLATOR = {
     [1] = PickupVariant.PICKUP_BOMB,

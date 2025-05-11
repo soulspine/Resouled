@@ -1,5 +1,9 @@
 local KEEPERS_PENNY = Isaac.GetItemIdByName("Keeper's Penny")
 
+if EID then
+    EID:addCollectible(KEEPERS_PENNY, "On use, max charge is increased by 1 (max 12) # Spawns a penny for each charge")
+end
+
 local MAX_CHARGE = 12
 local CHARGE_INCREMENT = 1
 

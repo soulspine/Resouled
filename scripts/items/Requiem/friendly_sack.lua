@@ -1,6 +1,6 @@
 local FRIENDLY_SACK = Isaac.GetItemIdByName("Friendly Sack")
 
-local ROOMS_TO_SPAWN_PICKUP = 1
+local ROOMS_TO_SPAWN_PICKUP = 6
 
 local PICKUP_SPAWNING_TRANSLATOR = {
     [1] = PickupVariant.PICKUP_BOMB,

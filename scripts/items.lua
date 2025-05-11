@@ -20,6 +20,7 @@ include("scripts.items.SummerOfIsaac.conjoined_d6")
 include("scripts.items.SummerOfIsaac.isaacs_last_will")
 include("scripts.items.SummerOfIsaac.a_friend")
 include("scripts.items.SummerOfIsaac.the_monster")
+include("scripts.items.SummerOfIsaac.unstable_dna")
 
 include("scripts.trinkets.SummerOfIsaac.recycling_sticker")
 -- Promotional Sets

@@ -142,23 +142,11 @@ end
 ---@param entity Entity
 ---@return EntityPlayer | nil
 function Resouled:TryFindPlayerSpawner(entity)
-    if entity.Type == EntityType.ENTITY_PLAYER then
-        return entity:ToPlayer()
-    end
-
-    if entity.SpawnerEntity then
-        local spawner = entity.SpawnerEntity
-        ::TryFindSpawnerPlayer::
-
-        if spawner ~= nil then
-            if spawner.Type ==EntityType.ENTITY_PLAYER then
-                return spawner:ToPlayer()
-            end
-
-            if spawner.SpawnerEntity then
-                spawner = spawner.SpawnerEntity
-                goto TryFindSpawnerPlayer
-            end
+    while entity ~= nil do
+        if entity:ToPlayer() then
+            return entity:ToPlayer()
+        else
+            entity = entity.SpawnerEntity
         end
     end
 

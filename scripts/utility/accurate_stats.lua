@@ -51,4 +51,17 @@ function accurateStatsModule:GetDPS(player)
     return player.Damage * accurateStatsModule:GetFireRate(player)
 end
 
+--- Returns amount of containers player has based on their default health type
+--- @param player EntityPlayer
+--- @return integer
+function accurateStatsModule:GetEffectiveHealthContainers(player)
+    local healthType = player:GetHealthType()
+    if healthType == HealthType.RED or HealthType == HealthType.BONE or healthType == HealthType.COIN then
+        return player:GetEffectiveMaxHearts()
+    elseif healthType == HealthType.SOUL then
+        return player:GetSoulHearts() -- black hearts are counted in
+    end
+    return 0
+end
+
 return accurateStatsModule

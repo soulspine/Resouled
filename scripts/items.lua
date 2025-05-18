@@ -14,6 +14,8 @@ include("scripts.trinkets.Requiem.handicapped_placard")
 include("scripts.items.Requiem.keepers_penny")
 include("scripts.items.Requiem.classic_roller")
 include("scripts.items.Requiem.friendly_sack")
+
+include("scripts.trinkets.Requiem.hand_me_downs")
 --include("scripts.items.Requiem.auction_gavel")
 -- Summer Of Isaac
 include("scripts.items.SummerOfIsaac.conjoined_d6")

@@ -23,7 +23,7 @@
     <passive id="16" name="Unstable DNA" gfx="unstable_dna.png" description="" quality="1" craftquality="1"/>
 <!-- Promotional Sets -->
     <trinket id="1" name="Handicapped Placard" description="" gfx="handicapped_placard.png"/>
-    <trinket id="2" name="Hand Me Downs" description="" gfx="hand_me_downs.png"/>
+    <trinket id="2" name="Hand me Downs" description="" gfx="hand_me_downs.png"/>
     <trinket id="3" name="Mugger Bean" description="" gfx="mugger_bean.png"/>
     <trinket id="4" name="Recycling Sticker" description="" gfx="recycling_sticker.png"/>
     <trinket id="5" name="Library Card" description="Common libraries" gfx="library_card.png"/>

@@ -19,6 +19,7 @@ local function preNewRoom()
         ---@param player EntityPlayer
         Resouled.Iterators:IterateOverPlayers(function(player)
             player:AddCacheFlags(CacheFlag.CACHE_SPEED, true)
+            player:EvaluateItems()
         end)
     end
 end

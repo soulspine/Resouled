@@ -1,4 +1,4 @@
-local THROW_POWER = 2
+local THROW_POWER = 10
 
 ---@param npc EntityNPC
 local function postNpcDeath(_, npc)

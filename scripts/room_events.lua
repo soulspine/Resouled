@@ -25,6 +25,7 @@ Resouled.RoomEvents = {
     CONJOINED_TWIN = "Conjoined Twin",
     BLOOD_MONEY = "Blood Money",
     HEAVY_IS_THE_HEAD = "Heavy is The Head",
+    BLIND_RAGE = "Blind Rage",
 }
 
 
@@ -54,6 +55,7 @@ local RoomEvents = {
     [23] = Resouled.RoomEvents.CONJOINED_TWIN,
     [24] = Resouled.RoomEvents.BLOOD_MONEY,
     [25] = Resouled.RoomEvents.HEAVY_IS_THE_HEAD,
+    [26] = Resouled.RoomEvents.BLIND_RAGE,
 }
 
 local ENEMY_ONLY = {
@@ -210,8 +212,8 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
         ::RollRoomEvent::
         
         Resouled:NewSeed()
-        local randomNum = rng:RandomInt(#RoomEvents) + 1
-        --local randomNum = 24
+        --local randomNum = rng:RandomInt(#RoomEvents) + 1
+        local randomNum = 26
         
         
         if (roomType == RoomType.ROOM_BOSS and BOSS_ROOM_BLACKLIST[randomNum]) or
@@ -284,3 +286,4 @@ include("scripts.room_events.blessing_of_the_inner_eye")
 include("scripts.room_events.conjoined_twin")
 include("scripts.room_events.blood_money")
 include("scripts.room_events.heavy_is_the_head")
+include("scripts.room_events.blind_rage")

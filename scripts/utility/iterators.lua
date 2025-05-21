@@ -20,4 +20,15 @@ function iteratorsModule:IterateOverRoomEntities(callback, ...)
     end
 end
 
+---@param callback function
+function iteratorsModule:IterateOverRooms(callback, ...)
+    local level = Game():GetLevel()
+    for i = 1, 13 * 13 do
+        local roomIndex = i
+        callback(roomIndex, ...)
+    end
+end
+
+
+
 return iteratorsModule

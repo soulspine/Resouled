@@ -152,3 +152,9 @@ function Resouled:TryFindPlayerSpawner(entity)
 
     return nil
 end
+
+---@param roomIndex1 integer
+---@param roomIndex2 integer
+function Resouled:GetGridRoomDistance(roomIndex1, roomIndex2)
+    return math.abs(roomIndex1//13 - roomIndex2//13) + math.abs(roomIndex1%13 - roomIndex2%13)
+end

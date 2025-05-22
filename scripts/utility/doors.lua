@@ -78,4 +78,28 @@ function doorsModule:GetClosestDoor(position)
     return closestDoor
 end
 
+--- Returns rotation of the door based on its direction
+---@param door GridEntityDoor
+---@return number
+function doorsModule:GetRotationFromDoor(door)
+    return (door.Direction - 1) * 90
+end
+
+--- Returns what type of resource opens said door.
+--- Returns `true` if by a key,  `false` if by a coin and `nil` if door is not locked.
+---@param door GridEntityDoor
+---@return boolean | nil
+function doorsModule:WhatOpensDoorLock(door)
+    if not door:IsOpen() and door:IsLocked() then
+        local sprite = door:GetSprite()
+        local lockedAnim = door.LockedAnimation
+        if door:IsTargetRoomArcade() or lockedAnim == "CoinClosed" then
+            return false
+        elseif lockedAnim == "KeyClosed" then
+            return true
+        end
+    end
+    return nil
+end
+
 return doorsModule

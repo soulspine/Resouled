@@ -1,98 +1,27 @@
 local HANDICAPPED_PLACARD = Isaac.GetTrinketIdByName("Handicapped Placard")
 
-local BASE_SLOW_DOWN = 0.05
-local SLOW_DOWN_PER_SOUL = 0.025
+local BREAK_CHANCE = 0.5
 
----@param npc EntityNPC
-local function onNpcInit(_, npc)
-    local handicappedPlacardPresent
-    ---@param player EntityPlayer
-    Resouled.Iterators:IterateOverPlayers(function(player)
-        if player:HasTrinket(HANDICAPPED_PLACARD) then
-            handicappedPlacardPresent = true
-        end
-    end)
-    if handicappedPlacardPresent and npc:IsEnemy() and npc:IsActiveEnemy(true) then
-        local sprite = npc:GetSprite()
-        local npcPlaybackSpeed = sprite.PlaybackSpeed
-        local precentToSlowEnemyDown = SLOW_DOWN_PER_SOUL * Resouled:GetPossessedSoulsNum()
-        local targetPlaybackSpeed = npcPlaybackSpeed - precentToSlowEnemyDown
-        sprite.PlaybackSpeed = targetPlaybackSpeed
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit)
+local OVERLAY_SPRITE = Sprite()
+OVERLAY_SPRITE:Load("gfx/effects/handicapped_placard_door_overlay.anm2", true)
+OVERLAY_SPRITE:Play("Idle", true)
 
----@param npc EntityNPC
-local function preNpcUpdate(_, npc)
-    local handicappedPlacardPresent
-    ---@param player EntityPlayer
-    Resouled.Iterators:IterateOverPlayers(function(player)
-        if player:HasTrinket(HANDICAPPED_PLACARD) then
-            handicappedPlacardPresent = true
-        end
-    end)
-    if handicappedPlacardPresent and npc:IsEnemy() and npc:IsActiveEnemy(true) then
-        local sprite = npc:GetSprite()
-        local precentToSlowEnemyDown = SLOW_DOWN_PER_SOUL * Resouled:GetPossessedSoulsNum()
-        local npcPlaybackSpeed = sprite.PlaybackSpeed + precentToSlowEnemyDown
-        local targetPlaybackSpeed = npcPlaybackSpeed - precentToSlowEnemyDown
-        sprite.PlaybackSpeed = targetPlaybackSpeed
-        npc.Friction = npc.Friction - precentToSlowEnemyDown
-    end
-end
-Resouled:AddPriorityCallback(ModCallbacks.MC_PRE_NPC_UPDATE, CallbackPriority.LATE, preNpcUpdate)
+---@param door GridEntityDoor
+---@param offset Vector
+local function postDoorRender(_, door, offset)
+    if PlayerManager.AnyoneHasTrinket(HANDICAPPED_PLACARD) then
+        local player0 = Isaac.GetPlayer()
+        local keyNum = player0:GetNumKeys()
+        local coinNum = player0:GetNumCoins()
 
-local function postProjectileInit(_, projectile)
-    local handicappedPlacardPresent
-    ---@param player EntityPlayer
-    Resouled.Iterators:IterateOverPlayers(function(player)
-        if player:HasTrinket(HANDICAPPED_PLACARD) then
-            handicappedPlacardPresent = true
-        end
-    end)
-    if handicappedPlacardPresent and projectile.SpawnerEntity then
-        if projectile.SpawnerEntity:IsEnemy() then
-            local sprite = projectile:GetSprite()
-            local precentToSlowProjectileDown = SLOW_DOWN_PER_SOUL * Resouled:GetPossessedSoulsNum()
-            local projectilePlaybackSpeed = sprite.PlaybackSpeed + precentToSlowProjectileDown
-            local targetPlaybackSpeed = projectilePlaybackSpeed - precentToSlowProjectileDown
-            sprite.PlaybackSpeed = targetPlaybackSpeed
-            projectile.Friction = projectile.Friction - precentToSlowProjectileDown
+        local whatOpensLockedDoor = Resouled.Doors:WhatOpensDoorLock(door)
+
+        if not door:IsOpen()
+        or (whatOpensLockedDoor ~= nil and ((whatOpensLockedDoor and keyNum == 0) or (not whatOpensLockedDoor and coinNum == 0))) then
+            OVERLAY_SPRITE.Offset = Isaac.WorldToScreen(door.Position)
+            OVERLAY_SPRITE.Rotation = Resouled.Doors:GetRotationFromDoor(door)
+            OVERLAY_SPRITE:Render(Vector.Zero)
         end
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_PROJECTILE_INIT, postProjectileInit)
-
----@param projectile EntityProjectile
-local function preProjectileUpdate(_, projectile)
-    local handicappedPlacardPresent
-    ---@param player EntityPlayer
-    Resouled.Iterators:IterateOverPlayers(function(player)
-        if player:HasTrinket(HANDICAPPED_PLACARD) then
-            handicappedPlacardPresent = true
-        end
-    end)
-    if handicappedPlacardPresent and projectile.SpawnerEntity then
-        if projectile.SpawnerEntity:IsEnemy() then
-            local sprite = projectile:GetSprite()
-            local precentToSlowProjectileDown = SLOW_DOWN_PER_SOUL * Resouled:GetPossessedSoulsNum()
-            local projectilePlaybackSpeed = sprite.PlaybackSpeed + precentToSlowProjectileDown
-            local targetPlaybackSpeed = projectilePlaybackSpeed - precentToSlowProjectileDown
-            sprite.PlaybackSpeed = targetPlaybackSpeed
-        end
-    end
-end
-Resouled:AddPriorityCallback(ModCallbacks.MC_PRE_PROJECTILE_UPDATE, CallbackPriority.LATE, preProjectileUpdate)
-
----@param pickup EntityPickup
-local function postPickupUpdate(_, pickup)
-    if pickup.SubType == HANDICAPPED_PLACARD then
-        if EID then
-            local precent = tostring(BASE_SLOW_DOWN * 100)
-            local soulPrecent = tostring(SLOW_DOWN_PER_SOUL * 100)
-            local currentPrecent = tostring((SLOW_DOWN_PER_SOUL * Resouled:GetPossessedSoulsNum() + BASE_SLOW_DOWN) * 100)
-            EID:addTrinket(HANDICAPPED_PLACARD, "Slows down enemies by "..precent.."% + "..soulPrecent.."% for every soul you posess,# Enemies will currently be slowed down by: {{ColorError}}"..currentPrecent.."%")
-        end
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, postPickupUpdate, PickupVariant.PICKUP_TRINKET)
+Resouled:AddCallback(ModCallbacks.MC_POST_GRID_ENTITY_DOOR_RENDER, postDoorRender)

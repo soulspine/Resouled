@@ -125,6 +125,10 @@ local function postNewFloor()
         RUN_SAVE.ResouledRoomEventsForThisChapter = BASE_ROOM_EVENT_NUM_PER_FLOOR + roomEventsToAdd * ROOM_EVENTS_TO_ADD_PER_STAGE
     end
 
+    if not RUN_SAVE.ResouledRoomEventsFloorCount then
+        RUN_SAVE.ResouledRoomEventsFloorCount = 1
+    end
+
     if RUN_SAVE.ResouledRoomEventsForThisChapter == 0 then
         RUN_SAVE.ResouledRoomEventsForThisChapter = BASE_ROOM_EVENT_NUM_PER_FLOOR + roomEventsToAdd * ROOM_EVENTS_TO_ADD_PER_STAGE
     end
@@ -134,9 +138,9 @@ local function postNewFloor()
     rng:SetSeed(Game():GetLevel():GetDevilAngelRoomRNG():GetSeed())
     
     local roomEventsThisFloor
-    if RUN_SAVE.ResouledRoomEventsForThisChapter > 1 then
+    if RUN_SAVE.ResouledRoomEventsFloorCount%2 == 1 then
         roomEventsThisFloor = rng:RandomInt(RUN_SAVE.ResouledRoomEventsForThisChapter)
-    else
+    elseif RUN_SAVE.ResouledRoomEventsFloorCount%2 == 0 then
         roomEventsThisFloor = RUN_SAVE.ResouledRoomEventsForThisChapter
     end
         
@@ -169,7 +173,9 @@ local function postNewFloor()
         table.remove(correctRooms, randomRoomIndex)
     end
     
+    RUN_SAVE.ResouledRoomEventsFloorCount = RUN_SAVE.ResouledRoomEventsFloorCount + 1
     RUN_SAVE.ResouledRoomEventsForThisChapter = RUN_SAVE.ResouledRoomEventsForThisChapter - roomEventsThisFloor
+    print(RUN_SAVE.ResouledRoomEventsForThisChapter, roomEventsThisFloor)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
     

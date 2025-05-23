@@ -36,6 +36,21 @@ local function onUpdate()
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 
+---@param entity Entity
+---@param amount number
+---@param flags integer
+---@param source EntityRef
+---@param countdown integer
+local function onPlayerHit(_, entity, amount, flags, source, countdown)
+    local entityData = entity:GetData()
+    if entity.Type == EntityType.ENTITY_PLAYER and Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_FATIGUE) then
+        local FLOOR_SAVE_MANAGER = SAVE_MANAGER.GetFloorSave()
+        FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue = 1
+        cachedIndicatorFrame = FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, onPlayerHit, EntityType.ENTITY_PLAYER)
+
 ---@param player EntityPlayer
 local function prePlayerUpdate(_, player)
     local FLOOR_SAVE_MANAGER = SAVE_MANAGER.GetFloorSave()
@@ -75,8 +90,6 @@ local function preClearReward()
             end
 
             FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue = 0
-        else
-            FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue = FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue + 1
         end
         cachedIndicatorFrame = FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue
     end

@@ -158,3 +158,25 @@ end
 function Resouled:GetGridRoomDistance(roomIndex1, roomIndex2)
     return math.abs(roomIndex1//13 - roomIndex2//13) + math.abs(roomIndex1%13 - roomIndex2%13)
 end
+
+---@param rng RNG
+---@param pool? ItemPoolType
+---@param defaultItem? CollectibleType @Item that will be chosen if pool is exhausted, defaults to CollectibleType.COLLECTIBLE_BREAKFAST
+---@return CollectibleType
+function Resouled:ChooseItemFromPool(rng, pool, defaultItem)
+    local game = Game()
+    local DEFAULT_ITEM = defaultItem or CollectibleType.COLLECTIBLE_BREAKFAST
+    pool = pool or game:GetRoom():GetItemPool(game:GetRoom():GetAwardSeed())
+    local itemsFromTargetPool = game:GetItemPool():GetCollectiblesFromPool(pool)
+    local validItems = {}
+    for i = 1, #itemsFromTargetPool do
+        local id = itemsFromTargetPool[i].itemID
+        if not Isaac.GetItemConfig():GetCollectible(id):HasTags(ItemConfig.TAG_QUEST) and game:GetItemPool():CanSpawnCollectible(id, false) then
+            table.insert(validItems, id)
+        end
+    end
+    
+    local itemID = #validItems > 0 and validItems[rng:RandomInt(#validItems) + 1] or DEFAULT_ITEM
+
+    return itemID -- return pickup if spawned, nil otherwise
+end

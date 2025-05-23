@@ -31,10 +31,8 @@ local function entityTakeDmg(_, entity, amount, flags, source)
                 data.ResouledCurseOfTheSuspiciousCooldown = data.ResouledCurseOfTheSuspiciousCooldown - 1
             end
 
-            if data.ResouledCurseOfTheSuspiciousCooldown <= 0 then
-                local randomNum = math.random()
-                
-                if randomNum < HEAL_CHANCE then
+            if data.ResouledCurseOfTheSuspiciousCooldown <= 0 then      
+                if entity:GetDropRNG():RandomFloat() < HEAL_CHANCE then
                     entity.HitPoints = entity.HitPoints + (amount / 2)
                     if entity.HitPoints > entity.MaxHitPoints then
                         entity.HitPoints = entity.MaxHitPoints

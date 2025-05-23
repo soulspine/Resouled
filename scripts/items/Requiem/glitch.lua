@@ -2,39 +2,28 @@ local GLITCH = Isaac.GetItemIdByName("Glitch")
 
 local MORPH_COOLDOWN = 25
 local ITEM_COUNT = 3
-local DEFAULT_COLLECTIBLE = Isaac.GetItemConfig():GetCollectible(CollectibleType.COLLECTIBLE_SAD_ONION)
+local DEFAULT_COLLECTIBLE = CollectibleType.COLLECTIBLE_SAD_ONION
 local GLITCH_GFX = Isaac.GetItemConfig():GetCollectible(GLITCH).GfxFileName
 
 local PICKUP_SFX = SoundEffect.SOUND_EDEN_GLITCH
 
 local EID_DESCRIPTION = "Limits pedestal options to " .. ITEM_COUNT .. " other passive items from current item pool and inherits those effects. Only one effect takes place at a time and it changes after clearing a room.#Having multiple copies of this item increases effect pool.#"
 
+if EID then
+    EID:addCollectible(GLITCH, EID_DESCRIPTION, "Glitch")
+end
+
 local ITEM_BLACKLIST = {
-    [CollectibleType.COLLECTIBLE_R_KEY] = true,
-    [CollectibleType.COLLECTIBLE_FORGET_ME_NOW] = true,
-    [CollectibleType.COLLECTIBLE_WE_NEED_TO_GO_DEEPER] = true,
-    [CollectibleType.COLLECTIBLE_INNER_CHILD] = true,
-    [CollectibleType.COLLECTIBLE_WAVY_CAP] = true,
-    [CollectibleType.COLLECTIBLE_MEGA_MUSH] = true,
-    [CollectibleType.COLLECTIBLE_KEEPERS_BOX] = true,
-    [CollectibleType.COLLECTIBLE_CLEAR_RUNE] = true,
-    [CollectibleType.COLLECTIBLE_DEATH_CERTIFICATE] = true,
-    [CollectibleType.COLLECTIBLE_SPINDOWN_DICE] = true,
-    [CollectibleType.COLLECTIBLE_ESAU_JR] = true,
-    [CollectibleType.COLLECTIBLE_ETERNAL_D6] = true,
-    [CollectibleType.COLLECTIBLE_D_INFINITY] = true,
-    [CollectibleType.COLLECTIBLE_RED_KEY] = true,
-    [CollectibleType.COLLECTIBLE_FLIP] = true,
-    [CollectibleType.COLLECTIBLE_BOOK_OF_SECRETS] = true,
-    [CollectibleType.COLLECTIBLE_BLANK_CARD] = true,
-    [CollectibleType.COLLECTIBLE_PLACEBO] = true,
-    [CollectibleType.COLLECTIBLE_NECRONOMICON] = true,
+    [CollectibleType.COLLECTIBLE_DOLLAR] = true,
+    [CollectibleType.COLLECTIBLE_PYRO] = true,
+    [CollectibleType.COLLECTIBLE_SKELETON_KEY] = true,
 }
 
 ---@param pickup EntityPickup
-local function onPickupInit(_, pickup)
-    local roomFloorSave = SAVE_MANAGER.GetRoomFloorSave(pickup).NoRerollSave
-    if pickup.SubType == GLITCH then
+---@param afterReroll boolean
+local function onPickupInit(_, pickup, afterReroll)
+    local roomFloorSave = SAVE_MANAGER.GetRoomFloorSave(pickup).RerollSave
+    if pickup.SubType == GLITCH or afterReroll then
         if not roomFloorSave.Glitch then -- first spawn
             roomFloorSave.Glitch = {
                 Cooldown = MORPH_COOLDOWN,
@@ -45,7 +34,13 @@ local function onPickupInit(_, pickup)
             local pool = Game():GetItemPool()
             for _ = 1, ITEM_COUNT do
                 ::reroll::
-                local item = Isaac.GetItemConfig():GetCollectible(pool:GetCollectible(pool:GetLastPool(), false, Resouled:NewSeed(),  DEFAULT_COLLECTIBLE.ID))
+                local itemId = Resouled:ChooseItemFromPool(Isaac.GetPlayer():GetCollectibleRNG(GLITCH), nil, DEFAULT_COLLECTIBLE)
+                local item = Isaac.GetItemConfig():GetCollectible(itemId)
+
+                if item.ID > 0 then -- tmtrainder (negative id) items cannot be blacklisted
+                    pool:AddRoomBlacklist(item.ID)
+                end
+
                 if 
                 not ITEM_BLACKLIST[item.ID] and
                 item:IsAvailable() and
@@ -56,24 +51,10 @@ local function onPickupInit(_, pickup)
                         Id = item.ID,
                         Gfx = item.GfxFileName,
                     })
-                else
-                    if item.ID > 0 then -- tmtrainder (negative id) items cannot be blacklisted
-                        pool:AddRoomBlacklist(item.ID)
-                    end
-                    goto reroll
+                else goto reroll
                 end
             end
-            pickup:Morph(pickup.Type, pickup.Variant, pickup.SubType, true, true, true)
-        else -- floor save has been initialized before
-            if not Resouled.Collectiblextension:IsQuestionMarkItem(pickup) then
-                local data = pickup:GetData()
-                data["EID_Description"] = EID_DESCRIPTION
-
-                for i = 1, #roomFloorSave.Glitch.Items do
-                    local item = Isaac.GetItemConfig():GetCollectible(roomFloorSave.Glitch.Items[i].Id)
-                    data["EID_Description"] = data["EID_Description"] .. "{{Blank}} {{Collectible" .. item.ID .. "}} "
-                end
-            end
+            pickup:Morph(pickup.Type, pickup.Variant, GLITCH, true, true, true)
         end
     end
 end
@@ -81,7 +62,13 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onPickupInit, PickupVaria
 
 ---@param pickup EntityPickup
 local function onPickupUpdate(_, pickup)
-    local roomFloorSave = SAVE_MANAGER.GetRoomFloorSave(pickup).NoRerollSave
+    local roomFloorSave = SAVE_MANAGER.GetRoomFloorSave(pickup).RerollSave
+
+    if roomFloorSave.Glitch and pickup.SubType ~= GLITCH then
+        roomFloorSave.Glitch = nil
+        onPickupInit(_, pickup, true) -- REROLL CHOICES
+    end
+
     if roomFloorSave.Glitch and not Resouled.Collectiblextension:IsQuestionMarkItem(pickup) then
         if roomFloorSave.Glitch.Cooldown > 0 then
             roomFloorSave.Glitch.Cooldown = roomFloorSave.Glitch.Cooldown - 1
@@ -105,7 +92,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onPickupUpdate, PickupV
 local function onPickupCollision(_, pickup, collider)
     local player = collider:ToPlayer()
     if player then
-        local roomFloorSave = SAVE_MANAGER.GetRoomFloorSave(pickup).NoRerollSave
+        local roomFloorSave = SAVE_MANAGER.GetRoomFloorSave(pickup).RerollSave
         local playerRunSave = SAVE_MANAGER.GetRunSave(player)
         if roomFloorSave.Glitch then
             if playerRunSave.Glitch == nil then

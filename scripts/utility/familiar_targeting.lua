@@ -14,8 +14,10 @@ function familiarTargeting:SelectRandomEnemyTarget(familiar)
             
     for i = 1, entities.Size do
         local entity = entities:Get(i)
-        if entity:IsVulnerableEnemy() and entity:IsActiveEnemy() and entity:IsVisible() then
-            table.insert(validEnemies, EntityRef(entity))
+        if entity then
+            if entity:IsVulnerableEnemy() and entity:IsActiveEnemy() and entity:IsVisible() then
+                table.insert(validEnemies, EntityRef(entity))
+            end
         end
     end
     if #validEnemies == 0 then

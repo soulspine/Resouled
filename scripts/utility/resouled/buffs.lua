@@ -12,7 +12,7 @@ Resouled.Buffs = { --Effect will be applied using ID stat, Spritesheet will be r
         NAME = "Cursed Skull",
         PRICE = 3,
         RARITY = "Common",
-        FAMILY = "Cursed Skull"
+        FAMILY = "Cursed''' Skull"
     },
     ---@type ResouledBuffs
     [2] = {
@@ -61,7 +61,7 @@ end
 
 ---@param buffID integer
 ---@return string
-function Resouled:GetBuffSpritesheet(buffID)
+function Resouled:GetBuffSpritesheetName(buffID)
     local buff = Resouled:GetBuffDesc(buffID)
     local name = buff.FAMILY
     local spritesheet = ""
@@ -70,13 +70,16 @@ function Resouled:GetBuffSpritesheet(buffID)
         if char == string.byte(' ') then
             char = string.byte('_')
         end
-        spritesheet = spritesheet..string.char(char)
+
+        if char ~= string.byte('\'') then
+            spritesheet = spritesheet..string.char(char)
+        end
     end
 
     return spritesheet:lower()..".png"
 end
 
 local function postGameStarted()
-    print(Resouled:GetBuffSpritesheet(1))
+    print(Resouled:GetBuffSpritesheetName(1))
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, postGameStarted)

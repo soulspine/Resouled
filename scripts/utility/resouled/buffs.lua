@@ -12,7 +12,7 @@ Resouled.Buffs = { --Effect will be applied using ID stat, Spritesheet will be r
         NAME = "Cursed Skull",
         PRICE = 3,
         RARITY = "Common",
-        FAMILY = "Cursed''' Skull"
+        FAMILY = "Cursed Skull"
     },
     ---@type ResouledBuffs
     [2] = {

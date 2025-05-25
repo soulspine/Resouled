@@ -8,6 +8,9 @@ local BUFF_REFRESH_COOLDOWN = 60
 local font = Font()
 font:Load("font/teammeatfont10.fnt")
 
+local ANIMATION_PEDESTAL_MAIN = "Pedestal"
+local ANIMATION_PEDESTAL_EMPTY = "Empty"
+
 ---@param sprite Sprite
 ---@param buffId ResouledBuff
 local function loadProperSprite(sprite, buffId)
@@ -18,7 +21,20 @@ local function loadProperSprite(sprite, buffId)
             sprite:ReplaceSpritesheet(0, Resouled:GetBuffFamilyById(buff.Family).Spritesheet, true)
             sprite:PlayOverlay(animationName, true)
         end
+        
+        if not sprite:IsPlaying(ANIMATION_PEDESTAL_MAIN) then
+            sprite:Play(ANIMATION_PEDESTAL_MAIN, true)
+        end
+        
     end
+end
+
+---@param player EntityPlayer
+---@param pedestalSprite Sprite
+local function playBuffPickupAnimation(player, pedestalSprite)
+    pedestalSprite:Play(ANIMATION_PEDESTAL_EMPTY, true)
+    player:AnimatePickup(pedestalSprite, true)
+    pedestalSprite:Play(ANIMATION_PEDESTAL_MAIN, true)
 end
 
 ---@param pickup EntityPickup
@@ -45,11 +61,13 @@ local function postPickupUpdate(_, pickup)
     local sprite = pickup:GetSprite()
     local data = pickup:GetData()
     if varData < 1 and not data.Resouled_PickedUpBuff then
-        local chosenBuff = Resouled:GetRandomWeightedBuff(RNG(pickup.InitSeed, 6))
+        local chosenBuff = Resouled:GetRandomWeightedBuff(pickup:GetDropRNG())
         if chosenBuff then
             pickup:SetVarData(chosenBuff)
         end
     end
+
+    varData = pickup:GetVarData() -- in case it was refreshed in previous if block
 
     if data.Resouled_PickedUpBuff then
         if data.Resouled_PickedUpBuff > 0 then
@@ -59,13 +77,14 @@ local function postPickupUpdate(_, pickup)
         end
     end
 
-    if pickup:GetVarData() > 0 then
+    if varData > 0 then
         loadProperSprite(sprite, pickup:GetVarData())
-    else
-        sprite:ReplaceSpritesheet(0, "gfx/buffs/placeholde.png", true)
-        sprite:PlayOverlay("Empty", true)
+    elseif varData == 0 then -- STOP ANIMATION
+        sprite:ReplaceSpritesheet(0, "gfx/buffs/placeholder.png", true)
+        sprite:PlayOverlay(ANIMATION_PEDESTAL_EMPTY, true)
     end
 
+    --- HOLD IT IN PLACE
     if data.Resouled_BuffPedestalInitPosition then
         pickup.Position = data.Resouled_BuffPedestalInitPosition
     end
@@ -82,8 +101,12 @@ local function postPickupCollision(_, pickup, collider)
         
         
         pickup:SetVarData(0)
-        data.Resouled_PickedUpBuff = BUFF_REFRESH_COOLDOWN
-    end
+        data.Resouled_PickedUpBuff = BUFF_REFRESH_COOLDOWN    
+        playBuffPickupAnimation(player, pickup:GetSprite())
+
+        -- TODO ADD THE BUFF TO THE PLAYER
+
+    end    
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_COLLISION, postPickupCollision, BUFF_PEDESTAL_VARIANT)
 

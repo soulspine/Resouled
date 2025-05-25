@@ -12,8 +12,16 @@
 ---@field Spritesheet string
 ---@field ChildBuffs ResouledBuff[]
 
+---@class ResouledBuffRarityDesc
+---@field Id ResouledBuffRarity
+---@field Weight integer
+---@field Name string
+
 --- @type table<string, ResouledBuffFamilyDesc>
 local registeredFamilies = {}
+
+--- @type table<string, ResouledBuffRarityDesc>
+local registeredRarities = {}
 
 --- @type table<string, ResouledBuffDesc>
 local registeredBuffs = {}
@@ -39,6 +47,25 @@ function Resouled:RegisterBuffFamily(family, name, spritesheet)
     return false
 end
 
+--- Registers a new buff rarity and saves its properties.
+--- Returns `true` if the rarity was registered successfully, `false` if it was already registered.
+---@param rarity ResouledBuffRarity
+---@param name string
+---@param weight number
+function Resouled:RegisterBuffRarity(rarity, name, weight)
+    local key = tostring(rarity)
+    if not registeredRarities[key] then
+        registeredRarities[key] = {
+            Id = rarity,
+            Name = name,
+            Weight = weight,
+        }
+        return true
+    end
+    Resouled:LogError("Tried to register a buff rarity that was already registered: " .. rarity)
+    return false
+end
+
 --- Registers a new buff and saves its properties.
 --- Returns `true` if the buff was registered successfully, `false` if it was already registered or if the family is not registered.
 ---@param buff ResouledBuff
@@ -49,9 +76,13 @@ end
 ---@return boolean
 function Resouled:RegisterBuff(buff, name, price, rarity, family)
     local buffKey = tostring(buff)
+    local rarityKey = tostring(rarity)
     local familyKey = tostring(family)
     if not registeredFamilies[familyKey] then
         Resouled:LogError("Tried to register a buff (" .. buff .. ") with an unregistered family (" .. family .. ")")
+        return false
+    elseif not registeredRarities[rarityKey] then
+        Resouled:LogError("Tried to register a buff (" .. buff .. ") with an unregistered rarity (" .. rarity .. ")")
         return false
     end
 
@@ -160,4 +191,104 @@ function Resouled:GetBuffFamilyByName(familyName)
     end
     Resouled:LogError("Tried to get a buff family description for an unregistered family name: " .. familyName)
     return nil
+end
+
+--- Retrieves a table containing all registered buff descriptions.
+---@return ResouledBuffDesc[]
+function Resouled:GetBuffs()
+    local out = {}
+    for _, buffDesc in pairs(registeredBuffs) do
+        table.insert(out, buffDesc)
+    end
+    return out
+end
+
+--- Retrieves a table containing all registered buff rarities.
+---@return ResouledBuffRarityDesc[]
+function Resouled:GetBuffRarities()
+    local out = {}
+    for _, rarityDesc in pairs(registeredRarities) do
+        table.insert(out, rarityDesc)
+    end
+    return out
+end
+
+--- Retrieves the description of a buff rarity by its ID.
+--- Returns a `ResouledBuffRarityDesc` object or `nil` if the rarity is not registered.
+--- @param rarity ResouledBuffRarity
+function Resouled:GetBuffRarityById(rarity)
+    local rarityDesc = registeredRarities[tostring(rarity)]
+    if rarityDesc then
+        return rarityDesc
+    end
+    Resouled:LogError("Tried to get a buff rarity description for an unregistered rarity: " .. rarity)
+    return nil
+end
+
+--- Retrieves the description of a buff rarity by its name.
+--- Returns a `ResouledBuffRarityDesc` object or `nil` if the rarity is not registered.
+--- @param rarityName string
+--- @return ResouledBuffRarityDesc | nil
+function Resouled:GetBuffRarityByName(rarityName)
+    for _, rarityDesc in pairs(registeredRarities) do
+        if rarityDesc.Name == rarityName then
+            return rarityDesc
+        end
+    end
+    Resouled:LogError("Tried to get a buff rarity description for an unregistered rarity name: " .. rarityName)
+    return nil
+end
+
+---@param rng RNG
+---@param blacklist? ResouledBuff[]
+---@return ResouledBuff | nil
+function Resouled:GetRandomWeightedBuff(rng, blacklist)
+    local randomFloat = rng:RandomFloat()
+    local ranges = {}
+    blacklist = blacklist or {}
+
+    local blacklistSet = {}
+
+    for _, buffId in ipairs(blacklist) do
+        blacklistSet[tostring(buffId)] = true
+    end
+
+    for _, rarityDesc in pairs(registeredRarities) do
+        if rarityDesc.Weight > 0 then
+            local upperBound = rarityDesc.Weight
+            if #ranges > 0 then
+                local previous = ranges[#ranges]
+                upperBound = previous.UpperBound + upperBound
+            end
+            table.insert(ranges, {
+                Rarity = rarityDesc.Id,
+                UpperBound = upperBound,
+            })
+        end
+    end
+
+    ---@type ResouledBuffRarity
+    local chosenRarity = nil
+
+    for _, range in ipairs(ranges) do
+        if randomFloat < range.UpperBound then
+            chosenRarity = range.Rarity
+            break
+        end
+    end
+
+    if not chosenRarity then
+        Resouled:LogError("Failed to choose a rarity for the random buff, no valid ranges found.")
+        return nil
+    end
+
+    local possibleBuffs = {}
+
+    for _, buffDesc in ipairs(self:GetBuffs()) do
+        if buffDesc.Rarity == chosenRarity and not blacklistSet[tostring(buffDesc.Id)] then
+            table.insert(possibleBuffs, buffDesc.Id)
+        end
+    end
+
+    return #possibleBuffs > 0 and possibleBuffs[rng:RandomInt(#possibleBuffs) + 1] or nil
 end

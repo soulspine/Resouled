@@ -1,0 +1,82 @@
+local BUFF_PEDESTAL_TYPE = Isaac.GetEntityTypeByName("Buff Pedestal")
+local BUFF_PEDESTAL_VARIANT = Isaac.GetEntityVariantByName("Buff Pedestal")
+local BUFF_PEDESTAL_SUBTYPE = Isaac.GetEntitySubTypeByName("Buff Pedestal")
+
+local SIZE_MULTI = Vector(1.2, 0.8)
+local BUFF_REFRESH_COOLDOWN = 60
+
+---@param sprite Sprite
+---@param buffId ResouledBuff
+local function loadProperSprite(sprite, buffId)
+    local buff = Resouled:GetBuffById(buffId)
+    if buff then
+        local animationName = Resouled:GetBuffRarityById(buff.Rarity).Name
+        if not sprite:IsOverlayPlaying(animationName) then
+            sprite:ReplaceSpritesheet(0, Resouled:GetBuffFamilyById(buff.Family).Spritesheet, true)
+            sprite:PlayOverlay(animationName, true)
+        end
+    end
+end
+
+---@param pickup EntityPickup
+local function onInit(_, pickup)
+    -- leaving vardata as 0 means it will roll a random buff on 1st update
+    pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
+    local sprite = pickup:GetSprite()
+    sprite:Play("Pedestal", true)
+
+    local varData = pickup:GetVarData()
+    if varData > 0 then
+        loadProperSprite(sprite, varData)
+    end
+
+    pickup:GetData().Resouled_BuffPedestalInitPosition = pickup.Position
+
+    pickup.SizeMulti = SIZE_MULTI
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onInit, BUFF_PEDESTAL_VARIANT)
+
+---@param pickup EntityPickup
+local function postPickupUpdate(_, pickup)
+    local varData = pickup:GetVarData()
+    local sprite = pickup:GetSprite()
+    local data = pickup:GetData()
+    if varData < 1 and not data.Resouled_PickedUpBuff then
+        local chosenBuff = Resouled:GetRandomWeightedBuff(RNG(pickup.InitSeed, 6))
+        if chosenBuff then
+            pickup:SetVarData(chosenBuff)
+        end
+    end
+
+    if data.Resouled_PickedUpBuff then
+        if data.Resouled_PickedUpBuff > 0 then
+            data.Resouled_PickedUpBuff = data.Resouled_PickedUpBuff - 1
+        elseif data.Resouled_PickedUpBuff == 0 then
+            data.Resouled_PickedUpBuff = nil
+        end
+    end
+
+    if pickup:GetVarData() > 0 then
+        loadProperSprite(sprite, pickup:GetVarData())
+    else
+        sprite:ReplaceSpritesheet(0, "gfx/buffs/placeholde.png", true)
+        sprite:PlayOverlay("Empty", true)
+    end
+
+    if data.Resouled_BuffPedestalInitPosition then
+        pickup.Position = data.Resouled_BuffPedestalInitPosition
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, postPickupUpdate, BUFF_PEDESTAL_VARIANT)
+
+---@param pickup EntityPickup
+---@param collider Entity
+local function postPickupCollision(_, pickup, collider)
+    local player = collider:ToPlayer()
+    local data = pickup:GetData()
+    if player and not data.Resouled_PickedUpBuff then
+        pickup:SetVarData(0)
+        data.Resouled_PickedUpBuff = BUFF_REFRESH_COOLDOWN
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_COLLISION, postPickupCollision, BUFF_PEDESTAL_VARIANT)

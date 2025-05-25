@@ -37,3 +37,4 @@ include("scripts.enemies.Challenges.blank_canvas_dip")
 
 include("scripts.enemies.resouled_dummy")
 include("scripts.enemies.resouled_hitbox")
+include("scripts.enemies.buff_pedestal")

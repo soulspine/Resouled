@@ -127,4 +127,7 @@
     <entity name="Paper Gore Particle 8" id="1000" variant="207" subtype="7" anm2path="paper_gore_8.anm2" friction="1"/>
     <entity name="Paper Gore Particle 9" id="1000" variant="207" subtype="8" anm2path="paper_gore_9.anm2" friction="1"/>
     <entity name="Paper Gore Particle 10" id="1000" variant="207" subtype="9" anm2path="paper_gore_10.anm2" friction="1"/>
+
+<!-- Other-->
+    <entity name="Buff Pedestal" id="5" variant="200" anm2path="buffs/buffs.anm2" collisionRadius="14" collisionMass="3" numGridCollisionPoints="12" friction="0" shadowSize="20" tags="noreroll"/>
 </entities>

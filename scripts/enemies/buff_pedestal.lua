@@ -5,6 +5,9 @@ local BUFF_PEDESTAL_SUBTYPE = Isaac.GetEntitySubTypeByName("Buff Pedestal")
 local SIZE_MULTI = Vector(1.2, 0.8)
 local BUFF_REFRESH_COOLDOWN = 60
 
+local font = Font()
+font:Load("font/teammeatfont10.fnt")
+
 ---@param sprite Sprite
 ---@param buffId ResouledBuff
 local function loadProperSprite(sprite, buffId)
@@ -74,9 +77,22 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, postPickupUpdate, BUFF_
 local function postPickupCollision(_, pickup, collider)
     local player = collider:ToPlayer()
     local data = pickup:GetData()
-    if player and not data.Resouled_PickedUpBuff then
+    if player and not data.Resouled_PickedUpBuff and Resouled:GetPossessedSoulsNum() >= Resouled:GetBuffById(pickup:GetVarData()).Price then
+        Resouled:SetPossessedSoulsNum(Resouled:GetPossessedSoulsNum() - Resouled:GetBuffById(pickup:GetVarData()).Price)
+        
+        
         pickup:SetVarData(0)
         data.Resouled_PickedUpBuff = BUFF_REFRESH_COOLDOWN
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_COLLISION, postPickupCollision, BUFF_PEDESTAL_VARIANT)
+
+---@param pickup EntityPickup
+local function postPickupRender(_, pickup)
+    local varData = pickup:GetVarData()
+    if varData > 0 then
+        local renderPos = Isaac.WorldToScreen(Vector(pickup.Position.X-1, pickup.Position.Y - 15))
+        font:DrawString(tostring(Resouled:GetBuffById(varData).Price), renderPos.X, renderPos.Y, KColor(1, 1, 1, 1), 1, true)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_RENDER, postPickupRender, BUFF_PEDESTAL_VARIANT)

@@ -47,9 +47,9 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.ZODIAC_SIGN, "Zodiac Sign", "g
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.IMP, "Imp", "gfx/buffs/imp.png")
 
 -- REGISTERING BUFF RARITIES
-Resouled:RegisterBuffRarity(Resouled.BuffRarity.COMMON, "Common", 0.75)
-Resouled:RegisterBuffRarity(Resouled.BuffRarity.RARE, "Rare", 0.2)
-Resouled:RegisterBuffRarity(Resouled.BuffRarity.LEGENDARY, "Legendary", 0.05)
+Resouled:RegisterBuffRarity(Resouled.BuffRarity.COMMON, "Common", 0.65)
+Resouled:RegisterBuffRarity(Resouled.BuffRarity.RARE, "Rare", 0.25)
+Resouled:RegisterBuffRarity(Resouled.BuffRarity.LEGENDARY, "Legendary", 0.1)
 Resouled:RegisterBuffRarity(Resouled.BuffRarity.SPECIAL, "Special", 0)
 
 -- REGISTERING BUFFS

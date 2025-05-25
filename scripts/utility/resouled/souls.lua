@@ -1,96 +1,8 @@
 local SOUL_PICKUP_VARIANT = Isaac.GetEntityVariantByName("Soul Pickup")
 
----@enum ResouledSoul
-Resouled.Souls = {
-    MONSTRO = 1,
-    DUKE = 2,
-    LITTLE_HORN = 3,
-    BLOAT = 4,
-    WRATH = 5,
-    WIDOW = 6,
-    CURSED_HAUNT = 7,
-    THE_BONE = 8,
-    THE_CHEST = 9,
-    CARRIOR_QUEEN = 10,
-    PANDORAS_BOX = 11,
-    CHUB = 12,
-    CONQUEST = 13,
-    DADDY_LONG_LEGS = 14,
-    DARK_ONE = 15,
-    DEATH = 16,
-    ENVY = 17,
-    FAMINE = 18,
-    GEMINI = 19,
-    GLUTTONY = 20,
-    GREED = 21,
-    GURDY = 22,
-    GURDY_JR = 23,
-    LARRY_JR = 24,
-    LUST = 25,
-    MASK_OF_INFAMY = 26,
-    MEGA_FATTY = 27,
-    PEEP = 28,
-    PESTILENCE = 29,
-    PIN = 30,
-    PRIDE = 31,
-    RAG_MAN = 32,
-    SCOLEX = 33,
-    SLOTH = 34,
-    HAUNT = 35,
-    THE_LAMB = 36,
-    WAR = 37,
-    MOM = 38,
-    SATAN = 39,
-    HEADLESS_HORSEMAN = 40,
-    BLASTOCYST = 41,
-    DINGLE = 42,
-    KRAMPUS = 43,
-    MONSTRO_II = 44,
-    THE_FALLEN = 45,
-    ISAAC = 46,
-    MOMS_HEART = 47,
-    HOLY_CHEST = 48,
-    EXPERIMENTAL_TREATMENT = 49,
-    ULTRA_FLESH_KID = 50,
-    CURSED_SOUL = 51,
-    BABY_PLUM = 52,
-    BROWNIE = 53,
-    CHARMED_MONSTRO = 54,
-    CLOG = 55,
-    HORNFEL = 56,
-    MAMA_GURDY = 57,
-    RAG_MEGA = 58,
-    SISTERS_VIS = 59,
-    THE_RAINMAKER = 60,
-    THE_SCOURGE = 61,
-    THE_SIREN = 62,
-    TURDLINGS = 63,
-    ULTRA_GREED = 64,
-    MEGA_SATAN = 65,
-    MOTHER = 66,
-    GUS = 67,
-    A_FRIEND = 68,
-    HUSH = 69,
-    HOLY_GREED = 70,
-    HOT_POTATO = 71,
-    FISTULA = 72,
-    GURGLINGS = 73,
-    POLYCEPHALUS = 74,
-    STEVEN = 75,
-    THE_CAGE = 76,
-    BIG_HORN = 77,
-    LOKI = 78,
-    THE_ADVERSARY = 79,
-    TERATOMA = 78,
-    IT_LIVES = 79,
-    CHARMED_MOMS_HEART = 80,
-    THE_LOST = 81,
-    THE_BEAST = 82,
-}
-
 local DEFAULT_WEIGHT = 1
 
-local BASIC_SPAWN_LOOKUP_TABLE = {} -- NOT STATIC, POPULATED AT RUNTIME by Resouled:AddNewBasicSoulSpawnRule
+local basicSpawnLookupTable = {} -- NOT STATIC, POPULATED AT RUNTIME by Resouled:AddNewBasicSoulSpawnRule
 
 local font = Font()
 font:Load("font/luaminioutlined.fnt")
@@ -196,12 +108,12 @@ function Resouled:AddNewBasicSoulSpawnRule(type, variant, subtype, soul, weight,
     weight = weight or DEFAULT_WEIGHT
     local key = makeLookupTableKey(type, variant, subtype)
 
-    if not BASIC_SPAWN_LOOKUP_TABLE[key] then
-        BASIC_SPAWN_LOOKUP_TABLE[key] = {}
+    if not basicSpawnLookupTable[key] then
+        basicSpawnLookupTable[key] = {}
     end
 
     table.insert(
-        BASIC_SPAWN_LOOKUP_TABLE[key], 
+        basicSpawnLookupTable[key], 
         {
             Soul = soul,
             Weight = weight,
@@ -213,7 +125,7 @@ end
 ---@param npc EntityNPC
 local function basicSoulSpawnHandler(_, npc)
     local key = makeLookupTableKey(npc.Type, npc.Variant, npc.SubType)
-    local spawnRules = BASIC_SPAWN_LOOKUP_TABLE[key]
+    local spawnRules = basicSpawnLookupTable[key]
     if spawnRules then
         for _, rule in ipairs(spawnRules) do
 
@@ -230,7 +142,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, basicSoulSpawnHandler)
 
 function Resouled:GetNumBasicSoulSpawnRules()
     local num = 0
-    for _, rules in pairs(BASIC_SPAWN_LOOKUP_TABLE) do
+    for _, rules in pairs(basicSpawnLookupTable) do
         for _, rule in ipairs(rules) do
             num = num + rule.Weight
         end

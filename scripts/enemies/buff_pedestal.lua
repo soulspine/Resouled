@@ -99,13 +99,17 @@ local function postPickupCollision(_, pickup, collider)
     if player and not data.Resouled_PickedUpBuff and Resouled:GetPossessedSoulsNum() >= Resouled:GetBuffById(pickup:GetVarData()).Price then
         Resouled:SetPossessedSoulsNum(Resouled:GetPossessedSoulsNum() - Resouled:GetBuffById(pickup:GetVarData()).Price)
         
+        local pickupSprite = Sprite()
+        pickupSprite:Load("gfx/buffs/buffs.anm2", true)
+        pickupSprite:ReplaceSpritesheet(0, Resouled:GetBuffFamilyById(Resouled:GetBuffById(pickup:GetVarData()).Family).Spritesheet, true)
+        pickupSprite:PlayOverlay(pickup:GetSprite():GetOverlayAnimation().."Pickup", true)
+
+        playBuffPickupAnimation(player, pickupSprite)
+        
+        -- TODO ADD THE BUFF TO THE PLAYER
         
         pickup:SetVarData(0)
-        data.Resouled_PickedUpBuff = BUFF_REFRESH_COOLDOWN    
-        playBuffPickupAnimation(player, pickup:GetSprite())
-
-        -- TODO ADD THE BUFF TO THE PLAYER
-
+        data.Resouled_PickedUpBuff = BUFF_REFRESH_COOLDOWN
     end    
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_COLLISION, postPickupCollision, BUFF_PEDESTAL_VARIANT)

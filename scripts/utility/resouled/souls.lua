@@ -74,6 +74,7 @@ end
 ---@param pickup EntityPickup
 local function onSoulPickupInit(_, pickup)
     pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
+    pickup:GetSprite():Play("Idle", true)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onSoulPickupInit, SOUL_PICKUP_VARIANT)
 

@@ -62,6 +62,7 @@ if REPENTOGON and MinimapAPI then
     include("scripts.pickups")
     include("scripts.room_events")
     include("scripts.souls")
+    include("scripts.buffs")
 
 else -- REPENTOGON AND MINIMAPI NOT FOUND
     local messages = {

@@ -2,6 +2,10 @@ function Resouled:Log(...)
     print("[Resouled]", ...)
 end
 
+function Resouled:LogError(...)
+    print("[Resouled ERROR]", ...)
+end
+
 --- Spawns a random chaos pool item of the specified quality at specified position
 ---@param quality integer
 ---@param rng RNG

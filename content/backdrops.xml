@@ -1,0 +1,3 @@
+<backdrops gfxroot="gfx/backdrop/" gridgfxroot="gfx/grid/" effectsgfxroot="gfx/effects/">
+    <backdrop id="1" name="Afterlife Shop" gfx="afterlife_shop.png" props="" walls="1" wallvariants="1" floors="1" floorvariants="1"/>
+</backdrops>

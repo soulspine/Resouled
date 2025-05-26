@@ -6,6 +6,7 @@ Resouled.BuffFamilies = {
     KIDS_DRAWING = 3,
     ZODIAC_SIGN = 4,
     IMP = 5,
+    THE_MOON = 6,
 }
 
 ---@enum ResouledBuff
@@ -28,6 +29,9 @@ Resouled.Buffs = {
     IMP = 16,
     FIEND = 17,
     DEMON = 18,
+    THE_MOON = 19,
+    THE_SUN = 20,
+    BLACK_HOLE = 21,
 }
 
 ---@enum ResouledBuffRarity
@@ -45,6 +49,7 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.CROSS, "Cross", "gfx/buffs/cro
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.KIDS_DRAWING, "Kid's Drawing", "gfx/buffs/kids_drawing.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.ZODIAC_SIGN, "Zodiac Sign", "gfx/buffs/zodiac_sign.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.IMP, "Imp", "gfx/buffs/imp.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.THE_MOON, "The Moon", "gfx/buffs/the_moon.png")
 
 -- REGISTERING BUFF RARITIES
 Resouled:RegisterBuffRarity(Resouled.BuffRarity.COMMON, "Common", 0.65)
@@ -55,7 +60,7 @@ Resouled:RegisterBuffRarity(Resouled.BuffRarity.SPECIAL, "Special", 0)
 -- REGISTERING BUFFS
 Resouled:RegisterBuff(Resouled.Buffs.CURSED_SKULL, "Cursed Skull", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.CURSED_SKULL)
 Resouled:RegisterBuff(Resouled.Buffs.DEVILS_HEAD, "Devil's Head", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.CURSED_SKULL)
-Resouled:RegisterBuff(Resouled.Buffs.FORBIDDEN_CRANIUM, "Forbidden Cranium", 5, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.CURSED_SKULL)
+Resouled:RegisterBuff(Resouled.Buffs.FORBIDDEN_CRANIUM, "Forbidden Cranium", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.CURSED_SKULL)
 Resouled:RegisterBuff(Resouled.Buffs.STEAM_SALE, "Steam Sale", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.STEAM_SALE)
 Resouled:RegisterBuff(Resouled.Buffs.STEAM_GIVEAWAY, "Steam Giveaway", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.STEAM_SALE)
 Resouled:RegisterBuff(Resouled.Buffs.PIRACY, "Piracy", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.STEAM_SALE)
@@ -71,6 +76,9 @@ Resouled:RegisterBuff(Resouled.Buffs.HEAVENS_CALL, "Heaven's Call", 8,  Resouled
 Resouled:RegisterBuff(Resouled.Buffs.IMP, "Imp", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.IMP)
 Resouled:RegisterBuff(Resouled.Buffs.FIEND, "Fiend", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.IMP)
 Resouled:RegisterBuff(Resouled.Buffs.DEMON, "Demon", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.IMP)
+Resouled:RegisterBuff(Resouled.Buffs.THE_MOON, "The Moon", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.THE_MOON)
+Resouled:RegisterBuff(Resouled.Buffs.THE_SUN, "The Sun", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.THE_MOON)
+Resouled:RegisterBuff(Resouled.Buffs.BLACK_HOLE, "Black Hole", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.THE_MOON)
 
 
 -- IMPORTING BUFF SCRIPTS

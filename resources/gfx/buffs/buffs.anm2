@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="Unknown" CreatedOn="5/26/2025 5:14:09 PM" Version="18" Fps="30"/>
+	<Info CreatedBy="Unknown" CreatedOn="5/27/2025 9:42:51 PM" Version="18" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="cross.png" Id="0"/>
+			<Spritesheet Path="placeholder.png" Id="0"/>
 			<Spritesheet Path="buff_pedestal.png" Id="1"/>
 			<Spritesheet Path="buff_background.png" Id="2"/>
 		</Spritesheets>

@@ -96,7 +96,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, postPickupUpdate, BUFF_
 local function postPickupCollision(_, pickup, collider)
     local player = collider:ToPlayer()
     local data = pickup:GetData()
-    if player and not data.Resouled_PickedUpBuff and Resouled:GetPossessedSoulsNum() >= Resouled:GetBuffById(pickup:GetVarData()).Price then
+    if player and not data.Resouled_PickedUpBuff and pickup:GetVarData() > 0 and Resouled:GetPossessedSoulsNum() >= Resouled:GetBuffById(pickup:GetVarData()).Price then
         Resouled:SetPossessedSoulsNum(Resouled:GetPossessedSoulsNum() - Resouled:GetBuffById(pickup:GetVarData()).Price)
         
         local pickupSprite = Sprite()

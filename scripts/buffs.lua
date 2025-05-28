@@ -7,6 +7,8 @@ Resouled.BuffFamilies = {
     ZODIAC_SIGN = 4,
     IMP = 5,
     THE_MOON = 6,
+
+    WAR = 7, --Special start from here
 }
 
 ---@enum ResouledBuff
@@ -32,6 +34,8 @@ Resouled.Buffs = {
     THE_MOON = 19,
     THE_SUN = 20,
     BLACK_HOLE = 21,
+
+    WAR = 22, -- Special start from here
 }
 
 ---@enum ResouledBuffRarity
@@ -50,6 +54,8 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.KIDS_DRAWING, "Kid's Drawing",
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.ZODIAC_SIGN, "Zodiac Sign", "gfx/buffs/zodiac_sign.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.IMP, "Imp", "gfx/buffs/imp.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.THE_MOON, "The Moon", "gfx/buffs/the_moon.png")
+
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.WAR, "War", "gfx/buffs/war.png") -- Special
 
 -- REGISTERING BUFF RARITIES
 Resouled:RegisterBuffRarity(Resouled.BuffRarity.COMMON, "Common", 0.65)
@@ -80,6 +86,10 @@ Resouled:RegisterBuff(Resouled.Buffs.THE_MOON, "The Moon", 3, Resouled.BuffRarit
 Resouled:RegisterBuff(Resouled.Buffs.THE_SUN, "The Sun", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.THE_MOON)
 Resouled:RegisterBuff(Resouled.Buffs.BLACK_HOLE, "Black Hole", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.THE_MOON)
 
+Resouled:RegisterBuff(Resouled.Buffs.WAR, "War", 10, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.WAR) -- Special
+
 
 -- IMPORTING BUFF SCRIPTS
 include("scripts.buffs.cursed_skull")
+
+include("scripts.buffs.war")

@@ -26,6 +26,18 @@ local registeredRarities = {}
 --- @type table<string, ResouledBuffDesc>
 local registeredBuffs = {}
 
+
+local fileSaveBuffTable = {}
+
+local function postModsLoaded()
+    for i = 1, #Resouled:GetBuffs() do
+        table.insert(fileSaveBuffTable, i, 0)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, postModsLoaded)
+
+
+
 --- Registers a new buff family and saves its spritesheet path to properly load it later.
 --- Returns `true` if the family was registered successfully, `false` if it was already registered.
 ---@param family ResouledBuffFamily
@@ -291,4 +303,41 @@ function Resouled:GetRandomWeightedBuff(rng, blacklist)
     end
 
     return #possibleBuffs > 0 and possibleBuffs[rng:RandomInt(#possibleBuffs) + 1] or nil
+end
+
+---@param buffID ResouledBuff
+function Resouled:AddBuffToSave(buffID)
+    local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
+    if not FILE_SAVE then
+        FILE_SAVE = {}
+    end
+    if not FILE_SAVE.Resouled_Buffs then
+        FILE_SAVE.Resouled_Buffs = fileSaveBuffTable
+    elseif #FILE_SAVE.Resouled_Buffs ~= fileSaveBuffTable then
+        for i = 1, #fileSaveBuffTable do
+            FILE_SAVE.Resouled_Buffs[i] = FILE_SAVE.Resouled_Buffs[i] or 0
+        end
+    end
+
+    FILE_SAVE.Resouled_Buffs[buffID] = (FILE_SAVE.Resouled_Buffs[buffID] or 0) + 1
+end
+
+---@param buffID ResouledBuff
+---@return integer
+function Resouled:GetBuffAmount(buffID)
+    local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
+    if FILE_SAVE and FILE_SAVE.Resouled_Buffs and FILE_SAVE.Resouled_Buffs[buffID] then
+        return FILE_SAVE.Resouled_Buffs[buffID]
+    end
+    return 0
+end
+
+---@param buffID ResouledBuff
+---@return boolean
+function Resouled:BuffPresent(buffID)
+    local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
+    if FILE_SAVE and FILE_SAVE.Resouled_Buffs and FILE_SAVE.Resouled_Buffs[buffID] then
+        return true
+    end
+    return false
 end

@@ -63,7 +63,7 @@ local function postPickupUpdate(_, pickup)
     if varData < 1 and not data.Resouled_PickedUpBuff then
         local chosenBuff = Resouled:GetRandomWeightedBuff(pickup:GetDropRNG())
         if chosenBuff then
-            pickup:SetVarData(chosenBuff)
+            pickup:SetVarData(22)
         end
     end
 
@@ -106,11 +106,11 @@ local function postPickupCollision(_, pickup, collider)
 
         playBuffPickupAnimation(player, pickupSprite)
         
-        -- TODO ADD THE BUFF TO THE PLAYER
+        Resouled:AddBuffToSave(pickup:GetVarData())
         
         pickup:SetVarData(0)
         data.Resouled_PickedUpBuff = BUFF_REFRESH_COOLDOWN
-    end    
+    end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_COLLISION, postPickupCollision, BUFF_PEDESTAL_VARIANT)
 

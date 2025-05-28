@@ -63,7 +63,7 @@ local function postPickupUpdate(_, pickup)
     if varData < 1 and not data.Resouled_PickedUpBuff then
         local chosenBuff = Resouled:GetRandomWeightedBuff(pickup:GetDropRNG())
         if chosenBuff then
-            pickup:SetVarData(pickup:GetVarData())
+            pickup:SetVarData(chosenBuff)
         end
     end
 

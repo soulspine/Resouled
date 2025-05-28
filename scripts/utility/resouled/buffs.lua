@@ -323,6 +323,25 @@ function Resouled:AddBuffToSave(buffID)
 end
 
 ---@param buffID ResouledBuff
+function Resouled:RemoveBuffFromSave(buffID)
+    local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
+    if not FILE_SAVE then
+        FILE_SAVE = {}
+    end
+    if not FILE_SAVE.Resouled_Buffs then
+        FILE_SAVE.Resouled_Buffs = fileSaveBuffTable
+    elseif #FILE_SAVE.Resouled_Buffs ~= fileSaveBuffTable then
+        for i = 1, #fileSaveBuffTable do
+            FILE_SAVE.Resouled_Buffs[i] = FILE_SAVE.Resouled_Buffs[i] or 0
+        end
+    end
+
+    if FILE_SAVE.Resouled_Buffs[buffID] > 0 then
+        FILE_SAVE.Resouled_Buffs[buffID] = (FILE_SAVE.Resouled_Buffs[buffID]) - 1
+    end
+end
+
+---@param buffID ResouledBuff
 ---@return integer
 function Resouled:GetBuffAmount(buffID)
     local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
@@ -336,7 +355,7 @@ end
 ---@return boolean
 function Resouled:BuffPresent(buffID)
     local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
-    if FILE_SAVE and FILE_SAVE.Resouled_Buffs and FILE_SAVE.Resouled_Buffs[buffID] then
+    if FILE_SAVE and FILE_SAVE.Resouled_Buffs and FILE_SAVE.Resouled_Buffs[buffID] and FILE_SAVE.Resouled_Buffs[buffID] > 0 then
         return true
     end
     return false

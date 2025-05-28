@@ -32,7 +32,7 @@ local function renderer(_, player, activeSlot, offset, alpha, scale, chargebarOf
     
     local itemDesc = Isaac.GetItemConfig():GetCollectible(player:GetActiveItem(activeSlot))
 
-    if itemDesc and itemDesc.ChargeType ~= 1 then
+    if itemDesc and itemDesc.ChargeType == 0 then
         
         if maxCharge > 0 and (not MAXCHARGE_RENDER_BLACKLIST[maxCharge] or itemDesc:HasCustomTag(CUSTOM_TAG)) then
             separatorSprite.Scale = Vector(1.25, 1) * scale

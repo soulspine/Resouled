@@ -223,8 +223,8 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
         ::RollRoomEvent::
         
         Resouled:NewSeed()
-        --local randomNum = rng:RandomInt(#RoomEvents) + 1
-        local randomNum = 26
+        local randomNum = rng:RandomInt(#RoomEvents) + 1
+        --local randomNum = 26
         
         
         if (roomType == RoomType.ROOM_BOSS and BOSS_ROOM_BLACKLIST[randomNum]) or

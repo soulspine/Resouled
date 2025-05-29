@@ -7,8 +7,9 @@ Resouled.BuffFamilies = {
     ZODIAC_SIGN = 4,
     IMP = 5,
     THE_MOON = 6,
+    BLUE_KING_CROWN = 7,
 
-    WAR = 7, --Special start from here
+    WAR = 8, --Special start from here
 }
 
 ---@enum ResouledBuff
@@ -34,8 +35,11 @@ Resouled.Buffs = {
     THE_MOON = 19,
     THE_SUN = 20,
     BLACK_HOLE = 21,
+    BLUE_KING_CROWN = 22,
+    KING_CROWN = 23,
+    ROYAL_CROWN = 24,
 
-    WAR = 22, -- Special start from here
+    WAR = 25, -- Special start from here
 }
 
 ---@enum ResouledBuffRarity
@@ -54,6 +58,7 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.KIDS_DRAWING, "Kid's Drawing",
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.ZODIAC_SIGN, "Zodiac Sign", "gfx/buffs/zodiac_sign.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.IMP, "Imp", "gfx/buffs/imp.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.THE_MOON, "The Moon", "gfx/buffs/the_moon.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.BLUE_KING_CROWN, "Blue King Crown", "gfx/buffs/blue_king_crown.png")
 
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.WAR, "War", "gfx/buffs/war.png") -- Special
 
@@ -73,18 +78,21 @@ Resouled:RegisterBuff(Resouled.Buffs.PIRACY, "Piracy", 8, Resouled.BuffRarity.LE
 Resouled:RegisterBuff(Resouled.Buffs.CROSS, "Cross", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.CROSS, false)
 Resouled:RegisterBuff(Resouled.Buffs.RELIC, "Relic", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.CROSS, false)
 Resouled:RegisterBuff(Resouled.Buffs.CRUSIFIX, "Crusifix", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.CROSS, false)
-Resouled:RegisterBuff(Resouled.Buffs.KIDS_DRAWING, "Kid's Drawing", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.KIDS_DRAWING, false)
-Resouled:RegisterBuff(Resouled.Buffs.FORGOTTEN_POLAROID, "Forgotten Polaroid", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.KIDS_DRAWING, false)
-Resouled:RegisterBuff(Resouled.Buffs.BROKEN_MEMORY, "Broken Memory", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.KIDS_DRAWING, false)
+Resouled:RegisterBuff(Resouled.Buffs.KIDS_DRAWING, "Kid's Drawing", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.KIDS_DRAWING, true)
+Resouled:RegisterBuff(Resouled.Buffs.FORGOTTEN_POLAROID, "Forgotten Polaroid", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.KIDS_DRAWING, true)
+Resouled:RegisterBuff(Resouled.Buffs.BROKEN_MEMORY, "Broken Memory", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.KIDS_DRAWING, true)
 Resouled:RegisterBuff(Resouled.Buffs.ZODIAC_SIGN, "Zodiac Sign", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.ZODIAC_SIGN, false)
 Resouled:RegisterBuff(Resouled.Buffs.CONSTELLATION, "Constellation", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.ZODIAC_SIGN, false)
-Resouled:RegisterBuff(Resouled.Buffs.HEAVENS_CALL, "Heaven's Call", 8,  Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.ZODIAC_SIGN, false)
+Resouled:RegisterBuff(Resouled.Buffs.HEAVENS_CALL, "Heaven's Call", 8,  Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.ZODIAC_SIGN, true)
 Resouled:RegisterBuff(Resouled.Buffs.IMP, "Imp", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.IMP, false)
 Resouled:RegisterBuff(Resouled.Buffs.FIEND, "Fiend", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.IMP, false)
 Resouled:RegisterBuff(Resouled.Buffs.DEMON, "Demon", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.IMP, false)
 Resouled:RegisterBuff(Resouled.Buffs.THE_MOON, "The Moon", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.THE_MOON, false)
 Resouled:RegisterBuff(Resouled.Buffs.THE_SUN, "The Sun", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.THE_MOON, false)
 Resouled:RegisterBuff(Resouled.Buffs.BLACK_HOLE, "Black Hole", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.THE_MOON, false)
+Resouled:RegisterBuff(Resouled.Buffs.BLUE_KING_CROWN, "Blue King Crown", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.BLUE_KING_CROWN, false)
+Resouled:RegisterBuff(Resouled.Buffs.KING_CROWN, "King Crown", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.BLUE_KING_CROWN, false)
+Resouled:RegisterBuff(Resouled.Buffs.ROYAL_CROWN, "Royal Crown", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.BLUE_KING_CROWN, false)
 
 Resouled:RegisterBuff(Resouled.Buffs.WAR, "War", 10, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.WAR, true) -- Special
 

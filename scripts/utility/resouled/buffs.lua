@@ -5,6 +5,7 @@
 ---@field Rarity ResouledBuffRarity
 ---@field Family ResouledBuffFamily
 ---@field FamilyName string
+---@field Stackable boolean
 
 ---@class ResouledBuffFamilyDesc
 ---@field Id ResouledBuffFamily
@@ -26,17 +27,23 @@ local registeredRarities = {}
 --- @type table<string, ResouledBuffDesc>
 local registeredBuffs = {}
 
+local BUFF_PEDESTAL_TYPE = Isaac.GetEntityTypeByName("Buff Pedestal")
+local BUFF_PEDESTAL_VARIANT = Isaac.GetEntityVariantByName("Buff Pedestal")
+local BUFF_PEDESTAL_SUBTYPE = Isaac.GetEntitySubTypeByName("Buff Pedestal")
 
-local fileSaveBuffTable = {}
-
-local function postModsLoaded()
-    for i = 1, #Resouled:GetBuffs() do
-        table.insert(fileSaveBuffTable, i, 0)
+---@param buffID ResouledBuff
+---@param position Vector
+---@return EntityPickup | nil
+function Resouled:SpawnSetBuffPedestal(buffID, position)
+    local buff = Game():Spawn(BUFF_PEDESTAL_TYPE, BUFF_PEDESTAL_VARIANT, position, Vector.Zero, nil, BUFF_PEDESTAL_SUBTYPE, Game():GetRoom():GetSpawnSeed() + Isaac.GetFrameCount()):ToPickup()
+    if buff then
+        buff:SetVarData(buffID)
+        return buff
+    else
+        Resouled:LogError("There was a problem spawning a set buff pedestal")
+        return nil
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, postModsLoaded)
-
-
 
 --- Registers a new buff family and saves its spritesheet path to properly load it later.
 --- Returns `true` if the family was registered successfully, `false` if it was already registered.
@@ -85,8 +92,9 @@ end
 ---@param price integer
 ---@param rarity ResouledBuffRarity
 ---@param family ResouledBuffFamily
+---@param stackable boolean
 ---@return boolean
-function Resouled:RegisterBuff(buff, name, price, rarity, family)
+function Resouled:RegisterBuff(buff, name, price, rarity, family, stackable)
     local buffKey = tostring(buff)
     local rarityKey = tostring(rarity)
     local familyKey = tostring(family)
@@ -106,6 +114,7 @@ function Resouled:RegisterBuff(buff, name, price, rarity, family)
             Rarity = rarity,
             Family = family,
             FamilyName = registeredFamilies[familyKey].Name,
+            Stackable = stackable
         }
 
         table.insert(registeredFamilies[familyKey].ChildBuffs, buff)
@@ -312,14 +321,21 @@ function Resouled:AddBuffToSave(buffID)
         FILE_SAVE = {}
     end
     if not FILE_SAVE.Resouled_Buffs then
-        FILE_SAVE.Resouled_Buffs = fileSaveBuffTable
-    elseif #FILE_SAVE.Resouled_Buffs ~= fileSaveBuffTable then
-        for i = 1, #fileSaveBuffTable do
-            FILE_SAVE.Resouled_Buffs[i] = FILE_SAVE.Resouled_Buffs[i] or 0
-        end
+        FILE_SAVE.Resouled_Buffs = {}
     end
 
-    FILE_SAVE.Resouled_Buffs[buffID] = (FILE_SAVE.Resouled_Buffs[buffID] or 0) + 1
+    local buff = Resouled:GetBuffById(buffID)
+    
+    if buff then
+        local key = tostring(buff.Id)
+        if buff.Stackable then
+            FILE_SAVE.Resouled_Buffs[key] = (FILE_SAVE.Resouled_Buffs[key] or 0) + 1
+        else
+            FILE_SAVE.Resouled_Buffs[key] = true
+        end
+    else
+        Resouled:LogError("Provided unregistered buff while adding buffs. nil ID: "..tostring(buffID))
+    end
 end
 
 ---@param buffID ResouledBuff
@@ -329,15 +345,28 @@ function Resouled:RemoveBuffFromSave(buffID)
         FILE_SAVE = {}
     end
     if not FILE_SAVE.Resouled_Buffs then
-        FILE_SAVE.Resouled_Buffs = fileSaveBuffTable
-    elseif #FILE_SAVE.Resouled_Buffs ~= fileSaveBuffTable then
-        for i = 1, #fileSaveBuffTable do
-            FILE_SAVE.Resouled_Buffs[i] = FILE_SAVE.Resouled_Buffs[i] or 0
-        end
+        FILE_SAVE.Resouled_Buffs = {}
     end
 
-    if FILE_SAVE.Resouled_Buffs[buffID] > 0 then
-        FILE_SAVE.Resouled_Buffs[buffID] = (FILE_SAVE.Resouled_Buffs[buffID]) - 1
+    local buff = Resouled:GetBuffById(buffID)
+    
+    if buff then
+        local key = tostring(buff.Id)
+        if FILE_SAVE.Resouled_Buffs[key] then
+
+            if buff.Stackable then
+                FILE_SAVE.Resouled_Buffs[key] = (FILE_SAVE.Resouled_Buffs[key]) - 1
+
+                if FILE_SAVE.Resouled_Buffs[key] == 0 then
+
+                    FILE_SAVE.Resouled_Buffs[key] = nil
+                end
+            else
+                FILE_SAVE.Resouled_Buffs[key] = nil
+            end
+        end
+    else
+        Resouled:LogError("Provided unregistered buff while removing buffs. nil ID: "..tostring(buffID))
     end
 end
 
@@ -345,8 +374,11 @@ end
 ---@return integer
 function Resouled:GetBuffAmount(buffID)
     local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
-    if FILE_SAVE and FILE_SAVE.Resouled_Buffs and FILE_SAVE.Resouled_Buffs[buffID] then
-        return FILE_SAVE.Resouled_Buffs[buffID]
+    local buff = Resouled:GetBuffById(buffID)
+    if buff then
+        if FILE_SAVE and FILE_SAVE.Resouled_Buffs and FILE_SAVE.Resouled_Buffs[tostring(buffID)] then
+            return FILE_SAVE.Resouled_Buffs[tostring(buffID)]
+        end
     end
     return 0
 end
@@ -354,9 +386,12 @@ end
 ---@param buffID ResouledBuff
 ---@return boolean
 function Resouled:BuffPresent(buffID)
-    local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
-    if FILE_SAVE and FILE_SAVE.Resouled_Buffs and FILE_SAVE.Resouled_Buffs[buffID] and FILE_SAVE.Resouled_Buffs[buffID] > 0 then
-        return true
+    local buff = Resouled:GetBuffById(buffID)
+    if buff then
+        local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
+        if FILE_SAVE and FILE_SAVE.Resouled_Buffs and FILE_SAVE.Resouled_Buffs[tostring(buffID)] then
+            return true
+        end
     end
     return false
 end

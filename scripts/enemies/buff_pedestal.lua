@@ -61,8 +61,13 @@ local function postPickupUpdate(_, pickup)
     local sprite = pickup:GetSprite()
     local data = pickup:GetData()
     if varData < 1 and not data.Resouled_PickedUpBuff then
+        ::BuffWasPresent::
         local chosenBuff = Resouled:GetRandomWeightedBuff(pickup:GetDropRNG())
+
         if chosenBuff then
+            if Resouled:BuffPresent(chosenBuff) and not Resouled:GetBuffById(chosenBuff).Stackable then
+                goto BuffWasPresent
+            end
             pickup:SetVarData(chosenBuff)
         end
     end

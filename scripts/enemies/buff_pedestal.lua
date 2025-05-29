@@ -11,6 +11,8 @@ font:Load("font/teammeatfont10.fnt")
 local ANIMATION_PEDESTAL_MAIN = "Pedestal"
 local ANIMATION_PEDESTAL_EMPTY = "Empty"
 
+local PICKUP_VOLUME = 1
+
 ---@param sprite Sprite
 ---@param buffId ResouledBuff
 local function loadProperSprite(sprite, buffId)
@@ -113,6 +115,8 @@ local function postPickupCollision(_, pickup, collider)
         
         Resouled:AddBuffToSave(pickup:GetVarData())
         
+        SFXManager():Play(Isaac.GetSoundIdByName("Buff"..tostring(Resouled:GetBuffById(pickup:GetVarData()).Rarity)), PICKUP_VOLUME)
+
         pickup:SetVarData(0)
         data.Resouled_PickedUpBuff = BUFF_REFRESH_COOLDOWN
     end

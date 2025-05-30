@@ -187,17 +187,22 @@ end
 
 ---@param pool ItemPoolType
 ---@param rng RNG
----@param position Vector
----@param spawner? Entity
+---@param quality? integer
 ---@return integer
-function Resouled:GetRandomItemFromPool(pool, rng, position, spawner)
+function Resouled:GetRandomItemFromPool(pool, rng, quality)
     local game = Game()
     local itemsFromTargetPool = Game():GetItemPool():GetCollectiblesFromPool(pool)
     local validItems = {}
     for i = 1, #itemsFromTargetPool do
         local id = itemsFromTargetPool[i].itemID
         if not Isaac.GetItemConfig():GetCollectible(id):HasTags(ItemConfig.TAG_QUEST) and Game():GetItemPool():CanSpawnCollectible(id, false) then
-            table.insert(validItems, id)
+            if quality then
+                if Isaac.GetItemConfig():GetCollectible(id).Quality == quality then
+                    table.insert(validItems, id)
+                else end
+            else
+                table.insert(validItems, id)
+            end
         end
     end
     

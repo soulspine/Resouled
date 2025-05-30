@@ -99,5 +99,8 @@ Resouled:RegisterBuff(Resouled.Buffs.WAR, "War", 10, Resouled.BuffRarity.SPECIAL
 
 -- IMPORTING BUFF SCRIPTS
 include("scripts.buffs.cursed_skull")
+include("scripts.buffs.devils_head")
+include("scripts.buffs.forbidden_cranium")
+include("scripts.buffs.crusifix")
 
 include("scripts.buffs.war")

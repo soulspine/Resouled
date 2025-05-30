@@ -26,6 +26,8 @@ Resouled.RoomEvents = {
     BLOOD_MONEY = "Blood Money",
     HEAVY_IS_THE_HEAD = "Heavy is The Head",
     BLIND_RAGE = "Blind Rage",
+    EQUALITY = "Equality",
+    ISAACS_BLESSING = "Isaac's Blessing",
 }
 
 
@@ -56,6 +58,8 @@ local RoomEvents = {
     [24] = Resouled.RoomEvents.BLOOD_MONEY,
     [25] = Resouled.RoomEvents.HEAVY_IS_THE_HEAD,
     [26] = Resouled.RoomEvents.BLIND_RAGE,
+    [27] = Resouled.RoomEvents.EQUALITY,
+    [28] = Resouled.RoomEvents.ISAACS_BLESSING,
 }
 
 local ENEMY_ONLY = {
@@ -87,6 +91,7 @@ local BOSS_ROOM_ONLY = {
 
 local ITEM_IN_ROOM_ONLY = {
     [17] = true,
+    [28] = true,
 }
 
 local SHOP_ONLY = {
@@ -300,3 +305,5 @@ include("scripts.room_events.conjoined_twin")
 include("scripts.room_events.blood_money")
 include("scripts.room_events.heavy_is_the_head")
 include("scripts.room_events.blind_rage")
+include("scripts.room_events.equality")
+include("scripts.room_events.isaacs_blessing")

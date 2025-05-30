@@ -184,3 +184,24 @@ function Resouled:ChooseItemFromPool(rng, pool, defaultItem)
 
     return itemID -- return pickup if spawned, nil otherwise
 end
+
+---@param pool ItemPoolType
+---@param rng RNG
+---@param position Vector
+---@param spawner? Entity
+---@return integer
+function Resouled:GetRandomItemFromPool(pool, rng, position, spawner)
+    local game = Game()
+    local itemsFromTargetPool = Game():GetItemPool():GetCollectiblesFromPool(pool)
+    local validItems = {}
+    for i = 1, #itemsFromTargetPool do
+        local id = itemsFromTargetPool[i].itemID
+        if not Isaac.GetItemConfig():GetCollectible(id):HasTags(ItemConfig.TAG_QUEST) and Game():GetItemPool():CanSpawnCollectible(id, false) then
+            table.insert(validItems, id)
+        end
+    end
+    
+    local itemID = #validItems > 0 and validItems[rng:RandomInt(#validItems) + 1]
+
+    return itemID or CollectibleType.COLLECTIBLE_BREAKFAST
+end

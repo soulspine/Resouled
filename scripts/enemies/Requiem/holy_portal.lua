@@ -92,7 +92,7 @@ local function onNpcUpdate(_, npc)
         local enemyCount = 0
         ---@param entity Entity
         Resouled.Iterators:IterateOverRoomEntities(function(entity)
-            if entity:IsEnemy() and entity:IsActiveEnemy() then
+            if entity:IsEnemy() and entity:IsActiveEnemy() and entity:IsVulnerableEnemy() then
                 if entity.Type == HOLY_PORTAL_TYPE and entity.Variant == HOLY_PORTAL_VARIANT and entity.SubType == HOLY_PORTAL_SUBTYPE then
                 else
                     enemyCount = enemyCount + 1

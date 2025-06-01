@@ -33,6 +33,16 @@
         <sample weight="1" path="auction_gavel_sold.wav" />
     </sound>
 
+    <sound name="Holy Spawn 1">
+        <sample weight="1" path="holy_spawn1.wav"/>
+    </sound>
+    <sound name="Holy Spawn 2">
+        <sample weight="1" path="holy_spawn2.wav"/>
+    </sound>
+    <sound name="Holy Spawn 3">
+        <sample weight="1" path="holy_spawn3.wav"/>
+    </sound>
+
 <!-- Summer Of Isaac -->
 
 <!-- Promotional Sets -->

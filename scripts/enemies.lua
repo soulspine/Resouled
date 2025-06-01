@@ -19,6 +19,7 @@ include("scripts.enemies.BaseGameV2.widows_soul")
 -- Four Souls V2
 -- Requiem
 include("scripts.enemies.Requiem.hunter")
+include("scripts.enemies.Requiem.holy_portal")
 -- Summer Of Isaac
 include("scripts.enemies.SummerOfIsaac.cursed_haunt")
 include("scripts.enemies.SummerOfIsaac.coil")

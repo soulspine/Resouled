@@ -26,6 +26,7 @@ local function postNpcInit(_, npc)
         npc.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NOPITS
         npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYEROBJECTS
         npc:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
+        npc:AddEntityFlags(EntityFlag.FLAG_NO_BLOOD_SPLASH)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, TEAR_TYPE)

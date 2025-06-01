@@ -50,24 +50,6 @@
     	<devolve id="34.0.0" weight="1" />
 	</entity>
 
-    <entity name="Monstro's Soul" boss="1" id="20" variant="1" subtype="0" anm2path="souls/monstros_soul.anm2" baseHP="4000" champion="0" collisionDamage="1" collisionMass="50" collisionRadius="40" friction="1" numGridCollisionPoints="12" shadowSize="56" stageHP="0" portrait="2" tags="nodelirium"/>
-
-    <entity name="Duke's Soul" id="67" variant="2" anm2path="souls/duke_of_flies_soul.anm2" baseHP="4000" boss="1" champion="0" collisionDamage="1" collisionMass="30" collisionRadius="35" friction="1.02" numGridCollisionPoints="12" shadowSize="34" stageHP="0" portrait="32" tags="nodelirium"/>
-    <entity name="Dukie's Soul" id="288" variant="1" anm2path="souls/dukie_soul.anm2" baseHP="75" stageHP="0" collisionDamage="1" collisionMass="20" collisionRadius="13" friction="1.02" numGridCollisionPoints="12" shadowSize="17" portrait="146"/>
-
-    <entity name="Little Horn's Soul" id="404" variant="2" anm2path="souls/little_horns_soul.anm2" baseHP="4000" stageHP="0" boss="1" champion="0" collisionDamage="1" collisionMass="30" collisionRadius="16" friction="1" numGridCollisionPoints="12" shadowSize="19" portrait="82"/>
-    <entity name="Little Horn's Soul Clone" id="404" variant="2" subtype="1" anm2path="souls/little_horns_soul_clone.anm2" baseHP="7" stageHP="0" boss="0" champion="0" collisionDamage="1" collisionMass="30" collisionRadius="16" friction="1" numGridCollisionPoints="12" shadowSize="19" portrait="82"/>
-    <entity name="Soul Ball" id="404" variant="3" anm2path="souls/soul_ball.anm2" baseHP="20" stageHP="0" champion="0" collisionDamage="0" collisionMass="999" collisionRadius="16" friction="0" numGridCollisionPoints="12" shadowSize="16" portrait="82"/>
-
-    <entity name="Bloat's Soul" id="68" variant="2" subtype="1" anm2path="souls/bloats_soul.anm2" baseHP="4000" boss="1" champion="0" collisionDamage="1" collisionMass="40" collisionRadius="27" friction="1" numGridCollisionPoints="12" shadowSize="39" stageHP="0" portrait="35"/>
-
-    <entity name="Wrath's Soul" id="48" variant="2" subtype="0" anm2path="souls/wraths_soul.anm2" boss="0" champion="0" collisionDamage="1" collisionMass="30" collisionRadius="13" friction="1" numGridCollisionPoints="12" shadowSize="14" portrait="16"/>
-    <entity name="Wrath's Giga Bomb" id="48" variant="2" subtype="1" anm2path="souls/wraths_bomb.anm2" boss="0" champion="0" collisionDamage="0" collisionMass="999" collisionRadius="32" friction="0" numGridCollisionPoints="12" shadowSize="65" portrait="16"/>
-    <entity name="Wrath's Soul Ghost" id="48" variant="2" subtype="2" anm2path="souls/wraths_soul_ghost.anm2" baseHP="4000" boss="1" champion="0" collisionDamage="1" collisionMass="30" collisionRadius="18" friction="1" numGridCollisionPoints="12" shadowSize="14" portrait="16"/>
-    <entity name="Wrath's Soul Tentacles" id="48" variant="2" subtype="3" anm2path="souls/wraths_soul_tentacles.anm2" boss="0" champion="0" collisionRadius="0" friction="1" numGridCollisionPoints="12" portrait="16"/>
-
-    <entity name="Widow's Soul" id="100" variant="2" subtype="0" anm2path="souls/widows_soul.anm2" baseHP="4000" boss="1" champion="0" collisionDamage="1" collisionMass="38" collisionRadius="35" friction="1" numGridCollisionPoints="12" shadowSize="54" stageHP="0" portrait="100"/>
-
     <entity anm2path="daddy_haunt.anm2" name="Daddy Haunt" id="3" variant="872" subtype="0" collisionRadius="100" shadowSize="15" friction="1"/>
     <entity anm2path="pizza_toppings.anm2" name="Mushroom Familiar" id="3" variant="445" subtype="0" shadowSize="15" friction="1.5"/>
     <entity anm2path="pizza_toppings.anm2" name="Cheese Familiar" id="3" variant="445" subtype="1" shadowSize="15" friction="1.5"/>
@@ -79,13 +61,13 @@
     <entity anm2path="effects/air_shockwave.anm2" name="Air Shockwave" id="1000" variant="200"/>
     <entity anm2path="galaxy_portal.anm2" name="Galaxy Portal" id="1000" variant="200"/>
 <!-- Four Souls V2 -->
-    <entity name="Dingle's Soul" id="261" variant="2" subtype="0" anm2path="souls/dingles_soul.anm2" boss="1" baseHP="4000" collisionDamage="1" collisionMass="75" collisionRadius="20" friction="1" numGridCollisionPoints="12" portrait="65" shadowSize="28"/>
 
 <!-- Requiem -->
     <entity anm2path="spinjitzu.anm2" name="Tornado" id="1000" variant="200"/>
     <entity anm2path="effects/curse_of_hunted_attack_claws.anm2" name="COTH attack claws" id="1000" variant="205"/>
     <entity anm2path="effects/curse_of_hunted_attack_spear.anm2" name="COTH attack spear" id="1000" variant="206"/>
     <entity anm2path="monsters/hunter.anm2" name="Hunter" id="416" variant="0" collisionMass="999" collisionRadius="30" friction="0" numGridCollisionPoints="12" collisionDamage="1"/>
+    <entity name="Holy Portal" id="418" variant="0" anm2path="holy_portal.anm2" collisionMass="999" collisionRadius="20" friction="0" numGridCollisionPoints="12" collisionDamage="0" champion="0" shadowSize="26"/>
 
 <!-- Summer Of Isaac -->
     <entity name="A Friend" id="3" variant="228" subtype="1" anm2path="a_friend.anm2" collisionMass="5" collisionRadius="7" friction="1" numGridCollisionPoints="12" shadowSize="16"/>
@@ -130,4 +112,5 @@
 
 <!-- Other-->
     <entity name="Buff Pedestal" id="5" variant="200" anm2path="buffs/buffs.anm2" collisionRadius="14" collisionMass="3" numGridCollisionPoints="12" friction="0" shadowSize="20" tags="noreroll"/>
+    <entity name="Death Statue" id="1000" variant="208" anm2path="afterlife_statue.anm2"/>
 </entities>

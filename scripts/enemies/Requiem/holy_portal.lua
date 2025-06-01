@@ -29,6 +29,15 @@ local function spawnHolyEnemy(portal, type, variant, subtype)
     portal:SetColor(Color(1, 1, 1, 1, 0.25, 0.1, 0.25), 15, 1, true, true)
 end
 
+local HOLY_ENEMIES = {
+    ["227 1 0"] = true,
+    ["22 2 0"] = true,
+    ["55 2 0"] = true,
+    ["60 2 0"] = true,
+    ["38 1 0"] = true,
+    ["38 1 1"] = true,
+}
+
 ---@param npc EntityNPC
 local function postNpcDeath(_, npc)
     if npc.Type == EntityType.ENTITY_BONY and npc.Variant == 0 then
@@ -82,7 +91,7 @@ local function onNpcUpdate(_, npc)
         ---@param entity Entity
         Resouled.Iterators:IterateOverRoomEntities(function(entity)
             if entity:IsEnemy() and entity:IsActiveEnemy() and entity:IsVulnerableEnemy() then
-                if entity.Type == HOLY_PORTAL_TYPE and entity.Variant == HOLY_PORTAL_VARIANT and entity.SubType == HOLY_PORTAL_SUBTYPE then
+                if entity.Type == HOLY_PORTAL_TYPE and entity.Variant == HOLY_PORTAL_VARIANT and entity.SubType == HOLY_PORTAL_SUBTYPE or HOLY_ENEMIES[tostring(entity.Type).." "..tostring(entity.Variant).." "..tostring(entity.SubType)] then
                 else
                     enemyCount = enemyCount + 1
                 end

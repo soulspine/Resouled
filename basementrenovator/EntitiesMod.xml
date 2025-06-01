@@ -1,3 +1,19 @@
 <data>
-    <entity Name="Holy Portal" ID="418" Variant="0" Subtype="0" Group="Enemies" Image="ResouledSprites/Holy_Portal.png" Kind="Resouled"/>  
+    <entity Name="Holy Portal" ID="418" Variant="0" Subtype="0" Group="Enemies" Image="ResouledSprites/holy_portal.png" Kind="Resouled"/>
+    <entity Name="Coil" ID="414" Variant="0" Subtype="0" Group="Enemies" Image="ResouledSprites/coil.png" Kind="Resouled"/>
+    <entity Name="Coil Fetus" ID="414" Variant="0" Subtype="1" Group="Enemies" Image="ResouledSprites/coil_fetus.png" Kind="Resouled"/>
+    <entity Name="Weltling" ID="415" Variant="0" Subtype="0" Group="Enemies" Image="ResouledSprites/weltling.png" Kind="Resouled"/>
+    <entity Name="Cursed Gaper" ID="10" Variant="4" Subtype="0" Group="Enemies" Image="ResouledSprites/cursed_gaper.png" Kind="Resouled"/>
+    <entity Name="Cursed Fatty" ID="208" Variant="3" Subtype="0" Group="Enemies" Image="ResouledSprites/cursed_fatty.png" Kind="Resouled"/>
+    <entity Name="Cursed Keeper Head" ID="86" Variant="1" Subtype="0" Group="Enemies" Image="ResouledSprites/cursed_keeper_head.png" Kind="Resouled"/>
+    <entity Name="Cursed Horf" ID="12" Variant="1" Subtype="0" Group="Enemies" Image="ResouledSprites/cursed_horf.png" Kind="Resouled"/>
+    <entity Name="Cursed Psy Horf" ID="248" Variant="1" Subtype="0" Group="Enemies" Image="ResouledSprites/cursed_psy_horf.png" Kind="Resouled"/>
+    <entity Name="Cursed Mom's Hand" ID="213" Variant="1" Subtype="0" Group="Enemies" Image="ResouledSprites/cursed_moms_hand.png" Kind="Resouled"/>
+    <entity Name="Hunter" ID="416" Variant="0" Subtype="0" Group="Enemies" Image="ResouledSprites/hunter.png" Kind="Resouled"/>
+    <entity Name="Blank Canvas Mulligan" ID="417" Variant="0" Subtype="0" Group="Enemies" Image="ResouledSprites/blank_canvas_mulligan.png" Kind="Resouled"/>
+    <entity Name="Blank Canvas Gaper" ID="417" Variant="1" Subtype="0" Group="Enemies" Image="ResouledSprites/blank_canvas_gaper.png" Kind="Resouled"/>
+    <entity Name="Blank Canvas Fly" ID="417" Variant="2" Subtype="0" Group="Enemies" Image="ResouledSprites/blank_canvas_fly.png" Kind="Resouled"/>
+    <entity Name="Blank Canvas Pooter" ID="417" Variant="3" Subtype="0" Group="Enemies" Image="ResouledSprites/blank_canvas_pooter.png" Kind="Resouled"/>
+    <entity Name="Blank Canvas Dip" ID="417" Variant="5" Subtype="0" Group="Enemies" Image="ResouledSprites/blank_canvas_dip.png" Kind="Resouled"/>
+    <entity Name="Buff Pedestal" ID="5" Variant="200" Subtype="0" Group="Upgrades" Image="ResouledSprites/buff_pedestal.png" Kind="Resouled"/>
 </data>

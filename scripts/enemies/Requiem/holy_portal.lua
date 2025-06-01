@@ -11,6 +11,7 @@ local function postNpcInit(_, npc)
         npc:GetSprite():Play("Idle", true)
         npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
         npc:AddEntityFlags(EntityFlag.FLAG_NO_BLOOD_SPLASH)
+        npc:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, HOLY_PORTAL_TYPE)

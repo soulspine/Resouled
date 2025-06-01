@@ -15,18 +15,26 @@ local function postNpcInit(_, npc)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, HOLY_PORTAL_TYPE)
 
+---@param portal Entity
+---@param type EntityType
+---@param variant integer
+---@param subtype integer
+local function spawnHolyEnemy(portal, type, variant, subtype)
+    local spawnedEntity = Game():Spawn(type, variant, portal.Position + Vector(0, 1), Vector(0, 5), nil, subtype, portal.InitSeed)
+    spawnedEntity:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
+    spawnedEntity:SetColor(Color(1, 0, 1, 0, 1, 0, 1), 20, 9999, true, true)
+    local randomNum = math.random(1, 3)
+    SFXManager():Play(Isaac.GetSoundIdByName(SPAWN_SFX..tostring(randomNum)), SPAWN_SFX_VOLUME)
+    portal:SetColor(Color(1, 1, 1, 1, 0.25, 0.1, 0.25), 15, 1, true, true)
+end
+
 ---@param npc EntityNPC
 local function postNpcDeath(_, npc)
     if npc.Type == EntityType.ENTITY_BONY and npc.Variant == 0 then
         ---@param entity Entity
         Resouled.Iterators:IterateOverRoomEntities(function(entity)
             if entity.Type == HOLY_PORTAL_TYPE and entity.Variant == HOLY_PORTAL_VARIANT and entity.SubType == HOLY_PORTAL_SUBTYPE then --Bony
-                local spawnedEntity = Game():Spawn(EntityType.ENTITY_BONY, 1, entity.Position + Vector(0, 1), Vector(0, 5), nil, 0, entity.InitSeed)
-                spawnedEntity:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
-                spawnedEntity:SetColor(Color(1, 0, 1, 0, 1, 0, 1), 20, 9999, true, true)
-                local randomNum = math.random(1, 3)
-                SFXManager():Play(Isaac.GetSoundIdByName(SPAWN_SFX..tostring(randomNum)), SPAWN_SFX_VOLUME)
-                entity:SetColor(Color(1, 1, 1, 1, 0.25, 0.1, 0.25), 15, 1, true, true)
+                spawnHolyEnemy(entity, EntityType.ENTITY_BONY, 1, 0)
             end
         end)
     end
@@ -34,12 +42,7 @@ local function postNpcDeath(_, npc)
         ---@param entity Entity
         Resouled.Iterators:IterateOverRoomEntities(function(entity)
             if entity.Type == HOLY_PORTAL_TYPE and entity.Variant == HOLY_PORTAL_VARIANT and entity.SubType == HOLY_PORTAL_SUBTYPE then --Mulligan
-                local spawnedEntity = Game():Spawn(22, 2, entity.Position + Vector(0, 1), Vector(0, 5), nil, 0, entity.InitSeed)
-                spawnedEntity:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
-                spawnedEntity:SetColor(Color(1, 0, 1, 0, 1, 0, 1), 20, 9999, true, true)
-                local randomNum = math.random(1, 3)
-                SFXManager():Play(Isaac.GetSoundIdByName(SPAWN_SFX..tostring(randomNum)), SPAWN_SFX_VOLUME)
-                entity:SetColor(Color(1, 1, 1, 1, 0.25, 0.1, 0.25), 15, 1, true, true)
+                spawnHolyEnemy(entity, 22, 2, 0)
             end
         end)
     end
@@ -47,12 +50,7 @@ local function postNpcDeath(_, npc)
         ---@param entity Entity
         Resouled.Iterators:IterateOverRoomEntities(function(entity)
             if entity.Type == HOLY_PORTAL_TYPE and entity.Variant == HOLY_PORTAL_VARIANT and entity.SubType == HOLY_PORTAL_SUBTYPE then --Leech
-                local spawnedEntity = Game():Spawn(EntityType.ENTITY_LEECH, 2, entity.Position + Vector(0, 1), Vector(0, 5), nil, 0, entity.InitSeed)
-                spawnedEntity:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
-                spawnedEntity:SetColor(Color(1, 0, 1, 0, 1, 0, 1), 20, 9999, true, true)
-                local randomNum = math.random(1, 3)
-                SFXManager():Play(Isaac.GetSoundIdByName(SPAWN_SFX..tostring(randomNum)), SPAWN_SFX_VOLUME)
-                entity:SetColor(Color(1, 1, 1, 1, 0.25, 0.1, 0.25), 15, 1, true, true)
+                spawnHolyEnemy(entity, EntityType.ENTITY_LEECH, 2, 0)
             end
         end)
     end
@@ -60,12 +58,7 @@ local function postNpcDeath(_, npc)
         ---@param entity Entity
         Resouled.Iterators:IterateOverRoomEntities(function(entity)
             if entity.Type == HOLY_PORTAL_TYPE and entity.Variant == HOLY_PORTAL_VARIANT and entity.SubType == HOLY_PORTAL_SUBTYPE then --Eye
-                local spawnedEntity = Game():Spawn(EntityType.ENTITY_EYE, 2, entity.Position + Vector(0, 1), Vector(0, 5), nil, 0, entity.InitSeed)
-                spawnedEntity:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
-                spawnedEntity:SetColor(Color(1, 0, 1, 0, 1, 0, 1), 20, 9999, true, true)
-                local randomNum = math.random(1, 3)
-                SFXManager():Play(Isaac.GetSoundIdByName(SPAWN_SFX..tostring(randomNum)), SPAWN_SFX_VOLUME)
-                entity:SetColor(Color(1, 1, 1, 1, 0.25, 0.1, 0.25), 15, 1, true, true)
+                spawnHolyEnemy(entity, EntityType.ENTITY_EYE, 2, 0)
             end
         end)
     end
@@ -73,12 +66,7 @@ local function postNpcDeath(_, npc)
         ---@param entity Entity
         Resouled.Iterators:IterateOverRoomEntities(function(entity)
             if entity.Type == HOLY_PORTAL_TYPE and entity.Variant == HOLY_PORTAL_VARIANT and entity.SubType == HOLY_PORTAL_SUBTYPE then --Baby
-                local spawnedEntity = Game():Spawn(EntityType.ENTITY_BABY, 1, entity.Position + Vector(0, 1), Vector(0, 5), nil, 0, entity.InitSeed)
-                spawnedEntity:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
-                spawnedEntity:SetColor(Color(1, 0, 1, 0, 1, 0, 1), 20, 9999, true, true)
-                local randomNum = math.random(1, 3)
-                SFXManager():Play(Isaac.GetSoundIdByName(SPAWN_SFX..tostring(randomNum)), SPAWN_SFX_VOLUME)
-                entity:SetColor(Color(1, 1, 1, 1, 0.25, 0.1, 0.25), 15, 1, true, true)
+                spawnHolyEnemy(entity, EntityType.ENTITY_BABY, 1, 0)
             end
         end)
     end

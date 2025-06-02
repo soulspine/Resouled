@@ -72,7 +72,7 @@ Resouled:RegisterBuffRarity(Resouled.BuffRarity.SPECIAL, "Special", 0)
 Resouled:RegisterBuff(Resouled.Buffs.CURSED_SKULL, "Cursed Skull", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.CURSED_SKULL, false)
 Resouled:RegisterBuff(Resouled.Buffs.DEVILS_HEAD, "Devil's Head", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.CURSED_SKULL, false)
 Resouled:RegisterBuff(Resouled.Buffs.FORBIDDEN_CRANIUM, "Forbidden Cranium", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.CURSED_SKULL, false)
-Resouled:RegisterBuff(Resouled.Buffs.STEAM_SALE, "Steam Sale", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.STEAM_SALE, false)
+Resouled:RegisterBuff(Resouled.Buffs.STEAM_SALE, "Steam Sale", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.STEAM_SALE, true)
 Resouled:RegisterBuff(Resouled.Buffs.STEAM_GIVEAWAY, "Steam Giveaway", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.STEAM_SALE, false)
 Resouled:RegisterBuff(Resouled.Buffs.PIRACY, "Piracy", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.STEAM_SALE, false)
 Resouled:RegisterBuff(Resouled.Buffs.CROSS, "Cross", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.CROSS, false)
@@ -96,11 +96,16 @@ Resouled:RegisterBuff(Resouled.Buffs.ROYAL_CROWN, "Royal Crown", 8, Resouled.Buf
 
 Resouled:RegisterBuff(Resouled.Buffs.WAR, "War", 10, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.WAR, true) -- Special
 
+Resouled:Log("Loaded "..tostring(#Resouled:GetBuffs()).." buffs")
+
 
 -- IMPORTING BUFF SCRIPTS
 include("scripts.buffs.cursed_skull")
 include("scripts.buffs.devils_head")
 include("scripts.buffs.forbidden_cranium")
 include("scripts.buffs.crusifix")
+include("scripts.buffs.steam_sale")
+include("scripts.buffs.steam_giveaway")
+include("scripts.buffs.piracy")
 
 include("scripts.buffs.war")

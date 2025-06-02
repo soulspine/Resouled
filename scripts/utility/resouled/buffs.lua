@@ -395,3 +395,10 @@ function Resouled:BuffPresent(buffID)
     end
     return false
 end
+
+function Resouled:ClearBuffSave()
+    local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
+    if FILE_SAVE and FILE_SAVE.Resouled_Buffs then
+        FILE_SAVE.Resouled_Buffs = {}
+    end
+end

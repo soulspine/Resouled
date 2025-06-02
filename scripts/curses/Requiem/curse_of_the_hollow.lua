@@ -14,6 +14,8 @@ local SCREEN_SHAKE = 25
 local DARKNESS_TIMEOUT = 100
 local DARKNESS_STRENGTH = 1
 local CURSE_SOUND = SoundEffect.SOUND_MOM_VOX_EVILLAUGH
+local BASE_REMOVE_CHANCE = 0.15
+local REMOVE_CHANCE_PER_SOUL = 0.0075
 
 local function postNewRoom()
     if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_THE_HOLLOW) then
@@ -22,7 +24,7 @@ local function postNewRoom()
         if room:IsFirstVisit() then
             if (type == RoomType.ROOM_DEFAULT or type == RoomType.ROOM_BOSS or type == RoomType.ROOM_MINIBOSS) or (room:IsMirrorWorld() and type == RoomType.ROOM_TREASURE) then
             else
-                local curseActivationChance = 0.15 + (0.025 * Resouled:GetPossessedSoulsNum())
+                local curseActivationChance = BASE_REMOVE_CHANCE + (REMOVE_CHANCE_PER_SOUL * Resouled:GetPossessedSoulsNum())
 
                 local rng = RNG()
 

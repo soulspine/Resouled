@@ -1,5 +1,5 @@
----@enum ResouledRoomEvents
-Resouled.RoomEvents = {
+-----@enum ResouledRoomEvents
+--Resouled.RoomEvents = {
     ALL_HALLOWS_EVE = "All Hallow's Eve",
     ANGELIC_INTERVENTION = "Angelic Intervention",
     BLACK_CHAMPIONS = "Black Champions",

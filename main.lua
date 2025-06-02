@@ -47,7 +47,7 @@ if REPENTOGON and MinimapAPI then
     include("scripts.utility.resouled.tear_effects")
     include("scripts.utility.resouled.curses")
     include("scripts.utility.resouled.misc")
-    include("scripts.utility.resouled.room_events_new")
+    include("scripts.utility.resouled.room_events")
 
 
     --- ALL RESOULED SCRIPTS
@@ -64,7 +64,6 @@ if REPENTOGON and MinimapAPI then
     include("scripts.souls")
     include("scripts.buffs")
     include("scripts.afterlife_shop")
-    include("scripts.room_events")
 
 else -- REPENTOGON AND MINIMAPI NOT FOUND
     local messages = {

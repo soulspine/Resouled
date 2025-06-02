@@ -99,6 +99,15 @@ function Resouled:CheckFilters(roomEventID)
     return true
 end
 
+---@return ResouledRoomEventDesc[]
+function Resouled:GetRoomEvents()
+    local out = {}
+    for _, buffDesc in pairs(registeredRoomEvents) do
+        table.insert(out, buffDesc)
+    end
+    return out
+end
+
 local BASE_ROOM_EVENT_NUM_PER_FLOOR = 2
 local ROOM_EVENTS_TO_ADD_PER_STAGE = 1
 
@@ -182,7 +191,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
         ::RollRoomEvent::
         
         Resouled:NewSeed()
-        local randomNum = rng:RandomInt(#registeredRoomEvents) + 1
+        local randomNum = rng:RandomInt(#Resouled:GetRoomEvents()) + 1
         --local randomNum = 26
         
         

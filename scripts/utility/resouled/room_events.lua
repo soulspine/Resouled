@@ -42,7 +42,7 @@ local registeredRoomEvents = {}
 ---@param roomEvent ResouledRoomEvent
 ---@param name string
 ---@param filters table
----@param noDespawn? boolean
+---@param noDespawn boolean | nil
 ---@return boolean
 function Resouled:RegisterRoomEvent(roomEvent, name, filters, noDespawn)
     local roomEventKey = tostring(roomEvent)
@@ -52,10 +52,8 @@ function Resouled:RegisterRoomEvent(roomEvent, name, filters, noDespawn)
             Id = roomEvent,
             Name = name,
             Filters = filters,
+            NoDespawn = noDespawn or false
         }
-        if noDespawn then
-            registeredRoomEvents[roomEventKey].NoDespawn = noDespawn
-        end
 
         return true
     end
@@ -202,8 +200,8 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
         ROOM_SAVE.RoomEvent = randomNum
         
         Game():GetHUD():ShowFortuneText(Resouled:GetRoomEvent(randomNum).Name)
-    else
-        if not Resouled:GetRoomEventByID(ROOM_SAVE.RoomEvent) then
+    elseif ROOM_SAVE.RoomEvent then
+        if not Resouled:GetRoomEventByID(ROOM_SAVE.RoomEvent).NoDespawn then
             ROOM_SAVE.RoomEvent = nil
             ROOM_SAVE.ResouledSpawnRoomEvent = nil
         end
@@ -214,7 +212,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)
 local function preNewRoom()
     local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
     if ROOM_SAVE.RoomEvent then
-        if not Resouled:GetRoomEventByID(ROOM_SAVE.RoomEvent) then
+        if not Resouled:GetRoomEventByID(ROOM_SAVE.RoomEvent).NoDespawn then
             ROOM_SAVE.RoomEvent = nil
             ROOM_SAVE.ResouledSpawnRoomEvent = nil
         end

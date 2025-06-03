@@ -68,6 +68,7 @@
     <entity anm2path="effects/curse_of_hunted_attack_spear.anm2" name="COTH attack spear" id="1000" variant="206"/>
     <entity anm2path="monsters/hunter.anm2" name="Hunter" id="416" variant="0" collisionMass="999" collisionRadius="30" friction="0" numGridCollisionPoints="12" collisionDamage="1"/>
     <entity name="Holy Portal" id="418" variant="0" anm2path="holy_portal.anm2" collisionMass="999" collisionRadius="20" friction="0" numGridCollisionPoints="12" collisionDamage="0" champion="0" shadowSize="26"/>
+    <entity name="Holy Brain" id="419" variant="0" anm2path="holy_brain.anm2" collisionMass="10" friction="1" collisionRadius="18" collisionDamage="1" champion="0" baseHP="30" numGridCollisionPoints="12" shadowSize="22"/>
 
 <!-- Summer Of Isaac -->
     <entity name="A Friend" id="3" variant="228" subtype="1" anm2path="a_friend.anm2" collisionMass="5" collisionRadius="7" friction="1" numGridCollisionPoints="12" shadowSize="16"/>

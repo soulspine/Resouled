@@ -20,6 +20,7 @@ include("scripts.enemies.BaseGameV2.widows_soul")
 -- Requiem
 include("scripts.enemies.Requiem.hunter")
 include("scripts.enemies.Requiem.holy_portal")
+include("scripts.enemies.Requiem.holy_brain")
 -- Summer Of Isaac
 include("scripts.enemies.SummerOfIsaac.cursed_haunt")
 include("scripts.enemies.SummerOfIsaac.coil")

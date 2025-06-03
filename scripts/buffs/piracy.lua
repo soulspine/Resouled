@@ -35,6 +35,6 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, postPickupUpdate)
 
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, function()
     if Resouled:BuffPresent(Resouled.Buffs.PIRACY) then
-        Resouled:RemoveBuffFromSave(Resouled.Buffs.PIRACY)
+        Resouled:RemoveBuffFromActiveSave(Resouled.Buffs.PIRACY)
     end
 end)

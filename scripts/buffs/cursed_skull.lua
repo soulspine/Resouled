@@ -22,7 +22,7 @@ local function postGameStart()
             player:AddPoopMana(1)
         end
         Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, Game():GetRoom():GetCenterPos(), Vector.Zero, nil, 0, Game():GetRoom():GetSpawnSeed())
-        Resouled:RemoveBuffFromSave(Resouled.Buffs.CURSED_SKULL)
+        Resouled:RemoveBuffFromActiveSave(Resouled.Buffs.CURSED_SKULL)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, postGameStart)

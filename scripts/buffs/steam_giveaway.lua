@@ -6,7 +6,7 @@ local function postNewRoom()
             if pickup then
                 if pickup.Price > 0 then
                     pickup:Morph(pickup.Type, pickup.Variant, pickup.SubType, false, true, false)
-                    Resouled:RemoveBuffFromSave(Resouled.Buffs.STEAM_GIVEAWAY)
+                    Resouled:RemoveBuffFromActiveSave(Resouled.Buffs.STEAM_GIVEAWAY)
                 end
             end
         end)

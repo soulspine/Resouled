@@ -32,10 +32,10 @@ local BUFF_PEDESTAL_VARIANT = Isaac.GetEntityVariantByName("Buff Pedestal")
 local BUFF_PEDESTAL_SUBTYPE = Isaac.GetEntitySubTypeByName("Buff Pedestal")
 
 ---@param buffID ResouledBuff
----@param position Vector
+---@param position? Vector
 ---@return EntityPickup | nil
 function Resouled:SpawnSetBuffPedestal(buffID, position)
-    local buff = Game():Spawn(BUFF_PEDESTAL_TYPE, BUFF_PEDESTAL_VARIANT, position, Vector.Zero, nil, BUFF_PEDESTAL_SUBTYPE, Game():GetRoom():GetSpawnSeed() + Isaac.GetFrameCount()):ToPickup()
+    local buff = Game():Spawn(BUFF_PEDESTAL_TYPE, BUFF_PEDESTAL_VARIANT, position or Game():GetRoom():GetCenterPos(), Vector.Zero, nil, BUFF_PEDESTAL_SUBTYPE, Game():GetRoom():GetSpawnSeed() + Isaac.GetFrameCount()):ToPickup()
     if buff then
         buff:SetVarData(buffID)
         return buff
@@ -320,8 +320,8 @@ function Resouled:AddBuffToSave(buffID)
     if not FILE_SAVE then
         FILE_SAVE = {}
     end
-    if not FILE_SAVE.Resouled_Buffs then
-        FILE_SAVE.Resouled_Buffs = {}
+    if not FILE_SAVE.Resouled_PendingBuffs then
+        FILE_SAVE.Resouled_PendingBuffs = {}
     end
 
     local buff = Resouled:GetBuffById(buffID)
@@ -329,9 +329,9 @@ function Resouled:AddBuffToSave(buffID)
     if buff then
         local key = tostring(buff.Id)
         if buff.Stackable then
-            FILE_SAVE.Resouled_Buffs[key] = (FILE_SAVE.Resouled_Buffs[key] or 0) + 1
+            FILE_SAVE.Resouled_PendingBuffs[key] = (FILE_SAVE.Resouled_PendingBuffs[key] or 0) + 1
         else
-            FILE_SAVE.Resouled_Buffs[key] = true
+            FILE_SAVE.Resouled_PendingBuffs[key] = true
         end
     else
         Resouled:LogError("Provided unregistered buff while adding buffs. nil ID: "..tostring(buffID))
@@ -344,40 +344,71 @@ function Resouled:RemoveBuffFromSave(buffID)
     if not FILE_SAVE then
         FILE_SAVE = {}
     end
-    if not FILE_SAVE.Resouled_Buffs then
-        FILE_SAVE.Resouled_Buffs = {}
+    if not FILE_SAVE.Resouled_PendingBuffs then
+        FILE_SAVE.Resouled_PendingBuffs = {}
     end
 
     local buff = Resouled:GetBuffById(buffID)
     
     if buff then
         local key = tostring(buff.Id)
-        if FILE_SAVE.Resouled_Buffs[key] then
+        if FILE_SAVE.Resouled_PendingBuffs[key] then
 
             if buff.Stackable then
-                FILE_SAVE.Resouled_Buffs[key] = (FILE_SAVE.Resouled_Buffs[key]) - 1
+                FILE_SAVE.Resouled_PendingBuffs[key] = (FILE_SAVE.Resouled_PendingBuffs[key]) - 1
 
-                if FILE_SAVE.Resouled_Buffs[key] == 0 then
+                if FILE_SAVE.Resouled_PendingBuffs[key] == 0 then
 
-                    FILE_SAVE.Resouled_Buffs[key] = nil
+                    FILE_SAVE.Resouled_PendingBuffs[key] = nil
                 end
             else
-                FILE_SAVE.Resouled_Buffs[key] = nil
+                FILE_SAVE.Resouled_PendingBuffs[key] = nil
             end
         end
     else
-        Resouled:LogError("Provided unregistered buff while removing buffs. nil ID: "..tostring(buffID))
+        Resouled:LogError("Provided unregistered buff while removing pending buffs. nil ID: "..tostring(buffID))
+    end
+end
+
+function Resouled:RemoveBuffFromActiveSave(buffID)
+    local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
+    if not FILE_SAVE then
+        FILE_SAVE = {}
+    end
+    if not FILE_SAVE.Resouled_ActiveBuffs then
+        FILE_SAVE.Resouled_ActiveBuffs = {}
+    end
+
+    local buff = Resouled:GetBuffById(buffID)
+    
+    if buff then
+        local key = tostring(buff.Id)
+        if FILE_SAVE.Resouled_ActiveBuffs[key] then
+
+            if buff.Stackable then
+                FILE_SAVE.Resouled_ActiveBuffs[key] = (FILE_SAVE.Resouled_ActiveBuffs[key]) - 1
+
+                if FILE_SAVE.Resouled_ActiveBuffs[key] <= 0 then
+
+                    FILE_SAVE.Resouled_ActiveBuffs[key] = nil
+                end
+            else
+                FILE_SAVE.Resouled_ActiveBuffs[key] = nil
+            end
+        end
+    else
+        Resouled:LogError("Provided unregistered buff while removing active buffs. nil ID: "..tostring(buffID))
     end
 end
 
 ---@param buffID ResouledBuff
 ---@return integer
-function Resouled:GetBuffAmount(buffID)
+function Resouled:GetPendingBuffAmount(buffID)
     local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
     local buff = Resouled:GetBuffById(buffID)
     if buff then
-        if FILE_SAVE and FILE_SAVE.Resouled_Buffs and FILE_SAVE.Resouled_Buffs[tostring(buffID)] then
-            return FILE_SAVE.Resouled_Buffs[tostring(buffID)]
+        if FILE_SAVE and FILE_SAVE.Resouled_PendingBuffs and FILE_SAVE.Resouled_PendingBuffs[tostring(buffID)] then
+            return FILE_SAVE.Resouled_PendingBuffs[tostring(buffID)]
         end
     end
     return 0
@@ -389,7 +420,7 @@ function Resouled:BuffPresent(buffID)
     local buff = Resouled:GetBuffById(buffID)
     if buff then
         local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
-        if FILE_SAVE and FILE_SAVE.Resouled_Buffs and FILE_SAVE.Resouled_Buffs[tostring(buffID)] then
+        if FILE_SAVE and FILE_SAVE.Resouled_ActiveBuffs and FILE_SAVE.Resouled_ActiveBuffs[tostring(buffID)] then
             return true
         end
     end
@@ -398,7 +429,55 @@ end
 
 function Resouled:ClearBuffSave()
     local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
-    if FILE_SAVE and FILE_SAVE.Resouled_Buffs then
-        FILE_SAVE.Resouled_Buffs = {}
+    if FILE_SAVE then
+        if FILE_SAVE.Resouled_PendingBuffs then
+            FILE_SAVE.Resouled_PendingBuffs = {}
+        end
+        if not FILE_SAVE.Resouled_PendingBuffs then
+            FILE_SAVE.Resouled_PendingBuffs = {}
+        end
+        if FILE_SAVE.Resouled_ActiveBuffs then
+            FILE_SAVE.Resouled_ActiveBuffs = {}
+        end
+        if not FILE_SAVE.Resouled_ActiveBuffs then
+            FILE_SAVE.Resouled_ActiveBuffs = {}
+        end
     end
 end
+
+function Resouled:ActivateBuffs()
+    local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
+    if FILE_SAVE and FILE_SAVE.Resouled_PendingBuffs then
+        if not FILE_SAVE.Resouled_ActiveBuffs then
+            FILE_SAVE.Resouled_PendingBuffs = {}
+        end
+
+        local buffs = Resouled:GetBuffs()
+
+        for i = 1, #buffs do
+            local buff = buffs[i]
+            local buffKey = tostring(buff.Id)
+            if FILE_SAVE.Resouled_PendingBuffs[buffKey] and not FILE_SAVE.Resouled_ActiveBuffs[buffKey] then
+                if not buff.Stackable then
+                    FILE_SAVE.Resouled_PendingBuffs[buffKey] = nil
+                    FILE_SAVE.Resouled_ActiveBuffs[buffKey] = true
+                elseif buff.Stackable then
+                    FILE_SAVE.Resouled_PendingBuffs[buffKey] = FILE_SAVE.Resouled_PendingBuffs[buffKey] - 1
+                    if FILE_SAVE.Resouled_PendingBuffs[buffKey] <= 0 then
+                        FILE_SAVE.Resouled_PendingBuffs[buffKey] = nil
+                    end
+                    FILE_SAVE.Resouled_ActiveBuffs[buffKey] = 1
+                end
+            end
+        end
+    end
+end
+
+local function postGameStarted()
+    local RUN_SAVE = SAVE_MANAGER.GetRunSave()
+    if not RUN_SAVE.Resouled_AddedBuffs then
+        RUN_SAVE.Resouled_AddedBuffs = true
+        Resouled:ActivateBuffs()
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, postGameStarted)

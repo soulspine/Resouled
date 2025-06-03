@@ -11,8 +11,7 @@ local function postBombInit(_, bomb)
             newBomb:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
             newBomb:SetExplosionCountdown(bomb:GetExplosionCountdown())
             bomb:Remove()
-            Resouled:RemoveBuffFromSave(Resouled.Buffs.WAR)
-            print(Resouled:GetBuffAmount(Resouled.Buffs.WAR))
+            Resouled:RemoveBuffFromActiveSave(Resouled.Buffs.WAR)
         end
     end
 end

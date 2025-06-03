@@ -12,7 +12,7 @@ local function preSpawnCleanReward()
     if Resouled:BuffPresent(Resouled.Buffs.DEVILS_HEAD) and room:GetType() == RoomType.ROOM_BOSS then
         Game():GetLevel():InitializeDevilAngelRoom(false, true)
         room:TrySpawnDevilRoomDoor(true, true)
-        Resouled:RemoveBuffFromSave(Resouled.Buffs.DEVILS_HEAD)
+        Resouled:RemoveBuffFromActiveSave(Resouled.Buffs.DEVILS_HEAD)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, preSpawnCleanReward)

@@ -9,7 +9,7 @@ Resouled:AddCallback(ModCallbacks.MC_GET_SHOP_ITEM_PRICE, onGetShopItemPrice)
 local function postNewFloor()
     if Resouled:BuffPresent(Resouled.Buffs.STEAM_SALE) then
         if Game():GetLevel():GetStage() ~= 1 then
-            Resouled:RemoveBuffFromSave(Resouled.Buffs.STEAM_SALE)
+            Resouled:RemoveBuffFromActiveSave(Resouled.Buffs.STEAM_SALE)
         end
     end
 end

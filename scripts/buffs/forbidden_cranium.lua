@@ -22,7 +22,7 @@ local function postPickupInit(_, pickup)
     if Game():GetRoom():GetType() == RoomType.ROOM_BOSS and Resouled:BuffPresent(Resouled.Buffs.FORBIDDEN_CRANIUM) then
         pickup:AddCollectibleCycle(Resouled:GetRandomItemFromPool(ItemPoolType.POOL_DEVIL, RNG(pickup.InitSeed), 4))
 
-        Resouled:RemoveBuffFromSave(Resouled.Buffs.FORBIDDEN_CRANIUM)
+        Resouled:RemoveBuffFromActiveSave(Resouled.Buffs.FORBIDDEN_CRANIUM)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, postPickupInit, PickupVariant.PICKUP_COLLECTIBLE)

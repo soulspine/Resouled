@@ -10,7 +10,7 @@ local function postPickupInit(_, pickup)
         pickup:AddCollectibleCycle(collectibleID)
         ROOM_SAVE.Resouled_CrusifixItemID = collectibleID
 
-        Resouled:RemoveBuffFromSave(Resouled.Buffs.CRUSIFIX)
+        Resouled:RemoveBuffFromActiveSave(Resouled.Buffs.CRUSIFIX)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, postPickupInit, PickupVariant.PICKUP_COLLECTIBLE)

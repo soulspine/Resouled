@@ -28,6 +28,7 @@ Resouled.RoomEvents = {
     BLIND_RAGE = 26,
     EQUALITY = 27,
     ISAACS_BLESSING = 28,
+    BUM_BO_IS_LOOSE = 29,
 }
 
 ---@class ResouledRoomEventDesc
@@ -260,3 +261,4 @@ include("scripts.room_events.heavy_is_the_head")
 include("scripts.room_events.blind_rage")
 include("scripts.room_events.equality")
 include("scripts.room_events.isaacs_blessing")
+include("scripts.room_events.bum_bo_is_loose")

@@ -103,5 +103,6 @@ Resouled:RegisterRoomEvent(Resouled.RoomEvents.HEAVY_IS_THE_HEAD, "Heavy is The 
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.BLIND_RAGE, "Blind Rage", {filters.ROOM_NOT_CLEAR})
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.EQUALITY, "Equality", {}, true)
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.ISAACS_BLESSING, "Isaac's Blessing", {filters.ITEM_PRESENT})
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.BUM_BO_IS_LOOSE, "Bum-Bo is loose!", {})
 
 Resouled:Log("Loaded "..tostring(#Resouled:GetRoomEvents()).." room events.")

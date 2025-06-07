@@ -1,9 +1,9 @@
-local THROW_POWER = 2
+local THROW_POWER = 2.5
 
 ---@param npc EntityNPC
 local function postNpcDeath(_, npc)
     if Resouled:RoomEventPresent(Resouled.RoomEvents.CONJOINED_TWIN) then
-        if npc:IsEnemy() and npc:IsActiveEnemy(true) then
+        if npc:IsEnemy() then
             ---@param player EntityPlayer
             Resouled.Iterators:IterateOverPlayers(function(player)
                 player.Velocity = player.Velocity + (Vector(1, 0):Rotated(math.random(0, 360)) * THROW_POWER)

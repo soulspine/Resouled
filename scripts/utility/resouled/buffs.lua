@@ -474,11 +474,11 @@ function Resouled:ActivateBuffs()
     end
 end
 
-local function postGameStarted()
+local function postPlayerInit() --Appearently this is THE first callback when starting a run
     local RUN_SAVE = SAVE_MANAGER.GetRunSave()
     if not RUN_SAVE.Resouled_AddedBuffs then
         RUN_SAVE.Resouled_AddedBuffs = true
         Resouled:ActivateBuffs()
     end
 end
-Resouled:AddPriorityCallback(ModCallbacks.MC_POST_GAME_STARTED, CallbackPriority.IMPORTANT, postGameStarted)
+Resouled:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.IMPORTANT, postPlayerInit)

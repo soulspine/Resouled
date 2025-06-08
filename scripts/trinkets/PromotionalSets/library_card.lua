@@ -30,7 +30,7 @@ local function onNewFloor()
                         table.remove(validGridIndexes, tableIndex)
                         goto reroll
                     else
-                        local room = level:TryPlaceRoom(roomConfigRoom, roomIndex, Dimension.CURRENT, 1, false, false)
+                        level:TryPlaceRoom(roomConfigRoom, roomIndex, Dimension.CURRENT, 1, false, false)
                     end
                 end
             end

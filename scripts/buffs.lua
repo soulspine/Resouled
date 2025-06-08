@@ -112,5 +112,8 @@ include("scripts.buffs.piracy")
 include("scripts.buffs.kids_drawing")
 include("scripts.buffs.forgotten_polaroid")
 include("scripts.buffs.broken_memory")
+include("scripts.buffs.zodiac_sign")
+include("scripts.buffs.constellation")
+include("scripts.buffs.heavens_call")
 
 include("scripts.buffs.war")

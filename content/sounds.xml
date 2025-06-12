@@ -24,11 +24,6 @@
     <sound name="Buff3">
         <sample weight="1" path="afterlife_special.wav"/>
     </sound>
-<!-- Base Game V2 -->
-
-<!-- Four Souls V2 -->
-
-<!-- Requiem -->
     <sound name="Auction Gavel Sold">
         <sample weight="1" path="auction_gavel_sold.wav" />
     </sound>
@@ -42,10 +37,6 @@
     <sound name="Holy Spawn 3">
         <sample weight="1" path="holy_spawn3.wav"/>
     </sound>
-
-<!-- Summer Of Isaac -->
-
-<!-- Promotional Sets -->
     <sound name="Key Get">
         <sample weight="1" path="Celeste\key_get.wav"/>
     </sound>

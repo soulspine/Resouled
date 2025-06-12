@@ -108,3 +108,12 @@ local function npcTakeDamage(_, entity, amount, damageFlags, source, countdown)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, npcTakeDamage)
+
+---@param npc EntityNPC
+local function postNpcDeath(_, npc)
+    local data = npc:GetData()
+    if data.ResouledSoulbond then
+        data.ResouledSoulbond = nil
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath)

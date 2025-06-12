@@ -54,10 +54,9 @@ if REPENTOGON and MinimapAPI then
 
     include("scripts.character_start")
     include("scripts.items")
-    include("scripts.pocketitems")
     include("scripts.effects")
     include("scripts.curses")
-    include("scripts.enemies")
+    include("scripts.entities")
     include("scripts.challenges")
     include("scripts.pickups")
     include("scripts.room_events")

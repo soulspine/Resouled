@@ -1,14 +1,4 @@
 <costumes anm2root="gfx/characters/">
-<!-- Base Game V2 -->
-<!-- Four Souls V2 -->
-
-<!-- Requiem -->
-
-<!-- Summer Of Isaac -->
-
-<!-- Promotional Sets -->
-
-<!-- Resouled Challenges -->
     <costume anm2path="pizza_time.anm2" type="none" priority="1000"/>
     <costume anm2path="isaac-8.anm2" type="none" priority="1000"/>
 </costumes>

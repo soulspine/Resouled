@@ -7,6 +7,8 @@ local SPECIAL_TEAR_COLOR = Color(1, 0.6, 1, 0.7, 0.7, 0.7, 0)
 local SPECIAL_TEAR_COLOR_DURATION = 300
 local SPECIAL_TEAR_COLOR_PRIORITY = 1
 
+local NORMAL_CHEESE_SPRITESHEET = "gfx/tears/tears_cheese.png"
+
 local GRATED_OFF_ENEMY_HEALTH_FRACTION = 0.01
 local GRATED_OFF_ENEMY_TYPE = EntityType.ENTITY_SMALL_MAGGOT
 local GRATED_OFF_ENEMY_VARIANT = 0
@@ -29,7 +31,8 @@ local function onTearInit(_, tear)
         local player = tear.SpawnerEntity:ToPlayer()
         if player and player:HasCollectible(CHEESE_GRATER) and tear:GetDropRNG():RandomFloat() < APPLY_TEAR_EFFECT_CHANCE(player.Luck) then
             Resouled:ApplyCustomTearEffect(tear, Resouled.TearEffects.CHEESE_GRATER)
-            tear:SetColor(SPECIAL_TEAR_COLOR, SPECIAL_TEAR_COLOR_DURATION, SPECIAL_TEAR_COLOR_PRIORITY, true, false)
+            local sprite = tear:GetSprite()
+            sprite:ReplaceSpritesheet(0, NORMAL_CHEESE_SPRITESHEET, true)
         end
     end
 end

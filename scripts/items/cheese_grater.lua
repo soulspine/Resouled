@@ -1,13 +1,15 @@
 local CHEESE_GRATER = Isaac.GetItemIdByName("Cheese Grater")
 
 local DAMAGE_MULTIPLIER = 2.5
-local COOLDOWN = 100
+local COOLDOWN = 10
 
 local SPECIAL_TEAR_COLOR = Color(1, 0.6, 1, 0.7, 0.7, 0.7, 0)
 local SPECIAL_TEAR_COLOR_DURATION = 300
 local SPECIAL_TEAR_COLOR_PRIORITY = 1
 
 local NORMAL_CHEESE_SPRITESHEET = "gfx/tears/tears_cheese.png"
+
+local MAGGOT_INNACURACY = 50
 
 local GRATED_OFF_ENEMY_HEALTH_FRACTION = 0.01
 local GRATED_OFF_ENEMY_TYPE = EntityType.ENTITY_SMALL_MAGGOT
@@ -50,28 +52,38 @@ local function onEntityTakeDamage(_, entity, amount, damageFlag, source, countdo
         local tear = source.Entity:ToTear()
 
         if (tear or knife) and source.Entity.SpawnerEntity then
-            player = source.Entity.SpawnerEntity:ToPlayer()
+            player = Resouled:TryFindPlayerSpawner(source.Entity)
+        end
+
+        if not player then
+            return
         end
 
         local npc = entity:ToNPC()
         local npcData = entity:GetData()
-        if
-        (player and player:HasCollectible(CHEESE_GRATER) and player:GetCollectibleRNG(CHEESE_GRATER):RandomFloat() < APPLY_TEAR_EFFECT_CHANCE(player.Luck)) or
-        (tear and Resouled:GetCustomTearEffects(tear) and Resouled:GetCustomTearEffects(tear) | Resouled.TearEffects.CHEESE_GRATER == Resouled.TearEffects.CHEESE_GRATER) then
-            if npc and npc:IsVulnerableEnemy() and not npcData.CheeseGraterMultiDamage and not Resouled:IsCustomTearEffectOnCooldown(npc, Resouled.TearEffects.CHEESE_GRATER) then
 
-                local newAmount = DAMAGE_MULTIPLIER * amount
-                if npc.HitPoints - newAmount > 0 then
-                    npcData.CheeseGraterMultiDamage = true
-                    entity:TakeDamage(newAmount, damageFlag, source, countdown)
+        if npcData.Resouled_CheeseGraterMaggot then
+            return
+        end
+
+        
+        if tear then
+            local tearEffects = Resouled:GetCustomTearEffects(tear)
+            if tearEffects and tearEffects[Resouled.TearEffects.CHEESE_GRATER] then
+                
+                if npc and npc:IsEnemy() and npc:IsActiveEnemy() and npc:IsVulnerableEnemy() and not Resouled:IsCustomTearEffectOnCooldown(npc, Resouled.TearEffects.CHEESE_GRATER) then
+
+                    local maggot = EntityNPC.ThrowMaggotAtPos(npc.Position, player.Position + Vector(math.random(-MAGGOT_INNACURACY, MAGGOT_INNACURACY), math.random(-MAGGOT_INNACURACY, MAGGOT_INNACURACY)), 0)
+                    maggot.Velocity = maggot.Velocity:Normalized() * (0.8 - (math.random()/2))
+                    maggot.MaxHitPoints = 1
+                    maggot.HitPoints = 1
+                    maggot:GetData().Resouled_CheeseGraterMaggot = true
+
                     Resouled:ApplyCustomTearEffectCooldown(npc, Resouled.TearEffects.CHEESE_GRATER, COOLDOWN)
 
-                    local gratedOffEntity = Game():Spawn(GRATED_OFF_ENEMY_TYPE, GRATED_OFF_ENEMY_VARIANT, npc.Position, Vector.FromAngle(math.random(360)):Normalized() * GRATED_OFF_ENEMY_SPAWN_VELOCITY_MULTIPLIER, npc, GRATED_OFF_ENEMY_SUBTYPE, npc.DropSeed)
-                    gratedOffEntity:AddHealth(-1*(1-GRATED_OFF_ENEMY_HEALTH_FRACTION)*gratedOffEntity.MaxHitPoints)
+                    npc:TakeDamage(amount * DAMAGE_MULTIPLIER, damageFlag, source, countdown)
                     return false
                 end
-            else
-                npcData.CheeseGraterMultiDamage = false
             end
         end
     end

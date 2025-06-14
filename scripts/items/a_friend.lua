@@ -242,7 +242,11 @@ local function familiarUpdate(_, familiar)
                 end
             end
 
-            if data.Resouled_Target.HitPoints <= 0 then
+            if not data.Resouled_Target:IsVulnerableEnemy() then
+                data.Resouled_Target = nil
+            end
+
+            if data.Resouled_Target and data.Resouled_Target.HitPoints <= 0 then
                 data.Resouled_Target = nil
             end
         end

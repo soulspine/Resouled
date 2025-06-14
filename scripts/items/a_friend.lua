@@ -36,6 +36,11 @@ local BOMB_AVOID_SPEED = 1.5
 local GRID_AVOID_RANGE = 40
 local GRID_AVOID_SPEED = 1.5
 
+local POOP_BREAK_ACTION_CHANCE = 0.025
+
+local OTHER_FRIEND_AVOID_RANGE = 20
+local OTHER_FRIEND_AVOID_SPEED = 2
+
 ---@param type CollectibleType
 ---@param player EntityPlayer
 local function postAddCollectible(_, type, player)
@@ -202,6 +207,10 @@ local function familiarUpdate(_, familiar)
                 end
             end
 
+            if entity.Type == EntityType.ENTITY_FAMILIAR and entity.Variant == FRIEND_VARIANT and entity.SubType == FRIEND_SUBTYPE and entity.Position:Distance(familiar.Position) < OTHER_FRIEND_AVOID_RANGE then
+                familiar.Velocity = familiar.Velocity + (familiar.Position - entity.Position):Normalized() * OTHER_FRIEND_AVOID_SPEED
+            end
+
             local closestProjectile = nil
             local projectile = entity:ToProjectile()
             if projectile then
@@ -303,7 +312,9 @@ local function familiarUpdate(_, familiar)
             end
         end
 
-        if not enemyPresent and not data.Resouled_GridTarget then
+
+        local randomFloat = math.random()
+        if not enemyPresent and not data.Resouled_GridTarget and randomFloat < POOP_BREAK_ACTION_CHANCE then
             ---@type GridEntity | nil
             local closestPoop = nil
             ---@param gridEntity GridEntity

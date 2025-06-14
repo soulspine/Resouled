@@ -22,14 +22,16 @@ local START_WANDERING_AROUND_CHANCE = 0.025
 
 local FOLLOW_ORBIT = 100
 
+local AVOID_SPEED = 0.35
+
 local SHOOT_COOLDOWN = 15
 local TEAR_SPEED = 13
 
 local PROJECTILE_AVOID_RANGE = 75
-local PROJECTILE_AVOID_SPEED = 2
+local PROJECTILE_AVOID_SPEED = 0.5
 
 local BOMB_AVOID_RANGE = 100
-local BOMB_AVOID_SPEED = 2
+local BOMB_AVOID_SPEED = 1.5
 
 local GRID_AVOID_RANGE = 40
 local GRID_AVOID_SPEED = 1.5
@@ -55,7 +57,7 @@ Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, postFamiliarInit, FRIEND_VAR
 ---@param familiar EntityFamiliar
 ---@param collider Entity
 local function postFamiliarCollision(_, familiar, collider)
-    if familiar.SubType == FRIEND_SUBTYPE then
+    if familiar.SubType == FRIEND_SUBTYPE and collider:ToPlayer() then
         familiar.Velocity = familiar.Velocity + (familiar.Position - collider.Position):Normalized() * 3.5
     end
 end
@@ -68,6 +70,7 @@ local function familiarUpdate(_, familiar)
         local data = familiar:GetData()
         local pathfinder = familiar:GetPathFinder()
         local squaredLength = familiar.Velocity:LengthSquared()
+        local room = Game():GetRoom()
 
         if familiar.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_ALL then
             familiar.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
@@ -229,7 +232,7 @@ local function familiarUpdate(_, familiar)
         end)
 
         --RANDOM WALKING IF NOT ENEMIES START
-        if not enemyPresent and not data.Resouled_TargetPos then
+        if not enemyPresent and not data.Resouled_TargetPos and not data.Resouled_GridTarget then
             familiar.Velocity = familiar.Velocity/1.5
             local randomFloat = math.random()
             if randomFloat < START_WANDERING_AROUND_CHANCE then
@@ -265,25 +268,29 @@ local function familiarUpdate(_, familiar)
             if data.Resouled_TargetPos then
                 data.Resouled_TargetPos = nil
             end
+            local pathfinderCheck = room:CheckLine(familiar.Position, data.Resouled_Target.Position, LineCheckMode.PROJECTILE)
             local distanceFromTarget = familiar.Position:Distance(data.Resouled_Target.Position)
             if distanceFromTarget >= FOLLOW_ORBIT then
                 pathfinder:FindGridPath(data.Resouled_Target.Position, WALK_SPEED, 1, true)
-            elseif distanceFromTarget < FOLLOW_ORBIT then
-                pathfinder:FindGridPath(data.Resouled_Target.Position + ((familiar.Position - data.Resouled_Target.Position):Normalized() * FOLLOW_ORBIT), WALK_SPEED, 1, true)
-                pathfinder:MoveRandomly(true)
+            elseif distanceFromTarget < FOLLOW_ORBIT and pathfinderCheck then
+                familiar.Velocity = familiar.Velocity + ((familiar.Position - data.Resouled_Target.Position):Normalized() * AVOID_SPEED)
             end
             
             if distanceFromTarget <= FOLLOW_ORBIT + (FOLLOW_ORBIT/10) then
                 if not data.Resouled_FireCooldown then
-                    ---@type EntityTear
-                    local tear = Game():Spawn(EntityType.ENTITY_TEAR, TearVariant.METALLIC, familiar.Position, (data.Resouled_Target.Position - familiar.Position):Normalized() * TEAR_SPEED, familiar, 0, familiar.InitSeed)
-                    local player = Resouled:TryFindPlayerSpawner(familiar)
-                    if player and player:HasTrinket(TrinketType.TRINKET_BABY_BENDER) then
-                        tear:AddTearFlags(TearFlags.TEAR_HOMING)
+                    if pathfinderCheck then
+                        ---@type EntityTear
+                        local tear = Game():Spawn(EntityType.ENTITY_TEAR, TearVariant.METALLIC, familiar.Position, (data.Resouled_Target.Position - familiar.Position):Normalized() * TEAR_SPEED, familiar, 0, familiar.InitSeed)
+                        local player = Resouled:TryFindPlayerSpawner(familiar)
+                        if player and player:HasTrinket(TrinketType.TRINKET_BABY_BENDER) then
+                            tear:AddTearFlags(TearFlags.TEAR_HOMING)
+                        end
+                        tear:SetColor(Color(0.1, 0.1, 0.1), 99999, 1, false, false)
+                        data.Resouled_FireCooldown = SHOOT_COOLDOWN
+                        sprite:PlayOverlay(sprite:GetOverlayAnimation()..SHOOT, true)
+                    else
+                        pathfinder:FindGridPath(data.Resouled_Target.Position, WALK_SPEED, 1, true)
                     end
-                    tear:SetColor(Color(0.1, 0.1, 0.1), 99999, 1, false, false)
-                    data.Resouled_FireCooldown = SHOOT_COOLDOWN
-                    sprite:PlayOverlay(sprite:GetOverlayAnimation()..SHOOT, true)
                 end
             end
 
@@ -317,39 +324,35 @@ local function familiarUpdate(_, familiar)
             if closestPoop then
                 data.Resouled_GridTarget = closestPoop
             end
-            
         end
 
 
         if data.Resouled_GridTarget and not data.Resouled_Target then
-            print("A")
             if data.Resouled_TargetPos then
                 data.Resouled_TargetPos = nil
             end
             local distanceFromTarget = familiar.Position:Distance(data.Resouled_GridTarget.Position)
-            if distanceFromTarget >= FOLLOW_ORBIT then
-                pathfinder:FindGridPath(data.Resouled_GridTarget.Position, WALK_SPEED, 1, true)
-            elseif distanceFromTarget < FOLLOW_ORBIT then
-                pathfinder:FindGridPath(data.Resouled_GridTarget.Position + ((familiar.Position - data.Resouled_GridTarget.Position):Normalized() * FOLLOW_ORBIT), WALK_SPEED, 1, true)
-                pathfinder:MoveRandomly(true)
-            end
+            pathfinder:FindGridPath(Isaac.GetFreeNearPosition(data.Resouled_GridTarget.Position, 0), WALK_SPEED, 1, true)
             if distanceFromTarget <= FOLLOW_ORBIT + (FOLLOW_ORBIT/10) then
                 if not data.Resouled_FireCooldown then
-                    ---@type EntityTear
-                    local tear = Game():Spawn(EntityType.ENTITY_TEAR, TearVariant.METALLIC, familiar.Position, (data.Resouled_GridTarget.Position - familiar.Position):Normalized() * TEAR_SPEED, familiar, 0, familiar.InitSeed)
-                    local player = Resouled:TryFindPlayerSpawner(familiar)
-                    if player and player:HasTrinket(TrinketType.TRINKET_BABY_BENDER) then
-                        tear:AddTearFlags(TearFlags.TEAR_HOMING)
+                    if room:CheckLine(familiar.Position, data.Resouled_GridTarget.Position + (familiar.Position - data.Resouled_GridTarget.Position):Normalized() * 35, LineCheckMode.PROJECTILE) then
+                        ---@type EntityTear
+                        local tear = Game():Spawn(EntityType.ENTITY_TEAR, TearVariant.METALLIC, familiar.Position, (data.Resouled_GridTarget.Position - familiar.Position):Normalized() * TEAR_SPEED, familiar, 0, familiar.InitSeed)
+                        local player = Resouled:TryFindPlayerSpawner(familiar)
+                        if player and player:HasTrinket(TrinketType.TRINKET_BABY_BENDER) then
+                            tear:AddTearFlags(TearFlags.TEAR_HOMING)
+                        end
+                        tear:SetColor(Color(0.1, 0.1, 0.1), 99999, 1, false, false)
+                        data.Resouled_FireCooldown = SHOOT_COOLDOWN
+                        sprite:PlayOverlay(sprite:GetOverlayAnimation()..SHOOT, true)
+                    else
+                        pathfinder:FindGridPath(Isaac.GetFreeNearPosition(data.Resouled_GridTarget.Position, 0), WALK_SPEED, 1, true)
                     end
-                    tear:SetColor(Color(0.1, 0.1, 0.1), 99999, 1, false, false)
-                    data.Resouled_FireCooldown = SHOOT_COOLDOWN
-                    sprite:PlayOverlay(sprite:GetOverlayAnimation()..SHOOT, true)
                 end
             end
         end
 
         if data.Resouled_AvoidBomb then
-            data.Resouled_Target = nil
             data.Resouled_TargetPos = nil
 
             familiar.Velocity = familiar.Velocity + (familiar.Position - data.Resouled_AvoidBomb.Position):Normalized() * BOMB_AVOID_SPEED

@@ -138,3 +138,4 @@ local function onFamiliarUpdate(_, familiar)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onFamiliarUpdate, DADDY_HAUNT_VARIANT)
+

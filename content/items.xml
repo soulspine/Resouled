@@ -1,7 +1,7 @@
 <items gfxroot="gfx/items/" deathanm2="gfx/death_items.anm2" version="1">
     <active id="0" name="Sleight of Hand" gfx="sleight_of_hand.png" description="Peek beyond closed doors" quality="2" craftquality="2" maxcharges="4" chargetype="normal"/>
     <familiar id="1" name="Daddy Haunt" gfx="daddy_haunt.png" description="Menace hanging over your enemies" quality="3" craftquality="3" cache="familiars"/>
-    <passive id="2" name="Cheese Grater" gfx="cheese_grater.png" description="Shred foes" quality="2" craftquality="2"/>
+    <passive id="2" name="Cheese Grater" gfx="cheese_grater.png" description="Shred foes" quality="1" craftquality="1"/>
     <active id="3" name="Bag-O-Trash" gfx="trashbagphase1.png" description="Dumpster in your hands" quality="0" craftquality="0" maxcharges="0" special="true"/>
     <passive id="4" name="Ceremonial Blade" gfx="ceremonial_blade.png" description="A small price to pay..." quality="2" craftquality="2"/>
     <passive id="5" name="Glitch" gfx="glitch.png" description="Null" quality="0" craftquality="0" tags="quest"/>
@@ -13,7 +13,7 @@
     <passive id="11" name="Friendly Sack" gfx="friendly_sack.png" description="" quality="3" craftquality="3"/>
     <active id="12" name="Conjoined D6" gfx="conjoined_d6.png" description="The dice of balance..." quality="4" craftquality="4" maxcharges="4" chargetype="normal"/>
     <passive id="13" name="Isaac's last will" gfx="isaacs_last_will.png" description="I leave all that I own to my cat Guppy" quality="2"/>
-    <passive id="14" name="A Friend" gfx="a_friend.png" description="A friend to the end" quality="1" craftquality="1" cache="familiars"/>
+    <passive id="14" name="A Friend" gfx="a_friend.png" description="A friend to the end" quality="2" craftquality="2" cache="familiars"/>
     <familiar id="15" name="The Monster" gfx="the_monster.png" description="Unleash the beast" quality="3" craftquality="3" cache="familiars"/>
     <passive id="16" name="Unstable DNA" gfx="unstable_dna.png" description="" quality="1" craftquality="1"/>
 

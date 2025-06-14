@@ -157,6 +157,24 @@ function Resouled:TryFindPlayerSpawner(entity)
     return nil
 end
 
+---@param entity Entity
+---@return EntityPlayer | nil
+function Resouled:TryFindPlayerSpawnerIfEntityFamiliar(entity)
+    local familiar = false
+    while entity ~= nil do
+        if entity:ToFamiliar() then
+            familiar = true
+        end
+        if entity:ToPlayer() and familiar then
+            return entity:ToPlayer()
+        else
+            entity = entity.SpawnerEntity
+        end
+    end
+
+    return nil
+end
+
 ---@param roomIndex1 integer
 ---@param roomIndex2 integer
 function Resouled:GetGridRoomDistance(roomIndex1, roomIndex2)

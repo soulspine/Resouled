@@ -51,20 +51,12 @@
     <entity anm2path="monsters/hunter.anm2" name="Hunter" id="416" variant="0" collisionMass="999" collisionRadius="30" friction="0" numGridCollisionPoints="12" collisionDamage="1"/>
     <entity name="Holy Portal" id="418" variant="0" anm2path="holy_portal.anm2" collisionMass="999" collisionRadius="20" friction="0" numGridCollisionPoints="12" collisionDamage="0" champion="0" shadowSize="26"/>
     <entity name="Holy Brain" id="419" variant="0" anm2path="holy_brain.anm2" collisionMass="10" friction="1" collisionRadius="18" collisionDamage="1" champion="0" baseHP="30" numGridCollisionPoints="12" shadowSize="22"/>
-    <entity name="A Friend" id="3" variant="228" subtype="1" anm2path="a_friend.anm2" collisionMass="5" collisionRadius="7" friction="1" numGridCollisionPoints="12" shadowSize="16"/>
-    <entity name="The Monster" id="3" variant="244" subtype="0" anm2path="the_monster.anm2" collisionMass="0" collisionRadius="0" friction="1" numGridCollisionPoints="12" shadowSize="16" tags="noreroll"/>
+    <entity name="A Friend" id="3" variant="244" subtype="0" anm2path="a_friend.anm2" collisionMass="5" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="16"/>
+    <entity name="The Monster" id="3" variant="245" subtype="0" anm2path="the_monster.anm2" collisionMass="0" collisionRadius="0" friction="1" numGridCollisionPoints="12" shadowSize="16" tags="noreroll"/>
     <entity name="Cursed Haunt" boss="1" id="260" variant="1" anm2path="cursed_haunt.anm2" collisionMass="50" collisionDamage="2" collisionRadius="26" friction="1" gridCollision="walls" numGridCollisionPoints="12" shadowSize="28" tags="ghost" baseHP="300"/>
     <entity name="Coil" id="414" variant="0" subtype="0" anm2path="coil.anm2" collisionMass="25" collisionRadius="13" friction="1" numGridCollisionPoints="12" shadowSize="16" baseHP="15" collisionDamage="1" stageHP="1"/>
     <entity name="Coil Fetus" id="414" variant="0" subtype="1" anm2path="coil_fetus.anm2" collisionMass="5" collisionRadius="7" friction="1" numGridCollisionPoints="12" shadowSize="5" baseHP="10" collisionDamage="1" stageHP="2"/>
     <entity name="Weltling" id="415" variant="0" subtype="0" anm2path="weltling.anm2" collisionMass="999" collisionRadius="16" friction="0" numGridCollisionPoints="12" shadowSize="16" baseHP="20" collisionDamage="1" stageHP="2"/>
-    <entity anm2path="strawberries.anm2" name="Red Strawberry Pickup" id="5" variant="450" subtype="0" collisionRadius="24" collisionMass="0" shadowSize="15" friction="1.5"/>
-    <entity anm2path="strawberries.anm2" name="Blue Strawberry Pickup" id="5" variant="450" subtype="1" collisionRadius="24" collisionMass="0" shadowSize="15" friction="1.5"/>
-    <entity anm2path="strawberries.anm2" name="Winged Strawberry Pickup" id="5" variant="450" subtype="3" collisionRadius="24" collisionMass="0" shadowSize="15" friction="1.5"/>
-    <entity anm2path="strawberries.anm2" name="Red Strawberry Familiar" id="3" variant="450" subtype="0" shadowSize="15" friction="1.5" tage="cansacrifice"/>
-    <entity anm2path="strawberries.anm2" name="Blue Strawberry Familiar" id="3" variant="450" subtype="1" shadowSize="15" friction="1.5" tags="cansacrifice"/>
-    <entity anm2path="strawberries.anm2" name="Golden Strawberry Familiar" id="3" variant="450" subtype="2" shadowSize="15" friction="1.5" tags="cansacrifice"/>
-    <entity name="ResouledDummy" id="999" variant="0" subtype="0"/>
-    <entity name="ResouledHitbox" id="999" variant="0" subtype="1" collisionRadius="1" numGridCollisionPoints="12" collisionDamage="1" collisionMass="999" friction="0"/>
     <entity name="Blank Canvas Mulligan" id="417" variant="0" subtype="0" anm2path="blank_canvas_mulligan.anm2" collisionMass="1" collisionRadius="14" collisionDamage="0" friction="1" numGridCollisionPoints="12" shadowSize="14" baseHP="20"/>
     <entity name="Blank Canvas Gaper" id="417" variant="1" subtype="0" anm2path="blank_canvas_gaper.anm2" collisionMass="1" collisionRadius="14" collisionDamage="1" friction="1" numGridCollisionPoints="12" shadowSize="14" baseHP="20"/>
     <entity name="Blank Canvas Fly" id="417" variant="2" subtype="0" anm2path="blank_canvas_fly.anm2" collisionMass="1" collisionRadius="6" collisionDamage="1" friction="1" numGridCollisionPoints="12" shadowSize="6" baseHP="8"/>
@@ -84,4 +76,7 @@
 
     <entity name="Buff Pedestal" id="5" variant="200" anm2path="buffs/buffs.anm2" collisionRadius="14" collisionMass="3" numGridCollisionPoints="12" friction="0" shadowSize="20" tags="noreroll"/>
     <entity name="Death Statue" id="1000" variant="208" anm2path="afterlife_statue.anm2"/>
+
+    <entity name="ResouledDummy" id="999" variant="0" subtype="0"/>
+    <entity name="ResouledHitbox" id="999" variant="0" subtype="1" collisionRadius="1" numGridCollisionPoints="12" collisionDamage="1" collisionMass="999" friction="0"/>
 </entities>

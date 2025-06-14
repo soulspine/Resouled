@@ -10,6 +10,7 @@ local SPECIAL_TEAR_COLOR_PRIORITY = 1
 local NORMAL_CHEESE_SPRITESHEET = "gfx/tears/tears_cheese.png"
 
 local MAGGOT_INNACURACY = 50
+local INNACURACY_ROTATION = 30
 
 local GRATED_OFF_ENEMY_HEALTH_FRACTION = 0.01
 local GRATED_OFF_ENEMY_TYPE = EntityType.ENTITY_SMALL_MAGGOT
@@ -72,14 +73,16 @@ local function onEntityTakeDamage(_, entity, amount, damageFlag, source, countdo
             if tearEffects and tearEffects[Resouled.TearEffects.CHEESE_GRATER] then
                 
                 if npc and npc:IsEnemy() and npc:IsActiveEnemy() and npc:IsVulnerableEnemy() and not Resouled:IsCustomTearEffectOnCooldown(npc, Resouled.TearEffects.CHEESE_GRATER) then
+                    --Spawn pos explanation: I take an offset vector that's 10 pixels bigger than maggot innacuracy (so the maggot doesn't spawn in the enemy), i rotate it to the player and randomly rotate it within a -45 to 45 degree angle, then i take a vector that's size is between 0 and maggot innacuracy and i rotate it randomly from 0 to 360 degrees
+                    local maggotSpawnPos = npc.Position + (Vector(MAGGOT_INNACURACY + 10, 0):Rotated((player.Position - npc.Position):GetAngleDegrees() + math.random(-INNACURACY_ROTATION, INNACURACY_ROTATION)) + Vector(math.random(0, MAGGOT_INNACURACY), 0):Rotated(math.random(0, 360)))
 
-                    local maggot = EntityNPC.ThrowMaggotAtPos(npc.Position, player.Position + Vector(math.random(-MAGGOT_INNACURACY, MAGGOT_INNACURACY), math.random(-MAGGOT_INNACURACY, MAGGOT_INNACURACY)), 0)
+                    local maggot = EntityNPC.ThrowMaggotAtPos(npc.Position, maggotSpawnPos, 0)
                     maggot.Velocity = maggot.Velocity:Normalized() * (0.8 - (math.random()/2))
-                    maggot.MaxHitPoints = 1
-                    maggot.HitPoints = 1
+                    maggot.MaxHitPoints = 1 / 100
+                    maggot.HitPoints = maggot.MaxHitPoints
                     maggot:GetData().Resouled_CheeseGraterMaggot = true
 
-                    Resouled:ApplyCustomTearEffectCooldown(npc, Resouled.TearEffects.CHEESE_GRATER, COOLDOWN)
+                    Resouled:ApplyCustomTearEffectCooldown(npc, Resouled.TearEffects.CHEESE_GRATER, COOLDOWN) 
 
                     npc:TakeDamage(amount * DAMAGE_MULTIPLIER, damageFlag, source, countdown)
                     return false

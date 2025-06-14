@@ -7,8 +7,8 @@ end
 local EFFECT_APPLY_CHANCE = 0.1
 
 ---@param tear EntityTear
-local function postFamiliarFireTear(_, tear)
-    local player = Resouled:TryFindPlayerSpawner(tear)
+local function postTearInit(_, tear)
+    local player = Resouled:TryFindPlayerSpawnerIfEntityFamiliar(tear)
     if player then
         if player:HasTrinket(HAND_ME_DOWNS) then
             local randomNum = math.random()
@@ -20,4 +20,4 @@ local function postFamiliarFireTear(_, tear)
         end
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_FAMILIAR_FIRE_PROJECTILE, postFamiliarFireTear)
+Resouled:AddCallback(ModCallbacks.MC_POST_TEAR_INIT, postTearInit)

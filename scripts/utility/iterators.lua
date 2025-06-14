@@ -29,6 +29,17 @@ function iteratorsModule:IterateOverRooms(callback, ...)
     end
 end
 
+---@param callback function
+function iteratorsModule:IterateOverGrid(callback, ...)
+    local room = Game():GetRoom()
+    for i = 0, room:GetGridSize() - 1 do
+        local gridEntity = room:GetGridEntity(i)
+        if gridEntity then
+            callback(gridEntity, ...)
+        end
+    end
+end
+
 
 
 return iteratorsModule

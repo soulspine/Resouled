@@ -1,15 +1,19 @@
 local function postNewRoom()
     if Resouled:RoomEventPresent(Resouled.RoomEvents.BUM_BO_IS_LOOSE) then
-        Game():Spawn(EntityType.ENTITY_FAMILIAR, FamiliarVariant.BUMBO, Isaac.GetFreeNearPosition(Game():GetRoom():GetCenterPos(), 0), Vector.Zero, nil, 0, Game():GetRoom():GetAwardSeed())
+        local bumbo = Game():Spawn(EntityType.ENTITY_FAMILIAR, FamiliarVariant.BUMBO, Isaac.GetFreeNearPosition(Game():GetRoom():GetCenterPos(), 0), Vector.Zero, nil, 0, Game():GetRoom():GetAwardSeed())
+        bumbo:GetData().Resouled_Delete = true
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)
 
 local function preNewRoom()
     if Resouled:RoomEventPresent(Resouled.RoomEvents.BUM_BO_IS_LOOSE) then
-        ---@param player EntityPlayer
-        Resouled.Iterators:IterateOverPlayers(function(player)
-            player:AddCacheFlags(CacheFlag.CACHE_FAMILIARS, true)
+        ---@param entity Entity
+        Resouled.Iterators:IterateOverRoomEntities(function(entity)
+            local data = entity:GetData()
+            if data.Resouled_Delete then
+                entity:Remove()
+            end
         end)
     end
 end

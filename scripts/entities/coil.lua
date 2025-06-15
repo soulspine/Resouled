@@ -34,23 +34,30 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, COIL)
 
 ---@param npc EntityNPC
 local function onNpcUpdate(_, npc)
-    local dirVector = (npc:GetPlayerTarget().Position - npc.Position)
+    local playerTarget = npc:GetPlayerTarget()
+    local dirVector = (playerTarget.Position - npc.Position)
     local sprite = npc:GetSprite()
+    local pathfinder = npc.Pathfinder
+    local room = Game():GetRoom()
+    local seesPlayer = room:CheckLine(npc.Position, playerTarget.Position, LineCheckMode.ENTITY)
     if npc.Variant == COIL_VARIANT and npc.SubType == COIL_SUBTYPE then -- COIL
-        if npc:GetPlayerTarget().Position:Distance(npc.Position) > 100 then
-            npc.Velocity = npc.Velocity * PLAYER_FOLLOW_VELOCITY_MULT + dirVector * PLAYER_FOLLOW_SPEED
-        else
-            npc.Velocity = npc.Velocity * PLAYER_AVOID_VELOCITY_MULT + -dirVector * PLAYER_AVOID_SPEED
-            local randomNum = math.random()
-            if Isaac.GetFrameCount() % 30 == 0 then
-                for i = 1, TEAR_COUNT do
-                    npc:FireProjectiles(npc.Position, (dirVector:Normalized() * TEAR_SPEED):Rotated((360/TEAR_COUNT)*(i-1)), 0, ProjectileParams())
+        if seesPlayer then
+            if playerTarget.Position:Distance(npc.Position) > 100 then
+                npc.Velocity = npc.Velocity * PLAYER_FOLLOW_VELOCITY_MULT + dirVector * PLAYER_FOLLOW_SPEED
+            else
+                npc.Velocity = npc.Velocity * PLAYER_AVOID_VELOCITY_MULT + -dirVector * PLAYER_AVOID_SPEED
+                if Isaac.GetFrameCount() % 30 == 0 then
+                    for i = 1, TEAR_COUNT do
+                        npc:FireProjectiles(npc.Position, (dirVector:Normalized() * TEAR_SPEED):Rotated((360/TEAR_COUNT)*(i-1)), 0, ProjectileParams())
+                    end
                 end
             end
+            npc.Pathfinder:EvadeTarget(playerTarget.Position)
+        else
+            pathfinder:FindGridPath(playerTarget.Position, 1, 1, true)
         end
-        npc.Pathfinder:EvadeTarget(npc:GetPlayerTarget().Position)
 
-        if npc.Position.X - npc:GetPlayerTarget().Position.X < 0 then
+        if npc.Position.X - playerTarget.Position.X < 0 then
             if sprite:GetLayer(1):GetFlipX() == false then
                 sprite:GetLayer(1):SetFlipX(true)
             end
@@ -62,7 +69,11 @@ local function onNpcUpdate(_, npc)
     end
 
     if npc.Variant == COIL_VARIANT and npc.SubType == COIL_FETUS_SUBTYPE then -- FETUS
-        npc.Velocity = (npc.Velocity + dirVector:Normalized() * COIL_FETUS_TARGET_DIRECTION_SPEED_MULTIPLIER) * COIL_FETUS_VELOCITY_MULTIPLIER --Adding the target direction to npc's velocity, then decreasing it so the npc doesn't fly everywhere
+        if seesPlayer then
+            npc.Velocity = (npc.Velocity + dirVector:Normalized() * COIL_FETUS_TARGET_DIRECTION_SPEED_MULTIPLIER) * COIL_FETUS_VELOCITY_MULTIPLIER --Adding the target direction to npc's velocity, then decreasing it so the npc doesn't fly everywhere
+        else
+            pathfinder:FindGridPath(playerTarget.Position, 1, 1, true)
+        end
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onNpcUpdate, COIL)

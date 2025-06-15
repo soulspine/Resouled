@@ -60,6 +60,12 @@ local function postAddCollectible(_, type, player)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, postAddCollectible)
 
+---@param player EntityPlayer
+local function onCacheEval(_, player)
+    player:CheckFamiliar(FRIEND_VARIANT, player:GetCollectibleNum(A_FRIEND), player:GetCollectibleRNG(A_FRIEND))
+end
+Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACHE_FAMILIARS)
+
 ---@param familiar EntityFamiliar
 local function postFamiliarInit(_, familiar)
     if familiar.SubType == FRIEND_SUBTYPE then
@@ -331,9 +337,9 @@ local function familiarUpdate(_, familiar)
                 if not data.Resouled_FireCooldown then
                     if pathfinderCheck then
                         ---@type EntityTear
-                        local tear = Game():Spawn(EntityType.ENTITY_TEAR, TearVariant.METALLIC, familiar.Position, (data.Resouled_Target.Position - familiar.Position):Normalized() * TEAR_SPEED, familiar, 0, familiar.InitSeed)
+                        local tear = Game():Spawn(EntityType.ENTITY_TEAR, TearVariant.METALLIC, familiar.Position, (data.Resouled_Target.Position - familiar.Position):Normalized() * TEAR_SPEED, familiar, 0, familiar.InitSeed):ToTear()
                         local player = Resouled:TryFindPlayerSpawner(familiar)
-                        if player and player:HasTrinket(TrinketType.TRINKET_BABY_BENDER) then
+                        if tear and player and player:HasTrinket(TrinketType.TRINKET_BABY_BENDER) then
                             tear:AddTearFlags(TearFlags.TEAR_HOMING)
                         end
                         tear:SetColor(Color(0.1, 0.1, 0.1), 99999, 1, false, false)
@@ -409,9 +415,9 @@ local function familiarUpdate(_, familiar)
                         if not data.Resouled_FireCooldown then
                             if room:CheckLine(familiar.Position, data.Resouled_GridTarget.Position + (familiar.Position - data.Resouled_GridTarget.Position):Normalized() * 35, LineCheckMode.PROJECTILE) then
                                 ---@type EntityTear
-                                local tear = Game():Spawn(EntityType.ENTITY_TEAR, TearVariant.METALLIC, familiar.Position, (data.Resouled_GridTarget.Position - familiar.Position):Normalized() * TEAR_SPEED, familiar, 0, familiar.InitSeed)
+                                local tear = Game():Spawn(EntityType.ENTITY_TEAR, TearVariant.METALLIC, familiar.Position, (data.Resouled_GridTarget.Position - familiar.Position):Normalized() * TEAR_SPEED, familiar, 0, familiar.InitSeed):ToTear()
                                 local player = Resouled:TryFindPlayerSpawner(familiar)
-                                if player and player:HasTrinket(TrinketType.TRINKET_BABY_BENDER) then
+                                if tear and player and player:HasTrinket(TrinketType.TRINKET_BABY_BENDER) then
                                     tear:AddTearFlags(TearFlags.TEAR_HOMING)
                                 end
                                 tear:SetColor(Color(0.1, 0.1, 0.1), 99999, 1, false, false)

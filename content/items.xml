@@ -16,6 +16,21 @@
     <passive id="14" name="A Friend" gfx="a_friend.png" description="The friend is nigh" quality="2" craftquality="2" cache="familiars"/>
     <familiar id="15" name="The Monster" gfx="the_monster.png" description="Journey to aether" quality="3" craftquality="3" cache="familiars"/>
     <passive id="16" name="Unstable DNA" gfx="unstable_dna.png" description="Unstable genetics" quality="1" craftquality="1"/>
+    <active id="17" name="Auction Gavel" gfx="auction_gavel.png" description="" quality="0" craftquality="0" chargetype="normal" maxcharges="3"/>
+    <familiar id="18" name="Black Proglottid" gfx="black_proglottid.png" description="" quality="0" craftquality="0" cache="familiars"/>
+    <passive id="19" name="Club" gfx="club.png" description="" quality="0" craftquality="0"/>
+    <passive id="20" name="Blast Miner" gfx="blast_miner.png" description="" quality="0" craftquality="0"/>
+    <familiar id="21" name="Co-Op Baby" gfx="co_op_baby.png" description="" quality="0" craftquality="0" cache="familiars"/>
+    <passive id="22" name="Cursed Soul" gfx="cursed_soul.png" description="" quality="0" craftquality="0"/>
+    <familiar id="23" name="Fetal Haunt" gfx="fetal_haunt.png" description="" quality="0" craftquality="0" cache="familiars"/>
+    <active id="24" name="Red GFUEL" gfx="GFUEL.png" description="" quality="0" craftquality="0" chargetype="normal" maxcharges="3"/>
+    <familiar id="25" name="Mama Haunt" gfx="mama_haunt.png" description="" quality="0" craftquality="0" cache="familiars"/>
+    <familiar id="26" name="Pink Proglottid" gfx="pink_proglottid.png" description="" quality="0" craftquality="0" cache="familiars"/>
+    <passive id="27" name="Pumpkin Mask" gfx="pumpkin_mask.png" description="" quality="0" craftquality="0"/>
+    <familiar id="28" name="Red Proglottid" gfx="red_proglottid.png" description="" quality="0" craftquality="0" cache="familiars"/>
+    <familiar id="29" name="Tumor Ball" gfx="tumor_ball.png" description="" quality="0" craftquality="0" cache="familiars"/>
+    <familiar id="30" name="Ultra Flesh Kid" gfx="ultra_flesh_kid.png" description="" quality="0" craftquality="0" cache="familiars"/>
+    <familiar id="31" name="White Proglottid" gfx="white_proglottid.png" description="" quality="0" craftquality="0" cache="familiars"/>
 
     <trinket id="1" name="Handicapped Placard" description="" gfx="handicapped_placard.png"/>
     <trinket id="2" name="Hand me Downs" description="Pass them down to the ones in need" gfx="hand_me_downs.png"/>

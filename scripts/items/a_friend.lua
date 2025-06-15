@@ -1,5 +1,9 @@
 local A_FRIEND = Isaac.GetItemIdByName("A Friend")
 
+if EID then
+    EID:addCollectible(A_FRIEND, "Spawns a friend that acts like a player # This friend can't die and can't pick up items")
+end
+
 local FRIEND_VARIANT = Isaac.GetEntityVariantByName("A Friend")
 local FRIEND_SUBTYPE = Isaac.GetEntitySubTypeByName("A Friend")
 
@@ -48,17 +52,6 @@ local PICKUP_PICK_UP_RANGE = 22
 
 local BOMB_PLACEMENT_RANGE = 15
 local BOMB_COOLDOWN = 600
-
-local FRIEND_PICKUP_DISTANCE = 25
-
----@param type CollectibleType
----@param player EntityPlayer
-local function postAddCollectible(_, type, player)
-    if type == A_FRIEND then
-        Game():Spawn(EntityType.ENTITY_FAMILIAR, FRIEND_VARIANT, Isaac.GetPlayer(player).Position, Vector.Zero, Isaac.GetPlayer(player), FRIEND_SUBTYPE, Isaac.GetPlayer(player).InitSeed)
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, postAddCollectible)
 
 ---@param player EntityPlayer
 local function onCacheEval(_, player)

@@ -1,12 +1,4 @@
 <entities anm2root="gfx/" version="5">
-    <entity anm2path="coin_triple.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Triple Coin" numGridCollisionPoints="24" shadowSize="14" stageHP="0" variant="20" subtype="8">
-        <gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0"/>
-        <preload-snd id="234"/>
-    </entity>
-    <entity anm2path="coin_quad.anm2" baseHP="0" boss="0" champion="0" collisionDamage="0" collisionMass="3" collisionRadius="12" friction="1" id="5" name="Quad Coin" numGridCollisionPoints="24" shadowSize="14" stageHP="0" variant="20" subtype="9">
-        <gibs amount="0" blood="0" bone="0" eye="0" gut="0" large="0"/>
-        <preload-snd id="234"/>
-    </entity>
     <entity anm2path="soul_card.anm2" id="5" variant="444" collisionRadius="16" name="Soul Pickup" shadowSize="14" reroll="false" tags="noreroll"/>
     <entity name="Cursed Gaper" id="10" variant="4" anm2path="cursed_gaper.anm2" baseHP="14" stageHP="3" collisionMass="5" collisionRadius="13" friction="1.2" numGridCollisionPoints="12" shadowSize="14" champion="0" collisionDamage="1" reroll="true">
         <beastiary anim="Idle" tramsform="0,0,1"/>
@@ -37,11 +29,6 @@
     	<devolve id="34.0.0" weight="1" />
 	</entity>
     <entity anm2path="daddy_haunt.anm2" name="Daddy Haunt" id="3" variant="872" subtype="0" collisionRadius="100" shadowSize="15" friction="1"/>
-    <entity anm2path="pizza_toppings.anm2" name="Mushroom Familiar" id="3" variant="445" subtype="0" shadowSize="15" friction="1.5"/>
-    <entity anm2path="pizza_toppings.anm2" name="Cheese Familiar" id="3" variant="445" subtype="1" shadowSize="15" friction="1.5"/>
-    <entity anm2path="pizza_toppings.anm2" name="Tomato Familiar" id="3" variant="445" subtype="2" shadowSize="15" friction="1.5"/>
-    <entity anm2path="pizza_toppings.anm2" name="Sausage Familiar" id="3" variant="445" subtype="3" shadowSize="15" friction="1.5"/>
-    <entity anm2path="pizza_toppings.anm2" name="Pineapple Familiar" id="3" variant="445" subtype="4" shadowSize="15" friction="1.5"/>
     <entity anm2path="pizza_toppings.anm2" name="Pizza Familiar" id="3" variant="445" subtype="5" shadowSize="10" friction="1" collisionRadius="10"/>
     <entity anm2path="effects/air_shockwave.anm2" name="Air Shockwave" id="1000" variant="200"/>
     <entity anm2path="galaxy_portal.anm2" name="Galaxy Portal" id="1000" variant="200"/>

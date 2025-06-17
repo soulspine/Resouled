@@ -5,18 +5,63 @@ local DAMAGE_SHARE = 0.25
 local BEAM_SPRITE_MIN = 0
 local BEAM_SPRITE_MAX = 64
 
+local CHAIN_OPACITY = 1
+
+local EFFECT_VARIANT = Isaac.GetEntityVariantByName("Chain Particle")
+local EFFECT_SUBTYPE = Isaac.GetEntitySubTypeByName("Chain Particle")
+local CHAIN_PARTICLES_SPAWN_CHANCE_ON_BREAK_PER_POINT = 0.5
+local SPAWN_HEIGHT = 15
+local MAX_HEIGHT_ROTATION = 45
+local MIN_HEIGHT_ROTATIOn = -5
+local WEIGHT = 1.1
+local BOUNCINESS = 0.5
+local SLIPPERINESS = 1
+local SIZE = 1
+local MAX_SIZE_VARIETY = 20
+local SPEED_MAX = 10
+local SPEED_MIN = 5
+
 
 local TARGET_BONDS_COUNT = function(enemyCount)
     return math.max(math.floor(enemyCount / 4), 1)
 end
 
+---@param entity Entity
+local SPAWN_CHAIN_PARTICLES = function(entity)
+    local data = entity:GetData()
+    local other = data.ResouledSoulbond.Other.Entity
+    local currentPos = entity.Position
+    local otherPos = other.Position
+    local dirVector = (otherPos - currentPos):Normalized() * BEAM_SPRITE_MAX
+    local dirVectorLength = dirVector:Length()
+    local distance = currentPos:Distance(otherPos)
+    local pointPos = currentPos
+    while distance - dirVectorLength > dirVectorLength do
+        local randomNum = math.random()
+        if randomNum < CHAIN_PARTICLES_SPAWN_CHANCE_ON_BREAK_PER_POINT then
+            Resouled:SpawnRealisticParticles(GridCollisionClass.COLLISION_SOLID, pointPos, math.random(1, 3), SPAWN_HEIGHT,
+            MAX_HEIGHT_ROTATION, MIN_HEIGHT_ROTATIOn, WEIGHT, BOUNCINESS, SLIPPERINESS, SIZE, MAX_SIZE_VARIETY, math.random(SPEED_MIN, SPEED_MAX), nil, nil, false, EFFECT_VARIANT, EFFECT_SUBTYPE)
+        end
+            
+        pointPos = pointPos + dirVector
+        distance = distance - dirVectorLength
+    end
+
+    Resouled:SpawnRealisticParticles(GridCollisionClass.COLLISION_SOLID, currentPos, math.random(2, 6), SPAWN_HEIGHT,
+    MAX_HEIGHT_ROTATION, MIN_HEIGHT_ROTATIOn, WEIGHT, BOUNCINESS, SLIPPERINESS, SIZE, MAX_SIZE_VARIETY, math.random(SPEED_MIN, SPEED_MAX), nil, nil, false, EFFECT_VARIANT, EFFECT_SUBTYPE)
+    Resouled:SpawnRealisticParticles(GridCollisionClass.COLLISION_SOLID, otherPos, math.random(2, 6), SPAWN_HEIGHT,
+    MAX_HEIGHT_ROTATION, MIN_HEIGHT_ROTATIOn, WEIGHT, BOUNCINESS, SLIPPERINESS, SIZE, MAX_SIZE_VARIETY, math.random(SPEED_MIN, SPEED_MAX), nil, nil, false, EFFECT_VARIANT, EFFECT_SUBTYPE)
+end
+
 local chainSprite = Sprite()
 chainSprite:Load("gfx/soulbond_chain.anm2", true)
 chainSprite:Play("Idle", true)
+chainSprite.Color.A = CHAIN_OPACITY
 
 local chainLockSprite = Sprite()
 chainLockSprite:Load("gfx/soulbond_chain_2.anm2", true)
 chainLockSprite:Play("Idle", true)
+chainLockSprite.Color.A = CHAIN_OPACITY
 
 local function onUpdate()
     if PlayerManager.AnyoneHasCollectible(SOULBOND) then
@@ -66,12 +111,14 @@ local function onNpcUpdate(_, npc)
         local other = data.ResouledSoulbond.Other.Entity
         local otherData = other:GetData()
         if not other:IsDead() then
+            SPAWN_CHAIN_PARTICLES(npc)
             data.ResouledSoulbond = nil
             otherData.ResouledSoulbond = nil
         end
     end
 
     if data.ResouledSoulbond and data.ResouledSoulbond.Other.Entity.HitPoints <= 0 then
+        SPAWN_CHAIN_PARTICLES(npc)
         data.ResouledSoulbond.Other.Entity:GetData().ResouledSoulbond = nil
         data.ResouledSoulbond = nil
     end
@@ -156,6 +203,7 @@ Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, npcTakeDamage)
 local function postNpcDeath(_, npc)
     local data = npc:GetData()
     if data.ResouledSoulbond then
+        SPAWN_CHAIN_PARTICLES(npc)
         data.ResouledSoulbond.Other.Entity:GetData().ResouledSoulbond = nil
         data.ResouledSoulbond = nil
     end

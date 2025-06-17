@@ -228,3 +228,123 @@ function Resouled:GetRandomItemFromPool(pool, rng, quality)
 
     return itemID or CollectibleType.COLLECTIBLE_BREAKFAST
 end
+
+---@param gridCollisionClass GridCollisionClass
+---@param position Vector
+---@param amount integer
+---@param startOffset number
+---@param minOffsetLoss integer
+---@param maxOffsetloss integer
+---@param weight number
+---@param bounciness number
+---@param slipperiness number
+---@param size number
+---@param maxSizeVariety integer
+---@param speed number
+---@param rotation? integer
+---@param maxSpread? integer
+---@param straightPath boolean
+---@param variant integer
+---@param subType? integer
+function Resouled:SpawnRealisticParticles(gridCollisionClass, position, amount, startOffset, minOffsetLoss, maxOffsetloss, weight, bounciness, slipperiness, size, maxSizeVariety, speed, rotation, maxSpread, straightPath, variant, subType)
+    for i = 1, amount do
+        local newSpeed = speed
+        ---@type EntityEffect
+        local particle = Game():Spawn(EntityType.ENTITY_EFFECT, variant, position, Vector.Zero, nil, subType or 0, Game():GetRoom():GetAwardSeed()):ToEffect()
+        local data = particle:GetData()
+
+        particle.GridCollisionClass = gridCollisionClass
+        particle.DepthOffset = -1000 - i
+
+        newSpeed = newSpeed * (math.random(20, 100)/100) * 1.5
+        
+        if rotation then
+            if not maxSpread then
+                particle.Velocity = (Vector(0, 1) * newSpeed):Rotated(rotation)
+            else
+                particle.Velocity = (Vector(0, 1) * newSpeed):Rotated(rotation + math.random(-maxSpread, maxSpread))
+            end
+        else
+            particle.Velocity = (Vector(0, 1) * newSpeed):Rotated(math.random(0, 360))
+        end
+        particle.Scale = (size | 1) * (1 + math.random(-maxSizeVariety, maxSizeVariety)/100)
+        particle.Size = particle.Size * particle.Scale
+            
+        data.Resouled_RealisticParticle = {
+            Weight = weight * particle.Scale,
+            Bounciness = bounciness / particle.Scale,
+            Slipperiness = slipperiness,
+            RotationSpeed = newSpeed / particle.Scale,
+            RotationDirection = math.random(2),
+            Offset = startOffset,
+            OffsetToLose = math.random(-minOffsetLoss, maxOffsetloss)/10,
+            StraightPath = straightPath,
+            BounceCount = 0,
+        }
+    end
+end
+
+---@param effect EntityEffect
+Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, function(_, effect)
+    local data = effect:GetData()
+    if data.Resouled_RealisticParticle then
+        if data.Resouled_RealisticParticle.Slipperiness > 1 then
+            effect.Velocity = (effect.Velocity * data.Resouled_RealisticParticle.Slipperiness) * 0.85
+        else
+            effect.Velocity = (effect.Velocity) * 0.85
+        end
+    end
+end)
+
+---@param effect EntityEffect
+Resouled:AddCallback(ModCallbacks.MC_PRE_EFFECT_RENDER, function(_, effect)
+    local data = effect:GetData()
+    if data.Resouled_RealisticParticle then
+        if data.Resouled_RealisticParticle.Offset > 0 then
+            if effect.Velocity:LengthSquared() > 0.001 then
+                if data.Resouled_RealisticParticle.RotationDirection == 0 then
+                    effect.SpriteRotation = (effect.SpriteRotation + data.Resouled_RealisticParticle.RotationSpeed)%360
+                else
+                    effect.SpriteRotation = (effect.SpriteRotation - data.Resouled_RealisticParticle.RotationSpeed)%360
+                end
+            end
+                
+            data.Resouled_RealisticParticle.Offset = data.Resouled_RealisticParticle.Offset - data.Resouled_RealisticParticle.OffsetToLose
+
+            data.Resouled_RealisticParticle.OffsetToLose = data.Resouled_RealisticParticle.OffsetToLose + (data.Resouled_RealisticParticle.Weight/5)
+        else
+            data.Resouled_RealisticParticle.OffsetToLose = (-data.Resouled_RealisticParticle.OffsetToLose * data.Resouled_RealisticParticle.Bounciness) / (data.Resouled_RealisticParticle.BounceCount + 2)
+            data.Resouled_RealisticParticle.BounceCount = data.Resouled_RealisticParticle.BounceCount + 1
+            if data.Resouled_RealisticParticle.BounceCount > data.Resouled_RealisticParticle.Bounciness * 5 then
+                data.Resouled_RealisticParticle.Offset = 0
+            else
+                data.Resouled_RealisticParticle.Offset = 0.0001
+            end
+
+            if not data.Resouled_RealisticParticle.StraightPath then
+                effect.Velocity = effect.Velocity:Rotated(math.random(-30, 30))
+            end
+
+            if effect.Velocity:LengthSquared() > 0.001 then
+                if data.Resouled_RealisticParticle.RotationDirection == 0 then
+                    data.Resouled_RealisticParticle.RotationDirection = 1
+                else
+                    data.Resouled_RealisticParticle.RotationDirection = 0
+                end
+                
+                data.Resouled_RealisticParticle.RotationSpeed = data.Resouled_RealisticParticle.RotationSpeed + math.random(-3, 3)
+            end
+        end
+
+        return Vector(0, -data.Resouled_RealisticParticle.Offset)
+    end
+end)
+
+---@param position Vector
+---@param amount integer
+function Resouled:SpawnPaperGore(position, amount)
+    local weight = 1.2
+    local bounciness = 0.25
+    local slipperiness = 0.25
+    Resouled:SpawnRealisticParticles(GridCollisionClass.COLLISION_SOLID, position, amount, 25, 30, 1, weight, bounciness, slipperiness, 1, 20, math.random(5, 15), nil, nil, false, Isaac.GetEntityVariantByName("Paper Gore Particle"), Isaac.GetEntitySubTypeByName("Paper Gore Particle"))
+end

@@ -16,7 +16,6 @@ local DEATH3_SFX = Isaac.GetSoundIdByName("Paper Death 3")
 
 local SFX_VOLUME = 1.5
 
-local GORE_VARIANT = Isaac.GetEntityVariantByName("Paper Gore Particle 1")
 local GORE_PARTICLE_COUNT = 15
 
 local DEATH_SOUND_TABLE = {
@@ -85,9 +84,7 @@ local function postNpcDeath(_, npc)
     if npc.Variant == GAPER_VARIANT then
         local randomNum = math.random(1, 3)
         SFXManager():Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
-        for _ = 1, GORE_PARTICLE_COUNT + math.random(-1, 1) do
-            Game():SpawnParticles(npc.Position, GORE_VARIANT, 1, math.random(3, 11), Color.Default, 0, math.random(1, 10)-1)
-        end
+        Resouled:SpawnPaperGore(npc.Position, GORE_PARTICLE_COUNT)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath, GAPER_TYPE)

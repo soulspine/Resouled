@@ -9,7 +9,7 @@ local CHAIN_OPACITY = 1
 
 local EFFECT_VARIANT = Isaac.GetEntityVariantByName("Chain Particle")
 local EFFECT_SUBTYPE = Isaac.GetEntitySubTypeByName("Chain Particle")
-local CHAIN_PARTICLES_SPAWN_CHANCE_ON_BREAK_PER_POINT = 0.5
+local CHAIN_PARTICLES_SPAWN_CHANCE_ON_BREAK_PER_POINT = 0.33
 local SPAWN_HEIGHT = 15
 local MAX_HEIGHT_ROTATION = 45
 local MIN_HEIGHT_ROTATIOn = -5
@@ -21,18 +21,61 @@ local MAX_SIZE_VARIETY = 20
 local SPEED_MAX = 10
 local SPEED_MIN = 5
 
+local PITCH = 3
+
+local chainSprite = Sprite()
+chainSprite:Load("gfx/soulbond_chain.anm2", true)
+chainSprite:Play("Idle", true)
+chainSprite.Color.A = CHAIN_OPACITY
+
+local chainLockSprite = Sprite()
+chainLockSprite:Load("gfx/soulbond_chain_2.anm2", true)
+chainLockSprite:Play("Idle", true)
+chainLockSprite.Color.A = CHAIN_OPACITY
+
 
 local TARGET_BONDS_COUNT = function(enemyCount)
     return math.max(math.floor(enemyCount / 4), 1)
 end
 
+---@param entity1 EntityRef
+---@param entity2 EntityRef
+local CREATE_BOND = function(entity1, entity2)
+    SFXManager():Play(SoundEffect.SOUND_CHAIN_LOOP, nil, nil, nil, PITCH)
+
+    local data1 = entity1.Entity:GetData()
+    local data2 = entity2.Entity:GetData()
+    data1.ResouledSoulbond = {
+        Other = entity2,
+        Beam = Beam(chainSprite, 0, false, false),
+    }
+    data1.ResouledSoulbondBlock = true
+    data2.ResouledSoulbond = {
+        Other = entity1,
+    }
+    data2.ResouledSoulbondBlock = true
+end
+
 ---@param entity Entity
-local SPAWN_CHAIN_PARTICLES = function(entity)
+local CHECK_BONDED_TWIN = function(entity)
+    local data = entity:GetData()
+    if data.ResouledSoulbond then
+        ---@type Entity
+        local x = data.ResouledSoulbond.Other.Entity
+        if x.HitPoints <= 0 or not x:IsActiveEnemy(false) or not x:IsVulnerableEnemy() then
+            return false
+        end
+        return true
+    end
+end
+
+---@param entity Entity
+local DESTROY_BOND = function(entity)
     local data = entity:GetData()
     local other = data.ResouledSoulbond.Other.Entity
     local currentPos = entity.Position
     local otherPos = other.Position
-    local dirVector = (otherPos - currentPos):Normalized() * BEAM_SPRITE_MAX
+    local dirVector = (otherPos - currentPos):Normalized() * (BEAM_SPRITE_MAX/5)
     local dirVectorLength = dirVector:Length()
     local distance = currentPos:Distance(otherPos)
     local pointPos = currentPos
@@ -51,17 +94,11 @@ local SPAWN_CHAIN_PARTICLES = function(entity)
     MAX_HEIGHT_ROTATION, MIN_HEIGHT_ROTATIOn, WEIGHT, BOUNCINESS, SLIPPERINESS, SIZE, MAX_SIZE_VARIETY, math.random(SPEED_MIN, SPEED_MAX), nil, nil, false, EFFECT_VARIANT, EFFECT_SUBTYPE)
     Resouled:SpawnRealisticParticles(GridCollisionClass.COLLISION_SOLID, otherPos, math.random(2, 6), SPAWN_HEIGHT,
     MAX_HEIGHT_ROTATION, MIN_HEIGHT_ROTATIOn, WEIGHT, BOUNCINESS, SLIPPERINESS, SIZE, MAX_SIZE_VARIETY, math.random(SPEED_MIN, SPEED_MAX), nil, nil, false, EFFECT_VARIANT, EFFECT_SUBTYPE)
+    SFXManager():Play(SoundEffect.SOUND_CHAIN_BREAK, nil, nil, nil, PITCH)
+
+    data.ResouledSoulbond = nil
+    other:GetData().ResouledSoulbond = nil
 end
-
-local chainSprite = Sprite()
-chainSprite:Load("gfx/soulbond_chain.anm2", true)
-chainSprite:Play("Idle", true)
-chainSprite.Color.A = CHAIN_OPACITY
-
-local chainLockSprite = Sprite()
-chainLockSprite:Load("gfx/soulbond_chain_2.anm2", true)
-chainLockSprite:Play("Idle", true)
-chainLockSprite.Color.A = CHAIN_OPACITY
 
 local function onUpdate()
     if PlayerManager.AnyoneHasCollectible(SOULBOND) then
@@ -87,17 +124,7 @@ local function onUpdate()
             local enemy1 = bindableEnemies[enemyIndex1]
             table.remove(bindableEnemies, enemyIndex1)
             local enemy2 = bindableEnemies[math.random(1, #bindableEnemies)]
-            local data1 = enemy1.Entity:GetData()
-            local data2 = enemy2.Entity:GetData()
-            data1.ResouledSoulbond = {
-                Other = enemy2,
-                Beam = Beam(chainSprite, 0, false, false),
-            }
-            data1.ResouledSoulbondBlock = true
-            data2.ResouledSoulbond = {
-                Other = enemy1,
-            }
-            data2.ResouledSoulbondBlock = true
+            CREATE_BOND(enemy1, enemy2)
         end
     end
 end
@@ -106,21 +133,12 @@ Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 ---@param npc EntityNPC
 local function onNpcUpdate(_, npc)
     local data = npc:GetData()
-    if data.ResouledSoulbond and npc:IsDead() then
-        ---@type Entity
-        local other = data.ResouledSoulbond.Other.Entity
-        local otherData = other:GetData()
-        if not other:IsDead() then
-            SPAWN_CHAIN_PARTICLES(npc)
-            data.ResouledSoulbond = nil
-            otherData.ResouledSoulbond = nil
+    if data.ResouledSoulbond then
+        if not CHECK_BONDED_TWIN(npc) then
+            DESTROY_BOND(npc)
         end
-    end
-
-    if data.ResouledSoulbond and data.ResouledSoulbond.Other.Entity.HitPoints <= 0 then
-        SPAWN_CHAIN_PARTICLES(npc)
-        data.ResouledSoulbond.Other.Entity:GetData().ResouledSoulbond = nil
-        data.ResouledSoulbond = nil
+    elseif not data.ResouledSoulbond and data.ResouledSoulBondBlock then
+        data.ResouledSoulBondBlock = nil
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, onNpcUpdate)
@@ -187,7 +205,9 @@ local function npcTakeDamage(_, entity, amount, damageFlags, source, countdown)
         if otherData.ResouledSoulbond then
             otherData.ResouledSoulbond.Damage = true
             other:TakeDamage(amount * DAMAGE_SHARE, damageFlags, source, countdown)
-            otherData.ResouledSoulbond.Damage = nil
+            if otherData.ResouledSoulbond then --Would error if entity died there
+                otherData.ResouledSoulbond.Damage = nil
+            end
         end
         
         local newAlpha = (1 - (entity.HitPoints / entity.MaxHitPoints))/2
@@ -196,16 +216,9 @@ local function npcTakeDamage(_, entity, amount, damageFlags, source, countdown)
         data.Resouled_NewAlpha = 1 - newAlpha
         otherData.Resouled_NewAlpha = 1 - newAlphaOther
     end
-end
-Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, npcTakeDamage)
 
----@param npc EntityNPC
-local function postNpcDeath(_, npc)
-    local data = npc:GetData()
-    if data.ResouledSoulbond then
-        SPAWN_CHAIN_PARTICLES(npc)
-        data.ResouledSoulbond.Other.Entity:GetData().ResouledSoulbond = nil
-        data.ResouledSoulbond = nil
+    if data.ResouledSoulbond and entity.HitPoints - amount <= 0 then
+        DESTROY_BOND(entity)
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath)
+Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, npcTakeDamage)

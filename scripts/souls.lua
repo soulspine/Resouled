@@ -89,7 +89,7 @@ Resouled.Souls = {
 -- SPECIAL SOUL SCRIPTS
 
 include("scripts.special_souls.the_bone")
---include("scripts.special_souls.the_chest")
+include("scripts.special_souls.the_chest")
 
 -- FILTERS
 local isCharmedFilter = function(npc)

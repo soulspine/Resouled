@@ -1,29 +1,25 @@
 local BLAST_RADIUS = 87
 local DOOR_DETECTION_RADIUS = 50
 
----@param effect EntityEffect
-local function onEffectInit(_, effect)
-    if Resouled:WasSoulSpawned(Resouled.Souls.THE_CHEST) then
+---@param bomb EntityBomb
+local function postBombUpdate(_, bomb)
+    if bomb:GetExplosionCountdown() > 0 then
         return
     end
-
     ---@param entity Entity
     Resouled.Iterators:IterateOverRoomEntities(function(entity)
         local pickup = entity:ToPickup()
-        if pickup and pickup.Position:Distance(effect.Position) < BLAST_RADIUS and pickup.Variant == PickupVariant.PICKUP_LOCKEDCHEST then
-            pickup:TryOpenChest()
-            Resouled:TrySpawnSoulPickup(Resouled.Souls.THE_CHEST, pickup.Position)
+        if pickup and pickup.Position:Distance(bomb.Position) <= BLAST_RADIUS * bomb.RadiusMultiplier and pickup.Variant == PickupVariant.PICKUP_LOCKEDCHEST then
+            if Resouled:TrySpawnSoulPickup(Resouled.Souls.THE_CHEST, pickup.Position) then
+                pickup:TryOpenChest()
+            end
         end
     end)
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, onEffectInit, EffectVariant.BOMB_EXPLOSION)
+Resouled:AddCallback(ModCallbacks.MC_POST_BOMB_UPDATE, postBombUpdate)
 
 ---@param pickup EntityPickup
 local function onPickupUpdate(_, pickup)
-    if Resouled:WasSoulSpawned(Resouled.Souls.THE_CHEST) then
-        return
-    end
-
     local open = false
 
     local closestDoor = Resouled.Doors:GetClosestDoor(pickup.Position)
@@ -39,8 +35,9 @@ local function onPickupUpdate(_, pickup)
     end
 
     if open then
-        pickup:TryOpenChest()
-        Resouled:TrySpawnSoulPickup(Resouled.Souls.THE_CHEST, pickup.Position)
+        if Resouled:TrySpawnSoulPickup(Resouled.Souls.THE_CHEST, pickup.Position) then
+            pickup:TryOpenChest()
+        end
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_UPDATE, onPickupUpdate, PickupVariant.PICKUP_LOCKEDCHEST)

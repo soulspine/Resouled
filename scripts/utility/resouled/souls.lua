@@ -33,6 +33,14 @@ local function createSoulsContainerOnRunStart(_, isContinued)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, createSoulsContainerOnRunStart)
 
+---@param soul ResouledSoul
+function Resouled:WasSoulSpawned(soul)
+    local runSave = SAVE_MANAGER.GetRunSave()
+    if runSave.Souls and runSave.Spawned and runSave.Spawned[soul] > 0 then
+        return true
+    end
+    return false
+end
 
 ---@return integer
 function Resouled:GetPossessedSoulsNum()
@@ -90,6 +98,7 @@ local function onSoulPickupCollision(_, pickup, collider, low)
             runSave.Souls.Possessed = runSave.Souls.Possessed + weight
             cachedSoulsNum = runSave.Souls.Possessed
         end
+        SFXManager():Play(Isaac.GetSoundIdByName("Soul Pickup "..tostring(math.random(4))))
         pickup:Remove()
     end
 end

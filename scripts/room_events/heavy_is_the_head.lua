@@ -18,7 +18,8 @@ local function preNewRoom()
     if Resouled:RoomEventPresent(Resouled.RoomEvents.HEAVY_IS_THE_HEAD) then
         ---@param player EntityPlayer
         Resouled.Iterators:IterateOverPlayers(function(player)
-            player:AddCacheFlags(CacheFlag.CACHE_SPEED, true)
+            local itemCount = player:GetCollectibleCount()
+            player.MoveSpeed = player.MoveSpeed + SPEED_LOSS_PER_ITEM * itemCount
         end)
     end
 end

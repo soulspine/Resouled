@@ -5,8 +5,6 @@ local DAMAGE_SHARE = 0.25
 local BEAM_SPRITE_MIN = 0
 local BEAM_SPRITE_MAX = 64
 
-local CHAIN_OPACITY = 1
-
 local EFFECT_VARIANT = Isaac.GetEntityVariantByName("Chain Particle")
 local EFFECT_SUBTYPE = Isaac.GetEntitySubTypeByName("Chain Particle")
 local CHAIN_PARTICLES_SPAWN_CHANCE_ON_BREAK_PER_POINT = 0.33
@@ -26,12 +24,10 @@ local PITCH = 3
 local chainSprite = Sprite()
 chainSprite:Load("gfx/soulbond_chain.anm2", true)
 chainSprite:Play("Idle", true)
-chainSprite.Color.A = CHAIN_OPACITY
 
 local chainLockSprite = Sprite()
 chainLockSprite:Load("gfx/soulbond_chain_2.anm2", true)
 chainLockSprite:Play("Idle", true)
-chainLockSprite.Color.A = CHAIN_OPACITY
 
 
 local TARGET_BONDS_COUNT = function(enemyCount)
@@ -181,7 +177,6 @@ local function onNpcRender(_, npc, offset)
         end
 
         chainLockSprite:Render(Isaac.WorldToScreen(currentPos))
-        chainLockSprite:Render(Isaac.WorldToScreen(otherPos))
 
     end
 
@@ -222,3 +217,12 @@ local function npcTakeDamage(_, entity, amount, damageFlags, source, countdown)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, npcTakeDamage)
+
+---@param itemConfig ItemConfigItem
+---@param player EntityPlayer
+local function preAddCostume(_, itemConfig, player)
+    if itemConfig.ID == SOULBOND and player:GetPlayerType() == PlayerType.PLAYER_THELOST_B then
+        return true
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_PRE_PLAYER_ADD_COSTUME, preAddCostume)

@@ -17,5 +17,7 @@ include("scripts.items.isaacs_last_will")
 include("scripts.items.a_friend")
 include("scripts.items.the_monster")
 include("scripts.items.unstable_dna")
+include("scripts.items.blast_miner")
+
 include("scripts.trinkets.recycling_sticker")
 include("scripts.trinkets.library_card")

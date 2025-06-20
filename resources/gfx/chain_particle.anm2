@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="Unknown" CreatedOn="6/17/2025 9:29:31 PM" Version="0" Fps="30"/>
+	<Info CreatedBy="Unknown" CreatedOn="6/20/2025 5:33:56 PM" Version="0" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="effects\chain_particles.png" Id="0"/>
+			<Spritesheet Path="effects\particles\chain_particles.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="particle" Id="0" SpritesheetId="0"/>

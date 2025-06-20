@@ -16,7 +16,7 @@ local function postBombUpdate(_, bomb)
         end
     end)
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_BOMB_UPDATE, postBombUpdate)
+Resouled:AddCallback(ModCallbacks.MC_PRE_BOMB_UPDATE, postBombUpdate)
 
 ---@param pickup EntityPickup
 local function onPickupUpdate(_, pickup)

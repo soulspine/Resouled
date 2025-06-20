@@ -39,15 +39,15 @@
     </sound>
 
     <sound name="Soul Pickup 1">
-        <samle weight="1" path="soul_pickup_1.wav"/>
+        <sample weight="1" path="soul_pickup_1.wav"/>
     </sound>
     <sound name="Soul Pickup 2">
-        <samle weight="1" path="soul_pickup_2.wav"/>
+        <sample weight="1" path="soul_pickup_2.wav"/>
     </sound>
     <sound name="Soul Pickup 3">
-        <samle weight="1" path="soul_pickup_3.wav"/>
+        <sample weight="1" path="soul_pickup_3.wav"/>
     </sound>
     <sound name="Soul Pickup 4">
-        <samle weight="1" path="soul_pickup_4.wav"/>
+        <sample weight="1" path="soul_pickup_4.wav"/>
     </sound>
 </sounds>

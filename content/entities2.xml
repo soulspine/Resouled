@@ -50,12 +50,15 @@
     <entity name="Blank Canvas Pooter" id="417" variant="3" subtype="0" anm2path="blank_canvas_pooter.anm2" collisionMass="1" collisionRadius="10" collisionDamage="1" friction="1" numGridCollisionPoints="12" shadowSize="10" baseHP="14"/>
     <entity name="Blank Canvas Tear" id="417" variant="4" subtype="0" anm2path="blank_canvas_tear.anm2" collisionMass="1" collisionRadius="6" friction="1" numGridCollisionPoints="12" shadowSize="6" baseHP="1"/>
     <entity name="Blank Canvas Dip" id="417" variant="5" subtype="0" anm2path="blank_canvas_dip.anm2" collisionMass="1" collisionRadius="8" collisionDamage="1" friction="1" numGridCollisionPoints="12" shadowSize="12" baseHP="8"/> 
-    <entity name="Paper Gore Particle" id="1000" variant="207" subtype="0" anm2path="paper_gore.anm2" friction="1"/>
 
+    <entity name="Paper Gore Particle" id="1000" variant="207" subtype="0" anm2path="paper_gore.anm2" friction="1"/>
     <entity name="Chain Particle" id="1000" variant="209" subtype="0" anm2path="chain_particle.anm2" friction="1"/>
+    <entity name="Wood Particle" id="1000" variant="210" subtype="0" anm2path="wood_particle.anm2" friction="1"/>
 
     <entity name="Buff Pedestal" id="5" variant="200" anm2path="buffs/buffs.anm2" collisionRadius="14" collisionMass="3" numGridCollisionPoints="12" friction="0" shadowSize="20" tags="noreroll"/>
     <entity name="Death Statue" id="1000" variant="208" anm2path="afterlife_statue.anm2"/>
+
+    <entity name="Blast Miner TNT" id="5" variant="201" subtype="0" anm2path="blast_miner_tnt.anm2" collisionRadius="15" collisionMass="5" numGridCollisionPoints="12" friction="1" shadowSize="21" tags="noreroll"/>
 
     <entity name="ResouledDummy" id="999" variant="0" subtype="0"/>
     <entity name="ResouledHitbox" id="999" variant="0" subtype="1" collisionRadius="1" numGridCollisionPoints="12" collisionDamage="1" collisionMass="999" friction="0"/>

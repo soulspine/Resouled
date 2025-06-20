@@ -260,9 +260,9 @@ function Resouled:SpawnRealisticParticles(gridCollisionClass, position, amount, 
         
         if rotation then
             if not maxSpread then
-                particle.Velocity = (Vector(0, 1) * newSpeed):Rotated(rotation)
+                particle.Velocity = (Vector(0, 1) * newSpeed):Rotated(rotation - 90)
             else
-                particle.Velocity = (Vector(0, 1) * newSpeed):Rotated(rotation + math.random(-maxSpread, maxSpread))
+                particle.Velocity = (Vector(0, 1) * newSpeed):Rotated(rotation - 90 + math.random(-maxSpread, maxSpread))
             end
         else
             particle.Velocity = (Vector(0, 1) * newSpeed):Rotated(math.random(0, 360))
@@ -348,3 +348,103 @@ function Resouled:SpawnPaperGore(position, amount)
     local slipperiness = 0.25
     Resouled:SpawnRealisticParticles(GridCollisionClass.COLLISION_SOLID, position, amount, 25, 30, 1, weight, bounciness, slipperiness, 1, 20, math.random(5, 15), nil, nil, false, Isaac.GetEntityVariantByName("Paper Gore Particle"), Isaac.GetEntitySubTypeByName("Paper Gore Particle"))
 end
+
+---@param bomb EntityBomb
+function Resouled:GetEntitiesInBombBlastRadius(bomb)
+    local entitiesInRadius = {}
+    ---@param entity Entity
+    Resouled.Iterators:IterateOverRoomEntities(function(entity)
+        if entity.Position:Distance(bomb.Position) <= 87 * bomb.RadiusMultiplier then --87 is a constant for bomb radius
+            table.insert(entitiesInRadius, entity)
+        end
+    end)
+    return entitiesInRadius
+end
+
+---@param entity Entity
+---@param bomb EntityBomb
+function Resouled:IsInBombBlastRadius(entity, bomb)
+    if entity.Position:Distance(bomb.Position) <= 87 * bomb.RadiusMultiplier then
+        return true
+    end
+    return false
+end
+
+---@param entity1 Entity
+---@param entity2 Entity
+---@return boolean
+function Resouled:HoldEntity(entity1, entity2)
+    local data1 = entity1:GetData()
+    local data2 = entity2:GetData()
+    if not data1.Resouled_HeldEntity then
+        if entity2.Type ~= EntityType.ENTITY_LASER then
+            data1.Resouled_HeldEntity = EntityRef(entity2)
+            data2.Resouled_BeingHeld = {
+                EntityCollisionClass = entity2.EntityCollisionClass,
+                GridCollisionClass = entity2.GridCollisionClass,
+            }
+            entity2.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
+            entity2.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
+            return true
+        end
+    end
+    return false
+end
+
+---@param entity Entity
+local FOLLOW = function(entity)
+    local data = entity:GetData()
+    if data.Resouled_HeldEntity then
+        ---@type Entity
+        local other = data.Resouled_HeldEntity.Entity
+        if other.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_NONE then
+            other.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
+        end
+        if other.GridCollisionClass ~= EntityGridCollisionClass.GRIDCOLL_NONE then
+            other.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
+        end
+        other.SpriteOffset = entity.SpriteOffset - Vector(0, entity.Size + other.Size)
+        other.Velocity = entity.Velocity
+        other.Position = entity.Position
+    end
+    if data.Resouled_BeingHeld then
+        return true
+    end
+end
+
+---@param entity EntityPickup
+Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_UPDATE, function(_, entity)
+    FOLLOW(entity)
+end)
+---@param entity EntityNPC
+Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, function(_, entity)
+    FOLLOW(entity)
+end)
+---@param entity EntityEffect
+Resouled:AddCallback(ModCallbacks.MC_PRE_EFFECT_UPDATE, function(_, entity)
+    FOLLOW(entity)
+end)
+---@param entity EntityBomb
+Resouled:AddCallback(ModCallbacks.MC_PRE_BOMB_UPDATE, function(_, entity)
+    FOLLOW(entity)
+end)
+---@param entity EntityTear
+Resouled:AddCallback(ModCallbacks.MC_PRE_TEAR_UPDATE, function(_, entity)
+    FOLLOW(entity)
+end)
+---@param entity EntityProjectile
+Resouled:AddCallback(ModCallbacks.MC_PRE_PROJECTILE_UPDATE, function(_, entity)
+    FOLLOW(entity)
+end)
+---@param entity EntityFamiliar
+Resouled:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_UPDATE, function(_, entity)
+    FOLLOW(entity)
+end)
+---@param entity EntityKnife
+Resouled:AddCallback(ModCallbacks.MC_PRE_KNIFE_UPDATE, function(_, entity)
+    FOLLOW(entity)
+end)
+---@param entity EntityPlayer
+Resouled:AddCallback(ModCallbacks.MC_PRE_PLAYER_UPDATE, function(_, entity)
+    FOLLOW(entity)
+end)

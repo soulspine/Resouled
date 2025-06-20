@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="Unknown" CreatedOn="6/17/2025 5:52:31 PM" Version="4" Fps="30"/>
+	<Info CreatedBy="Unknown" CreatedOn="6/20/2025 5:34:40 PM" Version="5" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="effects\paper_gore.png" Id="0"/>
+			<Spritesheet Path="effects\particles\paper_gore.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="particle" Id="0" SpritesheetId="0"/>

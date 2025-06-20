@@ -21,7 +21,8 @@ local SPEED = 25
 ---@param tnt EntityPickup
 ---@param player EntityPlayer
 local EXPLODE = function(tnt, player)
-    local bomb = player:FireBomb(tnt.Position, Vector.Zero)
+    local bomb = Game():Spawn(EntityType.ENTITY_BOMB, player:GetBombVariant(player:GetBombFlags()), tnt.Position, Vector.Zero, player, 0, player.InitSeed):ToBomb()
+    bomb:AddTearFlags(player:GetBombFlags())
     bomb:SetExplosionCountdown(0)
     bomb:Update()
     tnt:SetVarData(5)

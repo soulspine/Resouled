@@ -1,7 +1,7 @@
 local BLAST_MINER = Isaac.GetItemIdByName("Blast Miner TNT!")
 
 if EID then
-    EID:addCollectible(BLAST_MINER, "Replaces your bombs with pushable tnt crates # The crates explode in 5 hits and use your bomb effects")
+    EID:addCollectible(BLAST_MINER, " +5 bombs # Replaces your bombs with pushable tnt crates # The crates explode in 5 hits and use your bomb effects")
 end
 
 local TNT_VARIANT = Isaac.GetEntityVariantByName("Blast Miner TNT")

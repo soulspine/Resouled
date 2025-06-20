@@ -32,7 +32,7 @@ local EXPLODE = function(tnt, player)
     if tnt.Velocity:LengthSquared() < 0.01 then
         Resouled:SpawnRealisticParticles(GridCollisionClass.COLLISION_SOLID, tnt.Position, AMOUNT + math.random(-5, 5), START_OFFSET, MIN_OFFSET_LOSS, MAX_OFFSET_LOSS, WEIGHT, BOUNCINESS, SLIPPERINESS, SIZE, MAX_SIZE_VARIETY, SPEED, nil, nil, false, EFFECT_VARIANT, EFFECT_SUBTYPE)
     else
-        Resouled:SpawnRealisticParticles(GridCollisionClass.COLLISION_SOLID, tnt.Position, AMOUNT + math.random(-5, 5), START_OFFSET, MIN_OFFSET_LOSS, MAX_OFFSET_LOSS, WEIGHT, BOUNCINESS, SLIPPERINESS, SIZE, MAX_SIZE_VARIETY, SPEED + tnt.Velocity:Length(), tnt.Velocity:GetAngleDegrees(), 45 - math.floor(tnt.Velocity:Length()), false, EFFECT_VARIANT, EFFECT_SUBTYPE)
+        Resouled:SpawnRealisticParticles(GridCollisionClass.COLLISION_SOLID, tnt.Position, AMOUNT + math.random(-5, 5), START_OFFSET, MIN_OFFSET_LOSS, MAX_OFFSET_LOSS, WEIGHT, BOUNCINESS, SLIPPERINESS, SIZE, MAX_SIZE_VARIETY, SPEED + tnt.Velocity:Length(), tnt.Velocity:GetAngleDegrees(), 45 - math.floor(tnt.Velocity:Length()/2), false, EFFECT_VARIANT, EFFECT_SUBTYPE)
     end
 end
 

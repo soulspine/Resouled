@@ -20,7 +20,9 @@ local function postPlayerUpdate(_, player)
         if not RUN_SAVE.ResouledFriendlySack then
             RUN_SAVE.ResouledFriendlySack = {}
         end
-        RUN_SAVE.ResouledFriendlySack[player:GetPlayerIndex()] = 0
+        if not RUN_SAVE.ResouledFriendlySack[tostring(player:GetPlayerIndex())] then
+            RUN_SAVE.ResouledFriendlySack[tostring(player:GetPlayerIndex())] = 0
+        end
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, postPlayerUpdate)
@@ -34,14 +36,15 @@ local function postNewRoom()
         Resouled.Iterators:IterateOverPlayers(function(player)
 
             local playerIndex = player:GetPlayerIndex()
+            local indexKey = tostring(playerIndex)
 
-            if RUN_SAVE.ResouledFriendlySack[playerIndex] then
+            if RUN_SAVE.ResouledFriendlySack[indexKey] then
 
-                RUN_SAVE.ResouledFriendlySack[playerIndex] = RUN_SAVE.ResouledFriendlySack[playerIndex] + 1
+                RUN_SAVE.ResouledFriendlySack[indexKey] = RUN_SAVE.ResouledFriendlySack[indexKey] + 1
 
-                if RUN_SAVE.ResouledFriendlySack[playerIndex] >= ROOMS_TO_SPAWN_PICKUP then
+                if RUN_SAVE.ResouledFriendlySack[indexKey] >= ROOMS_TO_SPAWN_PICKUP then
 
-                    RUN_SAVE.ResouledFriendlySack[playerIndex] = 0
+                    RUN_SAVE.ResouledFriendlySack[indexKey] = 0
 
                     local rng = RNG()
 

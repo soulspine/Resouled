@@ -71,8 +71,14 @@ local function onCurseEval(_, curses)
             end
         end
 
+        ::RollCurse::
         local newCurseId = validCurses[rng:RandomInt(#validCurses) + 1]
         curses = 1 << (newCurseId)
+        if curses == LevelCurse.CURSE_OF_LABYRINTH and Game():GetLevel():GetStage() > 7 then
+            print("A")
+            Resouled:NewSeed()
+            goto RollCurse
+        end
         level:AddCurse(curses, false)
     end
 

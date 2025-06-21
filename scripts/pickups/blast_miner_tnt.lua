@@ -2,8 +2,10 @@ local TNT_VARIANT = Isaac.GetEntityVariantByName("Blast Miner TNT")
 local TNT_SUBTYPE = Isaac.GetEntitySubTypeByName("Blast Miner TNT")
 local TNT_MEGA_SUBTYPE = Isaac.GetEntitySubTypeByName("Blast Miner TNT Mega")
 
-local VELOCITY_MULTIPLIER = 0.25
-local BOBBY_BOMBS_VELOCITY_MULTIPLIER = 4
+local VELOCITY_MULTIPLIER = 0.7
+local BOBBY_BOMBS_VELOCITY_MULTIPLIER = 1.4
+
+local TNT_HP = 3
 
 local EFFECT_VARIANT = Isaac.GetEntityVariantByName("Wood Particle")
 local EFFECT_SUBTYPE = Isaac.GetEntitySubTypeByName("Wood Particle")
@@ -36,8 +38,8 @@ local EXPLODE = function(tnt, flags)
     bomb:AddTearFlags(flags)
     bomb:SetExplosionCountdown(0)
     bomb:Update()
-    tnt:SetVarData(5)
-    tnt:GetSprite():Play("5", true)
+    tnt:SetVarData(TNT_HP)
+    tnt:GetSprite():Play(tostring(TNT_HP), true)
     tnt.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
     tnt.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
 
@@ -84,7 +86,7 @@ local function onPickupUpdate(_, pickup)
         end
 
         local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(pickup)
-        if ROOM_SAVE.BlastMiner and pickup:GetVarData() < 5 then
+        if ROOM_SAVE.BlastMiner and pickup:GetVarData() < TNT_HP then
             if pickup.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_ALL then
                 pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
             end
@@ -164,7 +166,7 @@ local function onPickupUpdate(_, pickup)
                 sprite:Play(tostring(varData), true)
             end
             
-            if varData >= 5 then
+            if varData >= TNT_HP then
                 EXPLODE(pickup, ROOM_SAVE.BlastMiner.FLAGS)
                 return
             end
@@ -227,7 +229,7 @@ end
 
 local function PushTNT(_, player, collider, low)
 
-    if not (collider.Type == 5 and collider.Variant == TNT_VARIANT and collider.SubType == TNT_SUBTYPE) then return end
+    if not (collider.Type == 5 and collider.Variant == TNT_VARIANT and subtypeWhitelist[collider.SubType]) then return end
     if not low then return end
 
     local tnt = collider
@@ -243,7 +245,7 @@ local function PushTNT(_, player, collider, low)
 
     local overlap = (player.Position - tnt.Position):Length() - (player.Size + tnt.Size)
 
-    print(overlap)
+    --print(overlap)
     player.Velocity = player.Velocity + getDir(angle):Resized(math.max(-2, math.min(2, overlap)))
 
     return true

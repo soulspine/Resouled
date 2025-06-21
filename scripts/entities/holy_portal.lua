@@ -37,6 +37,7 @@ local HOLY_ENEMIES = {
     ["38 1 0"] = true,
     ["38 1 1"] = true,
     [tostring(Isaac.GetEntityTypeByName("Holy Brain")).." "..tostring(Isaac.GetEntityVariantByName("Holy Brain")).." "..tostring(Isaac.GetEntitySubTypeByName("Holy Brain"))] = true,
+    [tostring(Isaac.GetEntityTypeByName("Holy Psy Horf")).." "..tostring(Isaac.GetEntityVariantByName("Holy Psy Horf")).." "..tostring(Isaac.GetEntitySubTypeByName("Holy Psy Horf"))] = true,
 }
 
 ---@param npc EntityNPC
@@ -86,6 +87,14 @@ local function postNpcDeath(_, npc)
         Resouled.Iterators:IterateOverRoomEntities(function(entity)
             if entity.Type == HOLY_PORTAL_TYPE and entity.Variant == HOLY_PORTAL_VARIANT and entity.SubType == HOLY_PORTAL_SUBTYPE then --Brain
                 spawnHolyEnemy(entity, Isaac.GetEntityTypeByName("Holy Brain"), Isaac.GetEntityVariantByName("Holy Brain"), Isaac.GetEntitySubTypeByName("Holy Brain"))
+            end
+        end)
+    end
+    if npc.Type == EntityType.ENTITY_PSY_HORF then
+        ---@param entity Entity
+        Resouled.Iterators:IterateOverRoomEntities(function(entity)
+            if entity.Type == HOLY_PORTAL_TYPE and entity.Variant == HOLY_PORTAL_VARIANT and entity.SubType == HOLY_PORTAL_SUBTYPE then --Brain
+                spawnHolyEnemy(entity, Isaac.GetEntityTypeByName("Holy Psy Horf"), Isaac.GetEntityVariantByName("Holy Psy Horf"), Isaac.GetEntitySubTypeByName("Holy Psy Horf"))
             end
         end)
     end

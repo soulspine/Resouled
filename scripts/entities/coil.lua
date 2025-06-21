@@ -81,7 +81,10 @@ Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onNpcUpdate, COIL)
 ---@param npc EntityNPC
 local function postNpcDeath(_, npc)
     if npc.Variant == COIL_VARIANT and npc.SubType == COIL_SUBTYPE then
-        local fetus = Game():Spawn(COIL, COIL_VARIANT, npc.Position, Vector.Zero, npc, COIL_FETUS_SUBTYPE, npc.InitSeed)
+        local fetus = Game():Spawn(COIL, COIL_VARIANT, npc.Position, Vector.Zero, npc, COIL_FETUS_SUBTYPE, npc.InitSeed):ToNPC()
+        if npc:IsChampion() then
+            fetus:MakeChampion(npc.InitSeed, npc:GetChampionColorIdx(), true)
+        end
         fetus.FlipX = npc:GetSprite():GetLayer(1):GetFlipX()
     end
 end

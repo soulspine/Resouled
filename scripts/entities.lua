@@ -16,6 +16,7 @@ include("scripts.entities.blank_canvas_fly")
 include("scripts.entities.blank_canvas_pooter")
 include("scripts.entities.blank_canvas_tear")
 include("scripts.entities.blank_canvas_dip")
+include("scripts.entities.holy_psy_horf")
 
 include("scripts.entities.resouled_dummy")
 include("scripts.entities.resouled_hitbox")

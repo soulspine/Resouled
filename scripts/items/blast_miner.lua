@@ -14,8 +14,15 @@ local function playerPlaceBomb(_, player, bomb)
         local tnt = Game():Spawn(EntityType.ENTITY_PICKUP, TNT_VARIANT, player.Position, Vector.Zero, player, TNT_SUBTYPE, bomb.InitSeed)
         tnt.Velocity = player.Velocity * 2
         bomb:Remove()
-        local ROOM_SAVE = SAVE_MANAGER.GetRoomSave(tnt)
-        ROOM_SAVE.Spawner = player:GetPlayerIndex()
+        local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(tnt)
+        ROOM_SAVE.BlastMiner = {
+            GOLDEN = player:HasGoldenBomb(),
+            BOBBYBOMB = player:HasCollectible(CollectibleType.COLLECTIBLE_BOBBY_BOMB),
+            FLAGS = player:GetBombFlags()
+        }
+        if ROOM_SAVE.BlastMiner.GOLDEN then
+            tnt:GetSprite():ReplaceSpritesheet(0, "gfx/pickups/bombs/blast_miner_crate_gold.png", true)
+        end
         Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, tnt.Position, Vector.Zero, nil, 0, tnt.InitSeed)
     end
 end

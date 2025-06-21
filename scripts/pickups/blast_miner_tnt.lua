@@ -6,6 +6,7 @@ local BOBBY_BOMBS_VELOCITY_MULTIPLIER = 4
 
 local EFFECT_VARIANT = Isaac.GetEntityVariantByName("Wood Particle")
 local EFFECT_SUBTYPE = Isaac.GetEntitySubTypeByName("Wood Particle")
+local EFFECT_GOLD_SUBTYPE = Isaac.GetEntitySubTypeByName("Wood Gold Particle")
 
 local AMOUNT = 20
 local START_OFFSET = 10
@@ -19,20 +20,30 @@ local MAX_SIZE_VARIETY = 0
 local SPEED = 25
 
 ---@param tnt EntityPickup
----@param player EntityPlayer
-local EXPLODE = function(tnt, player)
-    local bomb = Game():Spawn(EntityType.ENTITY_BOMB, player:GetBombVariant(player:GetBombFlags()), tnt.Position, Vector.Zero, player, 0, player.InitSeed):ToBomb()
-    bomb:AddTearFlags(player:GetBombFlags())
+---@param flags TearFlags
+local EXPLODE = function(tnt, flags)
+    local bomb = Game():Spawn(EntityType.ENTITY_BOMB, BombVariant.BOMB_NORMAL, tnt.Position, Vector.Zero, nil, 0, tnt.InitSeed):ToBomb()
+    local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(tnt)
+    bomb:AddTearFlags(flags)
     bomb:SetExplosionCountdown(0)
     bomb:Update()
     tnt:SetVarData(5)
     tnt:GetSprite():Play("5", true)
     tnt.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
     tnt.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
-    if tnt.Velocity:LengthSquared() < 0.01 then
-        Resouled:SpawnRealisticParticles(GridCollisionClass.COLLISION_SOLID, tnt.Position, AMOUNT + math.random(-5, 5), START_OFFSET, MIN_OFFSET_LOSS, MAX_OFFSET_LOSS, WEIGHT, BOUNCINESS, SLIPPERINESS, SIZE, MAX_SIZE_VARIETY, SPEED, nil, nil, false, EFFECT_VARIANT, EFFECT_SUBTYPE)
+
+    local golden = ROOM_SAVE.BlastMiner.GOLDEN
+    local subtype
+    if golden then
+        subtype = EFFECT_GOLD_SUBTYPE
     else
-        Resouled:SpawnRealisticParticles(GridCollisionClass.COLLISION_SOLID, tnt.Position, AMOUNT + math.random(-5, 5), START_OFFSET, MIN_OFFSET_LOSS, MAX_OFFSET_LOSS, WEIGHT, BOUNCINESS, SLIPPERINESS, SIZE, MAX_SIZE_VARIETY, SPEED + tnt.Velocity:Length(), tnt.Velocity:GetAngleDegrees(), 45 - math.floor(tnt.Velocity:Length()/2), false, EFFECT_VARIANT, EFFECT_SUBTYPE)
+        subtype = EFFECT_SUBTYPE
+    end
+
+    if tnt.Velocity:LengthSquared() < 0.01 then
+        Resouled:SpawnRealisticParticles(GridCollisionClass.COLLISION_SOLID, tnt.Position, AMOUNT + math.random(-5, 5), START_OFFSET, MIN_OFFSET_LOSS, MAX_OFFSET_LOSS, WEIGHT, BOUNCINESS, SLIPPERINESS, SIZE, MAX_SIZE_VARIETY, SPEED, nil, nil, false, EFFECT_VARIANT, subtype)
+    else
+        Resouled:SpawnRealisticParticles(GridCollisionClass.COLLISION_SOLID, tnt.Position, AMOUNT + math.random(-5, 5), START_OFFSET, MIN_OFFSET_LOSS, MAX_OFFSET_LOSS, WEIGHT, BOUNCINESS, SLIPPERINESS, SIZE, MAX_SIZE_VARIETY, SPEED + tnt.Velocity:Length(), tnt.Velocity:GetAngleDegrees(), 45 - math.floor(tnt.Velocity:Length()/2), false, EFFECT_VARIANT, subtype)
     end
 end
 
@@ -42,8 +53,8 @@ local function postPickupInit(_, pickup)
         local sprite = pickup:GetSprite()
         local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(pickup)
         local ROOM_SAVE_POSITION = SAVE_MANAGER.GetRoomFloorSave(pickup.Position)
-        ROOM_SAVE.Spawner = ROOM_SAVE_POSITION.Spawner
-        if Isaac.GetPlayer():HasGoldenBomb() then
+        ROOM_SAVE.BlastMiner = ROOM_SAVE_POSITION.BlastMiner
+        if ROOM_SAVE.BlastMiner and ROOM_SAVE.BlastMiner.GOLDEN then
             sprite:ReplaceSpritesheet(0, "gfx/pickups/bombs/blast_miner_crate_gold.png", true)
         end
         sprite:Play("0", true)
@@ -61,9 +72,8 @@ local function onPickupUpdate(_, pickup)
             sprite:Play(tostring(varData), true)
         end
 
-        local ROOM_SAVE = SAVE_MANAGER.GetRoomSave(pickup)
-        local player = Isaac.GetPlayer(ROOM_SAVE.Spawner)
-        if player and pickup:GetVarData() < 5 then
+        local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(pickup)
+        if ROOM_SAVE.BlastMiner and pickup:GetVarData() < 5 then
             if pickup.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_ALL then
                 pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
             end
@@ -73,10 +83,10 @@ local function onPickupUpdate(_, pickup)
             local data = pickup:GetData()
             
             if data.Explode then
-                EXPLODE(pickup, player)
+                EXPLODE(pickup, ROOM_SAVE.BlastMiner.FLAGS)
             end
             
-            local bobbyBombPresent = player:HasCollectible(CollectibleType.COLLECTIBLE_BOBBY_BOMB)
+            local bobbyBombPresent = ROOM_SAVE.BlastMiner.BOBBYBOMB
             ---@type EntityNPC | nil
             local nearestEnemy = nil
             
@@ -130,7 +140,7 @@ local function onPickupUpdate(_, pickup)
                 if pickup.Position:Distance(nearestEnemy.Position) > pickup.Size + nearestEnemy.Size then
                     pickup.Velocity = (pickup.Velocity + (nearestEnemy.Position - pickup.Position):Normalized()) * BOBBY_BOMBS_VELOCITY_MULTIPLIER
                 else
-                    EXPLODE(pickup, player)
+                    EXPLODE(pickup, ROOM_SAVE.BlastMiner.FLAGS)
                     nearestEnemy = nil
                 end
             end
@@ -142,7 +152,7 @@ local function onPickupUpdate(_, pickup)
             end
             
             if varData >= 5 then
-                EXPLODE(pickup, player)
+                EXPLODE(pickup, ROOM_SAVE.BlastMiner.FLAGS)
             end
         else
             if pickup.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_NONE then
@@ -165,7 +175,9 @@ local function preRoomLeave()
         if pickup and pickup.Variant == TNT_VARIANT and pickup.SubType == TNT_SUBTYPE then
             local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(pickup)
             local ROOM_SAVE_POSITION = SAVE_MANAGER.GetRoomFloorSave(pickup.Position)
-            ROOM_SAVE_POSITION.Spawner = ROOM_SAVE.Spawner
+            if ROOM_SAVE.BlastMiner then
+                ROOM_SAVE_POSITION.BlastMiner = ROOM_SAVE.BlastMiner
+            end
         end
     end)
 end

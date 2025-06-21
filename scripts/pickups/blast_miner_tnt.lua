@@ -196,3 +196,56 @@ local function preRoomLeave()
     end)
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_ROOM_EXIT, preRoomLeave)
+
+
+local function getDir(angle)
+    angle = (angle + 360) % 360  -- Normalize angle to [0, 360)
+
+    if angle < 22.5 or angle >= 337.5 then
+        return Vector(-1, 0)                -- From Right
+    elseif angle < 67.5 then
+        return Vector(-1, -1):Normalized()  -- From Up-Right
+    elseif angle < 112.5 then
+        return Vector(0, -1)                -- From Up
+    elseif angle < 157.5 then
+        return Vector(1, -1):Normalized()   -- From Up-Left
+    elseif angle < 202.5 then
+        return Vector(1, 0)                 -- From Left
+    elseif angle < 247.5 then
+        return Vector(1, 1):Normalized()    -- From Down-Left
+    elseif angle < 292.5 then
+        return Vector(0, 1)                 -- From Down
+    elseif angle < 337.5 then
+        return Vector(-1, 1):Normalized()   -- From Down-Right
+    end
+
+    return Vector(0, 0)  -- Fallback in case something goes wrong
+end
+
+
+
+
+local function PushTNT(_, player, collider, low)
+
+    if not (collider.Type == 5 and collider.Variant == TNT_VARIANT and collider.SubType == TNT_SUBTYPE) then return end
+    if not low then return end
+
+    local tnt = collider
+    local inputDir = player:GetMovementInput()
+
+    if inputDir:Length() < 0.1 then return end
+
+
+    local angle = (player.Position - tnt.Position):GetAngleDegrees()
+    angle = (angle + 360) % 360
+
+    tnt.Velocity = getDir(angle):Resized(player.Velocity:Length()) * 2
+
+    local overlap = (player.Position - tnt.Position):Length() - (player.Size + tnt.Size)
+
+    print(overlap)
+    player.Velocity = player.Velocity + getDir(angle):Resized(math.max(-2, math.min(2, overlap)))
+
+    return true
+end
+Resouled:AddCallback(ModCallbacks.MC_PRE_PLAYER_COLLISION, PushTNT)

@@ -1,5 +1,6 @@
 local TNT_VARIANT = Isaac.GetEntityVariantByName("Blast Miner TNT")
 local TNT_SUBTYPE = Isaac.GetEntitySubTypeByName("Blast Miner TNT")
+local TNT_MEGA_SUBTYPE = Isaac.GetEntitySubTypeByName("Blast Miner TNT Mega")
 
 local VELOCITY_MULTIPLIER = 0.25
 local BOBBY_BOMBS_VELOCITY_MULTIPLIER = 4
@@ -7,6 +8,11 @@ local BOBBY_BOMBS_VELOCITY_MULTIPLIER = 4
 local EFFECT_VARIANT = Isaac.GetEntityVariantByName("Wood Particle")
 local EFFECT_SUBTYPE = Isaac.GetEntitySubTypeByName("Wood Particle")
 local EFFECT_GOLD_SUBTYPE = Isaac.GetEntitySubTypeByName("Wood Gold Particle")
+
+local subtypeWhitelist = {
+    [TNT_SUBTYPE] = true,
+    [TNT_MEGA_SUBTYPE] = true,
+}
 
 local AMOUNT = 20
 local START_OFFSET = 10
@@ -23,6 +29,9 @@ local SPEED = 25
 ---@param flags TearFlags
 local EXPLODE = function(tnt, flags)
     local bomb = Game():Spawn(EntityType.ENTITY_BOMB, BombVariant.BOMB_NORMAL, tnt.Position, Vector.Zero, nil, 0, tnt.InitSeed):ToBomb()
+    if tnt.SubType == TNT_MEGA_SUBTYPE then
+        bomb.ExplosionDamage = 185 --MR. MEGA damage
+    end
     local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(tnt)
     bomb:AddTearFlags(flags)
     bomb:SetExplosionCountdown(0)
@@ -34,12 +43,14 @@ local EXPLODE = function(tnt, flags)
 
     local golden = ROOM_SAVE.BlastMiner.GOLDEN
     local subtype
-    if golden then
-        subtype = EFFECT_GOLD_SUBTYPE
-    else
-        subtype = EFFECT_SUBTYPE
+    if tnt.SubType == TNT_SUBTYPE then
+        if golden then
+            subtype = EFFECT_GOLD_SUBTYPE
+        else
+            subtype = EFFECT_SUBTYPE
+        end
     end
-
+        
     if tnt.Velocity:LengthSquared() < 0.01 then
         Resouled:SpawnRealisticParticles(GridCollisionClass.COLLISION_SOLID, tnt.Position, AMOUNT + math.random(-5, 5), START_OFFSET, MIN_OFFSET_LOSS, MAX_OFFSET_LOSS, WEIGHT, BOUNCINESS, SLIPPERINESS, SIZE, MAX_SIZE_VARIETY, SPEED, nil, nil, false, EFFECT_VARIANT, subtype)
     else
@@ -49,12 +60,12 @@ end
 
 ---@param pickup EntityPickup
 local function postPickupInit(_, pickup)
-    if pickup.SubType == TNT_SUBTYPE then
+    if subtypeWhitelist[pickup.SubType] then
         local sprite = pickup:GetSprite()
         local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(pickup)
         local ROOM_SAVE_POSITION = SAVE_MANAGER.GetRoomFloorSave(pickup.Position)
         ROOM_SAVE.BlastMiner = ROOM_SAVE_POSITION.BlastMiner
-        if ROOM_SAVE.BlastMiner and ROOM_SAVE.BlastMiner.GOLDEN then
+        if ROOM_SAVE.BlastMiner and ROOM_SAVE.BlastMiner.GOLDEN and pickup.SubType == TNT_SUBTYPE then
             sprite:ReplaceSpritesheet(0, "gfx/pickups/bombs/blast_miner_crate_gold.png", true)
         end
         sprite:Play("0", true)
@@ -65,7 +76,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, postPickupInit, TNT_VARIA
 ---@param pickup EntityPickup
 local function onPickupUpdate(_, pickup)
     local sprite = pickup:GetSprite()
-    if pickup.SubType == TNT_SUBTYPE then
+    if subtypeWhitelist[pickup.SubType] then
         local varData = pickup:GetVarData()
 
         if sprite:GetAnimation() ~= varData then
@@ -84,6 +95,7 @@ local function onPickupUpdate(_, pickup)
             
             if data.Explode then
                 EXPLODE(pickup, ROOM_SAVE.BlastMiner.FLAGS)
+                return
             end
             
             local bobbyBombPresent = ROOM_SAVE.BlastMiner.BOBBYBOMB
@@ -142,6 +154,7 @@ local function onPickupUpdate(_, pickup)
                 else
                     EXPLODE(pickup, ROOM_SAVE.BlastMiner.FLAGS)
                     nearestEnemy = nil
+                    return
                 end
             end
 
@@ -153,6 +166,7 @@ local function onPickupUpdate(_, pickup)
             
             if varData >= 5 then
                 EXPLODE(pickup, ROOM_SAVE.BlastMiner.FLAGS)
+                return
             end
         else
             if pickup.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_NONE then
@@ -172,7 +186,7 @@ local function preRoomLeave()
     ---@param entity Entity
     Resouled.Iterators:IterateOverRoomEntities(function(entity)
         local pickup = entity:ToPickup()
-        if pickup and pickup.Variant == TNT_VARIANT and pickup.SubType == TNT_SUBTYPE then
+        if pickup and pickup.Variant == TNT_VARIANT and subtypeWhitelist[pickup.SubType] then
             local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(pickup)
             local ROOM_SAVE_POSITION = SAVE_MANAGER.GetRoomFloorSave(pickup.Position)
             if ROOM_SAVE.BlastMiner then

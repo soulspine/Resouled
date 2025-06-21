@@ -60,6 +60,7 @@
     <entity name="Death Statue" id="1000" variant="208" anm2path="afterlife_statue.anm2"/>
 
     <entity name="Blast Miner TNT" id="5" variant="201" subtype="0" anm2path="blast_miner_tnt.anm2" collisionRadius="15" collisionMass="5" numGridCollisionPoints="12" friction="1" shadowSize="21" tags="noreroll"/>
+    <entity name="Blast Miner TNT Mega" id="5" variant="201" subtype="1" anm2path="blast_miner_tnt_mega.anm2" collisionRadius="20" collisionMass="8" numGridCollisionPoints="12" friction="1" shadowSize="28" tags="noreroll"/>
 
     <entity name="ResouledDummy" id="999" variant="0" subtype="0"/>
     <entity name="ResouledHitbox" id="999" variant="0" subtype="1" collisionRadius="1" numGridCollisionPoints="12" collisionDamage="1" collisionMass="999" friction="0"/>

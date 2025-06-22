@@ -28,7 +28,7 @@
     <familiar id="26" name="Pink Proglottid" gfx="pink_proglottid.png" description="" quality="0" craftquality="0" cache="familiars"/>
     <passive id="27" name="Pumpkin Mask" gfx="pumpkin_mask.png" description="" quality="0" craftquality="0"/>
     <familiar id="28" name="Red Proglottid" gfx="red_proglottid.png" description="" quality="0" craftquality="0" cache="familiars"/>
-    <familiar id="29" name="Tumor Ball" gfx="tumor_ball.png" description="" quality="0" craftquality="0" cache="familiars"/>
+    <familiar id="29" name="Tumor Ball" gfx="tumor_ball.png" description="" quality="3" craftquality="0" cache="familiars"/>
     <familiar id="30" name="Ultra Flesh Kid" gfx="ultra_flesh_kid.png" description="" quality="0" craftquality="0" cache="familiars"/>
     <familiar id="31" name="White Proglottid" gfx="white_proglottid.png" description="" quality="0" craftquality="0" cache="familiars"/>
 

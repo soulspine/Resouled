@@ -7,11 +7,10 @@ if EID then
 end
 
 local TUMOR_LIMIT = 20
+local TUMOR_SPAWN_WHEN_SPLIT = 2
 
 local BASE_ORBIT_DISTANCE = 20
 local ORBIT_SIZE_TO_ADD_PER_TUMOR = 3
-
-local BFFS_SZIE_MULTIPLIER = 1.25
 
 local TUMOR_SPLIT_VELOCITY = Vector(5, 0)
 
@@ -49,7 +48,11 @@ local function onCacheEval(_, player)
     if RUN_SAVE.Resouled_ExtraTumors then
         extra = RUN_SAVE.Resouled_ExtraTumors
     end
-    player:CheckFamiliar(FAMILIAR_VARIANT, player:GetCollectibleNum(TUMOR_BALL) + extra, player:GetCollectibleRNG(TUMOR_BALL), nil, FAMILIAR_SUBTYPE)
+    local tumorNum = player:GetCollectibleNum(TUMOR_BALL) + extra
+    if tumorNum > TUMOR_LIMIT then
+        tumorNum = TUMOR_LIMIT
+    end
+    player:CheckFamiliar(FAMILIAR_VARIANT, tumorNum, player:GetCollectibleRNG(TUMOR_BALL), nil, FAMILIAR_SUBTYPE)
 end
 Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACHE_FAMILIARS)
 
@@ -74,58 +77,59 @@ local function preFamiliarUpdate(_, familiar)
 
             local hitCount = RUN_SAVE.Resouled_HitCount
 
-            local sizeMulti = 1
-            if player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) then
-                sizeMulti = BFFS_SZIE_MULTIPLIER
-            end
-
             if hitCount < TUMOR_LEVEL_1.HITS then
                 if not sprite:IsPlaying(TUMOR_LEVEL_1.ANIMATION) then
                     sprite:Play(TUMOR_LEVEL_1.ANIMATION, true)
                 end
-                if familiar.Size ~= TUMOR_LEVEL_1.SIZE * sizeMulti then
-                    familiar.Size = TUMOR_LEVEL_1.SIZE * sizeMulti
+                if familiar.Size ~= TUMOR_LEVEL_1.SIZE then
+                    familiar.Size = TUMOR_LEVEL_1.SIZE 
                 end
             end
             if hitCount >= TUMOR_LEVEL_1.HITS and hitCount < TUMOR_LEVEL_2.HITS then
                 if not sprite:IsPlaying(TUMOR_LEVEL_2.ANIMATION) then
                     sprite:Play(TUMOR_LEVEL_2.ANIMATION, true)
                 end
-                if familiar.Size ~= TUMOR_LEVEL_2.SIZE * sizeMulti then
-                    familiar.Size = TUMOR_LEVEL_2.SIZE * sizeMulti
+                if familiar.Size ~= TUMOR_LEVEL_2.SIZE then
+                    familiar.Size = TUMOR_LEVEL_2.SIZE
                 end
             end
             if hitCount >= TUMOR_LEVEL_2.HITS and hitCount < TUMOR_LEVEL_3.HITS then
                 if not sprite:IsPlaying(TUMOR_LEVEL_3.ANIMATION) then
                     sprite:Play(TUMOR_LEVEL_3.ANIMATION, true)
                 end
-                if familiar.Size ~= TUMOR_LEVEL_3.SIZE * sizeMulti then
-                    familiar.Size = TUMOR_LEVEL_3.SIZE * sizeMulti
+                if familiar.Size ~= TUMOR_LEVEL_3.SIZE then
+                    familiar.Size = TUMOR_LEVEL_3.SIZE
                 end
             end
             if hitCount >= TUMOR_LEVEL_3.HITS and hitCount < TUMOR_LEVEL_4.HITS then
                 if not sprite:IsPlaying(TUMOR_LEVEL_4.ANIMATION) then
                     sprite:Play(TUMOR_LEVEL_4.ANIMATION, true)
                 end
-                if familiar.Size ~= TUMOR_LEVEL_4.SIZE * sizeMulti then
-                    familiar.Size = TUMOR_LEVEL_4.SIZE * sizeMulti
+                if familiar.Size ~= TUMOR_LEVEL_4.SIZE then
+                    familiar.Size = TUMOR_LEVEL_4.SIZE
                 end
             end
             if hitCount >= TUMOR_LEVEL_4.HITS and not data.Resouled_TumorSplit and tumorBallCount <= TUMOR_LIMIT then
                 PLAYER_RUN_SAVE.Resouled_ExtraTumors = PLAYER_RUN_SAVE.Resouled_ExtraTumors + 1
 
-                local newTumor = Isaac.Spawn(EntityType.ENTITY_FAMILIAR, FAMILIAR_VARIANT, FAMILIAR_SUBTYPE, familiar.Position, TUMOR_SPLIT_VELOCITY, player)
-                newTumor:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
-                familiar.Velocity = familiar.Velocity + -TUMOR_SPLIT_VELOCITY
-
-                RUN_SAVE.Resouled_HitCount = TUMOR_LEVEL_1.HITS
-                local newTumorSaveManager = SAVE_MANAGER.GetRunSave(newTumor)
-                if not newTumorSaveManager.Resouled_HitCount then
-                    newTumorSaveManager.Resouled_HitCount = TUMOR_LEVEL_1.HITS
+                local tumorCount = TUMOR_SPAWN_WHEN_SPLIT
+                if player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) then
+                    tumorCount = tumorCount + 1
                 end
+                
+                for i = 1, tumorCount do
+                    local newTumor = Isaac.Spawn(EntityType.ENTITY_FAMILIAR, FAMILIAR_VARIANT, FAMILIAR_SUBTYPE, familiar.Position, TUMOR_SPLIT_VELOCITY:Rotated(math.floor((360/tumorCount)*i)), player)
 
-                newTumor:GetData().Resouled_TumorSplit = true
-                data.Resouled_TumorSplit = true
+                    newTumor:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
+                    local newTumorSaveManager = SAVE_MANAGER.GetRunSave(newTumor)
+
+                    if not newTumorSaveManager.Resouled_HitCount then
+                        newTumorSaveManager.Resouled_HitCount = TUMOR_LEVEL_1.HITS
+                    end
+
+                    newTumor:GetData().Resouled_TumorSplit = true
+                end
+                familiar:Remove()
             end
 
             ---@param entity Entity

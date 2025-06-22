@@ -191,7 +191,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
         
         Resouled:NewSeed()
         local randomNum = rng:RandomInt(#Resouled:GetRoomEvents()) + 1
-        --local randomNum = 26
+        --local randomNum = 29
         
         
         if Resouled:CheckFilters(randomNum) == false then

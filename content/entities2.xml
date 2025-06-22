@@ -1,5 +1,5 @@
 <entities anm2root="gfx/" version="5">
-    <entity anm2path="soul_card.anm2" id="5" variant="444" collisionRadius="16" name="Soul Pickup" shadowSize="14" reroll="false" tags="noreroll"/>
+    <entity anm2path="soul_card.anm2" id="5" variant="444" collisionMass="1" collisionRadius="16" name="Soul Pickup" shadowSize="14" reroll="false" tags="noreroll"/>
     <entity name="Cursed Gaper" id="10" variant="4" anm2path="cursed_gaper.anm2" baseHP="14" stageHP="3" collisionMass="5" collisionRadius="13" friction="1.2" numGridCollisionPoints="12" shadowSize="14" champion="0" collisionDamage="1" reroll="true">
         <beastiary anim="Idle" tramsform="0,0,1"/>
         <devolve id="10.1.0" weight="1" />
@@ -40,7 +40,7 @@
     <entity name="Holy Brain" id="419" variant="0" anm2path="holy_brain.anm2" collisionMass="10" friction="1" collisionRadius="18" collisionDamage="1" champion="1" baseHP="30" numGridCollisionPoints="12" shadowSize="22"/>
     <entity name="Holy Psy Horf" id="420" variant="0" anm2path="holy_psy_horf.anm2" collisionMass="25" friction="1" collisionRadius="20" collisionDamage="1" champion="1" baseHP="45" numGridCollisionPoints="12" shadowSize="23"/>
     <entity name="A Friend" id="3" variant="244" subtype="0" anm2path="a_friend.anm2" collisionMass="5" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="16"/>
-    <entity name="The Monster" id="3" variant="245" subtype="0" anm2path="the_monster.anm2" collisionMass="0" collisionRadius="0" friction="1" numGridCollisionPoints="12" shadowSize="16" tags="noreroll"/>
+    <entity name="Tumor Ball" id="3" variant="245" subtype="0" anm2path="tumor_ball.anm2" collisionMass="1" collisionRadius="8" friction="1" numGridCollisionPoints="12" shadowSize="5" tags="noreroll"/>
     <entity name="Cursed Haunt" boss="1" id="260" variant="1" anm2path="cursed_haunt.anm2" collisionMass="50" collisionDamage="2" collisionRadius="26" friction="1" gridCollision="walls" numGridCollisionPoints="12" shadowSize="28" tags="ghost" baseHP="300"/>
     <entity name="Coil" id="414" variant="0" subtype="0" anm2path="coil.anm2" collisionMass="25" collisionRadius="13" friction="1" champion="1" numGridCollisionPoints="12" shadowSize="16" baseHP="15" collisionDamage="1" stageHP="1"/>
     <entity name="Coil Fetus" id="414" variant="0" subtype="1" anm2path="coil_fetus.anm2" collisionMass="5" collisionRadius="7" friction="1" champion="1" numGridCollisionPoints="12" shadowSize="5" baseHP="10" collisionDamage="1" stageHP="2"/>

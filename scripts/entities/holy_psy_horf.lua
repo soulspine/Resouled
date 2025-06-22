@@ -43,6 +43,7 @@ local function onNpcUpdate(_, npc)
         if sprite:IsFinished("Attack") then
             if data.Resouled_Attack.Count >= 2 then
                 sprite:Play("TeleportUp", true)
+                SFXManager():Play(SoundEffect.SOUND_HELL_PORTAL1)
                 npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
                 data.Resouled_Attack.Count = 0
             else
@@ -60,6 +61,7 @@ local function onNpcUpdate(_, npc)
         end
 
         if sprite:IsFinished("TeleportUp") then
+            SFXManager():Play(SoundEffect.SOUND_HELL_PORTAL2)
             sprite:Play("TeleportDown", true)
         end
 

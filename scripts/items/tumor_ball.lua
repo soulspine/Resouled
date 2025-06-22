@@ -6,6 +6,8 @@ if EID then
     EID:addCollectible(TUMOR_BALL, "Spawns a familiar that blocks projectiles and grows # If it grows enough it splits into 2 tumor balls # Tumors can split only once per room")
 end
 
+local TUMOR_LIMIT = 20
+
 local BASE_ORBIT_DISTANCE = 20
 local ORBIT_SIZE_TO_ADD_PER_TUMOR = 3
 
@@ -17,24 +19,26 @@ local VELOCITY_MULTIPLIER = 0.9
 local PLAYER_FOLLOW_VELOCITY_SPEED = 0.25
 local AVOID_SPEED = 0.75
 
+local TUMOR_LOSS_PER_FLOOR = 4 -- 3/4 of the tumors get deleted
+
 local TUMOR_LEVEL_1 = {
     SIZE = 9,
-    HITS = 3,
+    HITS = 4,
     ANIMATION = "Stage1"
 }
 local TUMOR_LEVEL_2 = {
     SIZE = 12,
-    HITS = 6,
+    HITS = 8,
     ANIMATION = "Stage2"
 }
 local TUMOR_LEVEL_3 = {
     SIZE = 16,
-    HITS = 9,
+    HITS = 12,
     ANIMATION = "Stage3"
 }
 local TUMOR_LEVEL_4 = {
     SIZE = 20,
-    HITS = 12,
+    HITS = 16,
     ANIMATION = "Stage4"
 }
 
@@ -58,14 +62,15 @@ local function preFamiliarUpdate(_, familiar)
             local PLAYER_RUN_SAVE = SAVE_MANAGER.GetRunSave(player)
             local sprite = familiar:GetSprite()
             local data = familiar:GetData()
-
+            
             if not RUN_SAVE.Resouled_HitCount then
                 RUN_SAVE.Resouled_HitCount = 0
             end
-
+            
             if not PLAYER_RUN_SAVE.Resouled_ExtraTumors  then
                 PLAYER_RUN_SAVE.Resouled_ExtraTumors = 0
             end
+            local tumorBallCount = player:GetCollectibleNum(TUMOR_BALL) + PLAYER_RUN_SAVE.Resouled_ExtraTumors - 1
 
             local hitCount = RUN_SAVE.Resouled_HitCount
 
@@ -106,7 +111,7 @@ local function preFamiliarUpdate(_, familiar)
                     familiar.Size = TUMOR_LEVEL_4.SIZE * sizeMulti
                 end
             end
-            if hitCount >= TUMOR_LEVEL_4.HITS and not data.Resouled_TumorSplit then
+            if hitCount >= TUMOR_LEVEL_4.HITS and not data.Resouled_TumorSplit and tumorBallCount <= TUMOR_LIMIT then
                 PLAYER_RUN_SAVE.Resouled_ExtraTumors = PLAYER_RUN_SAVE.Resouled_ExtraTumors + 1
 
                 local newTumor = Isaac.Spawn(EntityType.ENTITY_FAMILIAR, FAMILIAR_VARIANT, FAMILIAR_SUBTYPE, familiar.Position, TUMOR_SPLIT_VELOCITY, player)
@@ -122,8 +127,6 @@ local function preFamiliarUpdate(_, familiar)
                 newTumor:GetData().Resouled_TumorSplit = true
                 data.Resouled_TumorSplit = true
             end
-
-            local tumorBallCount = player:GetCollectibleNum(TUMOR_BALL) + PLAYER_RUN_SAVE.Resouled_ExtraTumors - 1
 
             ---@param entity Entity
             Resouled.Iterators:IterateOverRoomEntities(function(entity)
@@ -173,3 +176,15 @@ local function postNewRoom()
     end)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)
+
+local function postNewFloor()
+    ---@param player EntityPlayer
+    Resouled.Iterators:IterateOverPlayers(function(player)
+        local RUN_SAVE = SAVE_MANAGER.GetRunSave(player)
+        if RUN_SAVE.Resouled_ExtraTumors then
+            RUN_SAVE.Resouled_ExtraTumors = math.floor(RUN_SAVE.Resouled_ExtraTumors/TUMOR_LOSS_PER_FLOOR)
+        end
+        player:AddCacheFlags(CacheFlag.CACHE_FAMILIARS, true)
+    end)
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)

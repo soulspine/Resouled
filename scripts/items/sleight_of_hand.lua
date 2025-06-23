@@ -8,6 +8,13 @@ local SLEIGHT_OF_HAND = Isaac.GetItemIdByName("Sleight of Hand")
 -- 5. ANIMATES PICKUPS OVER THE PLAYER THAT USED THE ITEM
 -- 6. IF SOMETHING BREAKS, THERE IS A TIMEOUT THAT RESETS EVERYTHING BACK TO THE START
 
+---@class restoreDoorInfo
+---@field Slot DoorSlot
+---@field Animation string
+---@field Frame number
+---@field Variant number
+---@field IsOpen boolean
+
 if EID then
     EID:addCollectible(SLEIGHT_OF_HAND, "Peeks into the closest room and makes Isaac hold all {{Coin}} pickups and {{Collectible}} items in that room.", "Sleight of Hand")
 end
@@ -29,12 +36,14 @@ BLACKOUT_SPRITE:Load("gfx/effects/blackout.anm2", true)
 BLACKOUT_SPRITE:Play("Idle", true)
 local BLACKOUT_TRANSITION_TIME = 10
 local BLACKOUT_STAY_TIME = 55
+
+-- DONT CHANGE
 local globalBlackoutIntensity = nil
 local globalBlackoutTimer = 0
 
 local SFX_PICKUP_ANIM = SoundEffect.SOUND_FETUS_JUMP
 local SFX_USE = SoundEffect.SOUND_UNLOCK00
-local SFX_GLOWING_HOURGLASS_TELEPORT = SoundEffect.SOUND_HELL_PORTAL2
+local SFX_GLOWING_HOURGLASS_TELEPORT = SoundEffect.SOUND_HELL_PORTAL2 --sound that gets stopped when item is used
 
 ---@param itemId CollectibleType
 ---@param rng RNG
@@ -49,6 +58,11 @@ local function onActiveUse(_, itemId, rng, player, useFlags, activeSlot, customV
         ShowAnim = true,
     }
     
+    --if true then
+    --    Resouled.Doors:ForceOpenDoors()
+    --    return returnTable
+    --end
+
     local runSave = SAVE_MANAGER.GetRunSave(nil, true)
     
     -- this is here to prevent player from spamming it between time frame of glowing hourglass teleport and charge adjustment
@@ -69,7 +83,6 @@ local function onActiveUse(_, itemId, rng, player, useFlags, activeSlot, customV
             return returnTable
         end
 
-        local targetRoomSafeIndex = targetRoomDesc.SafeGridIndex
         local playerPositions = {}
         
         -- we save all player positions to move them back later
@@ -79,19 +92,33 @@ local function onActiveUse(_, itemId, rng, player, useFlags, activeSlot, customV
             table.insert(playerPositions, position)
         end)
         
+        ---@type restoreDoorInfo[]
+        local restoreDoorsInfo = {}
+        for _, door in ipairs(Resouled.Doors:GetRoomDoors()) do
+            local doorSprite = door:GetSprite()
+            table.insert(restoreDoorsInfo, {
+                Slot = door.Slot,
+                Animation = doorSprite:GetAnimation(),
+                Frame = doorSprite:GetFrame(),
+                Variant = door:GetVariant(),
+                IsOpen = door:IsOpen(),
+            })
+        end
+
         -- data needed for it to work, animation cooldown is purposefully not set here
         runSave.SleightOfHand = {
-            TargetRoomSafeIndex = targetRoomSafeIndex,
+            TargetDoorPosition = door.Position,
             CurrentRoomSafeIndex = level:GetRoomByIdx(level:GetCurrentRoomIndex()).SafeGridIndex,
             PlayerPositions = playerPositions,
-            Doors = Resouled.Doors:GetRoomDoors(),
+            RestoreDoorsInfo = restoreDoorsInfo,
             Pickups = {},
             PlayerIndex = player.Index,
             InterruptedGlowingHourglass = false,
             Timeout = TIMEOUT,
             NewRoomCount = 0,
             AddedGoatHead = false,
-            Curses = level:GetCurses(),
+            Curses = level:GetCurses(), -- remove curses so curse of the maze doesn't screw over displacements
+            AnimationCooldown = nil,
         }
 
         level:RemoveCurses(runSave.SleightOfHand.Curses)
@@ -146,8 +173,10 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onNewRoomEnter)
 local function onPlayerUpdate(_, player)
     local runSave = SAVE_MANAGER.GetRunSave(nil, true)
     local sprite = player:GetSprite()
-    
-    if runSave.SleightOfHand and runSave.SleightOfHand.PlayerIndex == player.Index then-- REMOVE GLOWIND HOURGLASS SFX
+    local game = Game()
+    local room = game:GetRoom()
+
+    if runSave.SleightOfHand and runSave.SleightOfHand.PlayerIndex == player.Index then-- REMOVE GLOWING HOURGLASS SFX
         if SFXManager():IsPlaying(SFX_GLOWING_HOURGLASS_TELEPORT) then
             SFXManager():Stop(SFX_GLOWING_HOURGLASS_TELEPORT)
         end
@@ -160,12 +189,13 @@ local function onPlayerUpdate(_, player)
             return
         end
 
-        if not Game():IsPaused() then
+        if not game:IsPaused() then
             local newRoomCount = runSave.SleightOfHand.NewRoomCount
-            if newRoomCount <= 1 then -- 0 and 1
-            
-                local roomIndex = runSave.SleightOfHand.NewRoomCount == 0 and runSave.SleightOfHand.CurrentRoomSafeIndex or runSave.SleightOfHand.TargetRoomSafeIndex
-                Game():StartRoomTransition(roomIndex, Direction.NO_DIRECTION, RoomTransitionAnim.WALK, player)
+            if newRoomCount == 0 then -- teleporting to the same room to ensure glowing hourglass has somewhere to go back to
+                game:StartRoomTransition(runSave.SleightOfHand.CurrentRoomSafeIndex, Direction.NO_DIRECTION, RoomTransitionAnim.WALK, player)
+            elseif newRoomCount == 1 then
+                Resouled.Doors:ForceOpenDoors()
+                player.Position = runSave.SleightOfHand.TargetDoorPosition
             elseif newRoomCount == 2 then
                 player:UseActiveItem(CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS)
 
@@ -173,6 +203,35 @@ local function onPlayerUpdate(_, player)
                     sprite:SetFrame(ANIMATION_TELEPORT_UP, ANIMATION_TELEPORT_UP_FRAME_NUM)
                 end
             elseif newRoomCount == 3 then
+                ---@type restoreDoorInfo[]
+                local allDoors = runSave.SleightOfHand.RestoreDoorsInfo
+                for _, doorInfoThen in ipairs(allDoors) do
+                    local doorNow = room:GetDoor(doorInfoThen.Slot)
+                    if doorNow then
+                        local sprite = doorNow:GetSprite()
+
+                        if doorInfoThen.Animation ~= sprite:GetAnimation() then
+                            sprite:Play(doorInfoThen.Animation, true)
+                        end
+
+                        if doorInfoThen.Frame ~= sprite:GetFrame() then
+                            sprite:SetFrame(doorInfoThen.Frame)
+                        end
+
+                        if doorInfoThen.Variant ~= doorNow:GetVariant() then
+                            doorNow:SetVariant(doorInfoThen.Variant)
+                        end
+
+                        if doorInfoThen.IsOpen ~= doorNow:IsOpen() then
+                            if doorInfoThen.IsOpen then
+                                doorNow:Open()
+                            else
+                                doorNow:Close()
+                            end
+                        end
+                    end
+                end
+
                 if runSave.SleightOfHand.AddedGoatHead then
                     player:RemoveCollectible(CollectibleType.COLLECTIBLE_GOAT_HEAD)
                     runSave.AddedGoatHead = false
@@ -181,7 +240,7 @@ local function onPlayerUpdate(_, player)
                 if runSave.SleightOfHand.Curses > 0 then
                     print(runSave.SleightOfHand.Curses)
                     local i = 1
-                    while runSave.SleightOfHand.Curses >0 do
+                    while runSave.SleightOfHand.Curses > 0 do
                         if runSave.SleightOfHand.Curses & i == i then
                             Isaac.ExecuteCommand("curse " .. i)
                             runSave.SleightOfHand.Curses = runSave.SleightOfHand.Curses & ~i
@@ -190,7 +249,7 @@ local function onPlayerUpdate(_, player)
                     end
                 end
 
-                -- if pickup animation is playing we have to check if its the first time after using the item - then its definitely ghowing hourglass so we interrupt it
+                -- if pickup animation is playing we have to check if its the first time after using the item - then its definitely glowing hourglass so we interrupt it
                 if Resouled:IsPlayingPickupAnimation(player) then
                     if not runSave.SleightOfHand.InterruptedGlowingHourglass then
                         runSave.SleightOfHand.InterruptedGlowingHourglass = true
@@ -213,7 +272,7 @@ local function onPlayerUpdate(_, player)
                             local pickup = runSave.SleightOfHand.Pickups[1]
         
                             runSave.SleightOfHand.AnimationCooldown = PICKUP_ANIMATE_COOLDOWN
-                            -- its easier to use the build in method to animate collectibles so we do that
+                            -- its easier to use the built in method to animate collectibles so we do that
                             if pickup.Variant == PickupVariant.PICKUP_COLLECTIBLE then
                                 player:AnimateCollectible(pickup.SubType)
                             else

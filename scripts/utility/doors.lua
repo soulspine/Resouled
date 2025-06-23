@@ -17,8 +17,8 @@ function doorsModule:ForceShutDoors(filter)
 			door:GetSprite():Play(door.CloseAnimation, true)
 			door:SetVariant(DoorVariant.DOOR_HIDDEN)
 			local grid_save = SAVE_MANAGER.GetRoomFloorSave(room:GetGridPosition(door:GetGridIndex()))
-			if not grid_save.HasForcedShut then
-				grid_save.HasForcedShut = true
+			if not grid_save.Doors__HasForcedShut then
+				grid_save.Doors__HasForcedShut = true
 			else
 				door:GetSprite():SetLastFrame()
 			end
@@ -32,22 +32,34 @@ function doorsModule:ForceOpenDoors(filter)
     local room = Game():GetRoom()
     for doorSlot = DoorSlot.LEFT0, DoorSlot.NUM_DOOR_SLOTS - 1 do
         local door = room:GetDoor(doorSlot)
-        if door
-            and not door:IsOpen()
-            and door:GetSprite():GetAnimation() == door.CloseAnimation
-            and (filter == nil or filter(door) == true)
-        then
-            door:Open()
-            door:GetSprite():Play(door.OpenAnimation, true)
-            door:SetVariant(DoorVariant.DOOR_UNLOCKED)
-            local grid_save = SAVE_MANAGER.GetRoomFloorSave(room:GetGridPosition(door:GetGridIndex()))
-            if grid_save.HasForcedShut then
-                grid_save.HasForcedShut = false
-            else
-                door:GetSprite():SetLastFrame()
+        if door and not door:IsOpen() and (filter == nil or filter(door) == true) then
+            local validAnimation = false
+            local currentAnimation = door:GetSprite():GetAnimation()
+            if  currentAnimation == door.CloseAnimation
+            or  currentAnimation == door.LockedAnimation
+            or  currentAnimation == "Hidden"
+            then
+                validAnimation = true
+            end
+
+            if validAnimation then
+                door:Open()
+                door:GetSprite():Play(door.OpenAnimation, true)
+                door:SetVariant(DoorVariant.DOOR_UNLOCKED)
+                local grid_save = SAVE_MANAGER.GetRoomFloorSave(room:GetGridPosition(door:GetGridIndex()))
+                if grid_save.Doors__HasForcedShut then
+                    grid_save.Doors__HasForcedShut = nil
+                else
+                    door:GetSprite():SetLastFrame()
+                end
             end
         end
     end
+end
+
+---@param doorSlot DoorSlot
+---@param persistent boolean -- Whether to keep the door open always, even after events like leaving the room or using glowing hourglass
+function doorsModule:ForceOpenDoor(doorSlot, persistent)
 end
 
 --- Returns a table of all doors in current room

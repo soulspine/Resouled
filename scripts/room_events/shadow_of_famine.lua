@@ -6,8 +6,9 @@ local PICKUP_BLACKLIST = {
     [PickupVariant.PICKUP_TROPHY] = true,
 }
 
-local function preActiveUse()
-    if Resouled:RoomEventPresent(Resouled.RoomEvents.SHADOW_OF_FAMINE) then
+local function preActiveUse(_, itemId, rng, player, useFlags, activeSlot, varData)
+    if      activeSlot ~= -1 -- called by code
+    and     Resouled:RoomEventPresent(Resouled.RoomEvents.SHADOW_OF_FAMINE) then
         return true
     end
 end

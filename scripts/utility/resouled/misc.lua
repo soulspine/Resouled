@@ -250,6 +250,7 @@ function Resouled:SpawnRealisticParticles(gridCollisionClass, position, amount, 
     for i = 1, amount do
         local newSpeed = speed
         ---@type EntityEffect
+        ---@diagnostic disable-next-line: assign-type-mismatch
         local particle = Game():Spawn(EntityType.ENTITY_EFFECT, variant, position, Vector.Zero, nil, subType or 0, Game():GetRoom():GetAwardSeed()):ToEffect()
         local data = particle:GetData()
 

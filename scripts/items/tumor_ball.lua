@@ -52,7 +52,11 @@ local function onCacheEval(_, player)
     if tumorNum > TUMOR_LIMIT then
         tumorNum = TUMOR_LIMIT
     end
-    player:CheckFamiliar(FAMILIAR_VARIANT, tumorNum, player:GetCollectibleRNG(TUMOR_BALL), nil, FAMILIAR_SUBTYPE)
+
+    local rng = player:GetCollectibleRNG(TUMOR_BALL)
+    rng:SetSeed(rng:GetSeed(), tumorNum)
+
+    player:CheckFamiliar(FAMILIAR_VARIANT, tumorNum, rng, Isaac.GetItemConfig():GetCollectible(TUMOR_BALL), FAMILIAR_SUBTYPE)
 end
 Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACHE_FAMILIARS)
 
@@ -192,3 +196,10 @@ local function postNewFloor()
     end)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
+
+local function onFamiliarInit(_, familiar)
+    if familiar.SubType == FAMILIAR_SUBTYPE then
+        print(familiar.InitSeed)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onFamiliarInit, FAMILIAR_VARIANT)

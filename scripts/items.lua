@@ -19,6 +19,7 @@ include("scripts.items.a_friend")
 include("scripts.items.unstable_dna")
 include("scripts.items.blast_miner")
 include("scripts.items.tumor_ball")
+include("scripts.items.red_gfuel")
 
 include("scripts.trinkets.recycling_sticker")
 include("scripts.trinkets.library_card")

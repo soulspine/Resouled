@@ -14,11 +14,36 @@ end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CURSED_GAPER_TYPE)
 
 ---@param npc EntityNPC
+local function onNpcUpdate(_, npc)
+    if npc.Variant == CURSED_GAPER_VARIANT and npc.SubType == CURSED_GAPER_SUBTYPE then
+        ---@type EntityNPC | nil
+        local nearestGaper = nil
+
+        ---@param entity Entity
+        Resouled.Iterators:IterateOverRoomEntities(function(entity)
+            local npc2 = entity:ToNPC()
+            if npc2 and npc2.Type == EntityType.ENTITY_GAPER and npc2.Variant ~= CURSED_GAPER_VARIANT then
+                if not nearestGaper then
+                    nearestGaper = npc2
+                elseif npc.Position:Distance(npc2.Position) < npc.Position:Distance(nearestGaper.Position) then
+                    nearestGaper = npc2
+                end
+            end
+        end)
+
+        if nearestGaper then
+            npc:TryForceTarget(nearestGaper, 2)
+        end
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onNpcUpdate, CURSED_GAPER_TYPE)
+
+---@param npc EntityNPC
 ---@param collider Entity
 local function postNpcCollision(_, npc, collider)
     local colliderNPC = collider:ToNPC()
     if colliderNPC and colliderNPC.Type == EntityType.ENTITY_GAPER then
-        if npc.Variant == CURSED_GAPER_VARIANT and colliderNPC.Variant ~= CURSED_GAPER_VARIANT then
+        if npc.Variant == CURSED_GAPER_VARIANT and npc.SubType == CURSED_GAPER_SUBTYPE and colliderNPC.Variant ~= CURSED_GAPER_VARIANT then
             local newGaper = Game():Spawn(CURSED_GAPER_TYPE, CURSED_GAPER_VARIANT, colliderNPC.Position, colliderNPC.Velocity, colliderNPC.SpawnerEntity, CURSED_GAPER_SUBTYPE, colliderNPC.InitSeed)
             newGaper:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
             newGaper.HitPoints = colliderNPC.HitPoints

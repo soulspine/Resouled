@@ -58,7 +58,12 @@ local function onNpcUpdate(_, npc)
         end
 
         if sprite:IsFinished(RETRACT) then
-            npc.Position = Isaac.GetFreeNearPosition(Isaac.GetRandomPosition(), 1)
+            ::RollPosition::
+            local newPos = Isaac.GetFreeNearPosition(Isaac.GetRandomPosition(), 1)
+            if newPos:Distance(npc:GetPlayerTarget().Position) < 100 then
+                goto RollPosition
+            end
+            npc.Position = newPos
             sprite:Play(EMERGE, true)
         end
 

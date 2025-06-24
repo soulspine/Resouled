@@ -196,10 +196,3 @@ local function postNewFloor()
     end)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
-
-local function onFamiliarInit(_, familiar)
-    if familiar.SubType == FAMILIAR_SUBTYPE then
-        print(familiar.InitSeed)
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onFamiliarInit, FAMILIAR_VARIANT)

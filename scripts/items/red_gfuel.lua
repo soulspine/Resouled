@@ -11,7 +11,8 @@ local LASER_VARIANT = LaserVariant.THICKER_RED
 
 local RED_GFUEL_TIMEOUT = 300
 
-local DAMAGE_MULTIPLIER = 0.25
+local FLAT_DAMAGE = 3
+local DAMAGE_MULTIPLIER = 0.125
 
 ---@param item CollectibleType
 ---@param rng RNG
@@ -20,23 +21,28 @@ local function onActveUse(_, item, rng, player)
     player:AnimatePickup(GFUEL_SPRITE, nil, "LiftItem")
     local data = player:GetData()
     if not data.Resouled_RedGfuel then
-            data.Resouled_RedGfuel = {
-                UP = Game():Spawn(EntityType.ENTITY_LASER, LASER_VARIANT, player.Position, Vector.Zero, player, 0, player.InitSeed):ToLaser(),
-                DOWN = Game():Spawn(EntityType.ENTITY_LASER, LASER_VARIANT, player.Position + DOWN_LASER_START_POSITION, Vector.Zero, player, 0, player.InitSeed):ToLaser(),
-                TIMEOUT = RED_GFUEL_TIMEOUT,
-            }
-            data.Resouled_RedGfuel.UP:SetActiveRotation(0, 270, 999999, false)
-            data.Resouled_RedGfuel.UP.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
-            data.Resouled_RedGfuel.UP.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
-            data.Resouled_RedGfuel.UP.DepthOffset = 1000
-            data.Resouled_RedGfuel.UP:GetData().Resouled_RedGfuelUp = true
+        data.Resouled_RedGfuel = {
+            UP = Game():Spawn(EntityType.ENTITY_LASER, LASER_VARIANT, player.Position, Vector.Zero, player, 0, player.InitSeed):ToLaser(),
+            DOWN = Game():Spawn(EntityType.ENTITY_LASER, LASER_VARIANT, player.Position + DOWN_LASER_START_POSITION, Vector.Zero, player, 0, player.InitSeed):ToLaser(),
+            TIMEOUT = RED_GFUEL_TIMEOUT,
+        }
 
-            data.Resouled_RedGfuel.DOWN:SetActiveRotation(0, 90, 999999, false)
-            data.Resouled_RedGfuel.DOWN.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
-            data.Resouled_RedGfuel.DOWN.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
-            data.Resouled_RedGfuel.DOWN:GetData().Resouled_RedGfuelDown = true
-            data.Resouled_RedGfuel.DOWN.DepthOffset = 1000
+        if player:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
+            data.Resouled_RedGfuel.TIMEOUT = data.Resouled_RedGfuel.TIMEOUT * 2
         end
+
+        data.Resouled_RedGfuel.UP:SetActiveRotation(0, 270, 999999, false)
+        data.Resouled_RedGfuel.UP.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
+        data.Resouled_RedGfuel.UP.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
+        data.Resouled_RedGfuel.UP.DepthOffset = 1000
+        data.Resouled_RedGfuel.UP:GetData().Resouled_RedGfuelUp = true
+
+        data.Resouled_RedGfuel.DOWN:SetActiveRotation(0, 90, 999999, false)
+        data.Resouled_RedGfuel.DOWN.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
+        data.Resouled_RedGfuel.DOWN.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
+        data.Resouled_RedGfuel.DOWN:GetData().Resouled_RedGfuelDown = true
+        data.Resouled_RedGfuel.DOWN.DepthOffset = 1000
+    end
 end
 Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onActveUse, GFUEL)
 
@@ -44,6 +50,7 @@ Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onActveUse, GFUEL)
 local function onPlayerUpdate(_, player)
     local data = player:GetData()
     if player:GetHeldSprite():GetFilename() == GFUEL_SPRITE:GetFilename() and data.Resouled_RedGfuel then
+        Game():ShakeScreen(3)
         if data.Resouled_RedGfuel.UP then
             data.Resouled_RedGfuel.UP.Position = player.Position + player.SpriteOffset + UP_BRIMSTONE_OFFSET - data.Resouled_RedGfuel.UP.Velocity
             data.Resouled_RedGfuel.UP.Velocity = player.Velocity
@@ -122,7 +129,7 @@ local function onLaserUpdate(_, laser)
         Resouled.Iterators:IterateOverRoomEntities(function(entity)
             local npc = entity:ToNPC()
             if npc and npc.Position:Distance(laser.Position - DOWN_LASER_START_POSITION) - npc.Size <= laser.Size * 1.25 and npc:IsActiveEnemy() and npc:IsVulnerableEnemy() then
-                npc:TakeDamage(player.Damage * DAMAGE_MULTIPLIER, DamageFlag.DAMAGE_LASER, EntityRef(player), 0)
+                npc:TakeDamage((FLAT_DAMAGE + player.Damage) * DAMAGE_MULTIPLIER, DamageFlag.DAMAGE_LASER, EntityRef(player), 0)
             end
         end)
     end

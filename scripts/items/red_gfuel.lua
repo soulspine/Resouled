@@ -11,6 +11,8 @@ local LASER_VARIANT = LaserVariant.THICKER_RED
 
 local RED_GFUEL_TIMEOUT = 300
 
+local DAMAGE_MULTIPLIER = 0.25
+
 ---@param item CollectibleType
 ---@param rng RNG
 ---@param player EntityPlayer
@@ -50,6 +52,16 @@ local function onPlayerUpdate(_, player)
         if data.Resouled_RedGfuel.DOWN then
             data.Resouled_RedGfuel.DOWN.Velocity = data.Resouled_RedGfuel.DOWN.Velocity + player:GetShootingInput() * 1.5
             data.Resouled_RedGfuel.DOWN.Velocity = data.Resouled_RedGfuel.DOWN.Velocity * 0.85
+
+            local topLeft = Game():GetRoom():GetTopLeftPos()
+            local bottomRight = Game():GetRoom():GetBottomRightPos()
+
+            local laserPos = data.Resouled_RedGfuel.DOWN.Position - DOWN_LASER_START_POSITION
+            local laserVelocity = data.Resouled_RedGfuel.DOWN.Velocity
+
+            if laserPos.X + laserVelocity.X < topLeft.X or laserPos.X + laserVelocity.X > bottomRight.X or laserPos.Y + laserVelocity.Y < topLeft.Y or laserPos.Y + laserVelocity.Y > bottomRight.Y then
+                data.Resouled_RedGfuel.DOWN.Velocity = Vector.Zero
+            end
         end
 
         if data.Resouled_RedGfuel.TIMEOUT then
@@ -110,7 +122,7 @@ local function onLaserUpdate(_, laser)
         Resouled.Iterators:IterateOverRoomEntities(function(entity)
             local npc = entity:ToNPC()
             if npc and npc.Position:Distance(laser.Position - DOWN_LASER_START_POSITION) - npc.Size <= laser.Size * 1.25 and npc:IsActiveEnemy() and npc:IsVulnerableEnemy() then
-                npc:TakeDamage(player.Damage, DamageFlag.DAMAGE_LASER, EntityRef(player), 0)
+                npc:TakeDamage(player.Damage * DAMAGE_MULTIPLIER, DamageFlag.DAMAGE_LASER, EntityRef(player), 0)
             end
         end)
     end

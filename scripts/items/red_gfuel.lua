@@ -11,7 +11,7 @@ local LASER_VARIANT = LaserVariant.THICKER_RED
 
 local RED_GFUEL_TIMEOUT = 300
 
-local FLAT_DAMAGE = 3
+local FLAT_DAMAGE = 1
 local DAMAGE_MULTIPLIER = 0.125
 
 ---@param item CollectibleType
@@ -129,7 +129,7 @@ local function onLaserUpdate(_, laser)
         Resouled.Iterators:IterateOverRoomEntities(function(entity)
             local npc = entity:ToNPC()
             if npc and npc.Position:Distance(laser.Position - DOWN_LASER_START_POSITION) - npc.Size <= laser.Size * 1.25 and npc:IsActiveEnemy() and npc:IsVulnerableEnemy() then
-                npc:TakeDamage((FLAT_DAMAGE + player.Damage) * DAMAGE_MULTIPLIER, DamageFlag.DAMAGE_LASER, EntityRef(player), 0)
+                npc:TakeDamage(FLAT_DAMAGE + (player.Damage * DAMAGE_MULTIPLIER), DamageFlag.DAMAGE_LASER, EntityRef(player), 0)
             end
         end)
     end

@@ -8,6 +8,7 @@ local UP_BRIMSTONE_OFFSET = Vector(0, -80)
 local DOWN_LASER_START_POSITION = Vector(0, -1000)
 
 local LASER_VARIANT = LaserVariant.THICKER_RED
+local STATIC_SHOCK_BRIMSTONE = LaserVariant.GIANT_BRIM_TECH
 
 local RED_GFUEL_TIMEOUT = 300
 
@@ -20,12 +21,18 @@ local DAMAGE_MULTIPLIER = 0.125
 local function onActveUse(_, item, rng, player)
     player:AnimatePickup(GFUEL_SPRITE, nil, "LiftItem")
     local data = player:GetData()
-    if not data.Resouled_RedGfuel then
+    if not data.Resouled_RedGfuel and player:GetHeldSprite():GetFilename() == GFUEL_SPRITE:GetFilename() then
+        local laserVariant = LASER_VARIANT
+        if Resouled:RoomEventPresent(Resouled.RoomEvents.STATIC_SHOCK) then
+            laserVariant = STATIC_SHOCK_BRIMSTONE
+        end
         data.Resouled_RedGfuel = {
-            UP = Game():Spawn(EntityType.ENTITY_LASER, LASER_VARIANT, player.Position, Vector.Zero, player, 0, player.InitSeed):ToLaser(),
-            DOWN = Game():Spawn(EntityType.ENTITY_LASER, LASER_VARIANT, player.Position + DOWN_LASER_START_POSITION, Vector.Zero, player, 0, player.InitSeed):ToLaser(),
+            UP = Game():Spawn(EntityType.ENTITY_LASER, laserVariant, player.Position, Vector.Zero, player, 0, player.InitSeed):ToLaser(),
+            DOWN = Game():Spawn(EntityType.ENTITY_LASER, laserVariant, player.Position + DOWN_LASER_START_POSITION, Vector.Zero, player, 0, player.InitSeed):ToLaser(),
             TIMEOUT = RED_GFUEL_TIMEOUT,
         }
+
+        local playerTearEffects = player.TearFlags
 
         if player:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
             data.Resouled_RedGfuel.TIMEOUT = data.Resouled_RedGfuel.TIMEOUT * 2
@@ -36,12 +43,18 @@ local function onActveUse(_, item, rng, player)
         data.Resouled_RedGfuel.UP.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
         data.Resouled_RedGfuel.UP.DepthOffset = 1000
         data.Resouled_RedGfuel.UP:GetData().Resouled_RedGfuelUp = true
+        data.Resouled_RedGfuel.UP:AddTearFlags(playerTearEffects)
 
         data.Resouled_RedGfuel.DOWN:SetActiveRotation(0, 90, 999999, false)
         data.Resouled_RedGfuel.DOWN.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
         data.Resouled_RedGfuel.DOWN.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
         data.Resouled_RedGfuel.DOWN:GetData().Resouled_RedGfuelDown = true
         data.Resouled_RedGfuel.DOWN.DepthOffset = 1000
+        data.Resouled_RedGfuel.DOWN:AddTearFlags(playerTearEffects)
+    else
+        if data.Resouled_RedGfuel.TIMEOUT then
+            data.Resouled_RedGfuel.TIMEOUT = data.Resouled_RedGfuel.TIMEOUT + RED_GFUEL_TIMEOUT
+        end
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onActveUse, GFUEL)
@@ -49,7 +62,7 @@ Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onActveUse, GFUEL)
 ---@param player EntityPlayer
 local function onPlayerUpdate(_, player)
     local data = player:GetData()
-    if player:GetHeldSprite():GetFilename() == GFUEL_SPRITE:GetFilename() and data.Resouled_RedGfuel then
+    if player:GetHeldSprite():GetFilename() == GFUEL_SPRITE:GetFilename() and data.Resouled_RedGfuel and data.Resouled_RedGfuel.DOWN:Exists() and data.Resouled_RedGfuel.UP:Exists() then
         Game():ShakeScreen(3)
         if data.Resouled_RedGfuel.UP then
             data.Resouled_RedGfuel.UP.Position = player.Position + player.SpriteOffset + UP_BRIMSTONE_OFFSET - data.Resouled_RedGfuel.UP.Velocity
@@ -82,7 +95,8 @@ local function onPlayerUpdate(_, player)
                 data.Resouled_RedGfuel.TIMEOUT = nil
             end
         end
-    elseif player:GetHeldSprite():GetFilename() ~= GFUEL_SPRITE:GetFilename() and data.Resouled_RedGfuel then
+    elseif player:GetHeldSprite():GetFilename() == GFUEL_SPRITE:GetFilename() and data.Resouled_RedGfuel and not data.Resouled_RedGfuel.UP:Exists() and not data.Resouled_RedGfuel.DOWN:Exists() then
+        player:AnimatePickup(GFUEL_SPRITE, nil, "HideItem")
         data.Resouled_RedGfuel = nil
     end
 end

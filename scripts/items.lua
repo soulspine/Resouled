@@ -21,6 +21,8 @@ include("scripts.items.blast_miner")
 include("scripts.items.tumor_ball")
 include("scripts.items.red_gfuel")
 include("scripts.items.coop_baby")
+include("scripts.items.cursed_soul")
+include("scripts.items.pumpkin_mask")
 
 include("scripts.trinkets.recycling_sticker")
 include("scripts.trinkets.library_card")

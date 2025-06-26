@@ -2,12 +2,13 @@ local COOP_BABY = Isaac.GetItemIdByName("Co-Op Baby")
 local COOP_BABY_VARIANT = Isaac.GetEntityVariantByName("Coop Baby")
 local COOP_BABY_SUBTYPE = Isaac.GetEntitySubTypeByName("Coop Baby")
 
-local BASE_ORBIT_SIZE = 5
+local BASE_ORBIT_SIZE = 20
 local VELOCITY_MULTIPLIER = 0.85
-local ORBIT_SPEED = 3
+local ORBIT_SPEED = 2
 local TEAR_SPEED = 15
 local SHOOT_COOLDOWN = 20
 local ANIMATION_LENGTH = 16
+local FOLLOW_SPEED = 2
 
 ---@param velocity Vector
 local GET_ANGLE_SPRITE = function(velocity)
@@ -69,14 +70,15 @@ local function onFamiliarUpdate(_, familiar)
         else
             local target = familiar.Target
             local distanceFromTarget = familiar.Position:Distance(target.Position)
-            if distanceFromTarget > BASE_ORBIT_SIZE * target.Size then
-                familiar.Velocity = (familiar.Velocity + (target.Position - familiar.Position):Normalized()) * VELOCITY_MULTIPLIER
+            local size = target.Size / 3
+            if distanceFromTarget > BASE_ORBIT_SIZE * size + BASE_ORBIT_SIZE then
+                familiar.Velocity = (familiar.Velocity + (target.Position - familiar.Position):Normalized() * FOLLOW_SPEED) * VELOCITY_MULTIPLIER
             end
-            if distanceFromTarget <= (BASE_ORBIT_SIZE * target.Size) - 2 * BASE_ORBIT_SIZE then
-                familiar.Velocity = target.Velocity + (familiar.Position - target.Position):Normalized():Rotated(90) * ORBIT_SPEED
+            if distanceFromTarget <= (BASE_ORBIT_SIZE * size) - BASE_ORBIT_SIZE then
+                familiar.Velocity = (familiar.Velocity + (familiar.Position - target.Position):Normalized() * FOLLOW_SPEED) * VELOCITY_MULTIPLIER
             end
-            if distanceFromTarget <= (BASE_ORBIT_SIZE * target.Size) + 2 * BASE_ORBIT_SIZE then
-                familiar.Velocity = target.Velocity + (target.Position - familiar.Position):Normalized():Rotated(90) * ORBIT_SPEED
+            if distanceFromTarget <= (BASE_ORBIT_SIZE * size) then
+                familiar.Velocity = (familiar.Velocity + target.Velocity)/2 + (target.Position - familiar.Position):Normalized():Rotated(90) * ORBIT_SPEED
 
                 if not data.Resouled_ShootCooldown then
                     local tear = Game():Spawn(EntityType.ENTITY_TEAR, TearVariant.BLUE, familiar.Position, (target.Position - familiar.Position):Normalized() * TEAR_SPEED, familiar, 0, familiar.InitSeed)

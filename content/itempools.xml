@@ -1,2 +1,47 @@
+<!--
+Item pool names:
+- "treasure"
+- "shop"
+- "boss"
+- "devil"
+- "angel"
+- "curse"
+- "secret"
+- "library"
+- "challenge"
+- "dungeon"
+- "bossrush"
+- "goldenChest"
+- "redChest"
+- "beggar"
+- "demonBeggar"
+- "keyMaster"
+- "bombBum"
+- "planetarium"
+- "crane game"
+- "rottenBeggar"
+- "batteryBum"
+- "oldChest"
+- "woodenChest"
+- "momsChest"
+- "babyShop"
+- "ultraSecret"
+- "greedTreasure"
+- "greedShop"
+- "greedBoss"
+- "greedCurse"
+- "greedDevil"
+- "greedAngel"
+- "greedSecret"
+Tag descriptions:
+- Name - The name of the item as it appears in-game.
+- Weight - The frequency the item will appear in-game for that pool. Keep it to 1 or below.
+- DecreaseBy - How much the item pool counter will decrease by when your item is chosen. Keep it to
+  1 or below.
+- RemoveOn - At what point in the item pool counter the item will be removed and replaced by
+  Breakfast. Keep it at 0.1.
+  TEMPLATE
+    <Item Name="Name" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+-->
 <ItemPools>
 </ItemPools>

@@ -11,7 +11,7 @@ local ANIMATION_LENGTH = 16
 local FOLLOW_SPEED = 2
 
 ---@param velocity Vector
-local GET_ANGLE_SPRITE = function(velocity)
+local function getAngleSprite(velocity)
     local angleDegrees = velocity:GetAngleDegrees()
     if angleDegrees < 0 then
         angleDegrees = 360 + angleDegrees
@@ -63,7 +63,7 @@ local function onFamiliarUpdate(_, familiar)
             familiar:AddToFollowers()
             familiar:FollowParent()
 
-            local targetAnim = GET_ANGLE_SPRITE(familiar.Velocity)
+            local targetAnim = getAngleSprite(familiar.Velocity)
             if sprite:GetAnimation() ~= targetAnim then
                 sprite:SetAnimation(targetAnim, false)
             end
@@ -87,7 +87,7 @@ local function onFamiliarUpdate(_, familiar)
                     sprite:Play(sprite:GetAnimation().."Shoot", true)
                 end
             end
-            local targetAnim = GET_ANGLE_SPRITE(target.Position - familiar.Position)
+            local targetAnim = getAngleSprite(target.Position - familiar.Position)
 
             if data.Resouled_ShootCooldown and data.Resouled_ShootCooldown > SHOOT_COOLDOWN - ANIMATION_LENGTH then
                 targetAnim = targetAnim.."Shoot"

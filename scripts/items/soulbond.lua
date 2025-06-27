@@ -36,7 +36,7 @@ end
 
 ---@param entity1 EntityRef
 ---@param entity2 EntityRef
-local CREATE_BOND = function(entity1, entity2)
+local function createBond(entity1, entity2)
     SFXManager():Play(SoundEffect.SOUND_CHAIN_LOOP, nil, nil, nil, PITCH)
 
     local data1 = entity1.Entity:GetData()
@@ -53,7 +53,7 @@ local CREATE_BOND = function(entity1, entity2)
 end
 
 ---@param entity Entity
-local CHECK_BONDED_TWIN = function(entity)
+local function checkBondedTwin(entity)
     local data = entity:GetData()
     if data.ResouledSoulbond then
         ---@type Entity
@@ -66,7 +66,7 @@ local CHECK_BONDED_TWIN = function(entity)
 end
 
 ---@param entity Entity
-local DESTROY_BOND = function(entity)
+local function destroyBond(entity)
     local data = entity:GetData()
     local other = data.ResouledSoulbond.Other.Entity
     local currentPos = entity.Position
@@ -120,7 +120,7 @@ local function onUpdate()
             local enemy1 = bindableEnemies[enemyIndex1]
             table.remove(bindableEnemies, enemyIndex1)
             local enemy2 = bindableEnemies[math.random(1, #bindableEnemies)]
-            CREATE_BOND(enemy1, enemy2)
+            createBond(enemy1, enemy2)
         end
     end
 end
@@ -130,8 +130,8 @@ Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 local function onNpcUpdate(_, npc)
     local data = npc:GetData()
     if data.ResouledSoulbond then
-        if not CHECK_BONDED_TWIN(npc) then
-            DESTROY_BOND(npc)
+        if not checkBondedTwin(npc) then
+            destroyBond(npc)
         end
     elseif not data.ResouledSoulbond and data.ResouledSoulBondBlock then
         data.ResouledSoulBondBlock = nil
@@ -213,7 +213,7 @@ local function npcTakeDamage(_, entity, amount, damageFlags, source, countdown)
     end
 
     if data.ResouledSoulbond and entity.HitPoints - amount <= 0 then
-        DESTROY_BOND(entity)
+        destroyBond(entity)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, npcTakeDamage)

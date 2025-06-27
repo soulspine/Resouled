@@ -64,4 +64,22 @@ function accurateStatsModule:GetEffectiveHealthContainers(player)
     return 0
 end
 
+function accurateStatsModule:GetCurrentChapter()
+    local stage = Game():GetLevel():GetStage()
+    if stage < 9 then
+        return (stage+1)//2
+    else
+        return 4 + (stage-8)
+    end
+end
+
+function accurateStatsModule:IsCurrentFloorLastFloorOfChapter()
+    local stage = Game():GetLevel():GetStage()
+    if stage < 9 then
+        return stage % 2 == 0
+    else
+        return true
+    end
+end
+
 return accurateStatsModule

@@ -4,7 +4,7 @@ local COINS_ON_USE = 10
 
 ---@param collectibleHistory HistoryItem[]
 ---@return HistoryItem[]
-local GET_VALID_COLLECTIBLES = function(collectibleHistory)
+local function getValidCollectibles(collectibleHistory)
     local newTable = {}
 
     for i = 1, #collectibleHistory do
@@ -22,7 +22,7 @@ end
 local function onActiveUse(_, _, rng, player)
     player:AddCoins(COINS_ON_USE)
 
-    local validCollectibles = GET_VALID_COLLECTIBLES(player:GetHistory():GetCollectiblesHistory())
+    local validCollectibles = getValidCollectibles(player:GetHistory():GetCollectiblesHistory())
 
     ::RollCollectible::
     Resouled:NewSeed()

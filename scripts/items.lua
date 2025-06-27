@@ -23,6 +23,7 @@ include("scripts.items.red_gfuel")
 include("scripts.items.coop_baby")
 include("scripts.items.cursed_soul")
 include("scripts.items.pumpkin_mask")
+include("scripts.items.auction_gavel")
 
 include("scripts.trinkets.recycling_sticker")
 include("scripts.trinkets.library_card")

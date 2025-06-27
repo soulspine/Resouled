@@ -1,119 +1,86 @@
 local AUCTION_GAVEL = Isaac.GetItemIdByName("Auction Gavel")
 
-if EID then
-    EID:addCollectible(AUCTION_GAVEL, "Not implemented yet", "Auction Gavel")
-end
+local COINS_ON_USE = 10
 
-local BID_TIME = 150
+---@param collectibleHistory HistoryItem[]
+---@return HistoryItem[]
+local GET_VALID_COLLECTIBLES = function(collectibleHistory)
+    local newTable = {}
 
-local PRE_SHOP_VALUE_BID_CHANCE = 0.5
-local POST_99_VALUE_BID_CHANCE = 0.1
+    for i = 1, #collectibleHistory do
+        local item = Isaac.GetItemConfig():GetCollectible(collectibleHistory[i]:GetItemID())
 
-local SFX_AUCTION_GAVEL_SOLD = Isaac.GetSoundIdByName("Auction Gavel Sold")
-local SFX_SOLD_VOLUME = 1.5
-
-
-
----@param rng RNG
-local function npcTryBid(rng)
-    local roomSave = SAVE_MANAGER.GetRoomSave()
-    local bidValue = roomSave.AuctionGavel.BidValue
-    local shopValue = roomSave.AuctionGavel.ShopValue
-
-    local compareVal = PRE_SHOP_VALUE_BID_CHANCE
-
-    if bidValue > shopValue and bidValue < 99 then
-        compareVal = PRE_SHOP_VALUE_BID_CHANCE - (PRE_SHOP_VALUE_BID_CHANCE - POST_99_VALUE_BID_CHANCE) * ((bidValue - shopValue)/(99 - shopValue))^2
-    elseif bidValue >= 99 then
-        compareVal = POST_99_VALUE_BID_CHANCE
-    end
-
-    return rng:RandomFloat() < compareVal
-end
-
-
-local function onUpdate()
-    local roomSave = SAVE_MANAGER.GetRoomSave()
-    if roomSave.AuctionGavel == nil then
-        Resouled:RemoveCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
-        return
-    end
-
-    roomSave.AuctionGavel.BidTime = roomSave.AuctionGavel.BidTime - 1
-    npcTryBid(roomSave.AuctionGavel.RNG)
-    if roomSave.AuctionGavel.BidTime <= 0 then
-        Resouled:RemoveCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
-
-        for _, item in ipairs(roomSave.AuctionGavel.Items) do
-            Game():Spawn(EntityType.ENTITY_PICKUP, item.Variant, item.Position, Vector.Zero, nil, item.Subtype, Game():GetRoom():GetSpawnSeed())
+        if item.Type == ItemType.ITEM_PASSIVE or item.Type == ItemType.ITEM_FAMILIAR then
+            table.insert(newTable, collectibleHistory[i])
         end
-        Resouled.Doors:ForceOpenDoors()
-
-        Isaac.GetPlayer(0):AddCoins(-roomSave.AuctionGavel.BidValue)
-
     end
+    return newTable
 end
 
-
-
----@param itemID CollectibleType
 ---@param rng RNG
 ---@param player EntityPlayer
----@param useFlags number
----@param activeSlot ActiveSlot
----@param customVarData any
-local function onActiveUse(_, itemID, rng, player, useFlags, activeSlot, customVarData)
-    local roomSave = SAVE_MANAGER.GetRoomSave()
-    
-    if roomSave.AuctionGavel ~= nil then
-        roomSave.AuctionGavel.BidValue = roomSave.AuctionGavel.BidValue + 1
-        roomSave.AuctionGavel.IsPlayerBid = true
-        roomSave.AuctionGavel.BidTime = BID_TIME
-        player:AnimateCollectible(CollectibleType.COLLECTIBLE_DOLLAR)
-        return false
+local function onActiveUse(_, _, rng, player)
+    player:AddCoins(COINS_ON_USE)
+
+    local validCollectibles = GET_VALID_COLLECTIBLES(player:GetHistory():GetCollectiblesHistory())
+
+    ::RollCollectible::
+    Resouled:NewSeed()
+    local collectibleIndexToRemove = rng:RandomInt(#validCollectibles) + 1
+    local itemID = validCollectibles[collectibleIndexToRemove]:GetItemID()
+
+    if itemID == AUCTION_GAVEL then
+        goto RollCollectible
     end
 
-    local shopValue = 0
-    local shopItems = {}
+    player:RemoveCollectibleByHistoryIndex(collectibleIndexToRemove)
 
-    for _, entity in ipairs(Isaac.GetRoomEntities()) do
-        if entity.Type == EntityType.ENTITY_PICKUP and entity:ToPickup():IsShopItem() then
-            local price = entity:ToPickup().Price
-            if price > 0 then
-                shopValue = shopValue + price
-
-                local itemEntry = {
-                    Variant = entity.Variant,
-                    Subtype = entity.SubType,
-                    Position = entity.Position,
-                }
-
-                entity:Remove()
-                table.insert(shopItems, itemEntry)
-            end
-        end
-    end 
-
-    if shopValue > 0 then
-        SFXManager():Play(SFX_AUCTION_GAVEL_SOLD, SFX_SOLD_VOLUME)
+    local RUN_SAVE = SAVE_MANAGER.GetRunSave(player)
+    if not RUN_SAVE.Resouled_AuctionGavel then
+        RUN_SAVE.Resouled_AuctionGavel = itemID
     else
-        return false
+        RUN_SAVE.Resouled_AuctionGavel = itemID
     end
-
-    Resouled.Doors:ForceShutDoors()
-
-    
-    roomSave.AuctionGavel = {
-        Finished = false,
-        ShopValue = shopValue,
-        BidValue = 1,
-        IsPlayerBid = true,
-        BidTime = BID_TIME,
-        Items = shopItems,
-        RNG = player:GetCollectibleRNG(AUCTION_GAVEL),
-    }
-    Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
-
     return true
 end
 Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onActiveUse, AUCTION_GAVEL)
+
+---@param player EntityPlayer
+local function preUseCollectible(_, _, _, player)
+    local collectibles = player:GetHistory():GetCollectiblesHistory()
+
+    local passiveItemPresent = false
+
+    local i = 1
+    while i <= #collectibles do
+        local item = Isaac.GetItemConfig():GetCollectible(collectibles[i]:GetItemID())
+
+
+        if item.Type == ItemType.ITEM_PASSIVE or item.Type == ItemType.ITEM_FAMILIAR then
+            passiveItemPresent = true
+            break
+        end
+        i = i + 1
+    end
+
+    if not passiveItemPresent then
+        return true
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_PRE_USE_ITEM, preUseCollectible, AUCTION_GAVEL)
+
+---@param pickup EntityPickup
+local function postPickupInit(_, pickup)
+    local auctionGavelItem = nil
+    ---@param player EntityPlayer
+    Resouled.Iterators:IterateOverPlayers(function(player)
+        local RUN_SAVE = SAVE_MANAGER.GetRunSave(player)
+        if not auctionGavelItem and RUN_SAVE.Resouled_AuctionGavel then
+            auctionGavelItem = RUN_SAVE.Resouled_AuctionGavel
+        end
+    end)
+    if Game():GetRoom():GetType() == RoomType.ROOM_SHOP and pickup:IsShopItem() and auctionGavelItem then
+        pickup:Morph(pickup.Type, pickup.Variant, auctionGavelItem, true)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, postPickupInit, PickupVariant.PICKUP_COLLECTIBLE)

@@ -175,8 +175,8 @@ local function postNewFloor()
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
     
-    local function postNewRoom()
-        local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
+local function postNewRoom()
+    local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
     local room = Game():GetRoom()
     
     if ROOM_SAVE.RoomEvent then

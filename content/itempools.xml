@@ -84,4 +84,11 @@ Tag descriptions:
     <Item Name="Ultra Flesh Kid" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
     <Item Name="Blast Miner TNT!" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
   </Pool>
+  <Pool Name="shop">
+    <Item Name="Sleight of Hand" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Bag-O-Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Trick Penny" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Auction Gavel" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Co-Op Baby" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+  </Pool>
 </ItemPools>

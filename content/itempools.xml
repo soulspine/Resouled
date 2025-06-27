@@ -64,4 +64,24 @@ Tag descriptions:
     <Item Name="Ultra Flesh Kid" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
     <Item Name="Blast Miner TNT!" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
   </Pool>
+   <Pool Name="greedTreasure">
+    <Item Name="Sleight of Hand" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Daddy Haunt" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Cheese Grater" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Mama Haunt" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Bag-O-Trash" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Sibling Rivalry" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Soulbond" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Trick Penny" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Fetal Haunt" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Cursed Soul" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Friendly Sack" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Unstable DNA" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Conjoined D6" Weight="0.3" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Red GFUEL" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Co-Op Baby" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Classic Roller" Weight="0.4" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Ultra Flesh Kid" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Blast Miner TNT!" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+  </Pool>
 </ItemPools>

@@ -50,4 +50,8 @@
     <sound name="Soul Pickup 4">
         <sample weight="1" path="soul_pickup_4.wav"/>
     </sound>
+
+    <sound name="Gavel">
+        <sample weight="1" path="gavel.wav"/>
+    </sound>
 </sounds>

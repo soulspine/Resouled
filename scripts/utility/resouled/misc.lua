@@ -376,3 +376,10 @@ end
 function Resouled:GetDistanceFromHitboxEdge(entity1, entity2)
     return entity1.Position:Distance(entity2.Position) - (entity1.Size + entity2.Size)
 end
+
+---@param item CollectibleType
+---@param position Vector
+function Resouled:SpawnItemDisappearEffect(item, position)
+    local effect = Game():Spawn(EntityType.ENTITY_EFFECT, Isaac.GetEntityVariantByName("Disappear"), position, Vector.Zero, nil, Isaac.GetEntitySubTypeByName("Disappear"), Game():GetRoom():GetAwardSeed())
+    effect:GetSprite():ReplaceSpritesheet(0, Isaac.GetItemConfig():GetCollectible(item).GfxFileName, true)
+end

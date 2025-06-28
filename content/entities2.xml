@@ -53,11 +53,17 @@
     <entity name="Chain Particle" id="1000" variant="209" subtype="0" anm2path="chain_particle.anm2" friction="1"/>
     <entity name="Wood Particle" id="1000" variant="210" subtype="0" anm2path="wood_particle.anm2" friction="1"/>
     <entity name="Wood Gold Particle" id="1000" variant="210" subtype="1" anm2path="wood_gold_particle.anm2" friction="1"/>
+    <entity name="Disappear" id="1000" variant="211" subtype="0" anm2path="disappear.anm2" friction="1"/>
+    <entity name="Gavel" id="1000" variant="212" subtype="0" anm2path="gavel.anm2" friction="1"/>
 <!-- Familiars-->
     <entity name="A Friend" id="3" variant="244" subtype="0" anm2path="a_friend.anm2" collisionMass="5" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="16"/>
     <entity name="Tumor Ball" id="3" variant="245" subtype="0" anm2path="tumor_ball.anm2" collisionMass="1" collisionRadius="8" friction="1" numGridCollisionPoints="12" shadowSize="5" tags="noreroll"/>
     <entity anm2path="daddy_haunt.anm2" name="Daddy Haunt" id="3" variant="872" subtype="0" collisionRadius="100" shadowSize="15" friction="1"/>
     <entity name="Coop Baby" id="3" variant="246" subtype="0" anm2path="coop_baby.anm2" collisionMass="1" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="10"/>
+    <entity name="Black Proglottid" id="3" variant="247" subtype="0" anm2path="proglottid.anm2" collisionMass="1" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="10"/>
+    <entity name="White Proglottid" id="3" variant="247" subtype="1" anm2path="proglottid.anm2" collisionMass="1" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="10"/>
+    <entity name="Pink Proglottid" id="3" variant="247" subtype="2" anm2path="proglottid.anm2" collisionMass="1" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="10"/>
+    <entity name="Red Proglottid" id="3" variant="247" subtype="3" anm2path="proglottid.anm2" collisionMass="1" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="10"/>
 
 <!-- Pickups-->
     <entity anm2path="soul_card.anm2" id="5" variant="444" collisionMass="1" collisionRadius="16" name="Soul Pickup" shadowSize="14" reroll="false" tags="noreroll"/>

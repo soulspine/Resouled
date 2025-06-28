@@ -1,9 +1,14 @@
 local AUCTION_GAVEL = Isaac.GetItemIdByName("Auction Gavel")
 
+local ITEM_DISAPPEAR_EFFECT_OFFSET = Vector(0, -60)
+
+local GAVEL_VARIANT = Isaac.GetEntityVariantByName("Gavel")
+local GAVEL_SUBTYPE = Isaac.GetEntitySubTypeByName("Gavel")
+
 local COINS_ON_USE = 10
 
 ---@param collectibleHistory HistoryItem[]
----@return HistoryItem[]
+---@return integer[]
 local function getValidCollectibles(collectibleHistory)
     local newTable = {}
 
@@ -11,7 +16,7 @@ local function getValidCollectibles(collectibleHistory)
         local item = Isaac.GetItemConfig():GetCollectible(collectibleHistory[i]:GetItemID())
 
         if item.Type == ItemType.ITEM_PASSIVE or item.Type == ItemType.ITEM_FAMILIAR then
-            table.insert(newTable, collectibleHistory[i])
+            table.insert(newTable, collectibleHistory[i]:GetItemID())
         end
     end
     return newTable
@@ -26,21 +31,25 @@ local function onActiveUse(_, _, rng, player)
 
     ::RollCollectible::
     Resouled:NewSeed()
-    local collectibleIndexToRemove = rng:RandomInt(#validCollectibles) + 1
-    local itemID = validCollectibles[collectibleIndexToRemove]:GetItemID()
+    local collectibleIndexToRemove = validCollectibles[rng:RandomInt(#validCollectibles) + 1]
 
-    if itemID == AUCTION_GAVEL then
+    if collectibleIndexToRemove == AUCTION_GAVEL then
         goto RollCollectible
     end
 
-    player:RemoveCollectibleByHistoryIndex(collectibleIndexToRemove)
+    player:RemoveCollectible(collectibleIndexToRemove)
 
     local RUN_SAVE = SAVE_MANAGER.GetRunSave(player)
     if not RUN_SAVE.Resouled_AuctionGavel then
-        RUN_SAVE.Resouled_AuctionGavel = itemID
+        RUN_SAVE.Resouled_AuctionGavel = collectibleIndexToRemove
     else
-        RUN_SAVE.Resouled_AuctionGavel = itemID
+        RUN_SAVE.Resouled_AuctionGavel = collectibleIndexToRemove
     end
+
+    local effectPos = player.Position + ITEM_DISAPPEAR_EFFECT_OFFSET + player.SpriteOffset
+    local gavel = Game():Spawn(EntityType.ENTITY_EFFECT, GAVEL_VARIANT, effectPos, Vector.Zero, nil, GAVEL_SUBTYPE, rng:GetSeed())
+    gavel.DepthOffset = 1000
+    Resouled:SpawnItemDisappearEffect(collectibleIndexToRemove, effectPos)
     return true
 end
 Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onActiveUse, AUCTION_GAVEL)
@@ -77,9 +86,11 @@ local function postPickupInit(_, pickup)
         local RUN_SAVE = SAVE_MANAGER.GetRunSave(player)
         if not auctionGavelItem and RUN_SAVE.Resouled_AuctionGavel then
             auctionGavelItem = RUN_SAVE.Resouled_AuctionGavel
+            RUN_SAVE.Resouled_AuctionGavel = nil
         end
     end)
-    if Game():GetRoom():GetType() == RoomType.ROOM_SHOP and pickup:IsShopItem() and auctionGavelItem then
+    local room = Game():GetRoom()
+    if Game():GetRoom():GetType() == RoomType.ROOM_SHOP and room:IsFirstVisit() and auctionGavelItem then
         pickup:Morph(pickup.Type, pickup.Variant, auctionGavelItem, true)
     end
 end

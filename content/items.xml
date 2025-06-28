@@ -16,7 +16,7 @@
     <passive id="14" name="A Friend" gfx="a_friend.png" description="The friend is nigh" quality="2" craftquality="2" cache="familiars"/>
     <familiar id="15" name="The Monster" gfx="the_monster.png" description="Journey to aether" quality="3" craftquality="3" cache="familiars"/>
     <passive id="16" name="Unstable DNA" gfx="unstable_dna.png" description="Unstable genetics" quality="1" craftquality="1" tags="summonable"/>
-    <active id="17" name="Auction Gavel" gfx="auction_gavel.png" description="" quality="0" craftquality="0" chargetype="normal" maxcharges="3"/>
+    <active id="17" name="Auction Gavel" gfx="auction_gavel.png" description="" quality="0" craftquality="0" chargetype="normal" maxcharges="0"/>
     <familiar id="18" name="Black Proglottid" gfx="black_proglottid.png" description="" quality="0" craftquality="0" cache="familiars"/>
     <passive id="19" name="Club" gfx="club.png" description="" quality="0" craftquality="0"/>
     <passive id="20" name="Blast Miner TNT!" gfx="blast_miner.png" description="Barrel blast +5 bombs" quality="1" craftquality="0" bombs="5"/>

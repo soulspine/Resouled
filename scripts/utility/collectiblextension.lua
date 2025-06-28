@@ -188,4 +188,61 @@ function collectiblextension:TryRevealQuestionMarkItem(pickup)
     end
 end
 
+--- Returns the index of a history item from the player's history by time or `nil` if not found.
+---@param player EntityPlayer
+---@param time integer
+---@param posOffset? integer
+---@return integer | nil
+function collectiblextension:GetOldestHistoryItemIndexByTime(player, time, posOffset)
+    posOffset = posOffset or 0
+    local posOffsetCounter = 0
+    local history = player:GetHistory()
+    for i, historyItem in pairs(history:GetCollectiblesHistory()) do
+        if historyItem:GetTime() == time then
+            if posOffsetCounter == posOffset then
+                return i
+            else
+                posOffsetCounter = posOffsetCounter + 1
+            end
+        elseif historyItem:GetTime() > time then -- History is sorted by time, so if we found a time greater than the one we are looking for, we can stop searching
+            break
+        end
+    end
+    return nil
+end
+
+--- Returns a table of history items from the player's history by time.
+---@param player EntityPlayer
+---@param time integer
+---@return HistoryItem[]
+function collectiblextension:GetHistoryItemsByTime(player, time)
+    local history = player:GetHistory()
+    local items = {}
+    for i, historyItem in ipairs(history:GetCollectiblesHistory()) do
+        if historyItem:GetTime() == time then
+            table.insert(items, historyItem)
+        elseif historyItem:GetTime() > time then -- History is sorted by time, so if we found a time greater than the one we are looking for, we can stop searching
+            break
+        end
+    end
+    return items
+end
+
+--- Returns the index of a history item from the player's history by time and item ID or `nil` if not found.
+---@param player EntityPlayer
+---@param time integer
+---@param itemId CollectibleType | integer
+---@return integer | nil
+function collectiblextension:GetHistoryIndexByTimeAndItemId(player, time, itemId)
+    local history = player:GetHistory()
+    for i, historyItem in ipairs(history:GetCollectiblesHistory()) do
+        if historyItem:GetTime() == time and historyItem:GetItemID() == itemId then
+            return i
+        elseif historyItem:GetTime() > time then -- History is sorted by time, so if we found a time greater than the one we are looking for, we can stop searching
+            break
+        end
+    end
+    return nil
+end 
+
 return collectiblextension

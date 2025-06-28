@@ -42,12 +42,14 @@ end
 Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, playerTakeDamage, EntityType.ENTITY_PLAYER)
 
 local function postNewRoom()
-    ---@param player EntityPlayer
-    Resouled.Iterators:IterateOverPlayers(function(player)
-        local RUN_SAVE = SAVE_MANAGER.GetRunSave(player)
-        if RUN_SAVE.Resouled_CursedSoul and RUN_SAVE.Resouled_CursedSoul.SOULS > 0 then
-            player:TakeDamage(1, DamageFlag.DAMAGE_NO_PENALTIES, EntityRef(player), 0)
-        end
-    end)
+    if not Game():GetRoom():IsClear() then
+        ---@param player EntityPlayer
+        Resouled.Iterators:IterateOverPlayers(function(player)
+            local RUN_SAVE = SAVE_MANAGER.GetRunSave(player)
+            if RUN_SAVE.Resouled_CursedSoul and RUN_SAVE.Resouled_CursedSoul.SOULS > 0 and Resouled.AccurateStats:GetEffectiveHP(player) > 1 then
+                player:TakeDamage(1, DamageFlag.DAMAGE_NO_PENALTIES, EntityRef(player), 0)
+            end
+        end)
+    end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)

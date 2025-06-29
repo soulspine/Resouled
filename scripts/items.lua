@@ -28,6 +28,7 @@ include("scripts.items.black_proglottid")
 include("scripts.items.white_proglottid")
 include("scripts.items.pink_proglottid")
 include("scripts.items.red_proglottid")
+include("scripts.items.ultra_flesh_kid")
 
 include("scripts.trinkets.recycling_sticker")
 include("scripts.trinkets.library_card")

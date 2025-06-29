@@ -20,6 +20,11 @@ local function onEffectUpdate(_, effect)
         end
         if sprite:IsEventTriggered("ResouledHit") then
             SFXManager():Play(SOUND_ID)
+
+            local data = effect:GetData()
+            if data.Resouled_DisappearItem then
+                Resouled:SpawnItemDisappearEffect(data.Resouled_DisappearItem, effect.Position)
+            end
         end
     end
 end

@@ -51,4 +51,21 @@ function familiarTargeting:ClearEnemyTarget(familiar)
     familiar:GetData().familiarTargetingTarget = nil
 end
 
+---@param familiar EntityFamiliar
+function familiarTargeting:SelectNearestEnemyTarget(familiar)
+    ---@type nil | Entity
+    local nearestEnemy = nil
+    ---@param entity Entity
+    Resouled.Iterators:IterateOverRoomEntities(function(entity)
+        if entity:IsVulnerableEnemy() and entity:IsActiveEnemy() and entity:IsEnemy() then
+            if not nearestEnemy then
+                nearestEnemy = entity
+            elseif nearestEnemy.Position:Distance(familiar.Position) > entity.Position:Distance(familiar.Position) then
+                nearestEnemy = entity
+            end
+        end
+    end)
+    return nearestEnemy
+end
+
 return familiarTargeting

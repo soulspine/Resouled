@@ -64,12 +64,14 @@
     <entity name="White Proglottid" id="3" variant="247" subtype="1" anm2path="proglottid.anm2" collisionMass="1" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="10"/>
     <entity name="Pink Proglottid" id="3" variant="247" subtype="2" anm2path="proglottid.anm2" collisionMass="1" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="10"/>
     <entity name="Red Proglottid" id="3" variant="247" subtype="3" anm2path="proglottid.anm2" collisionMass="1" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="10"/>
+    <entity name="Ultra Flesh Kid" id="3" variant="248" subtype="0" anm2path="ultra_flesh_kid.anm2" collisionMass="1" collisionRadius="18" friction="1" numGridCollisionPoints="12" shadowSize="0"/>
 
 <!-- Pickups-->
     <entity anm2path="soul_card.anm2" id="5" variant="444" collisionMass="1" collisionRadius="16" name="Soul Pickup" shadowSize="14" reroll="false" tags="noreroll"/>
     <entity name="Buff Pedestal" id="5" variant="200" anm2path="buffs/buffs.anm2" collisionRadius="14" collisionMass="3" numGridCollisionPoints="12" friction="0" shadowSize="20" tags="noreroll"/>
     <entity name="Blast Miner TNT" id="5" variant="201" subtype="0" anm2path="blast_miner_tnt.anm2" collisionRadius="15" collisionMass="5" numGridCollisionPoints="12" friction="1" shadowSize="21" tags="noreroll"/>
     <entity name="Blast Miner TNT Mega" id="5" variant="201" subtype="1" anm2path="blast_miner_tnt_mega.anm2" collisionRadius="20" collisionMass="8" numGridCollisionPoints="12" friction="1" shadowSize="28" tags="noreroll"/>
+    <entity name="Magic Marker" id="5" variant="300" subtype="82492" anm2path="magic_marker.anm2" collisionRadius="12" collisionMass="3" friction="1" numGridCollisionPoints="24" shadowSize="16"/>
 
 <!-- Misc-->
     <entity name="ResouledDummy" id="999" variant="0" subtype="0"/>

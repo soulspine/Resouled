@@ -49,7 +49,7 @@ local function onActiveUse(_, _, rng, player)
     local effectPos = player.Position + ITEM_DISAPPEAR_EFFECT_OFFSET + player.SpriteOffset
     local gavel = Game():Spawn(EntityType.ENTITY_EFFECT, GAVEL_VARIANT, effectPos, Vector.Zero, nil, GAVEL_SUBTYPE, rng:GetSeed())
     gavel.DepthOffset = 1000
-    Resouled:SpawnItemDisappearEffect(collectibleIndexToRemove, effectPos)
+    gavel:GetData().Resouled_DisappearItem = collectibleIndexToRemove
     return true
 end
 Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onActiveUse, AUCTION_GAVEL)

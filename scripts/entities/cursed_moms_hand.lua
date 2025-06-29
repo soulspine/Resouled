@@ -15,10 +15,19 @@ local ANIMATION_JUMP_UP = "JumpUp"
 local ANIMATION_STUNNED = "Stunned"
 local ANIMATION_GRAB = "Grab"
 
+local GRAB_TELEPORT_ROOM_TYPE_WHITELIST = {
+    [RoomType.ROOM_DEFAULT] = true,
+    [RoomType.ROOM_BOSS] = true,
+    [RoomType.ROOM_MINIBOSS] = true,
+    [RoomType.ROOM_CURSE] = true,
+    [RoomType.ROOM_CHALLENGE] = true,
+    [RoomType.ROOM_SACRIFICE] = true,
+}
+
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
     if npc.Variant == CURSED_MOMS_HAND_VARIANT then
-        npc.Mass = 999999
+        npc.Mass = math.huge
         npc:GetData().ResouledCursedMomsHand = {
             StunLock = nil,
             GrabbedPlayerId = nil,
@@ -53,19 +62,34 @@ local function onNpcUpdate(_, npc)
                 if sprite:IsEventTriggered(EVENT_TRIGGER_RESOULED_TELEPOT) then
                     local game = Game()
                     local level = game:GetLevel()
-                    local room = game:GetRoom()
-                    local door = room:GetDoor(level.EnterDoor)
-                    local targetRoom = level:GetRoomByIdx(level.EnterDoor ~= DoorSlot.NO_DOOR_SLOT and door.TargetRoomIndex or level:GetCurrentRoomIndex()).SafeGridIndex
+                    local currentRoomSafeIndex = level:GetCurrentRoomDesc().SafeGridIndex -- i get it here to exclude it from possible destination rooms
+
+                    local validRoomSafeGridIndexes = {}
+                    local rooms = level:GetRooms()
+                    for i = 0, rooms.Size - 1 do
+                        local roomDesc = rooms:Get(i)
+                        if roomDesc.SafeGridIndex ~= currentRoomSafeIndex and GRAB_TELEPORT_ROOM_TYPE_WHITELIST[roomDesc.Data.Type] then
+                            table.insert(validRoomSafeGridIndexes, roomDesc.SafeGridIndex)
+                        end
+                    end
+
+                    local rng = RNG()
+                    rng:SetSeed(npc.DropSeed, 14) -- random shift number
+
+                    local targetRoom = validRoomSafeGridIndexes[rng:RandomInt(#validRoomSafeGridIndexes) + 1]
+
                     local player = Isaac.GetPlayer(data.ResouledCursedMomsHand.GrabbedPlayerId)
                     player.Visible = true
                     game:StartRoomTransition(targetRoom, Direction.NO_DIRECTION, RoomTransitionAnim.FADE, player)
                 end
+            end
 
+            if sprite:IsEventTriggered(EVENT_TRIGGER_RESOULED_LAND) then
+                npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
             end
 
             if sprite:IsPlaying(ANIMATION_STUNNED) then
                 data.ResouledCursedMomsHand.StunLock = PULLING_DURATION
-                npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
                 Resouled.Pulling:TryEnableCustomPlayerPulling(npc, PULLING_RADIUS, PULLING_COLOR)
             end
         end
@@ -77,13 +101,14 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, onNpcUpdate, CURSED_MOMS_HA
 ---@param collider Entity
 ---@param low boolean
 local function onNpcCollision(_, npc, collider, low)
-    if npc.Variant == CURSED_MOMS_HAND_VARIANT and collider.Type == EntityType.ENTITY_PLAYER then
+    local player = collider:ToPlayer()
+    if npc.Variant == CURSED_MOMS_HAND_VARIANT and player then
         local sprite = npc:GetSprite()
         local data = npc:GetData()
         npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
         data.ResouledCursedMomsHand.StunLock = nil
         sprite:Play(ANIMATION_GRAB, true)
-        data.ResouledCursedMomsHand.GrabbedPlayerId = collider:ToPlayer().Index
+        data.ResouledCursedMomsHand.GrabbedPlayerId = player.Index
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_COLLISION, onNpcCollision, CURSED_MOMS_HAND_TYPE)

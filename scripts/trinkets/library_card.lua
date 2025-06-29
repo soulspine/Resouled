@@ -37,4 +37,4 @@ local function onNewFloor()
         end
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, onNewFloor)
+Resouled:AddPriorityCallback(ModCallbacks.MC_POST_NEW_LEVEL, -300, onNewFloor)

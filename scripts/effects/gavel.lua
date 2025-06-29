@@ -43,6 +43,8 @@ local function onEffectUpdate(_, effect)
                     for _ = 1, 7 do
                         Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, effect.Position, Vector(math.random(MIN_VELOCITY, MAX_VELOCITY), 0):Rotated(math.random(0, 360)), nil, CoinSubType.COIN_PENNY, Resouled:NewSeed())
                     end
+                elseif randomNum == 4 then
+                    Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, effect.Position, Vector(math.random(MIN_VELOCITY, MAX_VELOCITY), 0):Rotated(math.random(0, 360)), nil, CoinSubType.COIN_DIME, Resouled:NewSeed())
                 end
             end
         end

@@ -39,7 +39,7 @@ local function onNpcUpdate(_, npc)
     local sprite = npc:GetSprite()
     local pathfinder = npc.Pathfinder
     local room = Game():GetRoom()
-    local seesPlayer = room:CheckLine(npc.Position, playerTarget.Position, LineCheckMode.ENTITY)
+    local seesPlayer = room:CheckLine(npc.Position, playerTarget.Position, LineCheckMode.EXPLOSION)
     if npc.Variant == COIL_VARIANT and npc.SubType == COIL_SUBTYPE then -- COIL
         if seesPlayer then
             if playerTarget.Position:Distance(npc.Position) > 100 then

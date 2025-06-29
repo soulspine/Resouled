@@ -148,3 +148,12 @@ local function onLaserUpdate(_, laser)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_LASER_UPDATE, onLaserUpdate)
+
+---@param player EntityPlayer
+---@param slot ActiveSlot
+local function preUseItem(_, _, _, player, _, slot)
+    if player:GetData().Resouled_RedGfuel then
+        return true
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_PRE_USE_ITEM, preUseItem, CollectibleType.COLLECTIBLE_FLIP)

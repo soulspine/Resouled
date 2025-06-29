@@ -139,10 +139,9 @@ local function onLaserUpdate(_, laser)
     if data.Resouled_RedGfuelDown then
         local player = Resouled:TryFindPlayerSpawner(laser)
         if not player then return end
-        ---@param entity Entity
-        Resouled.Iterators:IterateOverRoomEntities(function(entity)
-            local npc = entity:ToNPC()
-            if npc and npc.Position:Distance(laser.Position - DOWN_LASER_START_POSITION) - npc.Size <= laser.Size * 1.25 and npc:IsActiveEnemy() and npc:IsVulnerableEnemy() then
+        ---@param npc EntityNPC
+        Resouled.Iterators:IterateOverRoomNpcs(function(npc)
+            if npc.Position:Distance(laser.Position - DOWN_LASER_START_POSITION) - npc.Size <= laser.Size * 1.25 and npc:IsActiveEnemy() and npc:IsVulnerableEnemy() then
                 npc:TakeDamage(FLAT_DAMAGE + (player.Damage * DAMAGE_MULTIPLIER), DamageFlag.DAMAGE_LASER, EntityRef(player), 0)
             end
         end)

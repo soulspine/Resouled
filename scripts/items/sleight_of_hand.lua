@@ -149,19 +149,17 @@ local function onNewRoomEnter()
             SFXManager():Play(SFX_USE)
         elseif runSave.SleightOfHand.NewRoomCount == 1 then
             -- we save all pickups data
-            ---@param entity Entity
-            Resouled.Iterators:IterateOverRoomEntities(function(entity)
-                if entity.Type == EntityType.ENTITY_PICKUP then
-                    local entitySprite = entity:GetSprite()
-                    table.insert(runSave.SleightOfHand.Pickups, {
-                        Variant = entity.Variant,
-                        SubType = entity.SubType,
-                        Animation = {
-                            File = entitySprite:GetFilename(),
-                            Name = entitySprite:GetDefaultAnimation(),
-                        },
-                    })
-                end
+            ---@param pickup EntityPickup
+            Resouled.Iterators:IterateOverRoomPickups(function(pickup)
+                local entitySprite = pickup:GetSprite()
+                table.insert(runSave.SleightOfHand.Pickups, {
+                    Variant = pickup.Variant,
+                    SubType = pickup.SubType,
+                    Animation = {
+                        File = entitySprite:GetFilename(),
+                        Name = entitySprite:GetDefaultAnimation(),
+                    },
+                })
             end)
         end
         runSave.SleightOfHand.NewRoomCount = runSave.SleightOfHand.NewRoomCount + 1

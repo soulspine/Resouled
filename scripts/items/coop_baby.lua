@@ -108,10 +108,9 @@ Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onFamiliarUpdate, COOP_BAB
 local function entityTakeDamage(_, entity, amount, flags, source)
     local player = Resouled:TryFindPlayerSpawner(source.Entity)
     if player and entity:IsEnemy() and entity:IsActiveEnemy() and entity:IsVulnerableEnemy() and entity.HitPoints - amount > 0 then
-        ---@param entity2 Entity
-        Resouled.Iterators:IterateOverRoomEntities(function(entity2)
-            local familiar = entity2:ToFamiliar()
-            if familiar and familiar.Variant == COOP_BABY_VARIANT and familiar.SubType == COOP_BABY_SUBTYPE then
+        ---@param familiar EntityFamiliar
+        Resouled.Iterators:IterateOverRoomFamiliars(function(familiar)
+            if familiar.Variant == COOP_BABY_VARIANT and familiar.SubType == COOP_BABY_SUBTYPE then
                 local spawner = Resouled:TryFindPlayerSpawner(familiar)
                 if spawner and spawner:GetPlayerIndex() == player:GetPlayerIndex() then
                     familiar.Target = entity

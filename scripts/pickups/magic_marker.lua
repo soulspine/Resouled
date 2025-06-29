@@ -16,14 +16,11 @@ local PICKUP_UPGRADE = {
 ---@param player EntityPlayer
 local function onCardUse(_, _, player)
     local chestCount = 0
-    ---@param entity Entity
-    Resouled.Iterators:IterateOverRoomEntities(function(entity)
-        local pickup = entity:ToPickup()
-        if pickup then
-            if PICKUP_UPGRADE[pickup.Variant] then
-                pickup:Morph(EntityType.ENTITY_PICKUP, PICKUP_UPGRADE[pickup.Variant][RNG(pickup.InitSeed):RandomInt(#PICKUP_UPGRADE[pickup.Variant]) + 1], 1)
-                chestCount = chestCount + 1
-            end
+    ---@param pickup EntityPickup
+    Resouled.Iterators:IterateOverRoomPickups(function(pickup)
+        if PICKUP_UPGRADE[pickup.Variant] then
+            pickup:Morph(EntityType.ENTITY_PICKUP, PICKUP_UPGRADE[pickup.Variant][RNG(pickup.InitSeed):RandomInt(#PICKUP_UPGRADE[pickup.Variant]) + 1], 1)
+            chestCount = chestCount + 1
         end
     end)
     if chestCount < 1 then

@@ -19,10 +19,9 @@ local function onNpcUpdate(_, npc)
         ---@type EntityNPC | nil
         local nearestGaper = nil
 
-        ---@param entity Entity
-        Resouled.Iterators:IterateOverRoomEntities(function(entity)
-            local npc2 = entity:ToNPC()
-            if npc2 and npc2.Type == EntityType.ENTITY_GAPER and npc2.Variant ~= CURSED_GAPER_VARIANT then
+        ---@param npc2 EntityNPC
+        Resouled.Iterators:IterateOverRoomNpcs(function(npc2)
+            if npc2.Type == EntityType.ENTITY_GAPER and npc2.Variant ~= CURSED_GAPER_VARIANT then
                 if not nearestGaper then
                     nearestGaper = npc2
                 elseif npc.Position:Distance(npc2.Position) < npc.Position:Distance(nearestGaper.Position) then

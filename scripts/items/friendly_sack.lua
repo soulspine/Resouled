@@ -50,28 +50,24 @@ local function postNewRoom()
 
                     rng:SetSeed(Game():GetRoom():GetSpawnSeed())
 
-                    ---@param entity Entity
-                    Resouled.Iterators:IterateOverRoomEntities(function(entity)
+                    ---@param familiar EntityFamiliar
+                    Resouled.Iterators:IterateOverRoomFamiliars(function(familiar)
 
-                        local familiar = entity:ToFamiliar()
+                        local spawnerPlayer = Resouled:TryFindPlayerSpawner(familiar)
+                        if spawnerPlayer then
 
-                        if familiar then
-                            local spawnerPlayer = Resouled:TryFindPlayerSpawner(familiar)
-                            if spawnerPlayer then
+                            local spawnerPlayerIndex = spawnerPlayer:GetPlayerIndex()
 
-                                local spawnerPlayerIndex = spawnerPlayer:GetPlayerIndex()
+                            if spawnerPlayerIndex == playerIndex then
 
-                                if spawnerPlayerIndex == playerIndex then
+                                local pickupSpawnPos = familiar.Position
 
-                                    local pickupSpawnPos = familiar.Position
-
-                                    for _ = 1, Isaac.GetPlayer(spawnerPlayerIndex):GetCollectibleNum(FRIENDLY_SACK) do
-                                        Resouled:NewSeed()
+                                for _ = 1, Isaac.GetPlayer(spawnerPlayerIndex):GetCollectibleNum(FRIENDLY_SACK) do
+                                    Resouled:NewSeed()
+                                    
+                                    local chosenPickup = PICKUP_SPAWNING_TRANSLATOR[rng:RandomInt(#PICKUP_SPAWNING_TRANSLATOR) + 1]
                                         
-                                        local chosenPickup = PICKUP_SPAWNING_TRANSLATOR[rng:RandomInt(#PICKUP_SPAWNING_TRANSLATOR) + 1]
-                                        
-                                        Game():Spawn(EntityType.ENTITY_PICKUP, chosenPickup, pickupSpawnPos, Vector.Zero, nil, 0, rng:GetSeed())
-                                    end
+                                    Game():Spawn(EntityType.ENTITY_PICKUP, chosenPickup, pickupSpawnPos, Vector.Zero, nil, 0, rng:GetSeed())
                                 end
                             end
                         end

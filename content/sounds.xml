@@ -54,4 +54,8 @@
     <sound name="Gavel">
         <sample weight="1" path="gavel.wav"/>
     </sound>
+    
+    <sound name="Jumpscare">
+        <sample weight="1" path="jumpscare.wav"/>
+    </sound>
 </sounds>

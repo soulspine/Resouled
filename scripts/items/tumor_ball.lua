@@ -175,10 +175,9 @@ end
 Resouled:AddCallback(ModCallbacks.MC_PRE_FAMILIAR_UPDATE, preFamiliarUpdate, FAMILIAR_VARIANT)
 
 local function postNewRoom()
-    ---@param entity Entity
-    Resouled.Iterators:IterateOverRoomEntities(function(entity)
-        local familiar = entity:ToFamiliar()
-        if familiar and familiar.Variant == FAMILIAR_VARIANT and familiar.SubType == FAMILIAR_SUBTYPE then
+    ---@param familiar EntityFamiliar
+    Resouled.Iterators:IterateOverRoomFamiliars(function(familiar)
+        if familiar.Variant == FAMILIAR_VARIANT and familiar.SubType == FAMILIAR_SUBTYPE then
             familiar:GetData().Resouled_TumorSplit = nil
         end
     end)

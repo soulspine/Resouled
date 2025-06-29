@@ -17,11 +17,11 @@ local function preUseItem(_, collectibleType, rng, player, useFlags, activeSlot)
     if collectibleType == CONJOINED_D6 then
         local data = player:GetData()
         data.ResouledCD6OldItems = {}
-        ---@param entity Entity
-        Resouled.Iterators:IterateOverRoomEntities(function(entity)
-            if entity.Type == EntityType.ENTITY_PICKUP and entity.Variant == PickupVariant.PICKUP_COLLECTIBLE then
-                if entity.SubType ~= 0 and entity.SubType ~= nil then
-                    table.insert(data.ResouledCD6OldItems, entity.SubType)
+        ---@param pickup EntityPickup
+        Resouled.Iterators:IterateOverRoomPickups(function(pickup)
+            if pickup.Variant == PickupVariant.PICKUP_COLLECTIBLE then
+                if pickup.SubType ~= 0 and pickup.SubType ~= nil then
+                    table.insert(data.ResouledCD6OldItems, pickup.SubType)
                 end
             end
         end)
@@ -50,10 +50,10 @@ local function onItemUse(_, collectibleType, rng, player, useFlags, activeSlot)
         player:UseActiveItem(CollectibleType.COLLECTIBLE_D6)
         player:AnimateCollectible(CONJOINED_D6, "UseItem")
         data.ResouledCD6NewItems = {}
-        Resouled.Iterators:IterateOverRoomEntities(function(entity)
-            if entity.Type == EntityType.ENTITY_PICKUP and entity.Variant == PickupVariant.PICKUP_COLLECTIBLE then
-                if entity.SubType ~= 0 and entity.SubType ~= nil then
-                    table.insert(data.ResouledCD6NewItems, entity.SubType)
+        Resouled.Iterators:IterateOverRoomPickups(function(pickup)
+            if pickup.Variant == PickupVariant.PICKUP_COLLECTIBLE then
+                if pickup.SubType ~= 0 and pickup.SubType ~= nil then
+                    table.insert(data.ResouledCD6NewItems, pickup.SubType)
                 end
             end
         end)
@@ -104,7 +104,6 @@ Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval)
 ---@param player EntityPlayer
 local function postPlayerInit(_, player)
     local RunSave = SAVE_MANAGER.GetRunSave()
-    local data = player:GetData()
     player:GetPlayerIndex()
 
     if RunSave.ResouledCD6Multiplier == nil then

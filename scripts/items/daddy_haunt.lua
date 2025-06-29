@@ -118,10 +118,9 @@ local function onFamiliarUpdate(_, familiar)
         Game():Spawn(EntityType.ENTITY_EFFECT, Isaac.GetEntityVariantByName("Air Shockwave"), familiar.Position, Vector(0, 0), familiar, Isaac.GetEntitySubTypeByName("Air Shockwave"), 0)
         SFXManager():Play(SLAM_SFX, 1, 0, false, 1)
 
-        ---@param entity EntityEffect
-        Resouled.Iterators:IterateOverRoomEntities(function(entity)
-            local npc = entity:ToNPC()
-            if npc and npc:IsVulnerableEnemy() and npc:IsActiveEnemy() and not npc:IsDead() then
+        ---@param npc EntityNPC
+        Resouled.Iterators:IterateOverRoomNpcs(function(npc)
+            if npc:IsVulnerableEnemy() and npc:IsActiveEnemy() and not npc:IsDead() then
                 local distance = (entity.Position - familiar.Position):Length()
                 if distance < SLAM_EFFECT_RADIUS then
                     npc:TakeDamage(SLAM_DAMAGE, 0, EntityRef(familiar), 0)

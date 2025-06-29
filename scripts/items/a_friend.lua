@@ -557,16 +557,13 @@ Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, familiarUpdate, FRIEND_VAR
 
 ---@param npc EntityNPC
 local function postNpcDeath(_, npc)
-    ---@param entity Entity
-    Resouled.Iterators:IterateOverRoomEntities(function(entity)
-        local familiar = entity:ToFamiliar()
-        if familiar then
-            if familiar.Variant == FRIEND_VARIANT and familiar.SubType == FRIEND_SUBTYPE then
-                local data = familiar:GetData()
-                if data.Resouled_Target then
-                    if data.Resouled_Target.Index == npc.Index then
-                        data.Resouled_Target = nil
-                    end
+    ---@param familiar EntityFamiliar
+    Resouled.Iterators:IterateOverRoomFamiliars(function(familiar)
+        if familiar.Variant == FRIEND_VARIANT and familiar.SubType == FRIEND_SUBTYPE then
+            local data = familiar:GetData()
+            if data.Resouled_Target then
+                if data.Resouled_Target.Index == npc.Index then
+                    data.Resouled_Target = nil
                 end
             end
         end
@@ -576,10 +573,9 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath)
 
 ---@param spikes GridEntitySpikes
 local function gridSpikesUpdate(_, spikes)
-    ---@param entity Entity
-    Resouled.Iterators:IterateOverRoomEntities(function(entity)
-        local familiar = entity:ToFamiliar()
-        if familiar and familiar.Variant == FRIEND_VARIANT and familiar.SubType == FRIEND_SUBTYPE and familiar.Position:Distance(spikes.Position) < GRID_AVOID_RANGE then
+    ---@param familiar EntityFamiliar
+    Resouled.Iterators:IterateOverRoomFamiliars(function(familiar)
+        if familiar.Variant == FRIEND_VARIANT and familiar.SubType == FRIEND_SUBTYPE and familiar.Position:Distance(spikes.Position) < GRID_AVOID_RANGE then
             familiar.Velocity = familiar.Velocity + (familiar.Position - spikes.Position):Normalized() * GRID_AVOID_SPEED
         end
     end)
@@ -588,10 +584,9 @@ Resouled:AddCallback(ModCallbacks.MC_POST_GRID_ENTITY_SPIKES_UPDATE, gridSpikesU
 
 ---@param fire GridEntityFire
 local function gridFireplaceUpdate(_, fire)
-    ---@param entity Entity
-    Resouled.Iterators:IterateOverRoomEntities(function(entity)
-        local familiar = entity:ToFamiliar()
-        if familiar and familiar.Variant == FRIEND_VARIANT and familiar.SubType == FRIEND_SUBTYPE and familiar.Position:Distance(fire.Position) < GRID_AVOID_RANGE then
+    ---@param familiar EntityFamiliar
+    Resouled.Iterators:IterateOverRoomFamiliars(function(familiar)
+        if familiar.Variant == FRIEND_VARIANT and familiar.SubType == FRIEND_SUBTYPE and familiar.Position:Distance(fire.Position) < GRID_AVOID_RANGE then
             familiar.Velocity = familiar.Velocity + (familiar.Position - fire.Position):Normalized() * GRID_AVOID_SPEED
         end
     end)
@@ -599,10 +594,9 @@ end
 Resouled:AddCallback(ModCallbacks.MC_POST_GRID_ENTITY_FIRE_UPDATE, gridFireplaceUpdate)
 
 local function postNewRoom()
-    ---@param entity Entity
-    Resouled.Iterators:IterateOverRoomEntities(function(entity)
-        local familiar = entity:ToFamiliar()
-        if familiar and familiar.Variant == FRIEND_VARIANT and familiar.SubType == FRIEND_SUBTYPE then
+    ---@param familiar EntityFamiliar
+    Resouled.Iterators:IterateOverRoomFamiliars(function(familiar)
+        if familiar.Variant == FRIEND_VARIANT and familiar.SubType == FRIEND_SUBTYPE then
             local data = familiar:GetData()
             if data.Resouled_Target then
                 data.Resouled_Target = nil
@@ -631,10 +625,9 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)
 ---@param poop GridEntityPoop
 local function postPoopUpdate(_, poop)
     if poop.State == 1000 then
-        ---@param entity Entity
-        Resouled.Iterators:IterateOverRoomEntities(function(entity)
-            local familiar = entity:ToFamiliar()
-            if familiar and familiar.Variant == FRIEND_VARIANT and familiar.SubType == FRIEND_SUBTYPE then
+        ---@param familiar EntityFamiliar
+        Resouled.Iterators:IterateOverRoomFamiliars(function(familiar)
+            if familiar.Variant == FRIEND_VARIANT and familiar.SubType == FRIEND_SUBTYPE then
                 local data = familiar:GetData()
                 if data.Resouled_GridTarget then
                     if data.Resouled_GridTarget.Position.X == poop.Position.X and data.Resouled_GridTarget.Position.Y == poop.Position.Y then

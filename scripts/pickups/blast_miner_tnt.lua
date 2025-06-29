@@ -185,10 +185,9 @@ end
 Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_UPDATE, onPickupUpdate, TNT_VARIANT)
 
 local function preRoomLeave()
-    ---@param entity Entity
-    Resouled.Iterators:IterateOverRoomEntities(function(entity)
-        local pickup = entity:ToPickup()
-        if pickup and pickup.Variant == TNT_VARIANT and subtypeWhitelist[pickup.SubType] then
+    ---@param pickup EntityPickup
+    Resouled.Iterators:IterateOverRoomPickups(function(pickup)
+        if pickup.Variant == TNT_VARIANT and subtypeWhitelist[pickup.SubType] then
             local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(pickup)
             local ROOM_SAVE_POSITION = SAVE_MANAGER.GetRoomFloorSave(pickup.Position)
             if ROOM_SAVE.BlastMiner then

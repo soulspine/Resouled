@@ -26,7 +26,7 @@ end
 function iteratorsModule:IterateOverRoomNpcs(callback, ...)
     for _, entity in ipairs(Isaac.GetRoomEntities()) do
         if entity:ToNPC() then
-            callback(entity, ...)
+            callback(entity:ToNPC(), ...)
         end
     end
 end
@@ -37,7 +37,7 @@ end
 function iteratorsModule:IterateOverRoomEffects(callback, ...)
     for _, entity in ipairs(Isaac.GetRoomEntities()) do
         if entity:ToEffect() then
-            callback(entity, ...)
+            callback(entity:ToEffect(), ...)
         end
     end
 end
@@ -48,7 +48,7 @@ end
 function iteratorsModule:IterateOverRoomTears(callback, ...)
     for _, entity in ipairs(Isaac.GetRoomEntities()) do
         if entity:ToTear() then
-            callback(entity, ...)
+            callback(entity:ToTear(), ...)
         end
     end
 end
@@ -59,7 +59,7 @@ end
 function iteratorsModule:IterateOverRoomProjectiles(callback, ...)
     for _, entity in ipairs(Isaac.GetRoomEntities()) do
         if entity:ToProjectile() then
-            callback(entity, ...)
+            callback(entity:ToProjectile(), ...)
         end
     end
 end
@@ -70,7 +70,7 @@ end
 function iteratorsModule:IterateOverRoomLasers(callback, ...)
     for _, entity in ipairs(Isaac.GetRoomEntities()) do
         if entity:ToLaser() then
-            callback(entity, ...)
+            callback(entity:ToLaser(), ...)
         end
     end
 end
@@ -81,7 +81,7 @@ end
 function iteratorsModule:IterateOverRoomKnives(callback, ...)
     for _, entity in ipairs(Isaac.GetRoomEntities()) do
         if entity:ToKnife() then
-            callback(entity, ...)
+            callback(entity:ToKnife(), ...)
         end
     end
 end
@@ -92,7 +92,7 @@ end
 function iteratorsModule:IterateOverRoomBombs(callback, ...)
     for _, entity in ipairs(Isaac.GetRoomEntities()) do
         if entity:ToBomb() then
-            callback(entity, ...)
+            callback(entity:ToBomb(), ...)
         end
     end
 end
@@ -103,7 +103,7 @@ end
 function iteratorsModule:IterateOverRoomFamiliars(callback, ...)
     for _, entity in ipairs(Isaac.GetRoomEntities()) do
         if entity:ToFamiliar() then
-            callback(entity, ...)
+            callback(entity:ToFamiliar(), ...)
         end
     end
 end
@@ -114,7 +114,7 @@ end
 function iteratorsModule:IterateOverRoomPickups(callback, ...)
     for _, entity in ipairs(Isaac.GetRoomEntities()) do
         if entity:ToPickup() then
-            callback(entity, ...)
+            callback(entity:ToPickup(), ...)
         end
     end
 end

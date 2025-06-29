@@ -5,8 +5,6 @@ local ITEM_DISAPPEAR_EFFECT_OFFSET = Vector(0, -60)
 local GAVEL_VARIANT = Isaac.GetEntityVariantByName("Gavel")
 local GAVEL_SUBTYPE = Isaac.GetEntitySubTypeByName("Gavel")
 
-local COINS_ON_USE = 10
-
 ---@param collectibleHistory HistoryItem[]
 ---@return integer[]
 local function getValidCollectibles(collectibleHistory)
@@ -25,8 +23,6 @@ end
 ---@param rng RNG
 ---@param player EntityPlayer
 local function onActiveUse(_, _, rng, player)
-    player:AddCoins(COINS_ON_USE)
-
     local validCollectibles = getValidCollectibles(player:GetHistory():GetCollectiblesHistory())
 
     ::RollCollectible::

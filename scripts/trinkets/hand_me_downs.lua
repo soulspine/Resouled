@@ -4,7 +4,7 @@ if EID then
     EID:addTrinket(HAND_ME_DOWNS, "Familairs have a 10% chance to inherit your tear effects")
 end
 
-local EFFECT_APPLY_CHANCE = 0.1
+local EFFECT_APPLY_CHANCE = 0.5--0.1
 
 ---@param tear EntityTear
 local function postTearInit(_, tear)
@@ -13,9 +13,9 @@ local function postTearInit(_, tear)
         if player:HasTrinket(HAND_ME_DOWNS) then
             local randomNum = math.random()
             if randomNum < EFFECT_APPLY_CHANCE then
-                tear:AddTearFlags(player.TearFlags)
-                tear:SetDeadEyeIntensity(player:GetDeadEyeCharge())
-                tear:Update()
+                local newTear = player:FireTear(tear.Position, tear.Velocity, true, false, false, tear.SpawnerEntity)
+                newTear.CollisionDamage = tear.CollisionDamage
+                tear:Remove() -- remove the original tear
             end
         end
     end

@@ -104,26 +104,38 @@ local function onSoulPickupCollision(_, pickup, collider, low)
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onSoulPickupCollision, SOUL_PICKUP_VARIANT)
 
+---@param type integer
+---@param variant integer
+---@param subtype? integer
 local function makeLookupTableKey(type, variant, subtype)
-    return string.format("%d_%d_%d", type, variant, subtype)
+    if subtype then
+        return string.format("%d_%d_%d", type, variant, subtype)
+    else
+        return string.format("%d_%d", type, variant)
+    end
 end
 
 ---@param type EntityType
 ---@param variant integer
----@param subtype integer
+---@param subtype? integer
 ---@param soul ResouledSoul
 ---@param weight? integer -- default 1
 ---@param filter? function -- default nil
 function Resouled:AddNewBasicSoulSpawnRule(type, variant, subtype, soul, weight, filter)
     weight = weight or DEFAULT_WEIGHT
-    local key = makeLookupTableKey(type, variant, subtype)
+    local key
+    if subtype then
+        key = makeLookupTableKey(type, variant, subtype)
+    else
+        key = makeLookupTableKey(type, variant)
+    end
 
     if not basicSpawnLookupTable[key] then
         basicSpawnLookupTable[key] = {}
     end
 
     table.insert(
-        basicSpawnLookupTable[key], 
+        basicSpawnLookupTable[key],
         {
             Soul = soul,
             Weight = weight,
@@ -135,9 +147,23 @@ end
 ---@param npc EntityNPC
 local function basicSoulSpawnHandler(_, npc)
     local key = makeLookupTableKey(npc.Type, npc.Variant, npc.SubType)
+    local keyNoSubType = makeLookupTableKey(npc.Type, npc.Variant)
     local spawnRules = basicSpawnLookupTable[key]
+    local spawnRulesNoSubType = basicSpawnLookupTable[keyNoSubType]
     if spawnRules then
         for _, rule in ipairs(spawnRules) do
+
+            if rule.Filter and not rule.Filter(npc) then
+                goto continue -- skip this rule if the filter is not met
+            end
+
+            Resouled:TrySpawnSoulPickup(rule.Soul, npc.Position, rule.Weight)
+            ::continue::
+        end
+    end
+    
+    if spawnRulesNoSubType then
+        for _, rule in ipairs(spawnRulesNoSubType) do
 
             if rule.Filter and not rule.Filter(npc) then
                 goto continue -- skip this rule if the filter is not met

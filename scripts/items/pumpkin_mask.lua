@@ -9,13 +9,13 @@ local SOUND_ID = Isaac.GetSoundIdByName("Jumpscare")
 ---@param flags DamageFlag
 local function playerTakeDamage(_, entity, amount, flags)
     local player = entity:ToPlayer()
+    ---@diagnostic disable-next-line: need-check-nil
     if player:HasCollectible(PUMPKIN_MASK) then
-        ---@param npc EntityNPC
+        ItemOverlay.Show(Isaac.GetGiantBookIdByName("Pumpkin Mask"), 0, player)
+        SFXManager():Play(SOUND_ID)
         Resouled.Iterators:IterateOverRoomNpcs(function(npc)
             if npc:IsEnemy() and npc:IsActiveEnemy() and npc:IsVulnerableEnemy() then
                 npc:AddFear(EntityRef(player), FEAR_TIME)
-                ItemOverlay.Show(Isaac.GetGiantBookIdByName("Pumpkin Mask"), 0, player)
-                SFXManager():Play(SOUND_ID)
             end
         end)
     end

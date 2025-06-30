@@ -4,7 +4,7 @@ if EID then
     EID:addTrinket(HAND_ME_DOWNS, "Familairs have a 10% chance to inherit your tear effects")
 end
 
-local EFFECT_APPLY_CHANCE = 0.5--0.1
+local EFFECT_APPLY_CHANCE = 0.1
 
 ---@param tear EntityTear
 local function postTearInit(_, tear)

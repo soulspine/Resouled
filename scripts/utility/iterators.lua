@@ -3,7 +3,7 @@ local iteratorsModule = {}
 
 -- Iterates over all players in the game and calls the callback function with first argument being `player`.
 -- Passes all additional arguments to the callback function in the same order as they were passed to this function.
----@param callback function
+---@param callback fun(player: EntityPlayer, ...: any)
 function iteratorsModule:IterateOverPlayers(callback, ...)
     for i = 0, Game():GetNumPlayers() - 1 do
         local player = Isaac.GetPlayer(i)
@@ -13,7 +13,7 @@ end
 
 --- Iterates over all entities in the room and calls the callback function with first argument being `entity`.
 --- Passes all additional arguments to the callback function in the same order as they were passed to this function.
---- @param callback function
+--- @param callback fun(entity: Entity, ...: any)
 function iteratorsModule:IterateOverRoomEntities(callback, ...)
     for _, entity in ipairs(Isaac.GetRoomEntities()) do
         callback(entity, ...)
@@ -22,99 +22,108 @@ end
 
 --- Iterates over all npcs in the room and calls the callback function with first argument being `npc`.
 --- Passes all additional arguments to the callback function in the same order as they were passed to this function.
---- @param callback function
+--- @param callback fun(npc: EntityNPC, ...: any)
 function iteratorsModule:IterateOverRoomNpcs(callback, ...)
     for _, entity in ipairs(Isaac.GetRoomEntities()) do
-        if entity:ToNPC() then
-            callback(entity:ToNPC(), ...)
+        local npc = entity:ToNPC()
+        if npc then
+            callback(npc, ...)
         end
     end
 end
 
 --- Iterates over all effects in the room and calls the callback function with first argument being `effect`.
 --- Passes all additional arguments to the callback function in the same order as they were passed to this function.
---- @param callback function
+--- @param callback fun(effect: EntityEffect, ...: any)
 function iteratorsModule:IterateOverRoomEffects(callback, ...)
     for _, entity in ipairs(Isaac.GetRoomEntities()) do
-        if entity:ToEffect() then
-            callback(entity:ToEffect(), ...)
+        local effect = entity:ToEffect()
+        if effect then
+            callback(effect, ...)
         end
     end
 end
 
 --- Iterates over all tears in the room and calls the callback function with first argument being `tear`.
 --- Passes all additional arguments to the callback function in the same order as they were passed to this function.
---- @param callback function
+--- @param callback fun(tear: EntityTear, ...: any)
 function iteratorsModule:IterateOverRoomTears(callback, ...)
     for _, entity in ipairs(Isaac.GetRoomEntities()) do
-        if entity:ToTear() then
-            callback(entity:ToTear(), ...)
+        local tear = entity:ToTear()
+        if tear then
+            callback(tear, ...)
         end
     end
 end
 
 --- Iterates over all projectiles in the room and calls the callback function with first argument being `projectile`.
 --- Passes all additional arguments to the callback function in the same order as they were passed to this function.
---- @param callback function
+--- @param callback fun(projectile: EntityProjectile, ...: any)
 function iteratorsModule:IterateOverRoomProjectiles(callback, ...)
     for _, entity in ipairs(Isaac.GetRoomEntities()) do
-        if entity:ToProjectile() then
-            callback(entity:ToProjectile(), ...)
+        local projectile = entity:ToProjectile()
+        if projectile then
+            callback(projectile, ...)
         end
     end
 end
 
 --- Iterates over all lasers in the room and calls the callback function with first argument being `laser`.
 --- Passes all additional arguments to the callback function in the same order as they were passed to this function.
---- @param callback function
+--- @param callback fun(laser: EntityLaser, ...: any)
 function iteratorsModule:IterateOverRoomLasers(callback, ...)
     for _, entity in ipairs(Isaac.GetRoomEntities()) do
-        if entity:ToLaser() then
-            callback(entity:ToLaser(), ...)
+        local laser = entity:ToLaser()
+        if laser then
+            callback(laser, ...)
         end
     end
 end
 
 --- Iterates over all knives in the room and calls the callback function with first argument being `knife`.
 --- Passes all additional arguments to the callback function in the same order as they were passed to this function.
---- @param callback function
+--- @param callback fun(knife: EntityKnife, ...: any)
 function iteratorsModule:IterateOverRoomKnives(callback, ...)
     for _, entity in ipairs(Isaac.GetRoomEntities()) do
-        if entity:ToKnife() then
-            callback(entity:ToKnife(), ...)
+        local knife = entity:ToKnife()
+        if knife then
+            callback(knife, ...)
         end
     end
 end
 
 --- Iterates over all bombs in the room and calls the callback function with first argument being `bomb`.
 --- Passes all additional arguments to the callback function in the same order as they were passed to this function.
---- @param callback function
+--- @param callback fun(bomb: EntityBomb, ...: any)
 function iteratorsModule:IterateOverRoomBombs(callback, ...)
     for _, entity in ipairs(Isaac.GetRoomEntities()) do
-        if entity:ToBomb() then
-            callback(entity:ToBomb(), ...)
+        local bomb = entity:ToBomb()
+        if bomb then
+            callback(bomb, ...)
         end
     end
 end
 
 --- Iterates over all familiars in the room and calls the callback function with first argument being `familiar`.
 --- Passes all additional arguments to the callback function in the same order as they were passed to this function.
---- @param callback function
+--- @param callback fun(familiar: EntityFamiliar, ...: any)
 function iteratorsModule:IterateOverRoomFamiliars(callback, ...)
     for _, entity in ipairs(Isaac.GetRoomEntities()) do
-        if entity:ToFamiliar() then
-            callback(entity:ToFamiliar(), ...)
+        local familiar = entity:ToFamiliar()
+        if familiar then
+            callback(familiar, ...)
         end
     end
 end
 
 --- Iterates over all pickups in the room and calls the callback function with first argument being `pickup`.
 --- Passes all additional arguments to the callback function in the same order as they were passed to this function.
---- @param callback function
+--- @param callback fun(pickup: EntityPickup, ...: any)
 function iteratorsModule:IterateOverRoomPickups(callback, ...)
     for _, entity in ipairs(Isaac.GetRoomEntities()) do
-        if entity:ToPickup() then
-            callback(entity:ToPickup(), ...)
+        local pickup = entity:ToPickup()
+        if pickup then
+            callback(pickup, ...)
         end
     end
 end
@@ -127,7 +136,7 @@ function iteratorsModule:IterateOverRooms(callback, ...)
     end
 end
 
----@param callback function
+---@param callback fun(gridEntity: GridEntity, ...: any)
 function iteratorsModule:IterateOverGrid(callback, ...)
     local room = Game():GetRoom()
     for i = 0, room:GetGridSize() - 1 do

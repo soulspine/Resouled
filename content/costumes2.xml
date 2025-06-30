@@ -2,4 +2,5 @@
     <costume id="2" anm2path="cheese_grater.anm2" type="passive" priority="0"/>
     <costume id="8" anm2path="soulbond.anm2" type="passive" priority="0"/>
     <costume id="22" anm2path="cursed_soul.anm2" type="passive" priority="1"/>
+    <costume anm2path="pumpkin_mask.anm2" type="none" priority="999"/>
 </costumes>

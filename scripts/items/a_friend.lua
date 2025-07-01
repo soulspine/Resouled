@@ -200,23 +200,18 @@ local function familiarUpdate(_, familiar)
         end
 
         --WALKING ANIMATION HANDLING END
-
+        local player = Resouled:TryFindPlayerSpawner(familiar)
+        
         local enemyPresent = false
         ---@type EntityRef | nil
         local closestPickup = nil
         ---@type EntityNPC | nil
-        local closestEnemy = nil
+        local closestEnemy = Resouled:TryFindNearestEnemyByFindInRadius(familiar)
         ---@param entity Entity
         Resouled.Iterators:IterateOverRoomEntities(function(entity)
-            local player = Resouled:TryFindPlayerSpawner(familiar)
             local npc = entity:ToNPC()
             if npc and npc:IsEnemy() and npc:IsActiveEnemy() and npc:IsVulnerableEnemy() then
                 enemyPresent = true
-                if not closestEnemy then
-                    closestEnemy = npc
-                elseif npc.Position:Distance(familiar.Position) < closestEnemy.Position:Distance(familiar.Position) then
-                    closestEnemy = npc
-                end
             end
             
             if entity.Type == EntityType.ENTITY_FAMILIAR and entity.Variant == FRIEND_VARIANT and entity.SubType == FRIEND_SUBTYPE and entity.Position:Distance(familiar.Position) < OTHER_FRIEND_AVOID_RANGE then
@@ -331,7 +326,6 @@ local function familiarUpdate(_, familiar)
                     if pathfinderCheck then
                         ---@type EntityTear
                         local tear = Game():Spawn(EntityType.ENTITY_TEAR, TearVariant.METALLIC, familiar.Position, (data.Resouled_Target.Position - familiar.Position):Normalized() * TEAR_SPEED, familiar, 0, familiar.InitSeed):ToTear()
-                        local player = Resouled:TryFindPlayerSpawner(familiar)
                         if tear and player and player:HasTrinket(TrinketType.TRINKET_BABY_BENDER) then
                             tear:AddTearFlags(TearFlags.TEAR_HOMING)
                         end
@@ -373,8 +367,6 @@ local function familiarUpdate(_, familiar)
                         end
                     end
 
-                    local player = Resouled:TryFindPlayerSpawner(familiar)
-
                     if player and player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) and gridEntity:GetType() == GridEntityType.GRID_ROCKT and gridEntity.State == 1 then
                         if not closestTintedRock then
                             closestTintedRock = gridEntity
@@ -409,7 +401,6 @@ local function familiarUpdate(_, familiar)
                             if room:CheckLine(familiar.Position, data.Resouled_GridTarget.Position + (familiar.Position - data.Resouled_GridTarget.Position):Normalized() * 35, LineCheckMode.PROJECTILE) then
                                 ---@type EntityTear
                                 local tear = Game():Spawn(EntityType.ENTITY_TEAR, TearVariant.METALLIC, familiar.Position, (data.Resouled_GridTarget.Position - familiar.Position):Normalized() * TEAR_SPEED, familiar, 0, familiar.InitSeed):ToTear()
-                                local player = Resouled:TryFindPlayerSpawner(familiar)
                                 if tear and player and player:HasTrinket(TrinketType.TRINKET_BABY_BENDER) then
                                     tear:AddTearFlags(TearFlags.TEAR_HOMING)
                                 end
@@ -448,7 +439,6 @@ local function familiarUpdate(_, familiar)
                     pathfinder:FindGridPath(pickup.Position, WALK_SPEED, 1, false)
                     
                     if familiar.Position:Distance(pickup.Position) < PICKUP_PICK_UP_RANGE then
-                        local player = Resouled:TryFindPlayerSpawner(familiar)
                         if player then
                             local variant = pickup.Variant
                             local subType = pickup.SubType

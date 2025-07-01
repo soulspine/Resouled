@@ -415,3 +415,65 @@ function Resouled:TryFindSpecificSpawner(entity, searchedType, searchedVariant, 
     end
     return nil
 end
+
+---@param entity Entity
+---@param step? integer
+---@return EntityNPC | nil
+function Resouled:TryFindNearestEnemyByFindInRadius(entity, step) -- Use 45 for most optimization while being accurate
+    local STEP
+    if step then
+        if step <= 0 then
+            return nil
+        end
+        STEP = step
+    else
+        STEP = 45
+    end
+    local x = 0
+    local nearestEnemy = nil
+    local bottomRightPos = Game():GetRoom():GetBottomRightPos()
+    local highestX = math.abs(bottomRightPos.X) + math.abs(bottomRightPos.Y)
+
+    while x <= highestX and not nearestEnemy do
+        local entities = Isaac.FindInRadius(entity.Position, x)
+        if #entities > 0 then
+            for i = 1, #entities do
+                ---@type Entity
+                local entity2 = entities[i]
+                if entity2 and entity2.Index ~= entity.Index and entity2:ToNPC() and entity2:IsEnemy() and entity2:IsActiveEnemy() and entity2:IsVulnerableEnemy() then
+                    if not nearestEnemy then
+                        nearestEnemy = entity2:ToNPC()
+                    else
+                        if nearestEnemy.Position:Distance(entity.Position) > entity2.Position:Distance(entity.Position) then
+                            nearestEnemy = entity2:ToNPC()
+                        end
+                    end
+                end
+            end
+        end
+        x = x + STEP
+    end
+
+    return nearestEnemy
+end
+
+---@param entity Entity
+---@return EntityNPC | nil
+function Resouled:TryFindNearestEnemyByIteration(entity) -- Way less optimized than the option above but the most accurate
+    local nearestEnemy = nil
+
+    ---@param npc EntityNPC
+    Resouled.Iterators:IterateOverRoomNpcs(function(npc)
+        if npc.Index ~= entity.Index and npc:IsEnemy() and npc:IsActiveEnemy() and npc:IsVulnerableEnemy() then
+            if not nearestEnemy then
+                nearestEnemy = npc
+            else
+                if nearestEnemy.Position:Distance(entity.Position) > npc.Position:Distance(entity.Position) then
+                    nearestEnemy = npc
+                end
+            end
+        end
+    end)
+
+    return nearestEnemy
+end

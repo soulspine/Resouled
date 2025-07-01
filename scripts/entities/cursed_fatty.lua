@@ -18,7 +18,7 @@ local HALO_SUBTYPE = 3
 local HALO_OFFSET = Vector(0, -15)
 local HALO_SCALE = Vector(1.5, 1.5)
 
-local CURSED_ENEMY_MORPH_CHANCE = 0.1
+local CURSED_ENEMY_MORPH_CHANCE = Resouled.Stats.CursedEnemyMorphChance
 
 ---@param npc EntityNPC
 local function onNPCDeath(_, npc)

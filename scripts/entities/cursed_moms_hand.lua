@@ -1,5 +1,6 @@
 local CURSED_MOMS_HAND_TYPE = EntityType.ENTITY_MOMS_HAND
 local CURSED_MOMS_HAND_VARIANT = Isaac.GetEntityVariantByName("Cursed Mom's Hand")
+local CURSED_MOMS_HAND_SUBTYPE = Isaac.GetEntitySubTypeByName("Cursed Mom's Hand")
 
 local PULLING_DURATION = 180
 local PULLING_RADIUS = 300
@@ -24,8 +25,13 @@ local GRAB_TELEPORT_ROOM_TYPE_WHITELIST = {
     [RoomType.ROOM_SACRIFICE] = true,
 }
 
+local CURSED_ENEMY_MORPH_CHANCE = Resouled.Stats.CursedEnemyMorphChance
+
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
+    if Game():GetLevel():GetCurses() > 0 then
+        Resouled:TryEnemyMorph(npc, CURSED_ENEMY_MORPH_CHANCE, CURSED_MOMS_HAND_TYPE, CURSED_MOMS_HAND_VARIANT, CURSED_MOMS_HAND_SUBTYPE)
+    end
     if npc.Variant == CURSED_MOMS_HAND_VARIANT then
         npc.Mass = math.huge
         npc:GetData().ResouledCursedMomsHand = {

@@ -1,5 +1,5 @@
 <AnimatedActor>
-	<Info CreatedBy="robot" CreatedOn="27.02.2025 19:42:09" Version="104" Fps="30"/>
+	<Info CreatedBy="robot" CreatedOn="7/1/2025 2:34:34 PM" Version="104" Fps="30"/>
 	<Content>
 		<Spritesheets>
 			<Spritesheet Path="monsters\cursed_keeper_head.png" Id="0"/>
@@ -11,9 +11,10 @@
 			<Null Name="OverlayEffect" Id="0" ShowRect="false"/>
 		</Nulls>
 		<Events>
-			<Event Name="Shoot" Id="0"/>
+			<Event Name="Shoot1" Id="0"/>
 			<Event Name="Jump" Id="1"/>
 			<Event Name="Land" Id="2"/>
+			<Event Name="Shoot2" Id="3"/>
 		</Events>
 	</Content>
 	<Animations DefaultAnimation="Down">
@@ -127,7 +128,7 @@
 				</NullAnimation>
 			</NullAnimations>
 			<Triggers>
-				<Trigger EventId="1" AtFrame="5"/>
+				<Trigger EventId="0" AtFrame="5"/>
 				<Trigger EventId="2" AtFrame="19"/>
 			</Triggers>
 		</Animation>
@@ -205,6 +206,7 @@
 			</NullAnimations>
 			<Triggers>
 				<Trigger EventId="0" AtFrame="5"/>
+				<Trigger EventId="3" AtFrame="12"/>
 			</Triggers>
 		</Animation>
 		<Animation Name="ShootUp" FrameNum="20" Loop="false">

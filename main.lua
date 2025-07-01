@@ -39,6 +39,10 @@ if REPENTOGON and MinimapAPI then
     ---@type ProceduralMaxChargeModule
     Resouled.ProceduralMaxCharge = include("scripts.utility.procedural_max_charge")
 
+    -- STATS
+    Resouled.Stats = {
+        CursedEnemyMorphChance = 0.1
+    }
     -- ALL MODULES UNIQUE TO RESOULED
 
     include("scripts.utility.resouled.buffs")

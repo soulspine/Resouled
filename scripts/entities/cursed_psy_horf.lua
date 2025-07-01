@@ -1,11 +1,6 @@
 local CURSED_PSY_HORF_VARIANT = Isaac.GetEntityVariantByName("Cursed Psy Horf")
 local CURSED_PSY_HORF_TYPE = Isaac.GetEntityTypeByName("Cursed Psy Horf")
-local HALO_SUBTYPE = 3
-
-local HALO_OFFSET = Vector(0, -15)
-local HALO_SCALE = Vector(0.5, 0.5)
-
-local ACTIVATION_DISTANCE = 110
+local CURSED_PSY_HORF_SUBTYPE = Isaac.GetEntitySubTypeByName("Cursed Psy Horf")
 
 local CURSED_ENEMY_MORPH_CHANCE = 0.1
 
@@ -14,11 +9,13 @@ local SHOOT = "ResouledShoot"
 local PROJECTILE_PARAMS = ProjectileParams()
 local PROJECTILE_FLAGS = (ProjectileFlags.SMART)
 
+local REFLECTED_BULLET_SPEED = 2
+
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
     --Try to turn enemy into a cursed enemy
     if Game():GetLevel():GetCurses() > 0 then
-        Resouled:TryEnemyMorph(npc, CURSED_ENEMY_MORPH_CHANCE, CURSED_PSY_HORF_TYPE, CURSED_PSY_HORF_VARIANT, 0)
+        Resouled:TryEnemyMorph(npc, CURSED_ENEMY_MORPH_CHANCE, CURSED_PSY_HORF_TYPE, CURSED_PSY_HORF_VARIANT, CURSED_PSY_HORF_SUBTYPE)
     end
     
 
@@ -27,7 +24,6 @@ local function onNpcInit(_, npc)
         local data = npc:GetData()
         PROJECTILE_PARAMS.BulletFlags = PROJECTILE_FLAGS
         data.ProjectileParams = PROJECTILE_PARAMS
-        Resouled.NpcHalo:AddHaloToNpc(npc, HALO_SUBTYPE, HALO_SCALE, HALO_OFFSET)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CURSED_PSY_HORF_TYPE)
@@ -44,16 +40,13 @@ local function preNpcUpdate(_, npc)
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, preNpcUpdate, CURSED_PSY_HORF_TYPE)
 
----@param type CollectibleType
----@param rng RNG
----@param player EntityPlayer
----@param activeSlot ActiveSlot
-local function onActiveItemUse(_, type, rng, player, activeSlot)
-    ---@param entity Entity
-    Resouled.Iterators:IterateOverRoomEntities(function(entity)
-        if entity.Type == CURSED_PSY_HORF_TYPE and entity.Variant == CURSED_PSY_HORF_VARIANT then 
-            player:AddControlsCooldown(150)
-        end
-    end)
+---@param entity Entity
+---@param flags DamageFlag
+---@param source EntityRef
+---@param type EntityType
+local function onEnemyHit(_, entity, amount, flags, source, frames, type)
+    if entity.Variant == CURSED_PSY_HORF_VARIANT and not entity:IsDead() and source.Entity then
+        entity:ToNPC():FireProjectiles(entity.Position, -source.Entity.Velocity * REFLECTED_BULLET_SPEED, 0, PROJECTILE_PARAMS)
+    end
 end
-Resouled:AddCallback(ModCallbacks.MC_PRE_USE_ITEM, onActiveItemUse)
+Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, onEnemyHit, CURSED_PSY_HORF_TYPE)

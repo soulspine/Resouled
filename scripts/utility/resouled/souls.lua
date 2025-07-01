@@ -1,3 +1,4 @@
+local game = Game()
 local SOUL_PICKUP_VARIANT = Isaac.GetEntityVariantByName("Soul Pickup")
 
 local DEFAULT_WEIGHT = 1
@@ -10,9 +11,10 @@ font:Load("font/luaminioutlined.fnt")
 local cachedSoulsNum = 0
 
 local function hudRenderer()
-    local screenWidth = Isaac.GetScreenWidth()
-    font:DrawString(string.format("(placeholder) Souls Num: %d", cachedSoulsNum), screenWidth / 2, 20, KColor(1,1,1,1), nil, true)
-
+    if game:GetHUD():IsVisible() then
+        local screenWidth = Isaac.GetScreenWidth()
+        font:DrawString(string.format("(placeholder) Souls Num: %d", cachedSoulsNum), screenWidth / 2, 20, KColor(1,1,1,1), nil, true)
+    end
 end
 Resouled:AddCallback(ModCallbacks.MC_HUD_RENDER, hudRenderer)
 
@@ -67,7 +69,7 @@ function Resouled:TrySpawnSoulPickup(soul, position, weight)
     runSave.Souls and
     not runSave.Souls.Spawned[tostring(soul)] and
     not Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_SOULLESS) then
-        local pickup = Game():Spawn(EntityType.ENTITY_PICKUP, SOUL_PICKUP_VARIANT, position, Vector.Zero, nil, 0, Resouled:NewSeed())
+        local pickup = game:Spawn(EntityType.ENTITY_PICKUP, SOUL_PICKUP_VARIANT, position, Vector.Zero, nil, 0, Resouled:NewSeed())
         if weight and weight ~= DEFAULT_WEIGHT then
             local pickupSave = SAVE_MANAGER.GetRoomFloorSave(pickup)
             pickupSave.SoulWeight = weight

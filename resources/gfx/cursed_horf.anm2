@@ -1,5 +1,5 @@
 <AnimatedActor>
-	<Info CreatedBy="robot" CreatedOn="28.02.2025 09:32:36" Version="104" Fps="30"/>
+	<Info CreatedBy="robot" CreatedOn="7/1/2025 2:18:15 PM" Version="104" Fps="30"/>
 	<Content>
 		<Spritesheets>
 			<Spritesheet Path="monsters\cursed_horf.png" Id="0"/>
@@ -90,6 +90,10 @@
 			</NullAnimations>
 			<Triggers>
 				<Trigger EventId="0" AtFrame="4"/>
+				<Trigger EventId="0" AtFrame="6"/>
+				<Trigger EventId="0" AtFrame="8"/>
+				<Trigger EventId="0" AtFrame="10"/>
+				<Trigger EventId="0" AtFrame="12"/>
 			</Triggers>
 		</Animation>
 	</Animations>

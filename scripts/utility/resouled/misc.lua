@@ -208,7 +208,6 @@ end
 ---@param quality? integer
 ---@return integer
 function Resouled:GetRandomItemFromPool(pool, rng, quality)
-    local game = Game()
     local itemsFromTargetPool = Game():GetItemPool():GetCollectiblesFromPool(pool)
     local validItems = {}
     for i = 1, #itemsFromTargetPool do
@@ -382,4 +381,37 @@ end
 function Resouled:SpawnItemDisappearEffect(item, position)
     local effect = Game():Spawn(EntityType.ENTITY_EFFECT, Isaac.GetEntityVariantByName("Disappear"), position, Vector.Zero, nil, Isaac.GetEntitySubTypeByName("Disappear"), Game():GetRoom():GetAwardSeed())
     effect:GetSprite():ReplaceSpritesheet(0, Isaac.GetItemConfig():GetCollectible(item).GfxFileName, true)
+end
+
+---@param entity Entity
+---@param searchedType integer
+---@param searchedVariant? integer
+---@param searchedSubType? integer
+function Resouled:TryFindSpecificSpawner(entity, searchedType, searchedVariant, searchedSubType)
+    if searchedType and not searchedVariant and not searchedSubType then
+        while entity ~= nil do
+            if entity.Type == searchedType then
+                return entity
+            else
+                entity = entity.SpawnerEntity
+            end
+        end
+    elseif searchedType and searchedVariant and not searchedSubType then
+        while entity ~= nil do
+            if entity.Type == searchedType and entity.Variant == searchedVariant then
+                return entity
+            else
+                entity = entity.SpawnerEntity
+            end
+        end
+    elseif searchedType and searchedVariant and searchedSubType then
+        while entity ~= nil do
+            if entity.Type == searchedType and entity.Variant == searchedVariant and entity.SubType == searchedSubType then
+                return entity
+            else
+                entity = entity.SpawnerEntity
+            end
+        end
+    end
+    return nil
 end

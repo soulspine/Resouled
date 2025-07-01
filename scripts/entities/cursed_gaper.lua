@@ -2,7 +2,7 @@ local CURSED_GAPER_TYPE = Isaac.GetEntityTypeByName("Cursed Gaper")
 local CURSED_GAPER_VARIANT = Isaac.GetEntityVariantByName("Cursed Gaper")
 local CURSED_GAPER_SUBTYPE = Isaac.GetEntitySubTypeByName("Cursed Gaper")
 
-local CURSED_ENEMY_MORPH_CHANCE = 0.1
+local CURSED_ENEMY_MORPH_CHANCE = Resouled.Stats.CursedEnemyMorphChance
 
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)

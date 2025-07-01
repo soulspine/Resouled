@@ -18,14 +18,13 @@ local subtypeWhitelist = {
 
 local AMOUNT = 20
 local START_OFFSET = 10
-local MIN_OFFSET_LOSS = 75
-local MAX_OFFSET_LOSS = 0
-local WEIGHT = 1.5
-local BOUNCINESS = 0.2
-local SLIPPERINESS = 0
-local SIZE = 1
-local MAX_SIZE_VARIETY = 0
-local SPEED = 25
+local WEIGHT = 0.8
+local BOUNCINESS = 0.3
+local FRICTION = 0.25
+local MIN_SPEED = 17
+local MAX_SPEED = 25
+local MIN_SPEED_UPWARDS = 10
+local MAX_SPEED_UPWARDS = 20
 
 ---@param tnt EntityPickup
 ---@param flags TearFlags
@@ -54,9 +53,13 @@ local EXPLODE = function(tnt, flags)
     end
         
     if tnt.Velocity:LengthSquared() < 0.01 then
-        Resouled:SpawnRealisticParticles(GridCollisionClass.COLLISION_SOLID, tnt.Position, AMOUNT + math.random(-5, 5), START_OFFSET, MIN_OFFSET_LOSS, MAX_OFFSET_LOSS, WEIGHT, BOUNCINESS, SLIPPERINESS, SIZE, MAX_SIZE_VARIETY, SPEED, nil, nil, false, EFFECT_VARIANT, subtype)
+        for _ = 1, AMOUNT do
+            Resouled:SpawnPrettyParticles(EFFECT_VARIANT, EFFECT_SUBTYPE, math.random(MIN_SPEED, MAX_SPEED), math.random(MIN_SPEED_UPWARDS, MAX_SPEED_UPWARDS), -25, 90, tnt.Position, START_OFFSET, nil, nil, WEIGHT, BOUNCINESS, FRICTION, GridCollisionClass.COLLISION_SOLID)
+        end
     else
-        Resouled:SpawnRealisticParticles(GridCollisionClass.COLLISION_SOLID, tnt.Position, AMOUNT + math.random(-5, 5), START_OFFSET, MIN_OFFSET_LOSS, MAX_OFFSET_LOSS, WEIGHT, BOUNCINESS, SLIPPERINESS, SIZE, MAX_SIZE_VARIETY, SPEED + tnt.Velocity:Length(), tnt.Velocity:GetAngleDegrees(), 45 - math.floor(tnt.Velocity:Length()/2), false, EFFECT_VARIANT, subtype)
+        for _ = 1, AMOUNT do
+            Resouled:SpawnPrettyParticles(EFFECT_VARIANT, EFFECT_SUBTYPE, math.random(MIN_SPEED, MAX_SPEED) + tnt.Velocity:Length(), math.random(MIN_SPEED_UPWARDS, MAX_SPEED_UPWARDS), -25, 90, tnt.Position, START_OFFSET, tnt.Velocity:GetAngleDegrees(), 45 - math.floor(tnt.Velocity:Length()/2), WEIGHT, BOUNCINESS, FRICTION, GridCollisionClass.COLLISION_SOLID)
+        end
     end
 end
 

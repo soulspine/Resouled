@@ -9,15 +9,19 @@ local EFFECT_VARIANT = Isaac.GetEntityVariantByName("Chain Particle")
 local EFFECT_SUBTYPE = Isaac.GetEntitySubTypeByName("Chain Particle")
 local CHAIN_PARTICLES_SPAWN_CHANCE_ON_BREAK_PER_POINT = 0.33
 local SPAWN_HEIGHT = 15
-local MAX_HEIGHT_ROTATION = 45
-local MIN_HEIGHT_ROTATIOn = -5
-local WEIGHT = 1.1
+local SPEED_UPWARD = 10
+local WEIGHT = 0.75
 local BOUNCINESS = 0.5
-local SLIPPERINESS = 1
-local SIZE = 1
-local MAX_SIZE_VARIETY = 20
-local SPEED_MAX = 10
-local SPEED_MIN = 5
+local FRICTION = 0.75
+local SPEED_MAX = 20
+local SPEED_MIN = 10
+
+---@param position Vector
+local function spawnChainParticles(position)
+    for _ = 1, math.random(2, 6) do
+        Resouled:SpawnPrettyParticles(EFFECT_VARIANT, EFFECT_SUBTYPE, math.random(SPEED_MIN, SPEED_MAX), SPEED_UPWARD, 0, 90, position, SPAWN_HEIGHT, nil, nil, WEIGHT, BOUNCINESS, FRICTION, GridCollisionClass.COLLISION_SOLID)
+    end
+end
 
 local PITCH = 3
 
@@ -78,18 +82,14 @@ local function destroyBond(entity)
     while distance - dirVectorLength > dirVectorLength do
         local randomNum = math.random()
         if randomNum < CHAIN_PARTICLES_SPAWN_CHANCE_ON_BREAK_PER_POINT then
-            Resouled:SpawnRealisticParticles(GridCollisionClass.COLLISION_SOLID, pointPos, math.random(1, 3), SPAWN_HEIGHT,
-            MAX_HEIGHT_ROTATION, MIN_HEIGHT_ROTATIOn, WEIGHT, BOUNCINESS, SLIPPERINESS, SIZE, MAX_SIZE_VARIETY, math.random(SPEED_MIN, SPEED_MAX), nil, nil, false, EFFECT_VARIANT, EFFECT_SUBTYPE)
+            spawnChainParticles(pointPos)
         end
             
         pointPos = pointPos + dirVector
         distance = distance - dirVectorLength
     end
 
-    Resouled:SpawnRealisticParticles(GridCollisionClass.COLLISION_SOLID, currentPos, math.random(2, 6), SPAWN_HEIGHT,
-    MAX_HEIGHT_ROTATION, MIN_HEIGHT_ROTATIOn, WEIGHT, BOUNCINESS, SLIPPERINESS, SIZE, MAX_SIZE_VARIETY, math.random(SPEED_MIN, SPEED_MAX), nil, nil, false, EFFECT_VARIANT, EFFECT_SUBTYPE)
-    Resouled:SpawnRealisticParticles(GridCollisionClass.COLLISION_SOLID, otherPos, math.random(2, 6), SPAWN_HEIGHT,
-    MAX_HEIGHT_ROTATION, MIN_HEIGHT_ROTATIOn, WEIGHT, BOUNCINESS, SLIPPERINESS, SIZE, MAX_SIZE_VARIETY, math.random(SPEED_MIN, SPEED_MAX), nil, nil, false, EFFECT_VARIANT, EFFECT_SUBTYPE)
+    spawnChainParticles(currentPos) spawnChainParticles(otherPos)
     SFXManager():Play(SoundEffect.SOUND_CHAIN_BREAK, nil, nil, nil, PITCH)
 
     data.ResouledSoulbond = nil

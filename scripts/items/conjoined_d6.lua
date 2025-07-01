@@ -38,12 +38,19 @@ local function onItemUse(_, collectibleType, rng, player, useFlags, activeSlot)
     if collectibleType == CONJOINED_D6 then
         local RunSave = SAVE_MANAGER.GetRunSave()
 
+        local indexKey = tostring(player:GetPlayerIndex())
+        local formKey = tostring(player:GetCollectibleRNG(CONJOINED_D6):GetSeed())
+
         if not RunSave.ResouledCD6Multiplier then
             RunSave.ResouledCD6Multiplier = {}
         end
 
-        if not RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())] then
-            RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())] = CONJOINED_CD6_BASE_MULTIPLIER
+        if not RunSave.ResouledCD6Multiplier[indexKey] then
+            RunSave.ResouledCD6Multiplier[indexKey] = {}
+        end
+
+        if not RunSave.ResouledCD6Multiplier[indexKey][formKey] then
+            RunSave.ResouledCD6Multiplier[indexKey][formKey] = CONJOINED_CD6_BASE_MULTIPLIER
         end
 
         local data = player:GetData()
@@ -60,16 +67,15 @@ local function onItemUse(_, collectibleType, rng, player, useFlags, activeSlot)
         for i = 1, #data.ResouledCD6NewItems do
             local qualityDifference = math.abs(Isaac.GetItemConfig():GetCollectible(data.ResouledCD6NewItems[i]).Quality - Isaac.GetItemConfig():GetCollectible(data.ResouledCD6OldItems[i]).Quality)
             if Isaac.GetItemConfig():GetCollectible(data.ResouledCD6NewItems[i]).Quality < Isaac.GetItemConfig():GetCollectible(data.ResouledCD6OldItems[i]).Quality then
-                RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())] = (RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())] + ON_USE_MULTIPLIER_GAIN * qualityDifference)
+                RunSave.ResouledCD6Multiplier[indexKey][formKey] = (RunSave.ResouledCD6Multiplier[indexKey][formKey] + ON_USE_MULTIPLIER_GAIN * qualityDifference)
             end
             if Isaac.GetItemConfig():GetCollectible(data.ResouledCD6NewItems[i]).Quality > Isaac.GetItemConfig():GetCollectible(data.ResouledCD6OldItems[i]).Quality then
-                RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())] = (RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())] - ON_USE_MULTIPLIER_LOSS * qualityDifference)
+                RunSave.ResouledCD6Multiplier[indexKey][formKey] = (RunSave.ResouledCD6Multiplier[indexKey][formKey] - ON_USE_MULTIPLIER_LOSS * qualityDifference)
             end
             player:AddCacheFlags(CacheFlag.CACHE_ALL)
         end
         data.ResouledCD6NewItems = nil
         data.ResouledCD6OldItems = nil
-        print(RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())])
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onItemUse)
@@ -78,24 +84,26 @@ Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onItemUse)
 ---@param cacheFlags CacheFlag
 local function onCacheEval(_, player, cacheFlags)
     local RunSave = SAVE_MANAGER.GetRunSave()
-    local data = player:GetData()
 
     if RunSave.ResouledCD6Multiplier == nil then
         return
     end
 
-    if RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())] then
+    local indexKey = tostring(player:GetPlayerIndex())
+    local formKey = tostring(player:GetCollectibleRNG(CONJOINED_D6):GetSeed())
+
+    if RunSave.ResouledCD6Multiplier[indexKey] and RunSave.ResouledCD6Multiplier[indexKey][formKey] then
         if cacheFlags == CacheFlag.CACHE_DAMAGE then
-            player.Damage = player.Damage * RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())]
+            player.Damage = player.Damage * RunSave.ResouledCD6Multiplier[indexKey][formKey]
         end
         if cacheFlags == CacheFlag.CACHE_FIREDELAY then
-            player.MaxFireDelay = player.MaxFireDelay / RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())]
+            player.MaxFireDelay = player.MaxFireDelay / RunSave.ResouledCD6Multiplier[indexKey][formKey]
         end
         if cacheFlags == CacheFlag.CACHE_SPEED then
-            player.MoveSpeed = player.MoveSpeed * RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())]
+            player.MoveSpeed = player.MoveSpeed * RunSave.ResouledCD6Multiplier[indexKey][formKey]
         end
         if cacheFlags == CacheFlag.CACHE_RANGE then
-            player.TearRange = player.TearRange * RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())]
+            player.TearRange = player.TearRange * RunSave.ResouledCD6Multiplier[indexKey][formKey]
         end
     end
 end
@@ -109,8 +117,11 @@ local function postPlayerInit(_, player)
     if RunSave.ResouledCD6Multiplier == nil then
         return
     end
+    
+    local indexKey = tostring(player:GetPlayerIndex())
+    local formKey = tostring(player:GetCollectibleRNG(CONJOINED_D6):GetSeed())
 
-    if RunSave.ResouledCD6Multiplier[tostring(player:GetPlayerIndex())] then
+    if RunSave.ResouledCD6Multiplier[indexKey] and RunSave.ResouledCD6Multiplier[indexKey][formKey] then
         player:AddCacheFlags(CacheFlag.CACHE_ALL)
     end
 end

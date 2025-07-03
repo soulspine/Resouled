@@ -461,3 +461,13 @@ function Resouled:SpawnPaperGore(position, amount)
         Resouled:SpawnPrettyParticles(Isaac.GetEntityVariantByName("Paper Gore Particle"), Isaac.GetEntitySubTypeByName("Paper Gore Particle"), math.random(7, 15), math.random(8, 12), 15, 90, position, 15, nil, nil, weight, bounciness, friction, GridCollisionClass.COLLISION_SOLID)
     end
 end
+
+---@param player EntityPlayer
+---@return boolean
+function Resouled:IsShooting(player)
+    local input = player:GetShootingInput()
+    if (input.X ~= 0 or input.Y ~= 0) or (input == Vector(0, 0) and player:AreOpposingShootDirectionsPressed()) then
+        return true
+    end
+    return false
+end

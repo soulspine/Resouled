@@ -152,3 +152,11 @@ local function onEffectUpdate(_, effect)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, onEffectUpdate)
+
+---@param pickup EntityPickup
+local function prePickupMorph(_, pickup)
+    if pickup:GetData().ResouledCeremonialBladeCancelCollision then
+        return false
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_MORPH, prePickupMorph)

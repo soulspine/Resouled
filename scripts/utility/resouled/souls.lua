@@ -1,5 +1,6 @@
 local game = Game()
-local SOUL_PICKUP_VARIANT = Isaac.GetEntityVariantByName("Soul Pickup")
+local SOUL_PICKUP_VARIANT = Isaac.GetEntityVariantByName("Soul")
+local SOUL_PICKUP_SUBTYPE = Isaac.GetEntitySubTypeByName("Soul")
 
 local DEFAULT_WEIGHT = 1
 
@@ -69,7 +70,7 @@ function Resouled:TrySpawnSoulPickup(soul, position, weight)
     runSave.Souls and
     not runSave.Souls.Spawned[tostring(soul)] and
     not Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_SOULLESS) then
-        local pickup = game:Spawn(EntityType.ENTITY_PICKUP, SOUL_PICKUP_VARIANT, position, Vector.Zero, nil, 0, Resouled:NewSeed())
+        local pickup = game:Spawn(EntityType.ENTITY_PICKUP, SOUL_PICKUP_VARIANT, position, Vector.Zero, nil, SOUL_PICKUP_SUBTYPE, Resouled:NewSeed())
         if weight and weight ~= DEFAULT_WEIGHT then
             local pickupSave = SAVE_MANAGER.GetRoomFloorSave(pickup)
             pickupSave.SoulWeight = weight
@@ -83,7 +84,8 @@ end
 
 ---@param pickup EntityPickup
 local function onSoulPickupInit(_, pickup)
-    pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
+    pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
+    pickup.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
     pickup:GetSprite():Play("Idle", true)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onSoulPickupInit, SOUL_PICKUP_VARIANT)
@@ -92,16 +94,22 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onSoulPickupInit, SOUL_PI
 ---@param collider Entity
 ---@param low boolean
 local function onSoulPickupCollision(_, pickup, collider, low)
-    if collider.Type == EntityType.ENTITY_PLAYER then
-        local runSave = SAVE_MANAGER.GetRunSave()
-        if runSave.Souls then
-            local pickupSave = SAVE_MANAGER.GetRoomFloorSave(pickup)
-            local weight = pickupSave.SoulWeight or DEFAULT_WEIGHT
-            runSave.Souls.Possessed = runSave.Souls.Possessed + weight
-            cachedSoulsNum = runSave.Souls.Possessed
+    if pickup.SubType == SOUL_PICKUP_SUBTYPE then
+        if collider.Type == EntityType.ENTITY_PLAYER then
+            local runSave = SAVE_MANAGER.GetRunSave()
+            if runSave.Souls then
+                local pickupSave = SAVE_MANAGER.GetRoomFloorSave(pickup)
+                local weight = pickupSave.SoulWeight or DEFAULT_WEIGHT
+                runSave.Souls.Possessed = runSave.Souls.Possessed + weight
+                cachedSoulsNum = runSave.Souls.Possessed
+            end
+            SFXManager():Play(Isaac.GetSoundIdByName("Soul Pickup "..tostring(math.random(4))))
+
+            local color = collider.Color
+            collider:SetColor(Color(color.R, color.G, color.B, color.A, 0.5, 0.5, 0.5), 10, 1, true, true)
+
+            pickup:Remove()
         end
-        SFXManager():Play(Isaac.GetSoundIdByName("Soul Pickup "..tostring(math.random(4))))
-        pickup:Remove()
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onSoulPickupCollision, SOUL_PICKUP_VARIANT)

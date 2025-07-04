@@ -471,3 +471,13 @@ function Resouled:IsShooting(player)
     end
     return false
 end
+
+---@param position Vector
+---@param velocity Vector
+---@param maxSpread integer
+---@param spriteOffset Vector
+function Resouled:SpawnSparkleEffect(position, velocity, maxSpread, spriteOffset)
+    local sparkle = Game():Spawn(EntityType.ENTITY_EFFECT, Isaac.GetEntityVariantByName("Ball Sparkle"), position, Vector.Zero, nil, Isaac.GetEntitySubTypeByName("Ball Sparkle"), Game():GetRoom():GetAwardSeed())
+    sparkle.Velocity = velocity:Rotated(math.random(-maxSpread, maxSpread))
+    sparkle.SpriteOffset = spriteOffset
+end

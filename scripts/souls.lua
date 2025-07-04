@@ -155,7 +155,8 @@ Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_LITTLE_HORN, 0, nil, Resoule
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_PEEP, 1, nil, Resouled.Souls.BLOAT, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_WRATH, 0, 0, Resouled.Souls.WRATH, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_WRATH, 0, nil, Resouled.Souls.WRATH, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_WRATH, 1, nil, Resouled.Souls.WRATH, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_WIDOW, 1, nil, Resouled.Souls.WIDOW, 1)
 
@@ -165,26 +166,26 @@ Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_CHUB, 0, nil, Resouled.Souls
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_CHUB, 2, nil, Resouled.Souls.CARRIOR_QUEEN, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_WAR, 1, 0, Resouled.Souls.CONQUEST, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_WAR, 1, nil, Resouled.Souls.CONQUEST, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_DADDYLONGLEGS, 0, 0, Resouled.Souls.DADDY_LONG_LEGS, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_DADDYLONGLEGS, 0, nil, Resouled.Souls.DADDY_LONG_LEGS, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_DARK_ONE, 0, 0, Resouled.Souls.DARK_ONE, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_DARK_ONE, 0, nil, Resouled.Souls.DARK_ONE, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_DEATH, 0, nil, Resouled.Souls.DEATH, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_ENVY, 0, 0, Resouled.Souls.ENVY, 1)
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_ENVY, 1, 0, Resouled.Souls.ENVY, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_ENVY, 0, nil, Resouled.Souls.ENVY, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_ENVY, 1, nil, Resouled.Souls.ENVY, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_FAMINE, 0, nil, Resouled.Souls.FAMINE, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GEMINI, 0, nil, Resouled.Souls.GEMINI, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GLUTTONY, 0, 0, Resouled.Souls.GLUTTONY, 1)
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GLUTTONY, 1, 0, Resouled.Souls.GLUTTONY, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GLUTTONY, 0, nil, Resouled.Souls.GLUTTONY, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GLUTTONY, 1, nil, Resouled.Souls.GLUTTONY, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GREED, 0, 0, Resouled.Souls.GREED, 1)
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GREED, 1, 0, Resouled.Souls.GREED, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GREED, 0, nil, Resouled.Souls.GREED, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GREED, 1, nil, Resouled.Souls.GREED, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GURDY, 0, nil, Resouled.Souls.GURDY, 1)
 
@@ -192,8 +193,8 @@ Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GURDY_JR, 0, nil, Resouled.S
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_LARRYJR, 0, nil, Resouled.Souls.LARRY_JR, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_LUST, 0, 0, Resouled.Souls.LUST, 1)
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_LUST, 1, 0, Resouled.Souls.LUST, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_LUST, 0, nil, Resouled.Souls.LUST, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_LUST, 1, nil, Resouled.Souls.LUST, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MASK_OF_INFAMY, 0, nil, Resouled.Souls.MASK_OF_INFAMY, 1)
 
@@ -205,187 +206,186 @@ Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_PESTILENCE, 0, nil, Resouled
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_PIN, 0, nil, Resouled.Souls.PIN, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_PRIDE, 0, 0, Resouled.Souls.PRIDE, 1)
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_PRIDE, 1, 0, Resouled.Souls.PRIDE, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_PRIDE, 0, nil, Resouled.Souls.PRIDE, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_PRIDE, 1, nil, Resouled.Souls.PRIDE, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_RAG_MAN, 0, nil, Resouled.Souls.RAG_MAN, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_PIN, 1, nil, Resouled.Souls.SCOLEX, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_SLOTH, 0, 0, Resouled.Souls.SLOTH, 1)
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_SLOTH, 0, 1, Resouled.Souls.SLOTH, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_SLOTH, 0, nil, Resouled.Souls.SLOTH, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_THE_HAUNT, 0, nil, Resouled.Souls.HAUNT, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_THE_LAMB, 10, 0, Resouled.Souls.THE_LAMB, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_THE_LAMB, 10, nil, Resouled.Souls.THE_LAMB, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_WAR, 10, nil, Resouled.Souls.WAR, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MOM, 0, nil, Resouled.Souls.MOM, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_SATAN, 10, 0, Resouled.Souls.SATAN, 2)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_SATAN, 10, nil, Resouled.Souls.SATAN, 2)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_HEADLESS_HORSEMAN, 0, 0, Resouled.Souls.HEADLESS_HORSEMAN, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_HEADLESS_HORSEMAN, 0, nil, Resouled.Souls.HEADLESS_HORSEMAN, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BLASTOCYST_BIG, 0, 0, Resouled.Souls.BLASTOCYST, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BLASTOCYST_BIG, 0, nil, Resouled.Souls.BLASTOCYST, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_DINGLE, 0, nil, Resouled.Souls.DINGLE, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_FALLEN, 1, 0, Resouled.Souls.KRAMPUS, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_FALLEN, 1, nil, Resouled.Souls.KRAMPUS, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MONSTRO2, 0, nil, Resouled.Souls.MONSTRO_II, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_FALLEN, 0, 0, Resouled.Souls.THE_FALLEN, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_FALLEN, 0, nil, Resouled.Souls.THE_FALLEN, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_ISAAC, 0, 0, Resouled.Souls.ISAAC, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MOMS_HEART, 0, 0, Resouled.Souls.MOMS_HEART, 2)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MOMS_HEART, 0, nil, Resouled.Souls.MOMS_HEART, 2)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MOMS_HEART, 0, 0, Resouled.Souls.CHARMED_MOMS_HEART, 1, isCharmedFilter)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MOMS_HEART, 0, nil, Resouled.Souls.CHARMED_MOMS_HEART, 1, isCharmedFilter)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BABY_PLUM, 0, 0, Resouled.Souls.BABY_PLUM, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BABY_PLUM, 0, nil, Resouled.Souls.BABY_PLUM, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BROWNIE, 0, nil, Resouled.Souls.BROWNIE, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_CLOG, 0, 0, Resouled.Souls.CLOG, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_CLOG, 0, nil, Resouled.Souls.CLOG, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_HORNFEL, 0, 0, Resouled.Souls.HORNFEL, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_HORNFEL, 0, nil, Resouled.Souls.HORNFEL, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MAMA_GURDY, 0, 0, Resouled.Souls.MAMA_GURDY, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MAMA_GURDY, 0, nil, Resouled.Souls.MAMA_GURDY, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_RAG_MEGA, 0, 0, Resouled.Souls.RAG_MEGA, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_RAG_MEGA, 0, nil, Resouled.Souls.RAG_MEGA, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_SISTERS_VIS, 0, nil, Resouled.Souls.SISTERS_VIS, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_RAINMAKER, 0, 0, Resouled.Souls.RAINMAKER, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_RAINMAKER, 0, nil, Resouled.Souls.RAINMAKER, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_SCOURGE, 0, 0, Resouled.Souls.THE_SCOURGE, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_SCOURGE, 0, nil, Resouled.Souls.THE_SCOURGE, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_SIREN, 0, 0, Resouled.Souls.THE_SIREN, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_SIREN, 0, nil, Resouled.Souls.THE_SIREN, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GURGLING, 2, 0, Resouled.Souls.TURDLINGS, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GURGLING, 2, nil, Resouled.Souls.TURDLINGS, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_ULTRA_GREED, 0, 0, Resouled.Souls.ULTRA_GREED, 1)
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_ULTRA_GREED, 1, 0, Resouled.Souls.ULTRA_GREED, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_ULTRA_GREED, 0, nil, Resouled.Souls.ULTRA_GREED, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_ULTRA_GREED, 1, nil, Resouled.Souls.ULTRA_GREED, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MEGA_SATAN_2, 0, 0, Resouled.Souls.MEGA_SATAN, 2)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MEGA_SATAN_2, 0, nil, Resouled.Souls.MEGA_SATAN, 2)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MOTHER, 10, 0, Resouled.Souls.MOTHER, 2)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MOTHER, 10, nil, Resouled.Souls.MOTHER, 2)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_ROTGUT, 1, 0, Resouled.Souls.GUS, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_ROTGUT, 1, nil, Resouled.Souls.GUS, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_HUSH, 0, 0, Resouled.Souls.HUSH, 2)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_HUSH, 0, nil, Resouled.Souls.HUSH, 2)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_FISTULA_BIG, 0, nil, Resouled.Souls.FISTULA, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GURGLING, 0, 0, Resouled.Souls.GURGLINGS, 1)
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GURGLING, 1, 0, Resouled.Souls.GURGLINGS, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GURGLING, 0, nil, Resouled.Souls.GURGLINGS, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GURGLING, 1, nil, Resouled.Souls.GURGLINGS, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_POLYCEPHALUS, 0, nil, Resouled.Souls.POLYCEPHALUS, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GEMINI, 1, 0, Resouled.Souls.STEVEN, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GEMINI, 1, nil, Resouled.Souls.STEVEN, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_CAGE, 0, nil, Resouled.Souls.THE_CAGE, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BIG_HORN, 0, 0, Resouled.Souls.BIG_HORN, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BIG_HORN, 0, nil, Resouled.Souls.BIG_HORN, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_LOKI, 0, 0, Resouled.Souls.LOKI, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_LOKI, 0, nil, Resouled.Souls.LOKI, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_ADVERSARY, 0, 0, Resouled.Souls.THE_ADVERSARY, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_ADVERSARY, 0, nil, Resouled.Souls.THE_ADVERSARY, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_FISTULA_BIG, 1, 0, Resouled.Souls.TERATOMA, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_FISTULA_BIG, 1, nil, Resouled.Souls.TERATOMA, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MOMS_HEART, 1, 0, Resouled.Souls.IT_LIVES, 2)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MOMS_HEART, 1, nil, Resouled.Souls.IT_LIVES, 2)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BEAST, 1, 0, Resouled.Souls.THE_BEAST, 2)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BEAST, 1, nil, Resouled.Souls.THE_BEAST, 2)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_LARRYJR, 1, nil, Resouled.Souls.THE_HOLLOW, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_LARRYJR, 2, nil, Resouled.Souls.TUFF_TWIN, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_LARRYJR, 3, 0, Resouled.Souls.THE_SHELL, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_LARRYJR, 3, nil, Resouled.Souls.THE_SHELL, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_CHUB, 1, 0, Resouled.Souls.CHAD, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_CHUB, 1, nil, Resouled.Souls.CHAD, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MONSTRO2, 1, 0, Resouled.Souls.GISH, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MONSTRO2, 1, nil, Resouled.Souls.GISH, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_SLOTH, 2, 0, Resouled.Souls.ULTRA_PRIDE, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_SLOTH, 2, nil, Resouled.Souls.ULTRA_PRIDE, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_PIN, 2, nil, Resouled.Souls.THE_FRAIL, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_PIN, 3, nil, Resouled.Souls.WORMWOOD, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_LOKI, 1, 0, Resouled.Souls.LOKII, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_LOKI, 1, nil, Resouled.Souls.LOKII, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GEMINI, 2, 0, Resouled.Souls.THE_BLIGHTED_OVUM, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GEMINI, 2, nil, Resouled.Souls.THE_BLIGHTED_OVUM, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_WIDOW, 1, 0, Resouled.Souls.THE_WRETCHED, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_WIDOW, 1, nil, Resouled.Souls.THE_WRETCHED, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_DADDYLONGLEGS, 1, 0, Resouled.Souls.TRIACHNID, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_DADDYLONGLEGS, 1, nil, Resouled.Souls.TRIACHNID, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_ISAAC, 1, 0, Resouled.Souls.BLUE_BABY, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_ISAAC, 1, nil, Resouled.Souls.BLUE_BABY, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_DINGLE, 1, 0, Resouled.Souls.DANGLE, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_DINGLE, 1, nil, Resouled.Souls.DANGLE, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GATE, 0, nil, Resouled.Souls.THE_GATE, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MEGA_MAW, 0, nil, Resouled.Souls.MEGA_MAW, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_POLYCEPHALUS, 1, 0, Resouled.Souls.THE_PILE, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_POLYCEPHALUS, 1, nil, Resouled.Souls.THE_PILE, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MR_FRED, 0, 0, Resouled.Souls.MR_FRED, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MR_FRED, 0, nil, Resouled.Souls.MR_FRED, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_URIEL, 0, 0, Resouled.Souls.URIEL, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_URIEL, 0, nil, Resouled.Souls.URIEL, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_URIEL, 1, 0, Resouled.Souls.FALLEN_URIEL, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_URIEL, 1, nil, Resouled.Souls.FALLEN_URIEL, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GABRIEL, 0, 0, Resouled.Souls.GABRIEL, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GABRIEL, 0, nil, Resouled.Souls.GABRIEL, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GABRIEL, 1, 0, Resouled.Souls.FALLEN_GABRIEL, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GABRIEL, 1, nil, Resouled.Souls.FALLEN_GABRIEL, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_STAIN, 0, nil, Resouled.Souls.THE_STAIN, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_FORSAKEN, 0, nil, Resouled.Souls.THE_FORSAKEN, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_DELIRIUM, 0, 0, Resouled.Souls.DELIRIUM, 2)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_DELIRIUM, 0, nil, Resouled.Souls.DELIRIUM, 2)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MATRIARCH, 0, 0, Resouled.Souls.THE_MATRIARCH, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MATRIARCH, 0, nil, Resouled.Souls.THE_MATRIARCH, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_REAP_CREEP, 0, 0, Resouled.Souls.REAP_CREEP, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_REAP_CREEP, 0, nil, Resouled.Souls.REAP_CREEP, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_LIL_BLUB, 0, 0, Resouled.Souls.LIL_BULB, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_LIL_BLUB, 0, nil, Resouled.Souls.LIL_BULB, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_VISAGE, 0, 0, Resouled.Souls.VISAGE, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_VISAGE, 0, nil, Resouled.Souls.VISAGE, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_HERETIC, 0, 0, Resouled.Souls.THE_HERETIC, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_HERETIC, 0, nil, Resouled.Souls.THE_HERETIC, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GIDEON, 0, 0, Resouled.Souls.GREAT_GIDEON, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_GIDEON, 0, nil, Resouled.Souls.GREAT_GIDEON, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_CHIMERA, 1, 0, Resouled.Souls.CHIMERA, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_CHIMERA, 1, nil, Resouled.Souls.CHIMERA, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_ROTGUT, 0, 0, Resouled.Souls.ROTGUT, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_ROTGUT, 0, nil, Resouled.Souls.ROTGUT, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MIN_MIN, 0, 0, Resouled.Souls.MIN_MIN, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MIN_MIN, 0, nil, Resouled.Souls.MIN_MIN, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_SINGE, 0, 0, Resouled.Souls.SINGE, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_SINGE, 0, nil, Resouled.Souls.SINGE, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BUMBINO, 0, 0, Resouled.Souls.BUMBINO, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BUMBINO, 0, nil, Resouled.Souls.BUMBINO, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_COLOSTOMIA, 0, 0, Resouled.Souls.COLOSTOMIA, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_COLOSTOMIA, 0, nil, Resouled.Souls.COLOSTOMIA, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_TURDLET, 0, 0, Resouled.Souls.TURDLETS, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_TURDLET, 0, nil, Resouled.Souls.TURDLETS, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_HORNY_BOYS, 0, 0, Resouled.Souls.HORNY_BOYS, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_HORNY_BOYS, 0, nil, Resouled.Souls.HORNY_BOYS, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_DOGMA, 2, 0, Resouled.Souls.DOGMA, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_DOGMA, 2, nil, Resouled.Souls.DOGMA, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BEAST, 10, 0, Resouled.Souls.ULTRA_FAMINE, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BEAST, 10, nil, Resouled.Souls.ULTRA_FAMINE, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BEAST, 20, 0, Resouled.Souls.ULTRA_PESTILENCE, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BEAST, 20, nil, Resouled.Souls.ULTRA_PESTILENCE, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BEAST, 30, 0, Resouled.Souls.ULTRA_WAR, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BEAST, 30, nil, Resouled.Souls.ULTRA_WAR, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BEAST, 40, 0, Resouled.Souls.ULTRA_DEATH, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BEAST, 40, nil, Resouled.Souls.ULTRA_DEATH, 1)
 
 
 Resouled:Log("Loaded", Resouled:GetNumBasicSoulSpawnRules(), "basic soul spawn rules.")

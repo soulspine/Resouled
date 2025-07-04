@@ -55,6 +55,7 @@
     <entity name="Wood Gold Particle" id="1000" variant="210" subtype="1" anm2path="wood_gold_particle.anm2" friction="1"/>
     <entity name="Disappear" id="1000" variant="211" subtype="0" anm2path="disappear.anm2" friction="1"/>
     <entity name="Gavel" id="1000" variant="212" subtype="0" anm2path="gavel.anm2" friction="1"/>
+    <entity name="Ball Sparkle" id="1000" variant="213" subtype="0" anm2path="ball_sparkle.anm2" friction="1"/>
 <!-- Familiars-->
     <entity name="A Friend" id="3" variant="244" subtype="0" anm2path="a_friend.anm2" collisionMass="5" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="16"/>
     <entity name="Tumor Ball" id="3" variant="245" subtype="0" anm2path="tumor_ball.anm2" collisionMass="1" collisionRadius="8" friction="1" numGridCollisionPoints="12" shadowSize="5" tags="noreroll"/>
@@ -67,11 +68,12 @@
     <entity name="Ultra Flesh Kid" id="3" variant="248" subtype="0" anm2path="ultra_flesh_kid.anm2" collisionMass="1" collisionRadius="18" friction="1" numGridCollisionPoints="12" shadowSize="0"/>
 
 <!-- Pickups-->
-    <entity anm2path="soul_card.anm2" id="5" variant="444" collisionMass="1" collisionRadius="16" name="Soul Pickup" shadowSize="14" reroll="false" tags="noreroll"/>
+    <entity anm2path="soul_card.anm2" id="5" variant="444" subtype="0" collisionMass="1" collisionRadius="16" name="Soul Pickup" shadowSize="14" reroll="false" tags="noreroll"/>
     <entity name="Buff Pedestal" id="5" variant="200" anm2path="buffs/buffs.anm2" collisionRadius="14" collisionMass="3" numGridCollisionPoints="12" friction="0" shadowSize="20" tags="noreroll"/>
     <entity name="Blast Miner TNT" id="5" variant="201" subtype="0" anm2path="blast_miner_tnt.anm2" collisionRadius="15" collisionMass="5" numGridCollisionPoints="12" friction="1" shadowSize="21" tags="noreroll"/>
     <entity name="Blast Miner TNT Mega" id="5" variant="201" subtype="1" anm2path="blast_miner_tnt_mega.anm2" collisionRadius="20" collisionMass="8" numGridCollisionPoints="12" friction="1" shadowSize="28" tags="noreroll"/>
     <entity name="Magic Marker" id="5" variant="300" subtype="82492" anm2path="magic_marker.anm2" collisionRadius="12" collisionMass="3" friction="1" numGridCollisionPoints="24" shadowSize="16"/>
+    <entity name="Soul" id="5" variant="444" subtype="1" anm2path="soul.anm2" collisionRadius="4" collisionMass="1" friction="1" numGridCollisionPoints="12" shadowSize="0"/>
 
 <!-- Misc-->
     <entity name="ResouledDummy" id="999" variant="0" subtype="0"/>

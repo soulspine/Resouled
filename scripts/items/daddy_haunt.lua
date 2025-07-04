@@ -121,7 +121,7 @@ local function onFamiliarUpdate(_, familiar)
         ---@param npc EntityNPC
         Resouled.Iterators:IterateOverRoomNpcs(function(npc)
             if npc:IsVulnerableEnemy() and npc:IsActiveEnemy() and not npc:IsDead() then
-                local distance = (entity.Position - familiar.Position):Length()
+                local distance = (npc.Position - familiar.Position):Length()
                 if distance < SLAM_EFFECT_RADIUS then
                     npc:TakeDamage(SLAM_DAMAGE, 0, EntityRef(familiar), 0)
                     if math.random() < SLAM_FEAR_CHANCE then

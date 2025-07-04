@@ -122,7 +122,6 @@ local function onUpdate()
             if i then
                 local glitchData = playerRunSave.Glitch.Data[i]
                 if glitchData then
-                    print(glitchData.HistoryTime)
                     local historyItemIndex = Resouled.Collectiblextension:GetOldestHistoryItemIndexByTime(player, glitchData.HistoryTime)
                     if historyItemIndex then
                         local collectibleHistory = player:GetHistory():GetCollectiblesHistory()
@@ -137,7 +136,7 @@ local function onUpdate()
                         end
                         if nextItemId then
                             player:RemoveCollectibleByHistoryIndex(historyItemIndex - 1)
-                            player:AddCollectible(nextItemId)
+                            player:AddCollectible(nextItemId, nil, false)
                             collectibleHistory = player:GetHistory():GetCollectiblesHistory() -- refresh variable
                             playerRunSave.Glitch.Data[i].HistoryTime = collectibleHistory[#collectibleHistory]:GetTime()-- update the history time to the new item
                         else -- item must have been rerolled

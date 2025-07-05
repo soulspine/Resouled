@@ -115,5 +115,8 @@ include("scripts.buffs.broken_memory")
 include("scripts.buffs.zodiac_sign")
 include("scripts.buffs.constellation")
 include("scripts.buffs.heavens_call")
+include("scripts.buffs.blue_king_crown")
+include("scripts.buffs.king_crown")
+include("scripts.buffs.royal_crown")
 
 include("scripts.buffs.war")

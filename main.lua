@@ -41,7 +41,37 @@ if REPENTOGON and MinimapAPI then
 
     -- STATS
     Resouled.Stats = {
-        CursedEnemyMorphChance = 0.1
+        CursedEnemyMorphChance = 0.1,
+        BlueKingCrownBuff = {
+            [PickupVariant.PICKUP_BOMB] = {
+                [BombSubType.BOMB_NORMAL] = {[1] = BombSubType.BOMB_DOUBLEPACK, [2] = BombSubType.BOMB_GOLDEN}
+            },
+            [PickupVariant.PICKUP_COIN] = {
+                [CoinSubType.COIN_PENNY] = {[1] = CoinSubType.COIN_NICKEL, [2] = CoinSubType.COIN_STICKYNICKEL, [3] = CoinSubType.COIN_LUCKYPENNY, [4] = CoinSubType.COIN_DIME, [5] = CoinSubType.COIN_DOUBLEPACK, [6] = CoinSubType.COIN_GOLDEN}
+            },
+            [PickupVariant.PICKUP_CHEST] = {
+                [1] = PickupVariant.PICKUP_BOMBCHEST, [2] = PickupVariant.PICKUP_LOCKEDCHEST, [3] = PickupVariant.PICKUP_WOODENCHEST
+            },
+            [PickupVariant.PICKUP_KEY] = {
+                [KeySubType.KEY_NORMAL] = {[1] = KeySubType.KEY_CHARGED, [2] = KeySubType.KEY_GOLDEN, [3] = KeySubType.KEY_DOUBLEPACK}
+            },
+            [PickupVariant.PICKUP_LIL_BATTERY] = {
+                [BatterySubType.BATTERY_MICRO] = {[1] = BatterySubType.BATTERY_NORMAL}
+            },
+            Level1Chance = {
+                Pickup = 0.025,
+                Champion = 0.15,
+            },
+            Level2Chance = {
+                Pickup = 0.05,
+                Champion = 0.10
+            },
+            Level3Chance = {
+                Pickup = 0.075,
+                Champion = 0.05,
+                Keys = 0.05,
+            },
+        }
     }
     -- ALL MODULES UNIQUE TO RESOULED
 

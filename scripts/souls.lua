@@ -158,7 +158,7 @@ Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_PEEP, 1, nil, Resouled.Souls
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_WRATH, 0, nil, Resouled.Souls.WRATH, 1)
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_WRATH, 1, nil, Resouled.Souls.WRATH, 1)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_WIDOW, 1, nil, Resouled.Souls.WIDOW, 1)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_WIDOW, 0, nil, Resouled.Souls.WIDOW, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_THE_HAUNT, Isaac.GetEntityVariantByName("Cursed Haunt"), 0, Resouled.Souls.CURSED_HAUNT, 1)
 

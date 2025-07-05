@@ -86,8 +86,31 @@ local function postPickupInit(_, pickup)
         end
     end)
     local room = Game():GetRoom()
+    local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(pickup)
     if Game():GetRoom():GetType() == RoomType.ROOM_SHOP and room:IsFirstVisit() and auctionGavelItem then
         pickup:Morph(pickup.Type, pickup.Variant, auctionGavelItem, true)
+        ROOM_SAVE.AuctionGavelPrice = 15
+    end
+    if ROOM_SAVE.AuctionGavelPrice then
+        Resouled.Prices:FlatDecreaseShopPickupPrice(pickup, 0, ROOM_SAVE.AuctionGavelPrice)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, postPickupInit, PickupVariant.PICKUP_COLLECTIBLE)
+
+---@param pickup EntityPickup
+local function onPickupUpdate(_, pickup)
+    local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(pickup)
+    if ROOM_SAVE.AuctionGavelPrice then
+        Resouled.Prices:FlatDecreaseShopPickupPrice(pickup, 0, ROOM_SAVE.AuctionGavelPrice)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onPickupUpdate)
+
+---@param pickup EntityPickup
+local function postPurchase(_, pickup)
+    local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(pickup)
+    if ROOM_SAVE.AuctionGavelPrice then
+        ROOM_SAVE.AuctionGavelPrice = nil
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_SHOP_PURCHASE, postPurchase)

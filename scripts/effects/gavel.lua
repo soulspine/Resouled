@@ -40,7 +40,7 @@ local function onEffectUpdate(_, effect)
                     end
                 elseif randomNum == 3 then
                     Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, effect.Position, Vector(math.random(MIN_VELOCITY, MAX_VELOCITY), 0):Rotated(math.random(0, 360)), nil, CoinSubType.COIN_NICKEL, Resouled:NewSeed())
-                    for _ = 1, 7 do
+                    for _ = 1, 5 do
                         Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, effect.Position, Vector(math.random(MIN_VELOCITY, MAX_VELOCITY), 0):Rotated(math.random(0, 360)), nil, CoinSubType.COIN_PENNY, Resouled:NewSeed())
                     end
                 elseif randomNum == 4 then

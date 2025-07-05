@@ -4,7 +4,7 @@ local Soul = {
     StartVelocity = Vector(10, 0),
     TrailColor = Color(1, 1, 1, 0.75),
     TrailLength = 0.025, --The lower the number the longer
-    SpriteOffset = Vector(0, -15)
+    SpriteOffset = Vector(0, -10)
 }
 
 ---@param pickup EntityPickup
@@ -26,6 +26,8 @@ local function onPickupInit(_, pickup)
         pickup:GetData().Resouled_SoulTrail = EntityRef(trail)
 
         pickup.Velocity = Soul.StartVelocity:Rotated(math.random(360))
+
+        pickup:AddEntityFlags(EntityFlag.FLAG_PERSISTENT)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onPickupInit, Soul.Variant)
@@ -77,6 +79,21 @@ local function onPickupUpdate(_, pickup)
             if trail then
                 trail:Update()
             end
+
+            if not trail:Exists() then
+                data.Resouled_SoulTrail = nil
+            end
+        else
+            local entityParent = pickup
+            local trail = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.SPRITE_TRAIL, 0, entityParent.Position, Vector.Zero, entityParent):ToEffect()
+            trail:FollowParent(entityParent)
+            trail.Color = Soul.TrailColor
+            trail.MinRadius = Soul.TrailLength
+            trail.SpriteScale = Vector.One
+
+            trail.ParentOffset = Soul.SpriteOffset * 1.5
+
+            pickup:GetData().Resouled_SoulTrail = EntityRef(trail)
         end
 
         if pickup.FrameCount % 2 == 0 then

@@ -65,6 +65,10 @@
     <entity name="White Proglottid" id="3" variant="247" subtype="1" anm2path="proglottid.anm2" collisionMass="1" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="10"/>
     <entity name="Pink Proglottid" id="3" variant="247" subtype="2" anm2path="proglottid.anm2" collisionMass="1" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="10"/>
     <entity name="Red Proglottid" id="3" variant="247" subtype="3" anm2path="proglottid.anm2" collisionMass="1" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="10"/>
+    <entity name="Black Proglottid Egg" id="3" variant="247" subtype="10" anm2path="proglottid_egg.anm2" collisionMass="1" collisionRadius="6" friction="1" numGridCollisionPoints="12" shadowSize="5"/>
+    <entity name="White Proglottid Egg" id="3" variant="247" subtype="11" anm2path="proglottid_egg.anm2" collisionMass="1" collisionRadius="6" friction="1" numGridCollisionPoints="12" shadowSize="5"/>
+    <entity name="Pink Proglottid Egg" id="3" variant="247" subtype="12" anm2path="proglottid_egg.anm2" collisionMass="1" collisionRadius="6" friction="1" numGridCollisionPoints="12" shadowSize="5"/>
+    <entity name="Red Proglottid Egg" id="3" variant="247" subtype="13" anm2path="proglottid_egg.anm2" collisionMass="1" collisionRadius="6" friction="1" numGridCollisionPoints="12" shadowSize="5"/>
     <entity name="Ultra Flesh Kid" id="3" variant="248" subtype="0" anm2path="ultra_flesh_kid.anm2" collisionMass="1" collisionRadius="18" friction="1" numGridCollisionPoints="12" shadowSize="0"/>
 
 <!-- Pickups-->

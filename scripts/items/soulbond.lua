@@ -23,6 +23,17 @@ local function spawnChainParticles(position)
     end
 end
 
+local hitSounds = {
+    [1] = Isaac.GetSoundIdByName("Soulbond1"),
+    [2] = Isaac.GetSoundIdByName("Soulbond2"),
+    [3] = Isaac.GetSoundIdByName("Soulbond3")
+}
+
+local function playHitSound()
+    local randomNum = math.random(3)
+    SFXManager():Play(hitSounds[randomNum])
+end
+
 local PITCH = 3
 
 local chainSprite = Sprite()
@@ -203,6 +214,8 @@ local function npcTakeDamage(_, entity, amount, damageFlags, source, countdown)
             if otherData.ResouledSoulbond then --Would error if entity died there
                 otherData.ResouledSoulbond.Damage = nil
             end
+
+            playHitSound()
         end
         
         local newAlpha = (1 - (entity.HitPoints / entity.MaxHitPoints))/2

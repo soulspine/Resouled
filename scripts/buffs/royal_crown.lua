@@ -4,7 +4,7 @@ local pickupMorphTable = Resouled.Stats.BlueKingCrownBuff
 
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
-    if Resouled:BuffPresent(Resouled.Buffs.ROYAL_CROWN) then
+    if not npc:IsChampion() and Resouled:BuffPresent(Resouled.Buffs.ROYAL_CROWN) then
         if npc:IsActiveEnemy() and npc:IsVulnerableEnemy() and npc:IsEnemy() then
             local rng = RNG(npc.InitSeed)
             

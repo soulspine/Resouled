@@ -58,4 +58,14 @@
     <sound name="Jumpscare">
         <sample weight="1" path="jumpscare.wav"/>
     </sound>
+
+    <sound name="Soulbond1">
+        <sample weight="1" path="soulbond_1.wav"/>
+    </sound>
+    <sound name="Soulbond2">
+        <sample weight="1" path="soulbond_2.wav"/>
+    </sound>
+    <sound name="Soulbond3">
+        <sample weight="1" path="soulbond_3.wav"/>
+    </sound>
 </sounds>

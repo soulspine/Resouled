@@ -3,7 +3,7 @@ local pickupMorphTable = Resouled.Stats.BlueKingCrownBuff
 
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
-    if Resouled:BuffPresent(Resouled.Buffs.BLUE_KING_CROWN) then
+    if Resouled:ActiveBuffPresent(Resouled.Buffs.BLUE_KING_CROWN) then
         if not npc:IsChampion() and npc:IsActiveEnemy() and npc:IsVulnerableEnemy() and npc:IsEnemy() then
             local rng = RNG(npc.InitSeed)
             
@@ -17,7 +17,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit)
 
 ---@param pickup EntityPickup
 local function onPickupInit(_, pickup)
-    if Resouled:BuffPresent(Resouled.Buffs.BLUE_KING_CROWN) then
+    if Resouled:ActiveBuffPresent(Resouled.Buffs.BLUE_KING_CROWN) then
         local variant = pickup.Variant
         local subType = pickup.SubType
         local rng = RNG(pickup.InitSeed)
@@ -50,7 +50,7 @@ end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onPickupInit)
 
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, function()
-    if Resouled:BuffPresent(Resouled.Buffs.BLUE_KING_CROWN) then
-        Resouled:RemoveBuffFromActiveSave(Resouled.Buffs.BLUE_KING_CROWN)
+    if Resouled:ActiveBuffPresent(Resouled.Buffs.BLUE_KING_CROWN) then
+        Resouled:RemoveActiveBuff(Resouled.Buffs.BLUE_KING_CROWN)
     end
 end)

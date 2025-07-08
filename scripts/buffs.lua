@@ -22,7 +22,7 @@ Resouled.Buffs = {
     PIRACY = 6,
     CROSS = 7,
     RELIC = 8,
-    CRUSIFIX = 9,
+    CRUCIFIX = 9,
     KIDS_DRAWING = 10,
     FORGOTTEN_POLAROID = 11,
     BROKEN_MEMORY = 12,
@@ -77,7 +77,7 @@ Resouled:RegisterBuff(Resouled.Buffs.STEAM_GIVEAWAY, "Steam Giveaway", 5, Resoul
 Resouled:RegisterBuff(Resouled.Buffs.PIRACY, "Piracy", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.STEAM_SALE, false)
 Resouled:RegisterBuff(Resouled.Buffs.CROSS, "Cross", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.CROSS, false)
 Resouled:RegisterBuff(Resouled.Buffs.RELIC, "Relic", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.CROSS, false)
-Resouled:RegisterBuff(Resouled.Buffs.CRUSIFIX, "Crusifix", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.CROSS, false)
+Resouled:RegisterBuff(Resouled.Buffs.CRUCIFIX, "Crucifix", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.CROSS, false)
 Resouled:RegisterBuff(Resouled.Buffs.KIDS_DRAWING, "Kid's Drawing", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.KIDS_DRAWING, true)
 Resouled:RegisterBuff(Resouled.Buffs.FORGOTTEN_POLAROID, "Forgotten Polaroid", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.KIDS_DRAWING, true)
 Resouled:RegisterBuff(Resouled.Buffs.BROKEN_MEMORY, "Broken Memory", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.KIDS_DRAWING, true)
@@ -105,7 +105,7 @@ include("scripts.buffs.devils_head")
 include("scripts.buffs.forbidden_cranium")
 include("scripts.buffs.cross")
 include("scripts.buffs.relic")
-include("scripts.buffs.crusifix")
+include("scripts.buffs.crucifix")
 include("scripts.buffs.steam_sale")
 include("scripts.buffs.steam_giveaway")
 include("scripts.buffs.piracy")

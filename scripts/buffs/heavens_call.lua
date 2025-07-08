@@ -4,10 +4,10 @@ local function postPlanetariumChance(_, chance)
     if not RUN_SAVE.Resouled_PlanetariumsVisited then
         RUN_SAVE.Resouled_PlanetariumsVisited = 0
     end
-    if Resouled:BuffPresent(Resouled.Buffs.HEAVENS_CALL) and RUN_SAVE.Resouled_PlanetariumsVisited < 2 then
+    if Resouled:ActiveBuffPresent(Resouled.Buffs.HEAVENS_CALL) and RUN_SAVE.Resouled_PlanetariumsVisited < 2 then
         return chance + 0.2
-    elseif Resouled:BuffPresent(Resouled.Buffs.HEAVENS_CALL) and RUN_SAVE.Resouled_PlanetariumsVisited >= 2 then
-        Resouled:RemoveBuffFromActiveSave(Resouled.Buffs.HEAVENS_CALL)
+    elseif Resouled:ActiveBuffPresent(Resouled.Buffs.HEAVENS_CALL) and RUN_SAVE.Resouled_PlanetariumsVisited >= 2 then
+        Resouled:RemoveActiveBuff(Resouled.Buffs.HEAVENS_CALL)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PLANETARIUM_CALCULATE, postPlanetariumChance)
@@ -15,7 +15,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PLANETARIUM_CALCULATE, postPlanetarium
 local function onNewFloor()
     local game = Game()
     local level = game:GetLevel()
-    if level:GetStage() == 1 and Resouled:BuffPresent(Resouled.Buffs.HEAVENS_CALL) then
+    if level:GetStage() == 1 and Resouled:ActiveBuffPresent(Resouled.Buffs.HEAVENS_CALL) then
         local roomConfigRoom = RoomConfigHolder.GetRoomByStageTypeAndVariant(StbType.SPECIAL_ROOMS, RoomType.ROOM_PLANETARIUM, 1)
         
         local rng = level:GetDevilAngelRoomRNG()

@@ -1,5 +1,5 @@
 local function postGameStarted()
-    if Resouled:BuffPresent(Resouled.Buffs.CROSS) then
+    if Resouled:ActiveBuffPresent(Resouled.Buffs.CROSS) then
         ---@param player EntityPlayer
         Resouled.Iterators:IterateOverPlayers(function(player)
             if player:GetPlayerType() ~= PlayerType.PLAYER_THELOST and player:GetPlayerType() ~= PlayerType.PLAYER_THELOST_B then
@@ -8,7 +8,7 @@ local function postGameStarted()
                 player:AddCard(Card.CARD_HOLY)
             end
         end)
-        Resouled:RemoveBuffFromActiveSave(Resouled.Buffs.CROSS)
+        Resouled:RemoveActiveBuff(Resouled.Buffs.CROSS)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, postGameStarted)

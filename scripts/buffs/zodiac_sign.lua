@@ -15,7 +15,7 @@ local ZODIAC_SIGNS = {
 
 ---@param pickup EntityPickup
 local function postPickupInit(_, pickup)
-    if Resouled:BuffPresent(Resouled.Buffs.ZODIAC_SIGN) then
+    if Resouled:ActiveBuffPresent(Resouled.Buffs.ZODIAC_SIGN) then
         local zodiacSign = false
         for i = 1, #ZODIAC_SIGNS do
             if ZODIAC_SIGNS[i] == pickup.SubType then
@@ -25,7 +25,7 @@ local function postPickupInit(_, pickup)
         if not zodiacSign then
             local randomInt = RNG(pickup.InitSeed):RandomInt(12) + 1
             pickup:Morph(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, ZODIAC_SIGNS[randomInt], false, true, false)
-            Resouled:RemoveBuffFromActiveSave(Resouled.Buffs.ZODIAC_SIGN)
+            Resouled:RemoveActiveBuff(Resouled.Buffs.ZODIAC_SIGN)
         end
     end
 end

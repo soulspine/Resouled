@@ -5,13 +5,13 @@ local function postBombInit(_, bomb)
     end
     
     local player = Resouled:TryFindPlayerSpawner(bomb)
-    if Resouled:BuffPresent(Resouled.Buffs.WAR) and player then
+    if Resouled:ActiveBuffPresent(Resouled.Buffs.WAR) and player then
         local newBomb = Game():Spawn(EntityType.ENTITY_BOMB, BombVariant.BOMB_GIGA, bomb.Position, bomb.Velocity, bomb.SpawnerEntity, 0, bomb.InitSeed):ToBomb()
         if newBomb then
             newBomb:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
             newBomb:SetExplosionCountdown(bomb:GetExplosionCountdown())
             bomb:Remove()
-            Resouled:RemoveBuffFromActiveSave(Resouled.Buffs.WAR)
+            Resouled:RemoveActiveBuff(Resouled.Buffs.WAR)
         end
     end
 end

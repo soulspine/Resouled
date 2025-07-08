@@ -315,13 +315,11 @@ function Resouled:GetRandomWeightedBuff(rng, blacklist)
 end
 
 ---@param buffID ResouledBuff
-function Resouled:AddBuffToSave(buffID)
+function Resouled:AddPendingBuff(buffID)
     local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
+
     if not FILE_SAVE then
         FILE_SAVE = {}
-    end
-    if not FILE_SAVE.Resouled_PendingBuffs then
-        FILE_SAVE.Resouled_PendingBuffs = {}
     end
 
     local buff = Resouled:GetBuffById(buffID)
@@ -339,7 +337,7 @@ function Resouled:AddBuffToSave(buffID)
 end
 
 ---@param buffID ResouledBuff
-function Resouled:RemoveBuffFromSave(buffID)
+function Resouled:RemovePendingBuff(buffID)
     local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
     if not FILE_SAVE then
         FILE_SAVE = {}
@@ -371,11 +369,12 @@ function Resouled:RemoveBuffFromSave(buffID)
 end
 
 ---@param buffID ResouledBuff
-function Resouled:RemoveBuffFromActiveSave(buffID)
+function Resouled:RemoveActiveBuff(buffID)
     local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
     if not FILE_SAVE then
         FILE_SAVE = {}
     end
+
     if not FILE_SAVE.Resouled_ActiveBuffs then
         FILE_SAVE.Resouled_ActiveBuffs = {}
     end
@@ -417,7 +416,7 @@ end
 
 ---@param buffID ResouledBuff
 ---@return boolean
-function Resouled:BuffPresent(buffID)
+function Resouled:ActiveBuffPresent(buffID)
     local buff = Resouled:GetBuffById(buffID)
     if buff then
         local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
@@ -446,28 +445,27 @@ function Resouled:ClearBuffSave()
     end
 end
 
-function Resouled:ActivateBuffs()
+function Resouled:ActivatePendingBuffs()
     local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
     if FILE_SAVE and FILE_SAVE.Resouled_PendingBuffs then
         if not FILE_SAVE.Resouled_ActiveBuffs then
-            FILE_SAVE.Resouled_PendingBuffs = {}
+            FILE_SAVE.Resouled_ActiveBuffs = {}
         end
 
-        local buffs = Resouled:GetBuffs()
-
-        for i = 1, #buffs do
-            local buff = buffs[i]
-            local buffKey = tostring(buff.Id)
-            if FILE_SAVE.Resouled_PendingBuffs[buffKey] and not FILE_SAVE.Resouled_ActiveBuffs[buffKey] then
-                if not buff.Stackable then
-                    FILE_SAVE.Resouled_PendingBuffs[buffKey] = nil
-                    FILE_SAVE.Resouled_ActiveBuffs[buffKey] = true
-                elseif buff.Stackable then
-                    FILE_SAVE.Resouled_PendingBuffs[buffKey] = FILE_SAVE.Resouled_PendingBuffs[buffKey] - 1
-                    if FILE_SAVE.Resouled_PendingBuffs[buffKey] <= 0 then
-                        FILE_SAVE.Resouled_PendingBuffs[buffKey] = nil
+        for buffId, amount in pairs(FILE_SAVE.Resouled_PendingBuffs) do
+            local buff = Resouled:GetBuffById(buffId)
+            if buff then
+                local key = tostring(buff.Id)
+                if FILE_SAVE.Resouled_ActiveBuffs[key] then -- buff already present, add stackable otherwise ignore
+                    if buff.Stackable then
+                        FILE_SAVE.Resouled_ActiveBuffs[key] = FILE_SAVE.Resouled_ActiveBuffs[key] + amount
                     end
-                    FILE_SAVE.Resouled_ActiveBuffs[buffKey] = 1
+                else
+                    if buff.Stackable then
+                        FILE_SAVE.Resouled_ActiveBuffs[key] = amount
+                    else
+                        FILE_SAVE.Resouled_ActiveBuffs[key] = true
+                    end
                 end
             end
         end
@@ -478,7 +476,52 @@ local function postPlayerInit() --Appearently this is THE first callback when st
     local RUN_SAVE = SAVE_MANAGER.GetRunSave()
     if not RUN_SAVE.Resouled_AddedBuffs then
         RUN_SAVE.Resouled_AddedBuffs = true
-        Resouled:ActivateBuffs()
+        Resouled:ActivatePendingBuffs()
     end
 end
 Resouled:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.IMPORTANT, postPlayerInit)
+
+local COMMAND = {
+    Name = "addbuff",
+    Description = "Adds a buff to pending pool, will be activated on next run's start",
+    HelpText = "Usage: addbuff <buff_id>"
+}
+
+Console.RegisterCommand(COMMAND.Name, COMMAND.Description, COMMAND.HelpText, false, AutocompleteType.CUSTOM)
+
+local function executeBuffAddCommand(_, command, paramsRaw)
+    if command == COMMAND.Name then
+        local params = {}
+        for word in string.gmatch(paramsRaw, "%S+") do
+            table.insert(params, word)
+        end
+        if #params == 0 then
+            Resouled:LogError("No buff specified.")
+            return
+        end
+
+        local buff = Resouled:GetBuffById(tonumber(params[1]) or params[1])
+
+        if not buff then
+            Resouled:LogError("Buff with ID: "..tostring(params[1]).." hasn't been registered.")
+            return
+        end
+
+        Resouled:AddPendingBuff(buff.Id)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_EXECUTE_CMD, executeBuffAddCommand)
+
+local autocompleteTable = {}
+
+Resouled:RunAfterImports(function ()
+    for _, buff in ipairs(Resouled:GetBuffs()) do
+        table.insert(autocompleteTable, {tostring(buff.Id), buff.Name})
+    end
+end)
+
+local function buffAddCommandAutocomplete()
+    return autocompleteTable
+end
+---@diagnostic disable-next-line: param-type-mismatch
+Resouled:AddCallback(ModCallbacks.MC_CONSOLE_AUTOCOMPLETE, buffAddCommandAutocomplete, COMMAND.Name)

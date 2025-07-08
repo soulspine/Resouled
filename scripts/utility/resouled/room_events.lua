@@ -235,45 +235,16 @@ local function executeRoomEventCommand(_, command, paramsRaw)
 end
 Resouled:AddCallback(ModCallbacks.MC_EXECUTE_CMD, executeRoomEventCommand)
 
-local function roomEventCommandAutocomplete()
-    local returnTable = {}
+local autocompleteTable = {}
+
+Resouled:RunAfterImports(function ()
     for _, roomEvent in ipairs(Resouled:GetRoomEvents()) do
-        table.insert(returnTable, {tostring(roomEvent.Id), roomEvent.Name})
+        table.insert(autocompleteTable, {tostring(roomEvent.Id), roomEvent.Name})
     end
+end)
 
-    return returnTable
+local function roomEventCommandAutocomplete()
+    return autocompleteTable
 end
-
-
 ---@diagnostic disable-next-line: param-type-mismatch
 Resouled:AddCallback(ModCallbacks.MC_CONSOLE_AUTOCOMPLETE, roomEventCommandAutocomplete, COMMAND.Name)
-
-include("scripts.room_events.all_hallows_eve")
-include("scripts.room_events.angelic_intervention")
-include("scripts.room_events.black_champions")
-include("scripts.room_events.blessing_of_gluttony")
-include("scripts.room_events.blessing_of_greed")
-include("scripts.room_events.blessing_of_the_sack")
-include("scripts.room_events.blood_lust")
-include("scripts.room_events.butter_fingers")
-include("scripts.room_events.red_champions")
-include("scripts.room_events.shadow_of_war")
-include("scripts.room_events.static_shock")
-include("scripts.room_events.spoils_of_war")
-include("scripts.room_events.maggys_blessing")
-include("scripts.room_events.samsons_blessing")
-include("scripts.room_events.red_vise")
-include("scripts.room_events.splash_damage")
-include("scripts.room_events.edens_blessing")
-include("scripts.room_events.greed_looms")
-include("scripts.room_events.tax_for_the_mighty")
-include("scripts.room_events.shadow_of_famine")
-include("scripts.room_events.blessing_of_steam")
-include("scripts.room_events.blessing_of_the_inner_eye")
-include("scripts.room_events.conjoined_twin")
-include("scripts.room_events.blood_money")
-include("scripts.room_events.heavy_is_the_head")
-include("scripts.room_events.blind_rage")
-include("scripts.room_events.equality")
-include("scripts.room_events.isaacs_blessing")
-include("scripts.room_events.bum_bo_is_loose")

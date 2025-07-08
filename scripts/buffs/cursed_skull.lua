@@ -4,7 +4,7 @@ local CURSES_BLACKLIST = {
 }
 
 local function postGameStart()
-    if Resouled:BuffPresent(Resouled.Buffs.CURSED_SKULL) then
+    if Resouled:ActiveBuffPresent(Resouled.Buffs.CURSED_SKULL) then
         local validCurses = {}
         for i = 1, XMLData.GetNumEntries(XMLNode.CURSE) do
             if not CURSES_BLACKLIST[i] then
@@ -22,7 +22,7 @@ local function postGameStart()
             player:AddPoopMana(1)
         end
         Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, Game():GetRoom():GetCenterPos(), Vector.Zero, nil, 0, Game():GetRoom():GetSpawnSeed())
-        Resouled:RemoveBuffFromActiveSave(Resouled.Buffs.CURSED_SKULL)
+        Resouled:RemoveActiveBuff(Resouled.Buffs.CURSED_SKULL)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, postGameStart)

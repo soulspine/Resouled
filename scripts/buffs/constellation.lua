@@ -2,9 +2,9 @@
 ---@param roomConfig RoomConfigRoom
 ---@param seed integer
 local function prePlaceRoom(_, slot, roomConfig, seed)
-    if roomConfig.Type == RoomType.ROOM_TREASURE and Resouled:BuffPresent(Resouled.Buffs.CONSTELLATION) then
+    if roomConfig.Type == RoomType.ROOM_TREASURE and Resouled:ActiveBuffPresent(Resouled.Buffs.CONSTELLATION) then
         local newRoom = RoomConfig.GetRandomRoom(seed, false, StbType.SPECIAL_ROOMS, RoomType.ROOM_PLANETARIUM, roomConfig.Shape)
-        Resouled:RemoveBuffFromActiveSave(Resouled.Buffs.CONSTELLATION)
+        Resouled:RemoveActiveBuff(Resouled.Buffs.CONSTELLATION)
         return newRoom
     end
 end

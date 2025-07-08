@@ -67,7 +67,7 @@ local function postPickupUpdate(_, pickup)
         local chosenBuff = Resouled:GetRandomWeightedBuff(pickup:GetDropRNG())
 
         if chosenBuff then
-            if Resouled:BuffPresent(chosenBuff) and not Resouled:GetBuffById(chosenBuff).Stackable then
+            if Resouled:ActiveBuffPresent(chosenBuff) and not Resouled:GetBuffById(chosenBuff).Stackable then
                 goto BuffWasPresent
             end
             pickup:SetVarData(chosenBuff)
@@ -113,7 +113,7 @@ local function postPickupCollision(_, pickup, collider)
 
         playBuffPickupAnimation(player, pickupSprite)
         
-        Resouled:AddBuffToSave(pickup:GetVarData())
+        Resouled:AddPendingBuff(pickup:GetVarData())
         
         SFXManager():Play(Isaac.GetSoundIdByName("Buff"..tostring(Resouled:GetBuffById(pickup:GetVarData()).Rarity)), PICKUP_VOLUME)
 

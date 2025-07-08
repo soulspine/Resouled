@@ -3,6 +3,14 @@ Resouled = RegisterMod("Resouled", 1)
 
 if REPENTOGON and MinimapAPI then
 
+    local thingsToRunAfterImports = {}
+
+    --- Does not pass any parameters
+    ---@param func function
+    function Resouled:RunAfterImports(func)
+        table.insert(thingsToRunAfterImports, func)
+    end
+
     -- ALL EXTERNAL IMPORTS
 
     ---@type SaveManager
@@ -96,6 +104,10 @@ if REPENTOGON and MinimapAPI then
     include("scripts.souls")
     include("scripts.buffs")
     include("scripts.afterlife_shop")
+
+    for _, func in ipairs(thingsToRunAfterImports) do
+        func()
+    end
 
 else -- REPENTOGON AND MINIMAPI NOT FOUND
     local messages = {

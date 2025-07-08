@@ -4,7 +4,7 @@ local PIRACY_DISTANCE = 30
 ---@param pickup EntityPickup
 local function postPickupUpdate(_, pickup)
     if pickup:IsShopItem() and Game():GetRoom():GetType() == RoomType.ROOM_SHOP then
-        if Resouled:BuffPresent(Resouled.Buffs.PIRACY) then
+        if Resouled:ActiveBuffPresent(Resouled.Buffs.PIRACY) then
             ---@param player EntityPlayer
             Resouled.Iterators:IterateOverPlayers(function(player)
                 local data = pickup:GetData()
@@ -34,7 +34,7 @@ end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, postPickupUpdate)
 
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, function()
-    if Resouled:BuffPresent(Resouled.Buffs.PIRACY) then
-        Resouled:RemoveBuffFromActiveSave(Resouled.Buffs.PIRACY)
+    if Resouled:ActiveBuffPresent(Resouled.Buffs.PIRACY) then
+        Resouled:RemoveActiveBuff(Resouled.Buffs.PIRACY)
     end
 end)

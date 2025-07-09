@@ -13,12 +13,6 @@ if EID then
     EID:addCollectible(GLITCH, EID_DESCRIPTION, "Glitch")
 end
 
-local ITEM_BLACKLIST = {
-    [CollectibleType.COLLECTIBLE_DOLLAR] = true,
-    [CollectibleType.COLLECTIBLE_PYRO] = true,
-    [CollectibleType.COLLECTIBLE_SKELETON_KEY] = true,
-}
-
 local function rollItemChoicesWithGfx(count)
     local items = {}
 
@@ -31,7 +25,6 @@ local function rollItemChoicesWithGfx(count)
             pool:AddRoomBlacklist(item.ID)
         end
         if 
-        not ITEM_BLACKLIST[item.ID] and
         item:IsAvailable() and
         item.Type == ItemType.ITEM_PASSIVE and
         not item:HasTags(ItemConfig.TAG_QUEST) and
@@ -128,20 +121,28 @@ local function onUpdate()
                         local historyItem = collectibleHistory[historyItemIndex]
                         local itemId = historyItem:GetItemID()
                         ::postRerollReplace::
-                        local nextItemId = nil
-                        for j, id in ipairs(glitchData.Items) do
-                            if id == itemId then
-                                nextItemId = glitchData.Items[j % #glitchData.Items + 1] -- +1 because Lua is 1-indexed
+                        local nextItemData = nil
+                        for j, itemData in ipairs(glitchData.Items) do
+                            if itemData.Id == itemId then
+                                nextItemData = glitchData.Items[j % #glitchData.Items + 1]
                             end
                         end
-                        if nextItemId then
+                        if nextItemData then
                             player:RemoveCollectibleByHistoryIndex(historyItemIndex - 1)
-                            player:AddCollectible(nextItemId, nil, false)
+                            player:AddCollectible(nextItemData.Id, nil, nextItemData.FirstPickUp)
+                            nextItemData.FirstPickUp = false -- we just added it, so it is not the first pickup anymore
                             collectibleHistory = player:GetHistory():GetCollectiblesHistory() -- refresh variable
                             playerRunSave.Glitch.Data[i].HistoryTime = collectibleHistory[#collectibleHistory]:GetTime()-- update the history time to the new item
                         else -- item must have been rerolled
-                            local newItems = rollItemChoicesWithoutGfx(ITEM_COUNT - 1) -- -1 because we already have one item
-                            table.insert(newItems, itemId)
+                            local newItemChoices = rollItemChoicesWithoutGfx(ITEM_COUNT - 1) -- -1 because we already have one item
+                            table.insert(newItemChoices, itemId) -- we add the item we just rerolled to the choices
+                            local newItems = {}
+                            for _, newItemId in ipairs(newItemChoices) do
+                                table.insert(newItems, {
+                                    Id = newItemId,
+                                    FirstPickUp = false -- to make it consistent with vanilla, items rerolled by D4 do not grant on pickup effects
+                                })
+                            end
                             playerRunSave.Glitch.Data[i].Items = newItems
                             goto postRerollReplace
                         end
@@ -151,7 +152,6 @@ local function onUpdate()
                     end
                     playerRunSave.Glitch.UpdateIndex = playerRunSave.Glitch.UpdateIndex + 1
                 else
-                    --print(playerRunSave.Glitch.UpdateIndex - 1)
                     playerRunSave.Glitch.UpdateIndex = nil
                 end
             end
@@ -186,7 +186,10 @@ local function onPickupCollision(_, pickup, collider)
 
             local items = {}
             for _, item in pairs(roomFloorSave.Glitch.Items) do
-                table.insert(items, item.Id)
+                table.insert(items, {
+                    Id = item.Id,
+                    FirstPickUp = item.Id ~= collectibleToAdd -- we set false for item we just picked up, true otherwise
+                })
             end
 
             table.insert(playerRunSave.Glitch.Data, {

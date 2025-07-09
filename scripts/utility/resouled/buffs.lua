@@ -469,6 +469,7 @@ function Resouled:ActivatePendingBuffs()
                 end
             end
         end
+        FILE_SAVE.Resouled_PendingBuffs = {} -- clear pending buffs after activation
     end
 end
 

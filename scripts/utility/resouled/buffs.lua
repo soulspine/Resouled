@@ -431,15 +431,19 @@ function Resouled:ClearBuffSave()
     local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
     if FILE_SAVE then
         if FILE_SAVE.Resouled_PendingBuffs then
+            FILE_SAVE.Resouled_PendingBuffs = nil
             FILE_SAVE.Resouled_PendingBuffs = {}
         end
         if not FILE_SAVE.Resouled_PendingBuffs then
+            FILE_SAVE.Resouled_PendingBuffs = nil
             FILE_SAVE.Resouled_PendingBuffs = {}
         end
         if FILE_SAVE.Resouled_ActiveBuffs then
+            FILE_SAVE.Resouled_ActiveBuffs = nil
             FILE_SAVE.Resouled_ActiveBuffs = {}
         end
         if not FILE_SAVE.Resouled_ActiveBuffs then
+            FILE_SAVE.Resouled_ActiveBuffs = nil
             FILE_SAVE.Resouled_ActiveBuffs = {}
         end
     end

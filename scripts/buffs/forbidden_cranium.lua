@@ -10,7 +10,6 @@ local cursesToAdd = {
 local function postGameStart()
     if Resouled:ActiveBuffPresent(Resouled.Buffs.FORBIDDEN_CRANIUM) then
         for i = 1, #cursesToAdd do
-            print(cursesToAdd[i])
             Game():GetLevel():AddCurse(cursesToAdd[i], false)
         end
     end

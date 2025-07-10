@@ -36,9 +36,6 @@ local function onNewFloor()
                         
                         for i = 0, DoorSlot.NUM_DOOR_SLOTS - 1 do
                             local door = currentRoom:GetDoor(i)
-                            if door then
-                                print(door.TargetRoomIndex, newRoomDesc.SafeGridIndex, door.State)
-                            end
 
                             if door and door.TargetRoomIndex == newRoomDesc.SafeGridIndex then -- cant check if door state is closed because its not set yet, all doors are marked as closed at this point
                                 SFXManager():Stop(SoundEffect.SOUND_UNLOCK00) -- stop the sound because it still plays

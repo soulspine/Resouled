@@ -75,7 +75,6 @@ local function preActiveRender(_, player, activeSlot, offset, alpha, scale, char
     if itemDesc and itemDesc.Item == KEEPERS_PENNY then
 
         local maxCharge = itemDesc.VarData
-        print(activeSlot, maxCharge)
         local normalCharge = player:GetActiveCharge(activeSlot)
         local batteryCharge = player:GetBatteryCharge(activeSlot)
 

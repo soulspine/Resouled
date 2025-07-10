@@ -31,23 +31,24 @@ local function onPickupInit(_, pickup)
         if randomNum < chances.Pickup then
             
             if variant == PickupVariant.PICKUP_COIN and subType == CoinSubType.COIN_PENNY then
-                pickup:Morph(pickup.Type, pickup.Variant, rng:RandomInt(#pickupMorphTable[variant]) + 1)
+                print(pickupMorphTable[variant][pickup.SubType][rng:RandomInt(#pickupMorphTable[variant][pickup.SubType]) + 1])
+                pickup:Morph(pickup.Type, pickup.Variant, pickupMorphTable[variant][pickup.SubType][rng:RandomInt(#pickupMorphTable[variant][pickup.SubType]) + 1])
             end
 
             if variant == PickupVariant.PICKUP_BOMB and subType == BombSubType.BOMB_NORMAL then
-                pickup:Morph(pickup.Type, pickup.Variant, rng:RandomInt(#pickupMorphTable[variant]) + 1)
+                pickup:Morph(pickup.Type, pickup.Variant, pickupMorphTable[variant][pickup.SubType][rng:RandomInt(#pickupMorphTable[variant][pickup.SubType]) + 1])
             end
 
             if variant == PickupVariant.PICKUP_KEY and subType == KeySubType.KEY_NORMAL then
-                pickup:Morph(pickup.Type, pickup.Variant, rng:RandomInt(#pickupMorphTable[variant]) + 1)
+                pickup:Morph(pickup.Type, pickup.Variant, pickupMorphTable[variant][pickup.SubType][rng:RandomInt(#pickupMorphTable[variant][pickup.SubType]) + 1])
             end
 
             if variant == PickupVariant.PICKUP_LIL_BATTERY and subType == BatterySubType.BATTERY_MICRO then
-                pickup:Morph(pickup.Type, pickup.Variant, rng:RandomInt(#pickupMorphTable[variant]) + 1)
+                pickup:Morph(pickup.Type, pickup.Variant, pickupMorphTable[variant][pickup.SubType][rng:RandomInt(#pickupMorphTable[variant][pickup.SubType]) + 1])
             end
 
             if variant == PickupVariant.PICKUP_CHEST and subType == ChestSubType.CHEST_CLOSED then
-                pickup:Morph(pickup.Type, rng:RandomInt(#pickupMorphTable[variant]) + 1, pickup.SubType)
+                pickup:Morph(pickup.Type, pickupMorphTable[variant][rng:RandomInt(#pickupMorphTable[variant]) + 1], pickup.SubType)
             end
         end
     end

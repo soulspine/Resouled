@@ -1,5 +1,4 @@
 local function postGameStarted(_, isContinued)
-    print(Resouled:ActiveBuffPresent(Resouled.Buffs.KIDS_DRAWING))
     if Resouled:ActiveBuffPresent(Resouled.Buffs.KIDS_DRAWING) then
         ---@param player EntityPlayer
         Resouled.Iterators:IterateOverPlayers(function(player)

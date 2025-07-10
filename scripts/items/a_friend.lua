@@ -53,9 +53,12 @@ local PICKUP_PICK_UP_RANGE = 22
 local BOMB_PLACEMENT_RANGE = 15
 local BOMB_COOLDOWN = 600
 
+Resouled.FamiliarShooter:RegisterFamiliar(FRIEND_VARIANT, FRIEND_SUBTYPE)
+
 ---@param player EntityPlayer
-local function onCacheEval(_, player)
-    player:CheckFamiliar(FRIEND_VARIANT, player:GetCollectibleNum(A_FRIEND), player:GetCollectibleRNG(A_FRIEND))
+---@param cacheFlag CacheFlag
+local function onCacheEval(_, player, cacheFlag)
+    player:CheckFamiliar(FRIEND_VARIANT, player:GetCollectibleNum(A_FRIEND) + player:GetEffects():GetCollectibleEffectNum(A_FRIEND), player:GetCollectibleRNG(A_FRIEND), Isaac.GetItemConfig():GetCollectible(A_FRIEND))
 end
 Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACHE_FAMILIARS)
 
@@ -322,19 +325,14 @@ local function familiarUpdate(_, familiar)
             end
             
             if distanceFromTarget <= FOLLOW_ORBIT + (FOLLOW_ORBIT/10) then
-                if not data.Resouled_FireCooldown then
-                    if pathfinderCheck then
-                        ---@type EntityTear
-                        local tear = Game():Spawn(EntityType.ENTITY_TEAR, TearVariant.METALLIC, familiar.Position, (data.Resouled_Target.Position - familiar.Position):Normalized() * TEAR_SPEED, familiar, 0, familiar.InitSeed):ToTear()
-                        if tear and player and player:HasTrinket(TrinketType.TRINKET_BABY_BENDER) then
-                            tear:AddTearFlags(TearFlags.TEAR_HOMING)
-                        end
+                if pathfinderCheck then
+                    local tear = Resouled.FamiliarShooter:TryShoot(familiar, data.Resouled_Target.Position - familiar.Position, SHOOT_COOLDOWN, nil, false)
+                    if tear then
                         tear:SetColor(Color(0.1, 0.1, 0.1), 99999, 1, false, false)
-                        data.Resouled_FireCooldown = SHOOT_COOLDOWN
                         sprite:PlayOverlay(sprite:GetOverlayAnimation()..SHOOT, true)
-                    else
-                        pathfinder:FindGridPath(data.Resouled_Target.Position, WALK_SPEED, 1, true)
                     end
+                else
+                    pathfinder:FindGridPath(data.Resouled_Target.Position, WALK_SPEED, 1, true)
                 end
             end
 
@@ -397,19 +395,15 @@ local function familiarUpdate(_, familiar)
                 if pathfinder:HasPathToPos(pos, true) then
                     pathfinder:FindGridPath(pos, WALK_SPEED, 1, true)
                     if distanceFromTarget <= FOLLOW_ORBIT + (FOLLOW_ORBIT/10) then
-                        if not data.Resouled_FireCooldown then
-                            if room:CheckLine(familiar.Position, data.Resouled_GridTarget.Position + (familiar.Position - data.Resouled_GridTarget.Position):Normalized() * 35, LineCheckMode.PROJECTILE) then
-                                ---@type EntityTear
-                                local tear = Game():Spawn(EntityType.ENTITY_TEAR, TearVariant.METALLIC, familiar.Position, (data.Resouled_GridTarget.Position - familiar.Position):Normalized() * TEAR_SPEED, familiar, 0, familiar.InitSeed):ToTear()
-                                if tear and player and player:HasTrinket(TrinketType.TRINKET_BABY_BENDER) then
-                                    tear:AddTearFlags(TearFlags.TEAR_HOMING)
-                                end
+                        if room:CheckLine(familiar.Position, data.Resouled_GridTarget.Position + (familiar.Position - data.Resouled_GridTarget.Position):Normalized() * 35, LineCheckMode.PROJECTILE) then
+                            local tear = Resouled.FamiliarShooter:TryShoot(familiar, data.Resouled_GridTarget.Position - familiar.Position, SHOOT_COOLDOWN, nil, false)
+                            if tear then
                                 tear:SetColor(Color(0.1, 0.1, 0.1), 99999, 1, false, false)
                                 data.Resouled_FireCooldown = SHOOT_COOLDOWN
                                 sprite:PlayOverlay(sprite:GetOverlayAnimation()..SHOOT, true)
-                            else
-                                pathfinder:FindGridPath(pos, WALK_SPEED, 1, true)
                             end
+                        else
+                            pathfinder:FindGridPath(pos, WALK_SPEED, 1, true)
                         end
                     end
                 else
@@ -432,6 +426,7 @@ local function familiarUpdate(_, familiar)
             if data.Resouled_PickupTarget.Entity then
                 
                 ---@type EntityPickup
+                ---@diagnostic disable-next-line: assign-type-mismatch
                 local pickup = data.Resouled_PickupTarget.Entity:ToPickup()
                 
                 if pickup:GetSprite():GetAnimation() == "Idle" then
@@ -524,14 +519,6 @@ local function familiarUpdate(_, familiar)
         end
 
         --WALKING IF ENEMIES PRESENT END
-
-        if data.Resouled_FireCooldown then
-            data.Resouled_FireCooldown = data.Resouled_FireCooldown - 1
-    
-            if data.Resouled_FireCooldown == 0 then
-                data.Resouled_FireCooldown = nil
-            end
-        end
 
         if data.Resouled_BombCooldown then
             data.Resouled_BombCooldown = data.Resouled_BombCooldown - 1

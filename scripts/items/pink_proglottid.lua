@@ -3,8 +3,9 @@ local PROGLOTTID_VARIANT = Isaac.GetEntityVariantByName("Pink Proglottid")
 local PROGLOTTID_SUBTYPE = Isaac.GetEntitySubTypeByName("Pink Proglottid")
 
 ---@param player EntityPlayer
-local function onCacheEval(_, player)
-    player:CheckFamiliar(PROGLOTTID_VARIANT, player:GetCollectibleNum(PINK_PROGLOTTID), player:GetCollectibleRNG(PINK_PROGLOTTID), nil, PROGLOTTID_SUBTYPE)
+---@param cacheFlag CacheFlag
+local function onCacheEval(_, player, cacheFlag)
+    player:CheckFamiliar(PROGLOTTID_VARIANT, player:GetCollectibleNum(PINK_PROGLOTTID) + player:GetEffects():GetCollectibleEffectNum(PINK_PROGLOTTID), player:GetCollectibleRNG(PINK_PROGLOTTID), Isaac.GetItemConfig():GetCollectible(PINK_PROGLOTTID), PROGLOTTID_SUBTYPE)
 end
 Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACHE_FAMILIARS)
 

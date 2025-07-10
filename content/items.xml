@@ -1,6 +1,6 @@
 <items gfxroot="gfx/items/" deathanm2="gfx/death_items.anm2" version="1">
     <active id="0" name="Sleight of Hand" gfx="sleight_of_hand.png" description="Sneak peek" quality="2" craftquality="2" maxcharges="4" chargetype="normal"/>
-    <familiar id="1" name="Daddy Haunt" gfx="daddy_haunt.png" description="Menace hanging over your enemies" quality="3" craftquality="3" cache="familiars"/>
+    <familiar id="1" name="Daddy Haunt" gfx="daddy_haunt.png" description="Menace hanging over your enemies" quality="3" craftquality="3" cache="familiars" tags="monstermanual"/>
     <passive id="2" name="Cheese Grater" gfx="cheese_grater.png" description="Shred foes" quality="1" craftquality="1" tags="summonable"/>
     <active id="3" name="Bag-O-Trash" gfx="trashbagphase1.png" description="Dumpster in your hands" quality="0" craftquality="0" maxcharges="0" special="true"/>
     <passive id="4" name="Ceremonial Blade" gfx="ceremonial_blade.png" description="A small price to pay..." quality="2" craftquality="2" tags="summonable"/>
@@ -13,24 +13,24 @@
     <passive id="11" name="Friendly Sack" gfx="friendly_sack.png" description="Gift from friends" quality="3" craftquality="3" tags="summonable"/>
     <active id="12" name="Conjoined D6" gfx="conjoined_d6.png" description="The dice of balance..." quality="4" craftquality="4" maxcharges="4" chargetype="normal"/>
     <passive id="13" name="Isaac's last will" gfx="isaacs_last_will.png" description="I leave all that I own to my cat Guppy" quality="2"/>
-    <passive id="14" name="A Friend" gfx="a_friend.png" description="The friend is nigh" quality="2" craftquality="2" cache="familiars"/>
-    <familiar id="15" name="The Monster" gfx="the_monster.png" description="Journey to aether" quality="3" craftquality="3" cache="familiars"/>
+    <familiar id="14" name="A Friend" gfx="a_friend.png" description="The friend is nigh" quality="2" craftquality="2" cache="familiars" tags="monstermanual"/>
+    <familiar id="15" name="The Monster" gfx="the_monster.png" description="Journey to aether" quality="3" craftquality="3" cache="familiars" tags="monstermanual"/>
     <passive id="16" name="Unstable DNA" gfx="unstable_dna.png" description="Unstable genetics" quality="1" craftquality="1" tags="summonable"/>
     <active id="17" name="Auction Gavel" gfx="auction_gavel.png" description="A deal is a deal" quality="0" craftquality="0" chargetype="normal" maxcharges="0" shopprice="10"/>
-    <familiar id="18" name="Black Proglottid" gfx="black_proglottid.png" description="" quality="0" craftquality="0" cache="familiars"/>
+    <familiar id="18" name="Black Proglottid" gfx="black_proglottid.png" description="" quality="0" craftquality="0" cache="familiars" tags="monstermanual"/>
     <passive id="19" name="Club" gfx="club.png" description="" quality="0" craftquality="0"/>
     <passive id="20" name="Blast Miner TNT!" gfx="blast_miner.png" description="Barrel blast +5 bombs" quality="1" craftquality="1" bombs="5"/>
-    <familiar id="21" name="Co-Op Baby" gfx="co_op_baby.png" description="" quality="1" craftquality="1" cache="familiars"/>
+    <familiar id="21" name="Co-Op Baby" gfx="co_op_baby.png" description="" quality="1" craftquality="1" cache="familiars" tags="monstermanual"/>
     <passive id="22" name="Cursed Soul" gfx="cursed_soul.png" description="Cursed suffering" quality="0" craftquality="0"/>
-    <familiar id="23" name="Fetal Haunt" gfx="fetal_haunt.png" description="Crybaby ghost" quality="1" craftquality="1" cache="familiars"/>
+    <familiar id="23" name="Fetal Haunt" gfx="fetal_haunt.png" description="Crybaby ghost" quality="1" craftquality="1" cache="familiars" tags="monstermanual"/>
     <active id="24" name="Red GFUEL" gfx="GFUEL.png" description="BLOOD LASER BARRAGE UP!" quality="1" craftquality="1" chargetype="normal" maxcharges="4"/>
-    <familiar id="25" name="Mama Haunt" gfx="mama_haunt.png" description="" quality="2" craftquality="2" cache="familiars"/>
-    <familiar id="26" name="Pink Proglottid" gfx="pink_proglottid.png" description="" quality="0" craftquality="0" cache="familiars"/>
+    <familiar id="25" name="Mama Haunt" gfx="mama_haunt.png" description="" quality="2" craftquality="2" cache="familiars" tags="monstermanual"/>
+    <familiar id="26" name="Pink Proglottid" gfx="pink_proglottid.png" description="" quality="0" craftquality="0" cache="familiars" tags="monstermanual"/>
     <passive id="27" name="Pumpkin Mask" gfx="pumpkin_mask.png" description="Boo" quality="0" tags="nolostbr" craftquality="0"/>
-    <familiar id="28" name="Red Proglottid" gfx="red_proglottid.png" description="" quality="0" craftquality="0" cache="familiars"/>
+    <familiar id="28" name="Red Proglottid" gfx="red_proglottid.png" description="" quality="0" craftquality="0" cache="familiars" tags="monstermanual"/>
     <familiar id="29" name="Tumor Ball" gfx="tumor_ball.png" description="" quality="3" craftquality="3" cache="familiars"/>
-    <familiar id="30" name="Ultra Flesh Kid" gfx="ultra_flesh_kid.png" description="" quality="2" craftquality="2" cache="familiars"/>
-    <familiar id="31" name="White Proglottid" gfx="white_proglottid.png" description="" quality="0" craftquality="0" cache="familiars"/>
+    <familiar id="30" name="Ultra Flesh Kid" gfx="ultra_flesh_kid.png" description="" quality="2" craftquality="2" cache="familiars" tags="monstermanual"/>
+    <familiar id="31" name="White Proglottid" gfx="white_proglottid.png" description="" quality="0" craftquality="0" cache="familiars" tags="monstermanual"/>
 
     <trinket id="1" name="Handicapped Placard" description="" gfx="handicapped_placard.png"/>
     <trinket id="2" name="Hand me Downs" description="Pass them down to the ones in need" gfx="hand_me_downs.png"/>

@@ -47,6 +47,9 @@ if REPENTOGON and MinimapAPI then
     ---@type ProceduralMaxChargeModule
     Resouled.ProceduralMaxCharge = include("scripts.utility.procedural_max_charge")
 
+    ---@type FamiliarFireRateHandlerModule
+    Resouled.FamiliarShooter = include("scripts.utility.familiar_fire_rate_handler")
+
     -- STATS
     Resouled.Stats = {
         CursedEnemyMorphChance = 0.1,

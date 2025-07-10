@@ -2,21 +2,25 @@ local COOP_BABY = Isaac.GetItemIdByName("Co-Op Baby")
 local COOP_BABY_VARIANT = Isaac.GetEntityVariantByName("Coop Baby")
 local COOP_BABY_SUBTYPE = Isaac.GetEntitySubTypeByName("Coop Baby")
 
+local FIRE_DAMAGE = 2.5
+local FIRE_COOLDOWN = 20
 local BASE_ORBIT_SIZE = 20
 local VELOCITY_MULTIPLIER = 0.85
 local ORBIT_SPEED = 2
 local TEAR_SPEED = 15
-local SHOOT_COOLDOWN = 20
 local ANIMATION_LENGTH = 16
 local FOLLOW_SPEED = 2
 
+Resouled.FamiliarShooter:RegisterFamiliar(COOP_BABY_VARIANT, COOP_BABY_SUBTYPE)
+
 ---@param velocity Vector
 local function getAngleSprite(velocity)
-    local angleDegrees = velocity:GetAngleDegrees()
-    if angleDegrees < 0 then
-        angleDegrees = 360 + angleDegrees
-    end
+    local angleDegrees = velocity:GetAngleDegrees() -- + 180
     
+    if angleDegrees < 0 then
+        angleDegrees = angleDegrees + 360
+    end
+
     if angleDegrees >= 0 and angleDegrees < 22.5 or angleDegrees >= 337.5 and angleDegrees <= 360 then
         return "3"
     elseif angleDegrees >= 22.5 and angleDegrees < 67.5 then
@@ -28,17 +32,19 @@ local function getAngleSprite(velocity)
     elseif angleDegrees >= 157.5 and angleDegrees < 202.5 then
         return "7"
     elseif angleDegrees >= 202.5 and angleDegrees < 247.5 then
-        return "6"
+        return "4"
     elseif angleDegrees >= 247.5 and angleDegrees < 292.5 then
         return "5"
     elseif angleDegrees >= 292.5 and angleDegrees < 337.5 then
-        return "4"
+        return "6"
     end
 end
 
 ---@param player EntityPlayer
-local function onCacheEval(_, player)
-    player:CheckFamiliar(COOP_BABY_VARIANT, player:GetCollectibleNum(COOP_BABY), player:GetCollectibleRNG(COOP_BABY))
+---@param cacheFlag CacheFlag
+local function onCacheEval(_, player, cacheFlag)
+    print(COOP_BABY_VARIANT, COOP_BABY_SUBTYPE, player:GetCollectibleNum(COOP_BABY))
+    player:CheckFamiliar(COOP_BABY_VARIANT, player:GetCollectibleNum(COOP_BABY) + player:GetEffects():GetCollectibleEffectNum(COOP_BABY), player:GetCollectibleRNG(COOP_BABY), Isaac.GetItemConfig():GetCollectible(COOP_BABY), COOP_BABY_SUBTYPE)
 end
 Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACHE_FAMILIARS)
 
@@ -46,14 +52,6 @@ Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACH
 local function onFamiliarUpdate(_, familiar)
     if familiar.SubType == COOP_BABY_SUBTYPE then
         local sprite = familiar:GetSprite()
-        local data = familiar:GetData()
-
-        if data.Resouled_ShootCooldown then
-            data.Resouled_ShootCooldown = data.Resouled_ShootCooldown - 1
-            if data.Resouled_ShootCooldown <= 0 then
-                data.Resouled_ShootCooldown = nil
-            end
-        end
 
         if sprite:GetFrame() < 0 then
             sprite:SetFrame(0)
@@ -77,21 +75,15 @@ local function onFamiliarUpdate(_, familiar)
             if distanceFromTarget <= (BASE_ORBIT_SIZE * size) - BASE_ORBIT_SIZE then
                 familiar.Velocity = (familiar.Velocity + (familiar.Position - target.Position):Normalized() * FOLLOW_SPEED) * VELOCITY_MULTIPLIER
             end
+            if Resouled.FamiliarShooter:TryShoot(familiar, (target.Position - familiar.Position), FIRE_COOLDOWN, FIRE_DAMAGE) then
+                sprite:Play(sprite:GetAnimation().."Shoot", true)
+            end
+            
             if distanceFromTarget <= (BASE_ORBIT_SIZE * size) then
                 familiar.Velocity = (familiar.Velocity + target.Velocity)/2 + (target.Position - familiar.Position):Normalized():Rotated(90) * ORBIT_SPEED
-
-                if not data.Resouled_ShootCooldown then
-                    local tear = Game():Spawn(EntityType.ENTITY_TEAR, TearVariant.BLUE, familiar.Position, (target.Position - familiar.Position):Normalized() * TEAR_SPEED, familiar, 0, familiar.InitSeed)
-                    tear.CollisionDamage = 2.5
-                    data.Resouled_ShootCooldown = SHOOT_COOLDOWN
-                    sprite:Play(sprite:GetAnimation().."Shoot", true)
-                end
             end
+            
             local targetAnim = getAngleSprite(target.Position - familiar.Position)
-
-            if data.Resouled_ShootCooldown and data.Resouled_ShootCooldown > SHOOT_COOLDOWN - ANIMATION_LENGTH then
-                targetAnim = targetAnim.."Shoot"
-            end
 
             if sprite:GetAnimation() ~= targetAnim then
                 sprite:SetAnimation(targetAnim, false)

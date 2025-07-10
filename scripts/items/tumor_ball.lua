@@ -56,7 +56,7 @@ local function onCacheEval(_, player)
     local rng = player:GetCollectibleRNG(TUMOR_BALL)
     rng:SetSeed(rng:GetSeed(), tumorNum)
 
-    player:CheckFamiliar(FAMILIAR_VARIANT, tumorNum, rng, Isaac.GetItemConfig():GetCollectible(TUMOR_BALL), FAMILIAR_SUBTYPE)
+    player:CheckFamiliar(FAMILIAR_VARIANT, tumorNum + player:GetEffects():GetCollectibleEffectNum(TUMOR_BALL), rng, Isaac.GetItemConfig():GetCollectible(TUMOR_BALL), FAMILIAR_SUBTYPE)
 end
 Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACHE_FAMILIARS)
 

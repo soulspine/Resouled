@@ -118,18 +118,15 @@ local function onFamiliarUpdate(_, familiar)
         Game():Spawn(EntityType.ENTITY_EFFECT, Isaac.GetEntityVariantByName("Air Shockwave"), familiar.Position, Vector(0, 0), familiar, Isaac.GetEntitySubTypeByName("Air Shockwave"), 0)
         SFXManager():Play(SLAM_SFX, 1, 0, false, 1)
 
-        ---@param npc EntityNPC
-        Resouled.Iterators:IterateOverRoomNpcs(function(npc)
+        local npcs = Isaac.FindInRadius(familiar.Position, SLAM_EFFECT_RADIUS, EntityPartition.ENEMY)
+        for _, npc in ipairs(npcs) do
             if npc:IsVulnerableEnemy() and npc:IsActiveEnemy() and not npc:IsDead() then
-                local distance = (npc.Position - familiar.Position):Length()
-                if distance < SLAM_EFFECT_RADIUS then
-                    npc:TakeDamage(SLAM_DAMAGE, 0, EntityRef(familiar), 0)
-                    if math.random() < SLAM_FEAR_CHANCE then
-                        npc:AddFear(EntityRef(familiar), SLAM_FEAR_DURATION)
-                    end
+                npc:TakeDamage(SLAM_DAMAGE, 0, EntityRef(familiar), 0)
+                if math.random() < SLAM_FEAR_CHANCE then
+                    npc:AddFear(EntityRef(familiar), SLAM_FEAR_DURATION)
                 end
             end
-        end)
+        end
     elseif sprite:IsEventTriggered(EVENT_TRIGGER_RESOULED_ASCEND) then
         data.ResouledAscendFrames = ATTACK_ASCEND_FRAME_LENGTH
     elseif sprite:IsEventTriggered(EVENT_TRIGGER_RESOULED_DESCEND) then

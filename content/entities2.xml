@@ -56,6 +56,8 @@
     <entity name="Disappear" id="1000" variant="211" subtype="0" anm2path="disappear.anm2" friction="1"/>
     <entity name="Gavel" id="1000" variant="212" subtype="0" anm2path="gavel.anm2" friction="1"/>
     <entity name="Ball Sparkle" id="1000" variant="213" subtype="0" anm2path="ball_sparkle.anm2" friction="1"/>
+    <entity name="Music Note" id="1000" variant="214" subtype="0" anm2path="music_note.anm2" friction="1"/>
+    
 <!-- Familiars-->
     <entity name="A Friend" id="3" variant="244" subtype="0" anm2path="a_friend.anm2" collisionMass="5" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="16" tags="cansacrifice"/>
     <entity name="Tumor Ball" id="3" variant="245" subtype="0" anm2path="tumor_ball.anm2" collisionMass="1" collisionRadius="8" friction="1" numGridCollisionPoints="12" shadowSize="5" tags="noreroll cansacrifice"/>

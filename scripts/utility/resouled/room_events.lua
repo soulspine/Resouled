@@ -154,8 +154,12 @@ local function postNewFloor()
     end
 
     for _ = 1, roomEventsThisFloor do
+
+        local seed = Resouled:NewSeed()
+
         ::RollRoom::
-        Resouled:NewSeed()
+        rng:SetSeed(seed)
+        seed = Resouled:NewSeed()
         
         local randomRoomIndex = rng:RandomInt(#correctRooms)
         local roomListIndex = correctRooms[randomRoomIndex]

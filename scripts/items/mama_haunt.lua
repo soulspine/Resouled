@@ -5,6 +5,12 @@ local MAMA_HAUNT_SUBTYPE = Isaac.GetEntitySubTypeByName("Mama Haunt")
 local SING_PETRIFY_DURATION = 90
 local SING_PETRIFY_COOLDOWN = 210 -- in updates, each second is 30 updates
 
+local Note = {
+    Variant = Isaac.GetEntityVariantByName("Music Note"),
+    SubType = Isaac.GetEntitySubTypeByName("Music Note"),
+    LowestColorValue = 150,
+}
+
 local ANIMATION_SING = "Sing"
 local ANIMATION_IDLE = "Idle"
 local ANIMATION_TRIGGER_PETRIFY = "Petrify"
@@ -56,6 +62,14 @@ local function onFamiliarUpdate(_, familiar)
 
         if Isaac.CountEnemies() > 0 and data.RESOULED______MAMAHAUNT_COOLDOWN == 0 and not sprite:IsPlaying(ANIMATION_SING) then
             sprite:Play(ANIMATION_SING, true)
+        end
+
+        if sprite:IsEventTriggered("Note") then
+            local offset = sprite:GetNullFrame("NotePos"):GetPos()
+
+            local note = Game():Spawn(EntityType.ENTITY_EFFECT, Note.Variant, familiar.Position, Vector.Zero, nil, Note.SubType, familiar.InitSeed)
+
+            note.SpriteOffset = offset
         end
     end
 end

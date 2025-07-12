@@ -481,3 +481,50 @@ function Resouled:SpawnSparkleEffect(position, velocity, maxSpread, spriteOffset
     sparkle.Velocity = velocity:Rotated(math.random(-maxSpread, maxSpread))
     sparkle.SpriteOffset = spriteOffset
 end
+
+---@param sprite Sprite
+---@return Sprite
+function Resouled:MakeSpriteFrameSave(sprite) -- Returns a frozen current frame of the provided sprite
+    local frame = Sprite()
+    frame:Load(sprite:GetFilename())
+    frame:Play(sprite:GetAnimation(), true)
+    frame:PlayOverlay(sprite:GetOverlayAnimation(), true)
+    frame:SetFrame(sprite:GetFrame())
+    frame:SetOverlayFrame(sprite:GetOverlayFrame())
+    frame:SetRenderFlags(sprite:GetRenderFlags())
+
+    frame.Color = sprite.Color
+    frame.FlipX = sprite.FlipX
+    frame.FlipY = sprite.FlipY
+    frame.Offset = sprite.Offset
+    frame.Rotation = sprite.Rotation
+    frame.Scale = sprite.Scale
+
+    for i = 0, sprite:GetLayerCount() - 1 do
+        local layer = sprite:GetLayer(i)
+        local fLayer = frame:GetLayer(i)
+
+        if layer:IsVisible() then
+            if fLayer:GetSpritesheetPath() ~= layer:GetSpritesheetPath() then
+                frame:ReplaceSpritesheet(fLayer:GetLayerID(), layer:GetSpritesheetPath(), false)
+            end
+            
+            fLayer:SetColor(layer:GetColor())
+            fLayer:SetPos(layer:GetPos())
+            fLayer:SetCropOffset(layer:GetCropOffset())
+            fLayer:SetRenderFlags(layer:GetRenderFlags())
+            fLayer:SetFlipX(layer:GetFlipX())
+            fLayer:SetFlipY(layer:GetFlipY())
+            fLayer:SetRotation(layer:GetRotation())
+            fLayer:SetSize(layer:GetSize())
+            fLayer:SetWrapSMode(layer:GetWrapSMode())
+            fLayer:SetWrapTMode(layer:GetWrapTMode())
+        else
+            fLayer:SetVisible(layer:IsVisible())
+        end
+    end
+
+    frame:LoadGraphics()
+
+    return frame
+end

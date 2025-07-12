@@ -236,7 +236,6 @@ local function onPlayerUpdate(_, player)
                 end
 
                 if runSave.SleightOfHand.Curses > 0 then
-                    print(runSave.SleightOfHand.Curses)
                     local i = 1
                     while runSave.SleightOfHand.Curses > 0 do
                         if runSave.SleightOfHand.Curses & i == i then

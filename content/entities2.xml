@@ -59,7 +59,8 @@
 <!-- Familiars-->
     <entity name="A Friend" id="3" variant="244" subtype="0" anm2path="a_friend.anm2" collisionMass="5" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="16" tags="cansacrifice"/>
     <entity name="Tumor Ball" id="3" variant="245" subtype="0" anm2path="tumor_ball.anm2" collisionMass="1" collisionRadius="8" friction="1" numGridCollisionPoints="12" shadowSize="5" tags="noreroll cansacrifice"/>
-    <entity anm2path="daddy_haunt.anm2" name="Daddy Haunt" id="3" variant="872" subtype="0" collisionRadius="12" shadowSize="15" friction="1" tags="cansacrifice"/>
+    <entity name="Daddy Haunt" id="3" variant="872" subtype="0" anm2path="daddy_haunt.anm2" collisionRadius="12" shadowSize="15" friction="1" tags="cansacrifice"/>
+    <entity name="Mama Haunt" id="3" variant="872" subtype="1" anm2path="mama_haunt.anm2" collisionRadius="12" friction="1"shadowSize="15" tags="cansacrifice"/>
     <entity name="Coop Baby" id="3" variant="246" subtype="0" anm2path="coop_baby.anm2" collisionMass="1" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="10" tags="cansacrifice"/>
     <entity name="Black Proglottid" id="3" variant="247" subtype="0" anm2path="proglottid.anm2" collisionMass="1" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="10" tags="cansacrifice"/>
     <entity name="White Proglottid" id="3" variant="247" subtype="1" anm2path="proglottid.anm2" collisionMass="1" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="10" tags="cansacrifice"/>

@@ -1,5 +1,6 @@
 include("scripts.items.sleight_of_hand")
 include("scripts.items.daddy_haunt")
+include("scripts.items.mama_haunt")
 include("scripts.items.cheese_grater")
 include("scripts.items.bag_o_trash")
 include("scripts.items.ceremonial_blade")

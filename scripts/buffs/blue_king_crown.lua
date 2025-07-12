@@ -26,7 +26,6 @@ local function onPickupInit(_, pickup)
         if randomNum < chances.Pickup then
             
             if variant == PickupVariant.PICKUP_COIN and subType == CoinSubType.COIN_PENNY then
-                print(pickupMorphTable[variant][pickup.SubType][rng:RandomInt(#pickupMorphTable[variant][pickup.SubType]) + 1])
                 pickup:Morph(pickup.Type, pickup.Variant, pickupMorphTable[variant][pickup.SubType][rng:RandomInt(#pickupMorphTable[variant][pickup.SubType]) + 1])
             end
 

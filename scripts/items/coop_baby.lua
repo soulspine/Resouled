@@ -43,7 +43,6 @@ end
 ---@param player EntityPlayer
 ---@param cacheFlag CacheFlag
 local function onCacheEval(_, player, cacheFlag)
-    print(COOP_BABY_VARIANT, COOP_BABY_SUBTYPE, player:GetCollectibleNum(COOP_BABY))
     player:CheckFamiliar(COOP_BABY_VARIANT, player:GetCollectibleNum(COOP_BABY) + player:GetEffects():GetCollectibleEffectNum(COOP_BABY), player:GetCollectibleRNG(COOP_BABY), Isaac.GetItemConfig():GetCollectible(COOP_BABY), COOP_BABY_SUBTYPE)
 end
 Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACHE_FAMILIARS)

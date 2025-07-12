@@ -247,7 +247,6 @@ local function PushTNT(_, player, collider, low)
 
     local overlap = (player.Position - tnt.Position):Length() - (player.Size + tnt.Size)
 
-    --print(overlap)
     player.Velocity = player.Velocity + getDir(angle):Resized(math.max(-2, math.min(2, overlap)))
 
     return true

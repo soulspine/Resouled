@@ -5,6 +5,10 @@ local MAMA_HAUNT_SUBTYPE = Isaac.GetEntitySubTypeByName("Mama Haunt")
 local SING_PETRIFY_DURATION = 90
 local SING_PETRIFY_COOLDOWN = 210 -- in updates, each second is 30 updates
 
+if EID then
+    EID:addCollectible(MAMA_HAUNT, "Every " .. math.ceil(SING_PETRIFY_COOLDOWN/30) .. " seconds, Mama Haunt sings, petrifying all enemies in the room for " .. math.ceil(SING_PETRIFY_DURATION/30) .. " seconds", "Mama Haunt")
+end
+
 local Note = {
     Variant = Isaac.GetEntityVariantByName("Music Note"),
     SubType = Isaac.GetEntitySubTypeByName("Music Note"),

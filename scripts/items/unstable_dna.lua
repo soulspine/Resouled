@@ -33,8 +33,10 @@ local OMNI_CACHE_FLAG = CacheFlag.CACHE_SPEED | CacheFlag.CACHE_FIREDELAY | Cach
 local function postNewRoom()
     local room = Game():GetRoom()
     if room:IsFirstVisit() then
-        ---@param player EntityPlayer
         Resouled.Iterators:IterateOverPlayers(function(player)
+            --local sprite = player:GetSprite() -- SLIGH COLOR CHANGES WITH PILLS
+            --sprite.Color = Color(math.random(), math.random(), math.random(), sprite.Color.A)
+                    
             local itemCount = player:GetCollectibleNum(UNSTABLE_DNA)
             if itemCount > 0 then
                 local RUN_SAVE = SAVE_MANAGER.GetRunSave(player)
@@ -111,6 +113,7 @@ local function postNewRoom()
                     
                     ---@diagnostic disable-next-line: param-type-mismatch
                     player:AddCacheFlags(OMNI_CACHE_FLAG, true)
+                    
                 end
             end
         end)

@@ -4,17 +4,37 @@ local SOUL_PICKUP_SUBTYPE = Isaac.GetEntitySubTypeByName("Soul")
 
 local DEFAULT_WEIGHT = 1
 
+local SOULS_UI_TEXT_COLOR = KColor(1, 1, 1, 0.7)
+
 local basicSpawnLookupTable = {} -- NOT STATIC, POPULATED AT RUNTIME by Resouled:AddNewBasicSoulSpawnRule
 
 local font = Font()
 font:Load("font/luaminioutlined.fnt")
+
+local ICON_DIMENSIONS = 16
+local iconSprite = Sprite()
+iconSprite:Load("gfx/ui/soul_icon.anm2", true)
+iconSprite:Play(iconSprite:GetDefaultAnimation(), true)
+iconSprite:SetFrame(1)
 
 local cachedSoulsNum = 0
 
 local function hudRenderer()
     if game:GetHUD():IsVisible() then
         local screenWidth = Isaac.GetScreenWidth()
-        font:DrawString(string.format("(placeholder) Souls Num: %d", cachedSoulsNum), screenWidth / 2, 20, KColor(1,1,1,1), nil, true)
+        local screenHeight = Isaac.GetScreenHeight()
+
+        local text = tostring(cachedSoulsNum)
+        local xGap = ICON_DIMENSIONS / 4
+
+        font:DrawString(
+            tostring(cachedSoulsNum),
+            screenWidth / 2 + xGap,
+            screenHeight - ICON_DIMENSIONS,
+            SOULS_UI_TEXT_COLOR
+        )
+
+        iconSprite:Render(Vector(screenWidth / 2 - xGap, screenHeight - ICON_DIMENSIONS / 2))
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_HUD_RENDER, hudRenderer)

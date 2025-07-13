@@ -1,15 +1,10 @@
-local Soul = {
-    Variant = Isaac.GetEntityVariantByName("Soul"),
-    SubType = Isaac.GetEntitySubTypeByName("Soul"),
-    StartVelocity = Vector(10, 0),
-    TrailColor = Color(1, 1, 1, 0.75),
-    TrailLength = 0.025, --The lower the number the longer
-    SpriteOffset = Vector(0, -10)
-}
+local Soul = Resouled.Stats.Soul
+
+local DeathStatue = Resouled.Stats.DeathStatue
 
 ---@param pickup EntityPickup
 local function onPickupInit(_, pickup)
-    if pickup.SubType == Soul.SubType then
+    if pickup.SubType == Soul.SubType or pickup.SubType == Soul.SubTypeStatue then
         local sprite = pickup:GetSprite()
         sprite:Play("Appear", true)
         sprite.Offset = Soul.SpriteOffset
@@ -23,18 +18,37 @@ local function onPickupInit(_, pickup)
 
         trail.ParentOffset = Soul.SpriteOffset * 1.5
 
-        pickup:GetData().Resouled_SoulTrail = EntityRef(trail)
+        local data = pickup:GetData()
+
+        data.Resouled_SoulTrail = EntityRef(trail)
 
         pickup.Velocity = Soul.StartVelocity:Rotated(math.random(360))
 
-        pickup:AddEntityFlags(EntityFlag.FLAG_PERSISTENT)
+        if pickup.SubType ~= Soul.SubTypeStatue then
+            pickup:AddEntityFlags(EntityFlag.FLAG_PERSISTENT)
+        else
+            local statue = nil
+
+            ---@param effect EntityEffect
+            Resouled.Iterators:IterateOverRoomEffects(function(effect)
+                if effect.Variant == DeathStatue.Variant and effect.SubType == DeathStatue.SubType then
+                    statue = effect
+                end
+            end)
+
+            if not statue then
+                pickup:Remove()
+            else
+                data.Resouled_SoulStatueTarget = statue
+            end
+        end
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onPickupInit, Soul.Variant)
 
 ---@param pickup EntityPickup
 local function onPickupUpdate(_, pickup)
-    if pickup.SubType == Soul.SubType then
+    if pickup.SubType == Soul.SubType or pickup.SubType == Soul.SubTypeStatue then
         if pickup.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_PLAYERONLY then
             pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
         end
@@ -44,34 +58,60 @@ local function onPickupUpdate(_, pickup)
             sprite:Play("Idle", true)
         end
 
-        ---@type EntityPlayer | nil
-        local nearestPlayer = nil
-
-        ---@param player EntityPlayer
-        Resouled.Iterators:IterateOverPlayers(function(player)
-            if not nearestPlayer then
-                nearestPlayer = player
-            else
-                if nearestPlayer.Position:Distance(pickup.Position) > player.Position:Distance(pickup.Position) then
+        if pickup.SubType == Soul.SubType then
+            ---@type EntityPlayer | nil
+            local nearestPlayer = nil
+            
+            ---@param player EntityPlayer
+            Resouled.Iterators:IterateOverPlayers(function(player)
+                if not nearestPlayer then
                     nearestPlayer = player
+                else
+                    if nearestPlayer.Position:Distance(pickup.Position) > player.Position:Distance(pickup.Position) then
+                        nearestPlayer = player
+                    end
                 end
-            end
-        end)
+            end)
+            
+            if nearestPlayer then
+                local distance = pickup.Position:Distance(nearestPlayer.Position)/50
+                if distance > 1 then
+                    distance = 1
+                end
+                if distance < 0.9 then
+                    distance = 0.9
+                end
+                pickup.Velocity = (pickup.Velocity + (nearestPlayer.Position - pickup.Position):Normalized()) * distance
 
-        if nearestPlayer then
-            local distance = pickup.Position:Distance(nearestPlayer.Position)/50
-            if distance > 1 then
-                distance = 1
             end
-            if distance < 0.9 then
-                distance = 0.9
-            end
-            pickup.Velocity = (pickup.Velocity + (nearestPlayer.Position - pickup.Position):Normalized()) * distance
         end
-
+        
         sprite.Rotation = pickup.Velocity:GetAngleDegrees()
-
+        
         local data = pickup:GetData()
+        
+        if pickup.SubType == Soul.SubTypeStatue then
+            if data.Resouled_SoulStatueTarget then
+                ---@type EntityEffect
+                local statue = data.Resouled_SoulStatueTarget
+                local distance = pickup.Position:Distance(statue.Position)/50
+                if distance > 1 then
+                    distance = 1
+                end
+                if distance < 0.9 then
+                    distance = 0.9
+                end
+                pickup.Velocity = (pickup.Velocity + (statue.Position - pickup.Position):Normalized()) * distance
+                
+                if pickup.Position:Distance(statue.Position) - (pickup.Size + DeathStatue.Size) <= 0 then
+                    pickup:Remove()
+                    Soul:PlayPickupSound()
+                    statue:GetSprite():PlayOverlay("Flash", true)
+                end
+            else
+                pickup:Remove()
+            end
+        end
 
         if data.Resouled_SoulTrail then
             ---@type EntityEffect | nil
@@ -102,3 +142,13 @@ local function onPickupUpdate(_, pickup)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onPickupUpdate, Soul.Variant)
+
+local function preRoomExit()
+    ---@param pickup EntityPickup
+    Resouled.Iterators:IterateOverRoomPickups(function(pickup)
+        if pickup.Variant == Soul.Variant and pickup.SubType == Soul.SubTypeStatue then
+            pickup:Remove()
+        end
+    end)
+end
+Resouled:AddCallback(ModCallbacks.MC_PRE_ROOM_EXIT, preRoomExit)

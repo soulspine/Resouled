@@ -2,6 +2,8 @@ local BUFF_PEDESTAL_TYPE = Isaac.GetEntityTypeByName("Buff Pedestal")
 local BUFF_PEDESTAL_VARIANT = Isaac.GetEntityVariantByName("Buff Pedestal")
 local BUFF_PEDESTAL_SUBTYPE = Isaac.GetEntitySubTypeByName("Buff Pedestal")
 
+local Soul = Resouled.Stats.Soul
+
 local SIZE_MULTI = Vector(1.2, 0.8)
 local BUFF_REFRESH_COOLDOWN = 60
 
@@ -104,7 +106,8 @@ local function postPickupCollision(_, pickup, collider)
     local player = collider:ToPlayer()
     local data = pickup:GetData()
     if player and not data.Resouled_PickedUpBuff and pickup:GetVarData() > 0 and Resouled:GetPossessedSoulsNum() >= Resouled:GetBuffById(pickup:GetVarData()).Price then
-        Resouled:SetPossessedSoulsNum(Resouled:GetPossessedSoulsNum() - Resouled:GetBuffById(pickup:GetVarData()).Price)
+        local price = Resouled:GetBuffById(pickup:GetVarData()).Price
+        Resouled:SetPossessedSoulsNum(Resouled:GetPossessedSoulsNum() - price)
         
         local pickupSprite = Sprite()
         pickupSprite:Load("gfx/buffs/buffs.anm2", true)
@@ -119,6 +122,10 @@ local function postPickupCollision(_, pickup, collider)
 
         pickup:SetVarData(0)
         data.Resouled_PickedUpBuff = BUFF_REFRESH_COOLDOWN
+
+        for i = 1, price do
+            Game():Spawn(EntityType.ENTITY_PICKUP, Soul.Variant, player.Position, Vector.Zero, nil, Soul.SubTypeStatue, player.InitSeed + i)
+        end
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_COLLISION, postPickupCollision, BUFF_PEDESTAL_VARIANT)

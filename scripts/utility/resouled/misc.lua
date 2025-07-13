@@ -298,7 +298,7 @@ end
 ---@param entity Entity
 ---@param step? integer
 ---@return EntityNPC | nil
-function Resouled:TryFindNearestEnemyByFindInRadius(entity, step) -- Use 45 for most optimization while being accurate
+function Resouled:TryFindNearestEnemyByFindInRadius(entity, step) -- Tries to find the nearest enemy by using Isaac.FindInRadius() (less accurate than Resouled:TryFindNearestEnemyByIteration(), more optimized)
     local STEP
     if step then
         if step <= 0 then
@@ -314,18 +314,16 @@ function Resouled:TryFindNearestEnemyByFindInRadius(entity, step) -- Use 45 for 
     local highestX = math.abs(bottomRightPos.X) + math.abs(bottomRightPos.Y)
 
     while x <= highestX and not nearestEnemy do
-        local entities = Isaac.FindInRadius(entity.Position, x)
-        if #entities > 0 then
-            for i = 1, #entities do
-                ---@type Entity
-                local entity2 = entities[i]
-                if entity2 and entity2.Index ~= entity.Index and entity2:ToNPC() and entity2:IsEnemy() and entity2:IsActiveEnemy() and entity2:IsVulnerableEnemy() then
-                    if not nearestEnemy then
-                        nearestEnemy = entity2:ToNPC()
-                    else
-                        if nearestEnemy.Position:Distance(entity.Position) > entity2.Position:Distance(entity.Position) then
-                            nearestEnemy = entity2:ToNPC()
-                        end
+        ---@type EntityNPC[]
+        local entities = Isaac.FindInRadius(entity.Position, x, EntityPartition.ENEMY)
+        ---@param npc EntityNPC
+        for _, npc in ipairs(entities) do
+            if npc and Resouled:IsValidEnemy(npc) then
+                if not nearestEnemy then
+                    nearestEnemy = npc
+                else
+                    if nearestEnemy.Position:Distance(entity.Position) > npc.Position:Distance(entity.Position) then
+                        nearestEnemy = npc
                     end
                 end
             end
@@ -338,12 +336,12 @@ end
 
 ---@param entity Entity
 ---@return EntityNPC | nil
-function Resouled:TryFindNearestEnemyByIteration(entity) -- Way less optimized than the option above but the most accurate
+function Resouled:TryFindNearestEnemyByIteration(entity) -- Tries to find the nearest enemy by iteration (more accurate than Resouled:TryFindNearestEnemyByFindInRadius(), less optimized)
     local nearestEnemy = nil
 
     ---@param npc EntityNPC
     Resouled.Iterators:IterateOverRoomNpcs(function(npc)
-        if npc.Index ~= entity.Index and npc:IsEnemy() and npc:IsActiveEnemy() and npc:IsVulnerableEnemy() then
+        if npc.Index ~= entity.Index and Resouled:IsValidEnemy(npc) then
             if not nearestEnemy then
                 nearestEnemy = npc
             else
@@ -527,4 +525,13 @@ function Resouled:MakeSpriteFrameSave(sprite) -- Returns a frozen current frame 
     frame:LoadGraphics()
 
     return frame
+end
+
+---@param npc EntityNPC
+---@return boolean
+function Resouled:IsValidEnemy(npc) -- Returns true if the npc is a active and vulnerable enemy
+    if npc:IsEnemy() and npc:IsActiveEnemy() and npc:IsVulnerableEnemy() then
+        return true
+    end
+    return false
 end

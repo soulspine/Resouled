@@ -55,11 +55,11 @@ if REPENTOGON and MinimapAPI then
     
     -- ALL MODULES UNIQUE TO RESOULED
 
+    include("scripts.utility.resouled.misc")
     include("scripts.utility.resouled.buffs")
     include("scripts.utility.resouled.souls")
     include("scripts.utility.resouled.tear_effects")
     include("scripts.utility.resouled.curses")
-    include("scripts.utility.resouled.misc")
     include("scripts.utility.resouled.room_events")
 
 

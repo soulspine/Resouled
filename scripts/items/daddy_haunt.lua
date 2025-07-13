@@ -113,9 +113,10 @@ local function onFamiliarUpdate(_, familiar)
             Game():Spawn(EntityType.ENTITY_EFFECT, Isaac.GetEntityVariantByName("Air Shockwave"), familiar.Position, Vector(0, 0), familiar, Isaac.GetEntitySubTypeByName("Air Shockwave"), 0)
             SFXManager():Play(SLAM_SFX, 1, 0, false, 1)
 
+            ---@type EntityNPC[]
             local npcs = Isaac.FindInRadius(familiar.Position, SLAM_EFFECT_RADIUS, EntityPartition.ENEMY)
             for _, npc in ipairs(npcs) do
-                if npc:IsVulnerableEnemy() and npc:IsActiveEnemy() and not npc:IsDead() then
+                if Resouled:IsValidEnemy(npc) then
                     npc:TakeDamage(SLAM_DAMAGE, 0, EntityRef(familiar), 0)
                     if math.random() < SLAM_FEAR_CHANCE then
                         npc:AddFear(EntityRef(familiar), SLAM_FEAR_DURATION)

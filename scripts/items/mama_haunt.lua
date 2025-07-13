@@ -49,7 +49,7 @@ local function onFamiliarUpdate(_, familiar)
 
         if sprite:IsEventTriggered(ANIMATION_TRIGGER_PETRIFY) then
             Resouled.Iterators:IterateOverRoomNpcs(function(npc)
-                if npc:IsVulnerableEnemy() and npc:IsActiveEnemy() then
+                if Resouled:IsValidEnemy(npc) then
                     npc:AddFreeze(EntityRef(familiar), SING_PETRIFY_DURATION)
                 end
             end)

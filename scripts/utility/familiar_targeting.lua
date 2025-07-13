@@ -7,28 +7,22 @@ local familiarTargeting = {}
 ---@return boolean
 function familiarTargeting:SelectRandomEnemyTarget(familiar)
     local data = familiar:GetData()
-    local room = Game():GetRoom()
-    local entities = room:GetEntities()
     
     local validEnemies = {}
-            
-    for i = 1, entities.Size do
-        local entity = entities:Get(i)
-        if entity then
-            if entity:IsVulnerableEnemy() and entity:IsActiveEnemy() and entity:IsVisible() then
-                table.insert(validEnemies, EntityRef(entity))
-            end
+    
+    ---@param npc EntityNPC
+    Resouled.Iterators:IterateOverRoomNpcs(function(npc)
+        if Resouled:IsValidEnemy(npc) then
+            table.insert(validEnemies, EntityRef(npc))
         end
-    end
-    if #validEnemies == 0 then
+    end)
+    if #validEnemies <= 0 then
         return false
     else
-
+        ---@type EntityRef
+        data.familiarTargetingTarget = validEnemies[math.random(#validEnemies)]
+        return true
     end
-
-    ---@type EntityRef
-    data.familiarTargetingTarget = validEnemies[math.random(#validEnemies)]
-    return true
 end
 
 --- Returns the target of the familiar. If the target is not set, returns `nil`
@@ -40,8 +34,10 @@ function familiarTargeting:GetEnemyTarget(familiar)
         ---@type EntityNPC
         local npc = data.familiarTargetingTarget.Entity:ToNPC()
 
-        if npc and npc:IsVulnerableEnemy() and npc:IsActiveEnemy() and npc:IsVisible() and not npc:IsDead() then
+        if npc and Resouled:IsValidEnemy(npc) and not npc:IsDead() then
             return npc
+        else
+            data.familiarTargetingTarget = nil
         end
     end
 end
@@ -53,18 +49,9 @@ end
 
 ---@param familiar EntityFamiliar
 function familiarTargeting:SelectNearestEnemyTarget(familiar)
-    ---@type nil | Entity
-    local nearestEnemy = nil
-    ---@param entity Entity
-    Resouled.Iterators:IterateOverRoomEntities(function(entity)
-        if entity:IsVulnerableEnemy() and entity:IsActiveEnemy() and entity:IsEnemy() then
-            if not nearestEnemy then
-                nearestEnemy = entity
-            elseif nearestEnemy.Position:Distance(familiar.Position) > entity.Position:Distance(familiar.Position) then
-                nearestEnemy = entity
-            end
-        end
-    end)
+    ---@type nil | EntityNPC
+    local nearestEnemy = Resouled:TryFindNearestEnemyByFindInRadius(familiar, 10)
+
     return nearestEnemy
 end
 

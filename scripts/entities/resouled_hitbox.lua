@@ -1,6 +1,6 @@
 local HITBOX_TYPE = Isaac.GetEntityTypeByName("ResouledHitbox")
 local HITBOX_VARIANT = Isaac.GetEntityVariantByName("ResouledHitbox")
-local HITBOX_SUBTYPE = Isaac.GetEntityTypeByName("ResouledHitbox")
+local HITBOX_SUBTYPE = Isaac.GetEntitySubTypeByName("ResouledHitbox")
 
 ---@param npc EntityNPC
 local function postNpcInit(_, npc)

@@ -52,3 +52,9 @@ Resouled.Stats.DeathStatue = {
     SubType = Isaac.GetEntitySubTypeByName("Death Statue"),
     Size = 20,
 }
+
+Resouled.Stats.ResouledHitbox = {
+    Type = Isaac.GetEntityTypeByName("ResouledHitbox"),
+    Variant = Isaac.GetEntityVariantByName("ResouledHitbox"),
+    SubType = Isaac.GetEntitySubTypeByName("ResouledHitbox")
+}

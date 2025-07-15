@@ -461,13 +461,13 @@ function Resouled:SpawnPaperGore(position, amount)
 end
 
 ---@param player EntityPlayer
----@return boolean
+---@return Vector | nil
 function Resouled:IsShooting(player)
     local input = player:GetShootingInput()
     if (input.X ~= 0 or input.Y ~= 0) or (input == Vector(0, 0) and player:AreOpposingShootDirectionsPressed()) then
-        return true
+        return input
     end
-    return false
+    return nil
 end
 
 ---@param position Vector

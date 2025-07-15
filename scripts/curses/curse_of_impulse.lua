@@ -1,7 +1,6 @@
 local curse = Resouled.Curses.CURSE_OF_IMPULSE
 local mapId = Resouled.CursesMapId[curse]
 
---[[
 MinimapAPI:AddMapFlag(
     mapId,
     function()
@@ -11,7 +10,6 @@ MinimapAPI:AddMapFlag(
     mapId,
     1
 )
-]]
 
 local PUSH_DURATION = 10
 local PUSH_VELOCITY_MULT = 1.2

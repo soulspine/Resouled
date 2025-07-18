@@ -1,5 +1,43 @@
 local game = Game()
 
+local RoomEventSign = {
+    Sprite = Sprite(),
+
+    FontName = Font(),
+    FontDescription = Font(),
+
+    NameString = "",
+    DescriptionString = "",
+    TextColor = KColor(1, 1, 1, 1),
+
+    AppearTime = 0,
+
+    CurrentPositionY = 0,
+    TargetPositionY = 0,
+    Speed = 4.5,
+
+    DefaultAppearTime = 200,
+
+    SpriteYSize = 96,
+}
+RoomEventSign.Sprite:Load("gfx/ui/room_event_sign.anm2") RoomEventSign.Sprite:Play("Idle", true)
+RoomEventSign.FontName:Load("font/teammeatfont16bold.fnt")
+RoomEventSign.FontDescription:Load("font/teammeatfont10.fnt")
+
+
+---@param roomEventID ResouledRoomEvent
+---@param time? integer
+function Resouled:ShowRoomEventName(roomEventID, time)
+    local roomEvent = Resouled:GetRoomEventByID(roomEventID)
+    if roomEvent then
+        RoomEventSign.NameString = roomEvent.Name
+
+        RoomEventSign.AppearTime = time or RoomEventSign.DefaultAppearTime
+
+        RoomEventSign.TargetPositionY = RoomEventSign.SpriteYSize
+    end
+end
+
 local BASE_ROOM_EVENT_NUM_PER_FLOOR = 2
 local ROOM_EVENTS_TO_ADD_PER_CHAPTER = 1
 
@@ -179,8 +217,10 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
 local function postNewRoom()
     local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
 
+    RoomEventSign.AppearTime = 0
+
     if ROOM_SAVE.RoomEvent then
-        game:GetHUD():ShowFortuneText(Resouled:GetRoomEvent(ROOM_SAVE.RoomEvent).Name)
+        Resouled:ShowRoomEventName(ROOM_SAVE.RoomEvent)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)
@@ -252,3 +292,41 @@ local function roomEventCommandAutocomplete()
 end
 ---@diagnostic disable-next-line: param-type-mismatch
 Resouled:AddCallback(ModCallbacks.MC_CONSOLE_AUTOCOMPLETE, roomEventCommandAutocomplete, COMMAND.Name)
+
+
+local function onRoomEventSignRender()
+
+    if RoomTransition.GetTransitionMode() ~= 4 then -- Stuff like boss intro
+        if RoomEventSign.AppearTime > 0 then
+            RoomEventSign.AppearTime = RoomEventSign.AppearTime - 1
+        else
+            if RoomEventSign.TargetPositionY ~= 0 then
+                RoomEventSign.TargetPositionY = 0
+            end
+        end
+        
+        if RoomEventSign.CurrentPositionY < RoomEventSign.TargetPositionY then
+            RoomEventSign.CurrentPositionY = RoomEventSign.CurrentPositionY + RoomEventSign.Speed
+            if RoomEventSign.CurrentPositionY > RoomEventSign.TargetPositionY then
+                RoomEventSign.CurrentPositionY = RoomEventSign.TargetPositionY
+            end
+        elseif RoomEventSign.CurrentPositionY > RoomEventSign.TargetPositionY then
+            RoomEventSign.CurrentPositionY = RoomEventSign.CurrentPositionY - RoomEventSign.Speed
+            if RoomEventSign.CurrentPositionY < RoomEventSign.TargetPositionY then
+                RoomEventSign.CurrentPositionY = RoomEventSign.TargetPositionY
+            end
+        end
+    end
+
+    local signPos = Vector(Isaac.GetScreenWidth()/2, 0) + Vector(0, RoomEventSign.CurrentPositionY)
+    local namePos = RoomEventSign.Sprite:GetNullFrame("NamePos"):GetPos() + signPos
+    local descPos = RoomEventSign.Sprite:GetNullFrame("DescriptionPos"):GetPos() + signPos
+
+    if RoomEventSign.CurrentPositionY > 0 then
+        RoomEventSign.Sprite:Render(signPos)
+
+        RoomEventSign.FontName:DrawString(RoomEventSign.NameString, namePos.X, namePos.Y, RoomEventSign.TextColor, 1, true)
+        RoomEventSign.FontDescription:DrawString(RoomEventSign.DescriptionString, descPos.X, descPos.Y, RoomEventSign.TextColor, 1, true)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_HUD_RENDER, onRoomEventSignRender)

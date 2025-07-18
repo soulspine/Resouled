@@ -9,7 +9,7 @@ local function postBombUpdate(_, bomb)
     ---@param entity Entity
     Resouled.Iterators:IterateOverRoomEntities(function(entity)
         local pickup = entity:ToPickup()
-        if pickup and pickup.Position:Distance(bomb.Position) <= BLAST_RADIUS * bomb.RadiusMultiplier and pickup.Variant == PickupVariant.PICKUP_LOCKEDCHEST then
+        if pickup and pickup.Position:Distance(bomb.Position) <= BLAST_RADIUS * bomb.RadiusMultiplier and pickup.Variant == PickupVariant.PICKUP_LOCKEDCHEST and pickup.SubType == ChestSubType.CHEST_CLOSED then
             if Resouled:TrySpawnSoulPickup(Resouled.Souls.THE_CHEST, pickup.Position) then
                 pickup:TryOpenChest()
             end

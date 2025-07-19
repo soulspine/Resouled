@@ -29,6 +29,8 @@ Resouled.RoomEvents = {
     EQUALITY = 27,
     ISAACS_BLESSING = 28,
     BUM_BO_IS_LOOSE = 29,
+    MIGHT_FOR_THE_MEEK = 30,
+    PITY_FOR_THE_POOR = 31,
 }
 
 ---@return boolean
@@ -137,6 +139,8 @@ Resouled:RegisterRoomEvent(Resouled.RoomEvents.BLIND_RAGE, "Blind Rage", {filter
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.EQUALITY, "Equality", {}, true)
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.ISAACS_BLESSING, "Isaac's Blessing", {filters.ITEM_PRESENT})
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.BUM_BO_IS_LOOSE, "Bum-Bo is loose!", {})
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.MIGHT_FOR_THE_MEEK, "Might for the Meek!", {filters.ENEMIES_PRESENT})
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.PITY_FOR_THE_POOR, "Pity for the Poor", {filters.SHOP_ONLY}, true)
 
 Resouled:Log("Loaded "..tostring(#Resouled:GetRoomEvents()).." room events.")
 
@@ -170,3 +174,5 @@ include("scripts.room_events.blind_rage")
 include("scripts.room_events.equality")
 include("scripts.room_events.isaacs_blessing")
 include("scripts.room_events.bum_bo_is_loose")
+include("scripts.room_events.might_for_the_meek")
+include("scripts.room_events.pity_for_the_poor")

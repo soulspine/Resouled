@@ -234,7 +234,7 @@ Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, npcTakeDamage)
 ---@param itemConfig ItemConfigItem
 ---@param player EntityPlayer
 local function preAddCostume(_, itemConfig, player)
-    if itemConfig.ID == SOULBOND and player:GetPlayerType() == PlayerType.PLAYER_THELOST_B then
+    if itemConfig:IsCollectible() and itemConfig.ID == SOULBOND and player:GetPlayerType() == PlayerType.PLAYER_THELOST_B then
         return true
     end
 end

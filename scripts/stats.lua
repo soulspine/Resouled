@@ -45,6 +45,8 @@ Resouled.Stats.Soul = {
     PlayPickupSound = function()
         SFXManager():Play(Isaac.GetSoundIdByName("Soul Pickup "..tostring(math.random(4))))
     end,
+
+    Max = 99
 }
 
 Resouled.Stats.DeathStatue = {

@@ -25,4 +25,4 @@ local function preNewRoom()
         end
     end)
 end
-Resouled:AddCallback(ModCallbacks.MC_PRE_NEW_ROOM, preNewRoom)
+Resouled:AddCallback(ModCallbacks.MC_PRE_ROOM_EXIT, preNewRoom)

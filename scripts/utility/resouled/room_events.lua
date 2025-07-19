@@ -16,7 +16,7 @@ local RoomEventSign = {
     TargetPositionY = 0,
     Speed = 4.5,
 
-    DefaultAppearTime = 200,
+    DefaultAppearTime = 125,
 
     SpriteYSize = 96,
 }
@@ -292,7 +292,6 @@ local function roomEventCommandAutocomplete()
 end
 ---@diagnostic disable-next-line: param-type-mismatch
 Resouled:AddCallback(ModCallbacks.MC_CONSOLE_AUTOCOMPLETE, roomEventCommandAutocomplete, COMMAND.Name)
-
 
 local function onRoomEventSignRender()
 

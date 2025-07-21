@@ -31,6 +31,7 @@ Resouled.RoomEvents = {
     BUM_BO_IS_LOOSE = 29,
     MIGHT_FOR_THE_MEEK = 30,
     PITY_FOR_THE_POOR = 31,
+    GUPPYS_PIECES = 32,
 }
 
 ---@return boolean
@@ -108,6 +109,13 @@ local filters = {
         end
         return false
     end,
+    TREASURE_ONLY = function()
+        local room = Game():GetRoom()
+        if room:GetType() == RoomType.ROOM_TREASURE then
+            return true
+        end
+        return false
+    end,
 }
 
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.ALL_HALLOWS_EVE, "All Hallow's Eve", {filters.ENEMIES_PRESENT})
@@ -141,6 +149,7 @@ Resouled:RegisterRoomEvent(Resouled.RoomEvents.ISAACS_BLESSING, "Isaac's Blessin
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.BUM_BO_IS_LOOSE, "Bum-Bo is loose!", {})
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.MIGHT_FOR_THE_MEEK, "Might for the Meek!", {filters.ENEMIES_PRESENT})
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.PITY_FOR_THE_POOR, "Pity for the Poor", {filters.SHOP_ONLY}, true)
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.GUPPYS_PIECES, "Guppy's Pieces", {filters.TREASURE_ONLY})
 
 Resouled:Log("Loaded "..tostring(#Resouled:GetRoomEvents()).." room events.")
 
@@ -176,3 +185,4 @@ include("scripts.room_events.isaacs_blessing")
 include("scripts.room_events.bum_bo_is_loose")
 include("scripts.room_events.might_for_the_meek")
 include("scripts.room_events.pity_for_the_poor")
+include("scripts.room_events.guppys_pieces")

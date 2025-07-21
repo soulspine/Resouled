@@ -76,3 +76,13 @@ Resouled.Stats.CurseOfAmnesia = {
     DisappearChance = 0.35,
     AppearChance = 0.50,
 }
+
+Resouled.Stats.GuppyItems = {}
+
+local itemConfig = Isaac.GetItemConfig()
+for i = 1, #itemConfig:GetCollectibles() do
+    local item = itemConfig:GetCollectible(i)
+    if item and item:HasTags(ItemConfig.TAG_GUPPY) then
+        table.insert(Resouled.Stats.GuppyItems, i)
+    end
+end

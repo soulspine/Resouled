@@ -118,5 +118,8 @@ include("scripts.buffs.heavens_call")
 include("scripts.buffs.blue_king_crown")
 include("scripts.buffs.king_crown")
 include("scripts.buffs.royal_crown")
+include("scripts.buffs.imp")
+include("scripts.buffs.fiend")
+include("scripts.buffs.demon")
 
 include("scripts.buffs.war")

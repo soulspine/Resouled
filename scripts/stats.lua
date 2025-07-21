@@ -60,3 +60,19 @@ Resouled.Stats.ResouledHitbox = {
     Variant = Isaac.GetEntityVariantByName("ResouledHitbox"),
     SubType = Isaac.GetEntitySubTypeByName("ResouledHitbox")
 }
+
+Resouled.Stats.FiendBuff = {
+    BombChance = 0.00075
+}
+
+Resouled.Stats.DemonBuff = {
+    OnDeathChance = 0.05,
+    OnHitForBossChance = 0.01,
+    BigDamage = 60,
+    SmallDamage = 15,
+}
+
+Resouled.Stats.CurseOfAmnesia = {
+    DisappearChance = 0.35,
+    AppearChance = 0.50,
+}

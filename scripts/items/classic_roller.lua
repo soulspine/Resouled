@@ -22,7 +22,7 @@ local function onActiveUse(_, type, rng, player, flags, slot, data)
             local validItems = {}
             for i = 1, #itemsFromCurrectPool do
                 local id = itemsFromCurrectPool[i].itemID
-                if Isaac.GetItemConfig():GetCollectible(id).Quality == targetQuality and Game():GetItemPool():CanSpawnCollectible(id, false) then
+                if  Isaac.GetItemConfig():GetCollectible(id) and Isaac.GetItemConfig():GetCollectible(id).Quality == targetQuality and Game():GetItemPool():CanSpawnCollectible(id, false) then
                     table.insert(validItems, id)
                 end
             end

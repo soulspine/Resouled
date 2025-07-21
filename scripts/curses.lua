@@ -13,6 +13,7 @@ Resouled.Curses = {
     CURSE_OF_TINY_HANDS = Isaac.GetCurseIdByName("Curse of Tiny Hands!"),
     CURSE_OF_THE_HUNTED = Isaac.GetCurseIdByName("Curse of the Hunted!"),
     CURSE_OF_IMPULSE = Isaac.GetCurseIdByName("Curse of Impulse!"),
+    CURSE_OF_AMNESIA = Isaac.GetCurseIdByName("Curse of Amnesia!"),
 }
 
 Resouled.CursesMapId = {
@@ -29,6 +30,7 @@ Resouled.CursesMapId = {
     [Resouled.Curses.CURSE_OF_TINY_HANDS] = "ResouledCurseOfTinyHands",
     [Resouled.Curses.CURSE_OF_THE_HUNTED] = "ResouledCurseOfTheHunted",
     [Resouled.Curses.CURSE_OF_IMPULSE] = "ResouledCurseOfImpulse",
+    [Resouled.Curses.CURSE_OF_AMNESIA] = "ResouledCurseOfAmnesia"
 }
 
 local CURSES_BLACKLIST = {
@@ -52,6 +54,7 @@ include("scripts.curses.curse_of_the_suspicious")
 include("scripts.curses.curse_of_tiny_hands")
 include("scripts.curses.curse_of_the_hunted")
 include("scripts.curses.curse_of_impulse")
+include("scripts.curses.curse_of_amnesia")
 
 ---@param curses integer
 local function onCurseEval(_, curses)

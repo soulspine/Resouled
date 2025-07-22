@@ -6,6 +6,49 @@ local Door = {
     SubType = Isaac.GetEntitySubTypeByName("ResouledDoor"),
 }
 
+---@param index integer
+---@return boolean
+local function roomExists(index)
+    local RunSave = SAVE_MANAGER.GetRunSave()
+    return RunSave.AfterlifeShop and RunSave.AfterlifeShop.LevelLayout and RunSave.AfterlifeShop.LevelLayout[index] and RunSave.AfterlifeShop.LevelLayout[index].Room and RunSave.AfterlifeShop.LevelLayout[index].Room > 0
+end
+
+---@param type AfterlifeShopRoomType
+local function setRoomType(type)
+    return type
+end
+
+---@param currentIndex integer
+---@param dir Direction
+---@return integer
+local function moveAroundMap(currentIndex, dir)
+    local RunSave = SAVE_MANAGER.GetRunSave()
+    if RunSave.AfterlifeShop and RunSave.AfterlifeShop.LevelLayout then
+
+        local newIndex = Resouled:GetRoomIdxFromDir(dir, currentIndex)
+        
+        if newIndex and not roomExists(newIndex) then
+            return newIndex
+        elseif not newIndex or (newIndex and roomExists(newIndex)) then
+            local freeSpot = nil
+            local i = 0
+            while i < 4 and not freeSpot do
+                local newIndex2 = Resouled:GetRoomIdxFromDir(i, currentIndex)
+                if newIndex2 and not roomExists(newIndex2) then
+                    freeSpot = newIndex2
+                end
+                i = i + 1
+            end
+            if freeSpot then
+                return freeSpot
+            end
+        else
+            return currentIndex
+        end
+    end
+    return currentIndex
+end
+
 ---@return table
 local function getDoorsPositions()
     local room = game:GetRoom()
@@ -45,28 +88,37 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, Door.Type)
 ---@param doorSlot DoorSlot
 ---@param position Vector
 local function trySpawnDoor(doorSlot, position)
-    if Resouled:GetNearestRoomIndexAndDirectionFromPos(position) then
+    local RunSave = SAVE_MANAGER.GetRunSave()
+    local nearestRoom = Resouled:GetNearestRoomIndexAndDirectionFromPos(position)
+    if nearestRoom and RunSave.AfterlifeShop and RunSave.AfterlifeShop.LevelLayout and RunSave.AfterlifeShop.LevelLayout[nearestRoom.RoomIndex] and RunSave.AfterlifeShop.LevelLayout[nearestRoom.RoomIndex].Room and RunSave.AfterlifeShop.LevelLayout[nearestRoom.RoomIndex].Room > 0 then
         local door = game:Spawn(Door.Type, Door.Variant, position, Vector.Zero, nil, Door.SubType, Isaac.GetFrameCount())
-        door.SizeMulti = Vector(1, 0.05)
+        door.SizeMulti = Vector(1, 0.001)
         door.SpriteRotation = -90 + (90 * doorSlot)
     end
 end
 
-local function postNewRoom()
-    local room = Game():GetRoom()
-    local doorsPos = getDoorsPositions()
-    for i = 0, DoorSlot.NUM_DOOR_SLOTS do
-        local door = room:GetDoor(i)
-        if door then
-            room:RemoveDoor(i)
-
-        end
-        if i < 4 then
-            trySpawnDoor(i, doorsPos[i + 1])
+local function spawnDoors()
+    local RunSave = SAVE_MANAGER.GetRunSave()
+    if RunSave.AfterlifeShop then
+        local room = Game():GetRoom()
+        local doorsPos = getDoorsPositions()
+        for i = 0, DoorSlot.NUM_DOOR_SLOTS do
+            local door = room:GetDoor(i)
+            if door then
+                room:RemoveDoor(i)
+                
+            end
+            if i < 4 then
+                trySpawnDoor(i, doorsPos[i + 1])
+            end
         end
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)
+
+local function postNewRoom()
+    spawnDoors()
+end
+Resouled:AddPriorityCallback(ModCallbacks.MC_POST_NEW_ROOM, CallbackPriority.LATE, postNewRoom)
 
 ---@param npc EntityNPC
 ---@param collider Entity
@@ -81,36 +133,84 @@ end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_COLLISION, onNpcCollision, Door.Type)
 
 local function postFloorGenerate()
-    local level = game:GetLevel()
-    for i = 0, 12 do
-        for j = 0, 12 do
-                    
-            local levelGen = Isaac.LevelGeneratorEntry()
-            levelGen:SetColIdx(i)
-            levelGen:SetLineIdx(j)
-            levelGen:SetAllowedDoors(4)
-                    
-            local roomConfig = RoomConfigHolder.GetRandomRoom(1, false, StbType.CHEST, RoomType.ROOM_DEFAULT, RoomShape.ROOMSHAPE_1x1, nil, nil, nil, nil, 4)
-                    
-            level:PlaceRoom(levelGen, roomConfig, 1)
+    local RunSave = SAVE_MANAGER.GetRunSave()
+    if RunSave.AfterlifeShop then
+        local level = game:GetLevel()
+        
+        local startingRoom = level:GetCurrentRoomIndex()
+        RunSave.AfterlifeShop.LevelLayout = {}
+        local layout = RunSave.AfterlifeShop.LevelLayout
+
+        for i = 0, 12 do
+            for j = 0, 12 do
+                
+                local levelGen = Isaac.LevelGeneratorEntry()
+                levelGen:SetColIdx(i)
+                levelGen:SetLineIdx(j)
+                levelGen:SetAllowedDoors(4)
+                
+                local roomConfig = RoomConfigHolder.GetRandomRoom(1, false, StbType.CHEST, RoomType.ROOM_DEFAULT, RoomShape.ROOMSHAPE_1x1, nil, nil, nil, nil, 4)
+                
+                level:PlaceRoom(levelGen, roomConfig, 1)
+
+                layout[i] = {Room = setRoomType(AfterlifeShopRoomTypes.None)}
+            end
         end
-    end
-    local rooms = level:GetRooms()
-
-    for i = 1, rooms.Size do
-        local room = rooms:Get(i)
-
-        if room then
-            room.Clear = true
-            room.DisplayFlags = RoomDescriptor.DISPLAY_NONE
+        local rooms = level:GetRooms()
+        
+        for i = 1, rooms.Size do
+            local room = rooms:Get(i)
+            
+            if room then
+                room.Clear = true
+                room.DisplayFlags = RoomDescriptor.DISPLAY_NONE
+            end
         end
-    end
 
-    level:Update()
+        local currentIndex = startingRoom
+
+        --Generate the afterlife shop layout
+
+        --Placeholder generator (example how it to make rooms)
+        layout[currentIndex] = {Room = setRoomType(AfterlifeShopRoomTypes.MainShop)}
+
+        local roomCount = 0
+        local failedCount = 0
+
+        ::generate::
+        currentIndex = moveAroundMap(currentIndex, math.random(0, 3))
+
+        if not roomExists(currentIndex) then
+            roomCount = roomCount + 1
+            layout[currentIndex] = {Room = setRoomType(AfterlifeShopRoomTypes.SpecialBuffsRoom)}
+        else
+            failedCount = failedCount + 1
+        end
+
+        if failedCount < 2 and roomCount < 100 then
+            goto generate
+        end
+
+
+        RunSave.AfterlifeShop.StartRoomIndex = startingRoom
+
+        spawnDoors()
+        --Finished
+        
+        level:Update()
+    end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postFloorGenerate)
+Resouled:AddPriorityCallback(ModCallbacks.MC_POST_NEW_LEVEL, CallbackPriority.LATE, postFloorGenerate)
 
 Resouled:AddCallback(ModCallbacks.MC_PRE_LEVEL_PLACE_ROOM, function()
-    local roomConfig = RoomConfigHolder.GetRandomRoom(1, false, StbType.CHEST, RoomType.ROOM_DEFAULT, RoomShape.ROOMSHAPE_1x1, nil, nil, nil, nil, 4)
-    return roomConfig
+    local RunSave = SAVE_MANAGER.GetRunSave()
+    if RunSave.AfterlifeShopNext then
+        RunSave.AfterlifeShop = {}
+        RunSave.AfterlifeShopNext = nil
+    end
+
+    if RunSave.AfterlifeShop then
+        local roomConfig = RoomConfigHolder.GetRandomRoom(1, false, StbType.CHEST, RoomType.ROOM_DEFAULT, RoomShape.ROOMSHAPE_1x1, nil, nil, nil, nil, 4)
+        return roomConfig
+    end
 end)

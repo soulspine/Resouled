@@ -589,3 +589,26 @@ function Resouled:GetNearestRoomIndexAndDirectionFromPos(position)
         return table
     end
 end
+
+---@param direction Direction
+---@param currentIndex integer
+---@return integer | nil
+function Resouled:GetRoomIdxFromDir(direction, currentIndex)
+    local ColRow = Resouled:GetRoomColumnAndRowFromIdx(currentIndex)
+
+    if direction == Direction.UP then
+        ColRow = ColRow - Vector(0, 1)
+    elseif direction == Direction.DOWN then
+        ColRow = ColRow + Vector(0, 1)
+    elseif direction == Direction.LEFT then
+        ColRow = ColRow - Vector(1, 0)
+    elseif direction == Direction.RIGHT then
+        ColRow = ColRow + Vector(1, 0)
+    end
+
+    if ColRow.X < 0 or ColRow.X > 12 or ColRow.Y < 0 or ColRow.Y > 12 then
+        return nil
+    else
+        return 13 * ColRow.Y + ColRow.X
+    end
+end

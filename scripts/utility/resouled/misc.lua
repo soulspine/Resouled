@@ -535,3 +535,57 @@ function Resouled:IsValidEnemy(npc) -- Returns true if the npc is a active and v
     end
     return false
 end
+
+---@param idx integer
+---@return Vector
+function Resouled:GetRoomColumnAndRowFromIdx(idx)
+    return Vector(idx%13, idx//13)
+end
+
+-- returns a table with a Direction and RoomIndex
+---@param position Vector
+---@return table | nil
+function Resouled:GetNearestRoomIndexAndDirectionFromPos(position)
+    local ColRow = Resouled:GetRoomColumnAndRowFromIdx(Game():GetLevel():GetCurrentRoomIndex())
+
+    local room = Game():GetRoom()
+    local centerPos = room:GetCenterPos()
+    local topLeftPos = room:GetTopLeftPos()
+    local bottomRightPos = room:GetBottomRightPos()
+
+    local centerToPositionNormalized = (centerPos - position):Normalized()
+    local centerToTopLeftNormalized = (centerPos - topLeftPos):Normalized()
+    local centerToBottomRightNormalized = (centerPos - bottomRightPos):Normalized()
+    local centerToTopRightNormalized = (centerPos - Vector(bottomRightPos.X, topLeftPos.Y)):Normalized()
+    local centerToBottomLeftNormalized = (centerPos - Vector(topLeftPos.X, bottomRightPos.Y)):Normalized()
+
+    local direction = Direction.NO_DIRECTION
+
+    local x = centerToPositionNormalized.X
+    local y = centerToPositionNormalized.Y
+
+    if x < centerToTopLeftNormalized.X and x > centerToTopRightNormalized.X and y > centerToTopLeftNormalized.Y then
+        ColRow = ColRow - Vector(0, 1)
+        direction = Direction.UP
+    elseif x < centerToBottomLeftNormalized.X and x > centerToBottomRightNormalized.X and y < centerToBottomLeftNormalized.Y then
+        ColRow = ColRow + Vector(0, 1)
+        direction = Direction.DOWN
+    elseif y > centerToBottomLeftNormalized.Y and y < centerToTopLeftNormalized.Y and x > centerToTopLeftNormalized.X then
+        ColRow = ColRow - Vector(1, 0)
+        direction = Direction.LEFT
+    elseif y > centerToBottomRightNormalized.Y and y < centerToTopRightNormalized.Y and x < centerToTopRightNormalized.X then
+        ColRow = ColRow + Vector(1, 0)
+        direction = Direction.RIGHT
+    end
+
+
+    if ColRow.X < 0 or ColRow.X > 12 or ColRow.Y < 0 or ColRow.Y > 12 then
+        return nil
+    else
+        local table = {
+            Direction = direction,
+            RoomIndex = 13 * ColRow.Y + ColRow.X
+        }
+        return table
+    end
+end

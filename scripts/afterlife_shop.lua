@@ -1,1 +1,2 @@
-include("scripts.afterlife_shop.backdrop")
+--include("scripts.afterlife_shop.backdrop")
+--include("scripts.afterlife_shop.doors_and_floor_layout")

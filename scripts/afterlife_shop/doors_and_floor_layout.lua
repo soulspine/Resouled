@@ -6,16 +6,22 @@ local Door = {
     SubType = Isaac.GetEntitySubTypeByName("ResouledDoor"),
 }
 
----@param index integer
----@return boolean
-local function roomExists(index)
-    local RunSave = SAVE_MANAGER.GetRunSave()
-    return RunSave.AfterlifeShop and RunSave.AfterlifeShop["LevelLayout"] and RunSave.AfterlifeShop["LevelLayout"][tostring(index)] and RunSave.AfterlifeShop["LevelLayout"][tostring(index)] ~= 0
+---@param integer integer
+---@return string
+local function makeLookupKey(integer)
+    return tostring(math.floor(integer + 0.5))
 end
 
 ---@param type AfterlifeShopRoomType
 local function setRoomType(type)
     return type
+end
+
+---@param index integer
+---@return boolean
+local function roomExists(index)
+    local RunSave = SAVE_MANAGER.GetRunSave()
+    return RunSave.AfterlifeShop and RunSave.AfterlifeShop["LevelLayout"] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(index)] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(index)] > 0
 end
 
 ---@param currentIndex integer
@@ -77,6 +83,7 @@ local function postNpcInit(_, npc)
         npc:AddEntityFlags(EntityFlag.FLAG_NO_KNOCKBACK)
         npc:AddEntityFlags(EntityFlag.FLAG_HIDE_HP_BAR)
         npc:AddEntityFlags(EntityFlag.FLAG_BACKDROP_DETAIL)
+        npc:AddEntityFlags(EntityFlag.FLAG_NO_STATUS_EFFECTS)
         npc.DepthOffset = -1000
         npc:GetSprite():Play("Idle", true)
         npc.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
@@ -90,7 +97,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, Door.Type)
 local function trySpawnDoor(doorSlot, position)
     local RunSave = SAVE_MANAGER.GetRunSave()
     local nearestRoom = Resouled:GetNearestRoomIndexAndDirectionFromPos(position)
-    if nearestRoom and RunSave.AfterlifeShop and RunSave.AfterlifeShop["LevelLayout"] and RunSave.AfterlifeShop["LevelLayout"][tostring(nearestRoom.RoomIndex)] and RunSave.AfterlifeShop["LevelLayout"][tostring(nearestRoom.RoomIndex)] ~= 0 then
+    if nearestRoom and RunSave.AfterlifeShop and RunSave.AfterlifeShop["LevelLayout"] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(nearestRoom.RoomIndex)] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(nearestRoom.RoomIndex)] > 0 then
         local door = game:Spawn(Door.Type, Door.Variant, position, Vector.Zero, nil, Door.SubType, Isaac.GetFrameCount())
         door.SizeMulti = Vector(1, 0.001)
         door.SpriteRotation = -90 + (90 * doorSlot)
@@ -137,7 +144,6 @@ local function postFloorGenerate()
     if RunSave.AfterlifeShop then
         local level = game:GetLevel()
         
-        local startingRoom = level:GetCurrentRoomIndex()
         RunSave.AfterlifeShop["LevelLayout"] = {}
         local layout = RunSave.AfterlifeShop["LevelLayout"]
 
@@ -153,7 +159,9 @@ local function postFloorGenerate()
                 
                 level:PlaceRoom(levelGen, roomConfig, 1)
 
-                layout[tostring(i)] = setRoomType(AfterlifeShopRoomTypes.None)
+                local roomIdx = 13 * i + j
+
+                layout[makeLookupKey(roomIdx)] = setRoomType(Resouled.AfterlifeShop.RoomTypes.None)
             end
         end
         local rooms = level:GetRooms()
@@ -167,12 +175,13 @@ local function postFloorGenerate()
             end
         end
 
-        local currentIndex = startingRoom
+        local currentIndex = level:GetCurrentRoomIndex()
 
         --Generate the afterlife shop layout
 
         --Placeholder generator (example how it to make rooms)
-        layout[tostring(currentIndex)] = setRoomType(AfterlifeShopRoomTypes.MainShop)
+        layout[makeLookupKey(currentIndex)] = setRoomType(Resouled.AfterlifeShop.RoomTypes.MainShop)
+
 
         local roomCount = 0
         local failedCount = 0
@@ -182,7 +191,7 @@ local function postFloorGenerate()
 
         if not roomExists(currentIndex) then
             roomCount = roomCount + 1
-            layout[tostring(currentIndex)] = setRoomType(AfterlifeShopRoomTypes.SpecialBuffsRoom)
+            layout[makeLookupKey(currentIndex)] = setRoomType(math.random(2, 3))
         else
             failedCount = failedCount + 1
         end
@@ -190,9 +199,6 @@ local function postFloorGenerate()
         if failedCount < 2 and roomCount < 100 then
             goto generate
         end
-
-
-        RunSave.AfterlifeShop["StartRoomIndex"] = startingRoom
 
         spawnDoors()
         --Finished

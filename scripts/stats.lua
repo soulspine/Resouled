@@ -86,3 +86,9 @@ for i = 1, #itemConfig:GetCollectibles() do
         table.insert(Resouled.Stats.GuppyItems, i)
     end
 end
+
+Resouled.Stats.BuffPedestal = {
+    Type = Isaac.GetEntityTypeByName("Buff Pedestal"),
+    Variant = Isaac.GetEntityVariantByName("Buff Pedestal"),
+    SubType = Isaac.GetEntitySubTypeByName("Buff Pedestal")
+}

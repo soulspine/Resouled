@@ -56,17 +56,3 @@ local function onEffectRender(_, effect)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_EFFECT_RENDER, onEffectRender, SoulLantern.Variant)
-
-local function postNewRoom()
-    local RunSave = SAVE_MANAGER.GetRunSave()
-    if RunSave.AfterlifeShop then
-        local room = Game():GetRoom()
-        local topLeft = room:GetTopLeftPos()
-        local bottomRight = room:GetBottomRightPos()
-        for _ = 1, 10 do
-            local pos = Vector(math.random(topLeft.X, bottomRight.X), math.random(topLeft.Y, bottomRight.Y))
-            Game():Spawn(EntityType.ENTITY_EFFECT, SoulLantern.Variant, pos, Vector.Zero, nil, SoulLantern.SubType, room:GetAwardSeed())
-        end
-    end
-end
-Resouled:AddPriorityCallback(ModCallbacks.MC_POST_NEW_ROOM, CallbackPriority.LATE, postNewRoom)

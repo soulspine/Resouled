@@ -87,5 +87,5 @@
 <!-- Misc-->
     <entity name="ResouledDummy" id="999" variant="0" subtype="0"/>
     <entity name="ResouledHitbox" id="999" variant="0" subtype="1" collisionRadius="1" numGridCollisionPoints="12" collisionDamage="1" collisionMass="999" friction="0"/>
-    <entity name="ResouledDoor" anm2path="misc/door.anm2" id="999" variant="0" subtype="2" collisionRadius="16" numGridCollisionPoints="12" collisionDamage="0" collisionMass="999" friction="0.01"/>
+    <entity name="ResouledDoor" anm2path="misc/door.anm2" id="999" variant="0" subtype="2" collisionRadius="16" numGridCollisionPoints="12" collisionDamage="0" collisionMass="999" friction="0.01" champion="0" tags="noreroll nosplit"/>
 </entities>

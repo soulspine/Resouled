@@ -134,8 +134,11 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_COLLISION, postPickupCollision,
 local function postPickupRender(_, pickup)
     local varData = pickup:GetVarData()
     if varData > 0 then
-        local renderPos = Isaac.WorldToScreen(Vector(pickup.Position.X-1, pickup.Position.Y - 15))
-        font:DrawString(tostring(Resouled:GetBuffById(varData).Price), renderPos.X, renderPos.Y, KColor(1, 1, 1, 1), 1, true)
+        local buff = Resouled:GetBuffById(varData)
+        if buff and buff.Price > 0 then
+            local renderPos = Isaac.WorldToScreen(Vector(pickup.Position.X-1, pickup.Position.Y - 15))
+            font:DrawString(tostring(Resouled:GetBuffById(varData).Price), renderPos.X, renderPos.Y, KColor(1, 1, 1, 1), 1, true)
+        end
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_RENDER, postPickupRender, BUFF_PEDESTAL_VARIANT)

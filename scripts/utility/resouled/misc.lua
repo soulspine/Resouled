@@ -612,3 +612,8 @@ function Resouled:GetRoomIdxFromDir(direction, currentIndex)
         return 13 * ColRow.Y + ColRow.X
     end
 end
+
+---@param entity Entity
+function Resouled:CanBeChampion(entity)
+    return EntityConfig.GetEntity(entity.Type, entity.Variant, entity.SubType):CanBeChampion()
+end

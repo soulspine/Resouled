@@ -18,8 +18,7 @@ local function spawnSoulLantern(amount)
 end
 
 local function postNewRoom()
-    local RunSave = SAVE_MANAGER.GetRunSave()
-    if RunSave.AfterlifeShop then
+    if Resouled.AfterlifeShop:IsAfterlifeShop() then
         local room = game:GetRoom()
 
         room:SetBackdropType(Isaac.GetBackdropIdByName("Afterlife Shop"), 1)

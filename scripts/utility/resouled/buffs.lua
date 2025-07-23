@@ -479,7 +479,13 @@ end
 
 local function postPlayerInit() --Appearently this is THE first callback when starting a run
     local RUN_SAVE = SAVE_MANAGER.GetRunSave()
-    if not RUN_SAVE.Resouled_AddedBuffs then
+    local FileSave = SAVE_MANAGER.GetPersistentSave()
+
+    if not FileSave then
+        FileSave = {}
+    end
+
+    if not RUN_SAVE.Resouled_AddedBuffs and not Resouled.AfterlifeShop.Goto.Activate and not Resouled.AfterlifeShop:IsAfterlifeShop() then
         RUN_SAVE.Resouled_AddedBuffs = true
         Resouled:ActivatePendingBuffs()
     end

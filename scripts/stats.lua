@@ -92,3 +92,17 @@ Resouled.Stats.BuffPedestal = {
     Variant = Isaac.GetEntityVariantByName("Buff Pedestal"),
     SubType = Isaac.GetEntitySubTypeByName("Buff Pedestal")
 }
+
+Resouled.Stats.Achievements = {
+    Afterlife = {
+        CursedEnemies = Isaac.GetAchievementIdByName("Everything is cursed!"),
+        ForeverAlone = Isaac.GetAchievementIdByName("??? now holds forever alone!"),
+        SleightOfHand = Isaac.GetAchievementIdByName("Cain now holds sleight of hand!"),
+        Soulbond = Isaac.GetAchievementIdByName("The Baleful now holds soulbond!"),
+        SpindownDice = Isaac.GetAchievementIdByName("The Broken now holds spindown dice!"),
+    },
+
+    Normal = {
+
+    }
+}

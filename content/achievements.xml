@@ -1,0 +1,7 @@
+<achievements gfxroot="gfx/ui/achievement/">
+    <achievement name="Everything is cursed!" gfx="everything_is_cursed.png" gfxback="resouled_ach_paper.png" hidden="false"/>
+    <achievement name="Cain now holds sleight of hand!" gfx="cain_now_holds_sleight_of_hand.png" gfxback="resouled_ach_paper.png" hidden="false"/>
+    <achievement name="??? now holds forever alone!" gfx="blue_baby_now_holds_forever_alone.png" gfxback="resouled_ach_paper.png" hidden="false"/>
+    <achievement name="The Broken now holds spindown dice!" gfx="the_broken_now_holds_spindown_dice.png" gfxback="resouled_ach_paper.png" hidden="false"/>
+    <achievement name="The Baleful now holds soulbond!" gfx="the_broken_now_holds_soulbond.png" gfxback="resouled_ach_paper.png" hidden="false"/>
+</achievements>

@@ -2,10 +2,11 @@ Resouled.AfterlifeShop = {}
 
 ---@enum AfterlifeShopRoomType
 Resouled.AfterlifeShop.RoomTypes = {
-    None = 0,
-    MainShop = 1,
-    SpecialBuffsRoom = 2,
-    SoulSanctum = 3,
+    None = 0, -- No room
+    MainShop = 1, -- Afterlife main shop
+    SpecialBuffsRoom = 2, -- Special buffs obtained through the run spawn there
+    SoulSanctum = 3, -- You learn how to obtain special souls
+    Graveyard = 4, -- You finish the run there
 }
 
 ---@param integer integer
@@ -75,11 +76,11 @@ local function preNewLevel()
         RunSave.AfterlifeShop = {}
         RunSave.AfterlifeShopNext = nil
     end
-
-    Resouled.AfterlifeShop:SetAfterlifeShop()
 end
 Resouled:AddPriorityCallback(ModCallbacks.MC_PRE_LEVEL_INIT, CallbackPriority.IMPORTANT, preNewLevel)
 
 include("scripts.afterlife_shop.backdrop")
 include("scripts.afterlife_shop.doors_and_floor_layout")
 include("scripts.afterlife_shop.room_layout")
+include("scripts.afterlife_shop.teleportation")
+include("scripts.afterlife_shop.music")

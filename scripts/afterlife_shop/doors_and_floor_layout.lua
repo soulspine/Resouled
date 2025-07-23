@@ -123,7 +123,9 @@ local function spawnDoors()
 end
 
 local function postNewRoom()
-    spawnDoors()
+    if Resouled.AfterlifeShop:IsAfterlifeShop() then
+        spawnDoors()
+    end
 end
 Resouled:AddPriorityCallback(ModCallbacks.MC_POST_NEW_ROOM, CallbackPriority.LATE, postNewRoom)
 
@@ -141,7 +143,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_COLLISION, onNpcCollision, Door.Ty
 
 local function postFloorGenerate()
     local RunSave = SAVE_MANAGER.GetRunSave()
-    if RunSave.AfterlifeShop then
+    if Resouled.AfterlifeShop:IsAfterlifeShop() then
         local level = game:GetLevel()
         
         RunSave.AfterlifeShop["LevelLayout"] = {}
@@ -215,7 +217,7 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_LEVEL_PLACE_ROOM, function()
         RunSave.AfterlifeShopNext = nil
     end
 
-    if RunSave.AfterlifeShop then
+    if Resouled.AfterlifeShop:IsAfterlifeShop() then
         local roomConfig = RoomConfigHolder.GetRandomRoom(1, false, StbType.CHEST, RoomType.ROOM_DEFAULT, RoomShape.ROOMSHAPE_1x1, nil, nil, nil, nil, 4)
         return roomConfig
     end

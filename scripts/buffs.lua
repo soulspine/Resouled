@@ -94,7 +94,7 @@ Resouled:RegisterBuff(Resouled.Buffs.BLUE_KING_CROWN, "Blue King Crown", 3, Reso
 Resouled:RegisterBuff(Resouled.Buffs.KING_CROWN, "King Crown", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.BLUE_KING_CROWN, false)
 Resouled:RegisterBuff(Resouled.Buffs.ROYAL_CROWN, "Royal Crown", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.BLUE_KING_CROWN, false)
 
-Resouled:RegisterBuff(Resouled.Buffs.WAR, "War", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.WAR, true) -- Special
+Resouled:RegisterBuff(Resouled.Buffs.WAR, "War", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.WAR, true, Resouled.Souls.WAR) -- Special
 
 Resouled:Log("Loaded "..tostring(#Resouled:GetBuffs()).." buffs")
 

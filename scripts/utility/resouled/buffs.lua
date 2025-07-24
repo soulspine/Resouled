@@ -6,6 +6,7 @@
 ---@field Family ResouledBuffFamily
 ---@field FamilyName string
 ---@field Stackable boolean
+---@field TiedSpecialSoul ResouledSoul|nil
 
 ---@class ResouledBuffFamilyDesc
 ---@field Id ResouledBuffFamily
@@ -93,8 +94,9 @@ end
 ---@param rarity ResouledBuffRarity
 ---@param family ResouledBuffFamily
 ---@param stackable boolean
+---@param tiedSpecialSoul? ResouledSoul
 ---@return boolean
-function Resouled:RegisterBuff(buff, name, price, rarity, family, stackable)
+function Resouled:RegisterBuff(buff, name, price, rarity, family, stackable, tiedSpecialSoul)
     local buffKey = tostring(buff)
     local rarityKey = tostring(rarity)
     local familyKey = tostring(family)
@@ -114,7 +116,8 @@ function Resouled:RegisterBuff(buff, name, price, rarity, family, stackable)
             Rarity = rarity,
             Family = family,
             FamilyName = registeredFamilies[familyKey].Name,
-            Stackable = stackable
+            Stackable = stackable,
+            TiedSpecialSoul = tiedSpecialSoul
         }
 
         table.insert(registeredFamilies[familyKey].ChildBuffs, buff)
@@ -149,6 +152,24 @@ function Resouled:GetBuffByName(buffName)
         end
     end
     Resouled:LogError("Tried to get a buff description for an unregistered buff name: " .. buffName)
+    return nil
+end
+
+---@param buff ResouledBuff
+---@return ResouledSoul | nil
+function Resouled:TryGetSpecialSoulTiedToBuff(buff)
+    return Resouled:GetBuffById(buff).TiedSpecialSoul
+end
+
+---@param soul ResouledSoul
+---@return ResouledBuff | nil
+function Resouled:TryGetBuffTiedToSpecialSoul(soul)
+    for _, buffID in pairs(Resouled.Buffs) do
+        local buff = Resouled:GetBuffById(buffID)
+        if buff and buff.TiedSpecialSoul and buff.TiedSpecialSoul == soul then
+            return buffID
+        end
+    end
     return nil
 end
 

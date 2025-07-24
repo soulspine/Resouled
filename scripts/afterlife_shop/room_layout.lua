@@ -1,5 +1,6 @@
 local DeathStatue = Resouled.Stats.DeathStatue
 local BuffPedestal = Resouled.Stats.BuffPedestal
+local WiseSkull = Resouled.Stats.WiseSkull
 
 local ShopLevels = Resouled.AfterlifeShop.ShopLevels
 
@@ -74,11 +75,28 @@ local specialBuffPos = {
     [8] = Vector(100, 75),
 }
 
+Resouled.AfterlifeShop.SpecialBuffsPerRoom = #specialBuffPos
+
 local function specialBuffsLayout()
-    for i = 1, #specialBuffPos do
-        local room = Game():GetRoom()
-        local centerPos = room:GetCenterPos()
-        Resouled:SpawnSetBuffPedestal(Resouled.Buffs.WAR, centerPos + specialBuffPos[i])
+    local buffs = {}
+
+    local i = 1
+    for key, buffID in pairs(Resouled.AfterlifeShop.Goto.SpecialBuffs) do
+
+        if i <= #specialBuffPos then
+            buffs[i] = buffID
+            Resouled.AfterlifeShop.Goto.SpecialBuffs[key] = nil
+        end
+
+        i = i + 1
+    end
+
+    for j = 1, #specialBuffPos do
+        if buffs[j] then
+            local room = Game():GetRoom()
+            local centerPos = room:GetCenterPos()
+            Resouled:SpawnSetBuffPedestal(buffs[j], centerPos + specialBuffPos[j])
+        end
     end
 end
 
@@ -90,11 +108,24 @@ local function graveyardLayout()
     Isaac.Spawn(Casket.Type, Casket.Variant, Casket.SubType, room:GetCenterPos(), Vector.Zero, nil)
 end
 
+local function bossfightLayout()
+    local FileSave = SAVE_MANAGER.GetPersistentSave()
+    if not FileSave then FileSave = {} end
+    if not FileSave.WiseSkullKilled then FileSave.WiseSkullKilled = false end
+    local room = Game():GetRoom()
+
+    if FileSave.WiseSkullKilled == false then
+        Isaac.Spawn(WiseSkull.Type, WiseSkull.Variant, WiseSkull.SubType, room:GetCenterPos(), Vector.Zero, nil)
+    end
+end
+
 local layouts = {
     [Resouled.AfterlifeShop.RoomTypes.MainShop] = mainShopLayout,
     [Resouled.AfterlifeShop.RoomTypes.SpecialBuffsRoom] = specialBuffsLayout,
-    [Resouled.AfterlifeShop.RoomTypes.Graveyard] = graveyardLayout
+    [Resouled.AfterlifeShop.RoomTypes.Graveyard] = graveyardLayout,
+    [Resouled.AfterlifeShop.RoomTypes.SecretFight] = bossfightLayout,
 }
+
 
 local function postNewRoom()
     if Resouled.AfterlifeShop:IsAfterlifeShop() then

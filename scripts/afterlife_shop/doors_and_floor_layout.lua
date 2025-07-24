@@ -4,6 +4,11 @@ local Door = {
     Type = Isaac.GetEntityTypeByName("ResouledDoor"),
     Variant = Isaac.GetEntityVariantByName("ResouledDoor"),
     SubType = Isaac.GetEntitySubTypeByName("ResouledDoor"),
+
+    Animations = {
+        Open = "Idle",
+        Locked = "Locked"
+    }
 }
 
 ---@param integer integer
@@ -24,10 +29,28 @@ local function roomExists(index)
     return RunSave.AfterlifeShop and RunSave.AfterlifeShop["LevelLayout"] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(index)] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(index)] > 0
 end
 
+---@param index integer
+---@return boolean
+local function isAnySpotAroundRoomFree(index)
+    local RunSave = SAVE_MANAGER.GetRunSave()
+    if RunSave.AfterlifeShop and RunSave.AfterlifeShop["LevelLayout"] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(index)] then
+        for i = 0, 3 do -- all directions
+            if not Resouled:GetRoomIdxFromDir(i, index) then
+                return true
+            end
+        end
+    end
+    return false
+end
+
 ---@param currentIndex integer
 ---@param dir Direction
 ---@return integer
 local function moveAroundMap(currentIndex, dir)
+    if dir == Direction.NO_DIRECTION then
+        dir = math.random(0, 3)
+    end
+
     local RunSave = SAVE_MANAGER.GetRunSave()
     if RunSave.AfterlifeShop and RunSave.AfterlifeShop["LevelLayout"] then
 
@@ -85,7 +108,7 @@ local function postNpcInit(_, npc)
         npc:AddEntityFlags(EntityFlag.FLAG_BACKDROP_DETAIL)
         npc:AddEntityFlags(EntityFlag.FLAG_NO_STATUS_EFFECTS)
         npc.DepthOffset = -1000
-        npc:GetSprite():Play("Idle", true)
+        --npc:GetSprite():Play("Idle", true)
         npc.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
         npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
     end
@@ -97,8 +120,36 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, Door.Type)
 local function trySpawnDoor(doorSlot, position)
     local RunSave = SAVE_MANAGER.GetRunSave()
     local nearestRoom = Resouled:GetNearestRoomIndexAndDirectionFromPos(position)
+    local currentIndex = Game():GetLevel():GetCurrentRoomIndex()
+
     if nearestRoom and RunSave.AfterlifeShop and RunSave.AfterlifeShop["LevelLayout"] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(nearestRoom.RoomIndex)] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(nearestRoom.RoomIndex)] > 0 then
+
+        if (not Resouled.AfterlifeShop.SpecialBuffRoomsConnectionWhitelist[RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(currentIndex)]] and
+        RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(nearestRoom.RoomIndex)] == Resouled.AfterlifeShop.RoomTypes.SpecialBuffsRoom) or
+        (RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(currentIndex)] == Resouled.AfterlifeShop.RoomTypes.SpecialBuffsRoom and
+        not Resouled.AfterlifeShop.SpecialBuffRoomsConnectionWhitelist[RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(nearestRoom.RoomIndex)]])
+        then
+            return
+        end
+
         local door = game:Spawn(Door.Type, Door.Variant, position, Vector.Zero, nil, Door.SubType, Isaac.GetFrameCount())
+        local sprite = door:GetSprite()
+
+        sprite:Play(Door.Animations.Open, true)
+
+        if RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(nearestRoom.RoomIndex)] == (Resouled.AfterlifeShop.RoomTypes.SoulSanctum or Resouled.AfterlifeShop.RoomTypes.SpecialBuffsRoom) then
+
+            local FileSave = SAVE_MANAGER.GetPersistentSave()
+
+            if not FileSave then FileSave = {} end
+            if not FileSave.WiseSkullKilled then FileSave.WiseSkullKilled = false end
+
+            if FileSave.WiseSkullKilled == false then
+                sprite:Play(Door.Animations.Locked, true)
+            end
+
+        end
+
         door.SizeMulti = Vector(1, 0.001)
         door.SpriteRotation = -90 + (90 * doorSlot)
     end
@@ -141,6 +192,28 @@ local function onNpcCollision(_, npc, collider)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_COLLISION, onNpcCollision, Door.Type)
 
+---@param npc EntityNPC
+local function onNpcUpdate(_, npc)
+    if npc.Variant == Door.Variant and npc.SubType == Door.SubType then
+        local sprite = npc:GetSprite()
+        local FileSave = SAVE_MANAGER.GetPersistentSave()
+
+        if not FileSave then FileSave = {} end
+        if not FileSave.WiseSkullKilled then FileSave.WiseSkullKilled = false end
+
+        if sprite:IsPlaying(Door.Animations.Locked) and FileSave.WiseSkullKilled == true then
+            sprite:Play(Door.Animations.Open, true)
+        end
+
+        if sprite:IsPlaying(Door.Animations.Open) and npc.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_PLAYERONLY then
+            npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
+        elseif sprite:IsPlaying(Door.Animations.Locked) and npc.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_NONE  then
+            npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
+        end
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onNpcUpdate, Door.Type)
+
 local function postFloorGenerate()
     local RunSave = SAVE_MANAGER.GetRunSave()
     if Resouled.AfterlifeShop:IsAfterlifeShop() then
@@ -181,29 +254,42 @@ local function postFloorGenerate()
 
         --Generate the afterlife shop layout
 
-        --Placeholder generator (example how it to make rooms)
         layout[makeLookupKey(currentIndex)] = setRoomType(Resouled.AfterlifeShop.RoomTypes.StartingRoom)
 
+        currentIndex = moveAroundMap(currentIndex, Direction.UP)
 
-        local roomCount = 0
-        local failedCount = 0
+        local shopIdx = currentIndex
 
-        ::generate::
-        currentIndex = moveAroundMap(currentIndex, math.random(0, 3))
+        layout[makeLookupKey(currentIndex)] = setRoomType(Resouled.AfterlifeShop.RoomTypes.MainShop)
 
-        if not roomExists(currentIndex) then
-            roomCount = roomCount + 1
-            layout[makeLookupKey(currentIndex)] = setRoomType(math.random(1, 4))
-        else
-            failedCount = failedCount + 1
+        currentIndex = moveAroundMap(currentIndex, Direction.LEFT)
+
+        layout[makeLookupKey(currentIndex)] = setRoomType(Resouled.AfterlifeShop.RoomTypes.Graveyard)
+
+        currentIndex = moveAroundMap(shopIdx, Direction.RIGHT)
+
+        layout[makeLookupKey(currentIndex)] = setRoomType(Resouled.AfterlifeShop.RoomTypes.SecretFight)
+
+        currentIndex = moveAroundMap(currentIndex, Direction.RIGHT)
+        
+        layout[makeLookupKey(currentIndex)] = setRoomType(Resouled.AfterlifeShop.RoomTypes.SoulSanctum)
+
+        local soulSanctumIdx = currentIndex
+
+        local specialBuffRooms = math.ceil(#Resouled.AfterlifeShop.Goto.SpecialBuffs / Resouled.AfterlifeShop.SpecialBuffsPerRoom)
+
+        for _ = 1, specialBuffRooms do
+            if math.random() < Resouled.AfterlifeShop.ChanceToGoBackToSoulSanctumDuringGeneration and isAnySpotAroundRoomFree(soulSanctumIdx) then
+                currentIndex = soulSanctumIdx
+            end
+
+            currentIndex = moveAroundMap(currentIndex, math.random(1, 3)) -- UP, RIGHT, DOWN
+
+            layout[makeLookupKey(currentIndex)] = setRoomType(Resouled.AfterlifeShop.RoomTypes.SpecialBuffsRoom)
         end
 
-        if failedCount < 2 and roomCount < 100 then
-            goto generate
-        end
-
-        spawnDoors()
         --Finished
+        spawnDoors()
         
         level:Update()
     end

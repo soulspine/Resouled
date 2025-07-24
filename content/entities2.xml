@@ -42,6 +42,7 @@
     <entity name="Blank Canvas Pooter" id="417" variant="3" subtype="0" anm2path="blank_canvas_pooter.anm2" collisionMass="1" collisionRadius="10" collisionDamage="1" friction="1" numGridCollisionPoints="12" shadowSize="10" baseHP="14"/>
     <entity name="Blank Canvas Tear" id="417" variant="4" subtype="0" anm2path="blank_canvas_tear.anm2" collisionMass="1" collisionRadius="6" friction="1" numGridCollisionPoints="12" shadowSize="6" baseHP="1"/>
     <entity name="Blank Canvas Dip" id="417" variant="5" subtype="0" anm2path="blank_canvas_dip.anm2" collisionMass="1" collisionRadius="8" collisionDamage="1" friction="1" numGridCollisionPoints="12" shadowSize="12" baseHP="8"/> 
+    <entity name="Wise Skull" id="418" variant="0" subtype="0" anm2path="misc/wise_skull.anm2" collisionMass="1" collisionRadius="10" collisionDamage="1" friction="1" numGridCollisionPoints="12" baseHP="1"/> 
 
 <!-- Effects-->
     <entity anm2path="effects/air_shockwave.anm2" name="Air Shockwave" id="1000" variant="200"/>
@@ -83,7 +84,7 @@
     <entity name="Magic Marker" id="5" variant="300" subtype="82492" anm2path="magic_marker.anm2" collisionRadius="12" collisionMass="3" friction="1" numGridCollisionPoints="24" shadowSize="16"/>
     <entity name="Soul" id="5" variant="444" subtype="1" anm2path="soul.anm2" collisionRadius="4" collisionMass="1" friction="1" numGridCollisionPoints="12" shadowSize="0"/>
     <entity name="Soul Statue Target" id="5" variant="444" subtype="2" anm2path="soul.anm2" collisionRadius="4" collisionMass="1" friction="1" numGridCollisionPoints="12" shadowSize="0"/>
-    <entity name="Casket" id="5" variant="444" subtype="3" anm2path="misc/casket.anm2" collisionRadius="10" collisionMass="99999" friction="0.1" numGridCollisionPoints="12" shadowSize="0"/>
+    <entity name="Casket" id="5" variant="444" subtype="3" anm2path="misc/casket.anm2" collisionRadius="20" collisionMass="99999" friction="0.1" numGridCollisionPoints="12" shadowSize="0"/>
 
 <!-- Misc-->
     <entity name="ResouledDummy" id="999" variant="0" subtype="0"/>

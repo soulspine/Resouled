@@ -1,3 +1,5 @@
+local WiseSkull = Resouled.Stats.WiseSkull
+
 ---@param eye1 Color
 ---@param eye2 Color
 ---@return table
@@ -25,3 +27,36 @@ local function getRandomPresetEyeColors()
 
     return presets[math.random(#presets)]
 end
+
+---@param npc EntityNPC
+local function onNpcInit(_, npc)
+    if npc.Variant == WiseSkull.Variant and npc.SubType == WiseSkull.SubType then
+        local sprite = npc:GetSprite()
+        
+        sprite:Play("Idle", true)
+
+
+        local eye1 = sprite:GetLayer("Eye1")
+        local eye2 = sprite:GetLayer("Eye2")
+
+        if eye1 and eye2 then
+            local colors = getRandomPresetEyeColors()
+
+            eye1:SetColor(colors[1])
+            eye2:SetColor(colors[2])
+        end
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, WiseSkull.Type)
+
+---@param npc EntityNPC
+local function postNpcDeath(_, npc)
+    if npc.Variant == WiseSkull.Variant and npc.SubType == WiseSkull.SubType then
+        local FileSave = SAVE_MANAGER.GetPersistentSave()
+        if not FileSave then FileSave = {} end
+        if not FileSave.WiseSkullKilled then FileSave.WiseSkullKilled = false end
+
+        FileSave.WiseSkullKilled = true
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath, WiseSkull.Type)

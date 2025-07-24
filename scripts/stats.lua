@@ -113,5 +113,12 @@ Resouled.Stats.Casket = {
     SubType = Isaac.GetEntitySubTypeByName("Casket"),
     Speed = 0.5,
     AnimIn = "Trapdoor",
-    AnimOut = "JumpOut"
+    AnimOut = "JumpOut",
+    SizeMulti = Vector(1.5, 1)
+}
+
+Resouled.Stats.WiseSkull = {
+    Type = Isaac.GetEntityTypeByName("Wise Skull"),
+    Variant = Isaac.GetEntityVariantByName("Wise Skull"),
+    SubType = Isaac.GetEntitySubTypeByName("Wise Skull")
 }

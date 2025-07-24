@@ -96,6 +96,12 @@ function Resouled:TrySpawnSoulPickup(soul, position, weight)
             pickupSave.SoulWeight = weight
         end
         runSave.Souls.Spawned[tostring(soul)] = true
+
+        local buffID = Resouled:TryGetBuffTiedToSpecialSoul(soul)
+        if buffID then
+            Resouled.AfterlifeShop:AddSpecialBuffToSpawn(buffID)
+        end
+
         return true
     else
         return false

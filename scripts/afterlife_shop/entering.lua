@@ -4,7 +4,13 @@ Resouled.AfterlifeShop.Goto = {
     Difficulty = nil,
     SoulNum = nil,
     ReplaceMusic = false,
+    SpecialBuffs = {}
 }
+
+---@param buffID ResouledBuff
+function Resouled.AfterlifeShop:AddSpecialBuffToSpawn(buffID)
+    table.insert(Resouled.AfterlifeShop.Goto.SpecialBuffs, buffID)
+end
 
 local black = Sprite()
 black:Load("gfx/effects/blackout.anm2", true)
@@ -27,6 +33,8 @@ local function postGameEnd(_, isGameOver)
         Resouled.AfterlifeShop.Goto.Activate = true
         Resouled.AfterlifeShop.Goto.SoulNum = Resouled:GetPossessedSoulsNum()
         Resouled.AfterlifeShop.Goto.ReplaceMusic = true
+    else
+        Resouled.AfterlifeShop.Goto.SpecialBuffs = {}
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, postGameEnd)
@@ -70,6 +78,8 @@ local function postGameStarted()
         Resouled:SetPossessedSoulsNum(Resouled.AfterlifeShop.Goto.SoulNum)
         Resouled.AfterlifeShop.Goto.SoulNum = nil
         Resouled.AfterlifeShop.Goto.Activate = false
+    else
+        Resouled.AfterlifeShop.Goto.SpecialBuffs = {}
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, postGameStarted)

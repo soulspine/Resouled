@@ -8,7 +8,15 @@ Resouled.AfterlifeShop.RoomTypes = {
     SoulSanctum = 3, -- You learn how to obtain special souls
     Graveyard = 4, -- You finish the run there
     StartingRoom = 5, -- You come out of a big chest there
+    SecretFight = 6, -- You fight wise skull there to unlock soul sanctum
 }
+
+Resouled.AfterlifeShop.SpecialBuffRoomsConnectionWhitelist = {
+    [Resouled.AfterlifeShop.RoomTypes.SoulSanctum] = true,
+    [Resouled.AfterlifeShop.RoomTypes.SpecialBuffsRoom] = true
+}
+
+Resouled.AfterlifeShop.ChanceToGoBackToSoulSanctumDuringGeneration = 0.15
 
 ---@param integer integer
 ---@return string
@@ -86,3 +94,4 @@ include("scripts.afterlife_shop.room_layout")
 include("scripts.afterlife_shop.entering")
 include("scripts.afterlife_shop.music")
 include("scripts.afterlife_shop.casket")
+include("scripts.afterlife_shop.wise_skull")

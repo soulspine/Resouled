@@ -6,6 +6,8 @@ local function onPickupInit(_, pickup)
         pickup:GetSprite():Play("Idle", true)
         pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
         pickup.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_GROUND
+
+        pickup.SizeMulti = Casket.SizeMulti
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onPickupInit, Casket.Variant)

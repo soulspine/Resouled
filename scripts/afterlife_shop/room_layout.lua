@@ -82,9 +82,18 @@ local function specialBuffsLayout()
     end
 end
 
+local Casket = Resouled.Stats.Casket
+
+local function graveyardLayout()
+    local room = Game():GetRoom()
+
+    Isaac.Spawn(Casket.Type, Casket.Variant, Casket.SubType, room:GetCenterPos(), Vector.Zero, nil)
+end
+
 local layouts = {
     [Resouled.AfterlifeShop.RoomTypes.MainShop] = mainShopLayout,
-    [Resouled.AfterlifeShop.RoomTypes.SpecialBuffsRoom] = specialBuffsLayout
+    [Resouled.AfterlifeShop.RoomTypes.SpecialBuffsRoom] = specialBuffsLayout,
+    [Resouled.AfterlifeShop.RoomTypes.Graveyard] = graveyardLayout
 }
 
 local function postNewRoom()

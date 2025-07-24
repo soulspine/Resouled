@@ -7,6 +7,7 @@ Resouled.AfterlifeShop.RoomTypes = {
     SpecialBuffsRoom = 2, -- Special buffs obtained through the run spawn there
     SoulSanctum = 3, -- You learn how to obtain special souls
     Graveyard = 4, -- You finish the run there
+    StartingRoom = 5, -- You come out of a big chest there
 }
 
 ---@param integer integer
@@ -82,5 +83,6 @@ Resouled:AddPriorityCallback(ModCallbacks.MC_PRE_LEVEL_INIT, CallbackPriority.IM
 include("scripts.afterlife_shop.backdrop")
 include("scripts.afterlife_shop.doors_and_floor_layout")
 include("scripts.afterlife_shop.room_layout")
-include("scripts.afterlife_shop.teleportation")
+include("scripts.afterlife_shop.entering")
 include("scripts.afterlife_shop.music")
+include("scripts.afterlife_shop.casket")

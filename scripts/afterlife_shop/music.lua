@@ -1,5 +1,7 @@
 Resouled.AfterlifeShop.Theme = Isaac.GetMusicIdByName("Goodbye Cruel World")
 
+Resouled.IsInMainMenu = false
+
 local function postNewLevel()
     if Resouled.AfterlifeShop:IsAfterlifeShop() then
         MusicManager():Fadein(Resouled.AfterlifeShop.Theme, 1)
@@ -20,7 +22,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 
 ---@param id Music
 local function preMusicPlay(_, id)
-    if Resouled.AfterlifeShop.Goto.ReplaceMusic == true or (not Isaac.IsInGame() and MenuManager:GetActiveMenu() == MainMenuType.TITLE) then
+    if Resouled.AfterlifeShop.Goto.ReplaceMusic == true or (Resouled.IsInMainMenu and MenuManager:GetActiveMenu() == MainMenuType.TITLE) then
         if id ~= Resouled.AfterlifeShop.Theme then
             return false
         end
@@ -36,3 +38,15 @@ end
 Resouled:AddPriorityCallback(ModCallbacks.MC_POST_GAME_END, CallbackPriority.IMPORTANT, postGameEnd)
 
 Resouled:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, postGameEnd)
+
+Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, function()
+    if Resouled.IsInMainMenu == true then
+        Resouled.IsInMainMenu = false
+    end
+end)
+
+Resouled:AddCallback(ModCallbacks.MC_MAIN_MENU_RENDER, function()
+    if Resouled.IsInMainMenu == false then
+        Resouled.IsInMainMenu = true
+    end
+end)

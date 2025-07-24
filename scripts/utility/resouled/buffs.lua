@@ -485,7 +485,7 @@ local function postPlayerInit() --Appearently this is THE first callback when st
         FileSave = {}
     end
 
-    if not RUN_SAVE.Resouled_AddedBuffs and not Resouled.AfterlifeShop.Goto.Activate and not Resouled.AfterlifeShop:IsAfterlifeShop() then
+    if not RUN_SAVE.Resouled_AddedBuffs and (not Resouled.AfterlifeShop or Resouled.AfterlifeShop and not Resouled.AfterlifeShop.Goto.Activate and not Resouled.AfterlifeShop:IsAfterlifeShop()) then
         RUN_SAVE.Resouled_AddedBuffs = true
         Resouled:ActivatePendingBuffs()
     end

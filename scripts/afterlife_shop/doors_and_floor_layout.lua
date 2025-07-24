@@ -182,7 +182,7 @@ local function postFloorGenerate()
         --Generate the afterlife shop layout
 
         --Placeholder generator (example how it to make rooms)
-        layout[makeLookupKey(currentIndex)] = setRoomType(Resouled.AfterlifeShop.RoomTypes.MainShop)
+        layout[makeLookupKey(currentIndex)] = setRoomType(Resouled.AfterlifeShop.RoomTypes.StartingRoom)
 
 
         local roomCount = 0
@@ -193,7 +193,7 @@ local function postFloorGenerate()
 
         if not roomExists(currentIndex) then
             roomCount = roomCount + 1
-            layout[makeLookupKey(currentIndex)] = setRoomType(math.random(2, 3))
+            layout[makeLookupKey(currentIndex)] = setRoomType(math.random(1, 4))
         else
             failedCount = failedCount + 1
         end

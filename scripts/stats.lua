@@ -106,3 +106,12 @@ Resouled.Stats.Achievements = {
 
     }
 }
+
+Resouled.Stats.Casket = {
+    Type = Isaac.GetEntityTypeByName("Casket"),
+    Variant = Isaac.GetEntityVariantByName("Casket"),
+    SubType = Isaac.GetEntitySubTypeByName("Casket"),
+    Speed = 0.5,
+    AnimIn = "Trapdoor",
+    AnimOut = "JumpOut"
+}

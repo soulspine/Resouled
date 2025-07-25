@@ -82,8 +82,8 @@ TurtleLightning:AddCallbacks()
 mod:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, TurtleLightning.AddCallbacks, ITEM)
 mod:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, TurtleLightning.AddCallbacks)
 
-function TurtleLightning:RemoveCallbacks()
-    if not PlayerManager.AnyoneHasCollectible(ITEM) and callbacksActive then
+function TurtleLightning:RemoveCallbacks(_, _, force)
+    if (not PlayerManager.AnyoneHasCollectible(ITEM) or force) and callbacksActive then
         mod:RemoveCallback(ModCallbacks.MC_POST_HUD_RENDER, TurtleLightning.RenderSelectionBox)
         mod:RemoveCallback(ModCallbacks.MC_POST_UPDATE, TurtleLightning.SelectionBoxUpdate)
         mod:RemoveCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, TurtleLightning.Update)
@@ -91,7 +91,9 @@ function TurtleLightning:RemoveCallbacks()
     end
 end
 mod:AddCallback(ModCallbacks.MC_POST_TRIGGER_COLLECTIBLE_REMOVED, TurtleLightning.RemoveCallbacks, ITEM)
-mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, TurtleLightning.RemoveCallbacks)
+mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, function()
+    TurtleLightning:RemoveCallbacks(nil, nil, true)
+end)
 
 ThrowableItemLib:RegisterThrowableItem({
     ID = ITEM,

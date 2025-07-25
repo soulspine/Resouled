@@ -50,6 +50,7 @@ if REPENTOGON and MinimapAPI then
     ---@type FamiliarFireRateHandlerModule
     Resouled.FamiliarShooter = include("scripts.utility.familiar_fire_rate_handler")
 
+    include("scripts.utility.throwableitemlib").Init()
 
     include("scripts.stats")
     

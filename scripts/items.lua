@@ -30,6 +30,7 @@ include("scripts.items.white_proglottid")
 include("scripts.items.pink_proglottid")
 include("scripts.items.red_proglottid")
 include("scripts.items.ultra_flesh_kid")
+include("scripts.items.did_you_know_that_if_minecraft_turtle_dies_from_a_lighting")
 
 include("scripts.trinkets.recycling_sticker")
 include("scripts.trinkets.library_card")

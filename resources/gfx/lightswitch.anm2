@@ -1,5 +1,5 @@
 <AnimatedActor>
-	<Info CreatedBy="Unknown" CreatedOn="7/26/2025 3:06:47 PM" Version="5" Fps="30"/>
+	<Info CreatedBy="Unknown" CreatedOn="7/26/2025 4:15:13 PM" Version="6" Fps="30"/>
 	<Content>
 		<Spritesheets>
 			<Spritesheet Path="effects\lightswitch.png" Id="0"/>
@@ -8,7 +8,10 @@
 			<Layer Name="body" Id="0" SpritesheetId="0"/>
 		</Layers>
 		<Nulls/>
-		<Events/>
+		<Events>
+			<Event Name="SwitchOff" Id="0"/>
+			<Event Name="SwitchOn" Id="1"/>
+		</Events>
 	</Content>
 	<Animations DefaultAnimation="OnToOff">
 		<Animation Name="On" FrameNum="1" Loop="true">
@@ -48,7 +51,9 @@
 				</LayerAnimation>
 			</LayerAnimations>
 			<NullAnimations/>
-			<Triggers/>
+			<Triggers>
+				<Trigger EventId="0" AtFrame="6"/>
+			</Triggers>
 		</Animation>
 		<Animation Name="OffToOn" FrameNum="9" Loop="false">
 			<RootAnimation>
@@ -63,7 +68,9 @@
 				</LayerAnimation>
 			</LayerAnimations>
 			<NullAnimations/>
-			<Triggers/>
+			<Triggers>
+				<Trigger EventId="1" AtFrame="6"/>
+			</Triggers>
 		</Animation>
 	</Animations>
 </AnimatedActor>

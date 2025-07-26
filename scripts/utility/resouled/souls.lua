@@ -6,6 +6,14 @@ local DEFAULT_WEIGHT = 1
 
 local SOULS_UI_TEXT_COLOR = KColor(1, 1, 1, 0.7)
 
+COLLIDER_COLOR_R0 = 0.5
+COLLIDER_COLOR_G0 = 0.5
+COLLIDER_COLOR_B0 = 0.5
+COLLIDER_COLOR_DURATION = 10
+COLLIDER_COLOR_PRIORITY = 1
+COLLIDER_COLOR_FADEOUT = true
+COLLIDER_COLOR_SHARE = true
+
 local basicSpawnLookupTable = {} -- NOT STATIC, POPULATED AT RUNTIME by Resouled:AddNewBasicSoulSpawnRule
 
 local font = Font()
@@ -19,21 +27,58 @@ iconSprite:SetFrame(1)
 
 local cachedSoulsNum = 0
 
+local HUD_COLLECT_DISPLAY_TIME = 100
+local HUD_DEFAULT_FADEOUT_TIME = 10
+local HUD_OPACITY_STEP = 0.08
+
+local hudDisplayTimer = 0
+local hudOpacity = 0
+
+---@param duration? integer
+function Resouled:DisplaySoulsHud(duration)
+    hudDisplayTimer = duration or HUD_DEFAULT_FADEOUT_TIME
+end
+
+---@param entity Entity
+---@param hook InputHook
+---@param action ButtonAction
+local function onInput(_, entity, hook, action)
+    if entity
+        and action == ButtonAction.ACTION_MAP
+        and Input.IsActionPressed(action, entity:ToPlayer().ControllerIndex)
+    then
+        hudDisplayTimer = HUD_DEFAULT_FADEOUT_TIME
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_INPUT_ACTION, onInput, InputHook.IS_ACTION_PRESSED)
+
 local function hudRenderer()
-    if game:GetHUD():IsVisible() then
+    if hudDisplayTimer > 0 then
+        hudOpacity = math.min(hudOpacity + HUD_OPACITY_STEP, 1)
+        hudDisplayTimer = hudDisplayTimer - 1
+    else
+        hudOpacity = math.max(hudOpacity - HUD_OPACITY_STEP, 0)
+    end
+
+
+    if game:GetHUD():IsVisible() and hudOpacity > 0 then
         local screenWidth = Isaac.GetScreenWidth()
         local screenHeight = Isaac.GetScreenHeight()
 
         local text = tostring(cachedSoulsNum)
         local xGap = ICON_DIMENSIONS / 4
 
+        local textColor = SOULS_UI_TEXT_COLOR
+        textColor.Alpha = hudOpacity
+
         font:DrawString(
-            tostring(cachedSoulsNum),
+            text,
             screenWidth / 2 + xGap,
             screenHeight - ICON_DIMENSIONS,
-            SOULS_UI_TEXT_COLOR
+            textColor
         )
 
+        iconSprite.Color.A = hudOpacity
         iconSprite:Render(Vector(screenWidth / 2 - xGap, screenHeight - ICON_DIMENSIONS / 2))
     end
 end
@@ -87,10 +132,11 @@ end
 function Resouled:TrySpawnSoulPickup(soul, position, weight)
     local runSave = SAVE_MANAGER.GetRunSave()
     if
-    runSave.Souls and
-    not runSave.Souls.Spawned[tostring(soul)] and
-    not Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_SOULLESS) then
-        local pickup = game:Spawn(EntityType.ENTITY_PICKUP, Soul.Variant, position, Vector.Zero, nil, Soul.SubType, Resouled:NewSeed())
+        runSave.Souls and
+        not runSave.Souls.Spawned[tostring(soul)] and
+        not Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_SOULLESS) then
+        local pickup = game:Spawn(EntityType.ENTITY_PICKUP, Soul.Variant, position, Vector.Zero, nil, Soul.SubType,
+            Resouled:NewSeed())
         if weight and weight ~= DEFAULT_WEIGHT then
             local pickupSave = SAVE_MANAGER.GetRoomFloorSave(pickup)
             pickupSave.SoulWeight = weight
@@ -132,7 +178,15 @@ local function onSoulPickupCollision(_, pickup, collider, low)
             Soul:PlayPickupSound()
 
             local color = collider.Color
-            collider:SetColor(Color(color.R, color.G, color.B, color.A, 0.5, 0.5, 0.5), 10, 1, true, true)
+            collider:SetColor(
+                Color(color.R, color.G, color.B, color.A, COLLIDER_COLOR_R0, COLLIDER_COLOR_G0, COLLIDER_COLOR_B0),
+                COLLIDER_COLOR_DURATION,
+                COLLIDER_COLOR_PRIORITY,
+                COLLIDER_COLOR_FADEOUT,
+                COLLIDER_COLOR_SHARE
+            )
+
+            Resouled:DisplaySoulsHud(HUD_COLLECT_DISPLAY_TIME)
 
             pickup:Remove()
         end
@@ -188,7 +242,6 @@ local function basicSoulSpawnHandler(_, npc)
     local spawnRulesNoSubType = basicSpawnLookupTable[keyNoSubType]
     if spawnRules then
         for _, rule in ipairs(spawnRules) do
-
             if rule.Filter and not rule.Filter(npc) then
                 goto continue -- skip this rule if the filter is not met
             end
@@ -197,10 +250,9 @@ local function basicSoulSpawnHandler(_, npc)
             ::continue::
         end
     end
-    
+
     if spawnRulesNoSubType then
         for _, rule in ipairs(spawnRulesNoSubType) do
-
             if rule.Filter and not rule.Filter(npc) then
                 goto continue -- skip this rule if the filter is not met
             end

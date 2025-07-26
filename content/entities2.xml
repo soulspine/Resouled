@@ -87,6 +87,7 @@
     <entity name="Soul" id="5" variant="444" subtype="1" anm2path="soul.anm2" collisionRadius="4" collisionMass="1" friction="1" numGridCollisionPoints="12" shadowSize="0"/>
     <entity name="Soul Statue Target" id="5" variant="444" subtype="2" anm2path="soul.anm2" collisionRadius="4" collisionMass="1" friction="1" numGridCollisionPoints="12" shadowSize="0"/>
     <entity name="Casket" id="5" variant="444" subtype="3" anm2path="misc/casket.anm2" collisionRadius="20" collisionMass="99999" friction="0.1" numGridCollisionPoints="12" shadowSize="0"/>
+    <entity name="Light Switch" id="5" variant="444" subtype="4" anm2path="lightswitch.anm2" friction="1"/>
 
 <!-- Misc-->
     <entity name="ResouledDummy" id="999" variant="0" subtype="0"/>

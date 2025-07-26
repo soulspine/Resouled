@@ -1,3 +1,4 @@
+---@diagnostic disable: need-check-nil
 local Soul = Resouled.Stats.Soul
 
 local DeathStatue = Resouled.Stats.DeathStatue
@@ -10,7 +11,8 @@ local function onPickupInit(_, pickup)
         sprite.Offset = Soul.SpriteOffset
 
         local entityParent = pickup
-        local trail = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.SPRITE_TRAIL, 0, entityParent.Position, Vector.Zero, entityParent):ToEffect()
+        local trail = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.SPRITE_TRAIL, 0, entityParent.Position,
+            Vector.Zero, entityParent):ToEffect()
         trail:FollowParent(entityParent)
         trail.Color = Soul.TrailColor
         trail.MinRadius = Soul.TrailLength
@@ -61,7 +63,7 @@ local function onPickupUpdate(_, pickup)
         if pickup.SubType == Soul.SubType then
             ---@type EntityPlayer | nil
             local nearestPlayer = nil
-            
+
             ---@param player EntityPlayer
             Resouled.Iterators:IterateOverPlayers(function(player)
                 if not nearestPlayer then
@@ -72,9 +74,9 @@ local function onPickupUpdate(_, pickup)
                     end
                 end
             end)
-            
+
             if nearestPlayer then
-                local distance = pickup.Position:Distance(nearestPlayer.Position)/50
+                local distance = pickup.Position:Distance(nearestPlayer.Position) / 50
                 if distance > 1 then
                     distance = 1
                 end
@@ -82,19 +84,18 @@ local function onPickupUpdate(_, pickup)
                     distance = 0.9
                 end
                 pickup.Velocity = (pickup.Velocity + (nearestPlayer.Position - pickup.Position):Normalized()) * distance
-
             end
         end
-        
+
         sprite.Rotation = pickup.Velocity:GetAngleDegrees()
-        
+
         local data = pickup:GetData()
-        
+
         if pickup.SubType == Soul.SubTypeStatue then
             if data.Resouled_SoulStatueTarget then
                 ---@type EntityEffect
                 local statue = data.Resouled_SoulStatueTarget
-                local distance = pickup.Position:Distance(statue.Position)/50
+                local distance = pickup.Position:Distance(statue.Position) / 50
                 if distance > 1 then
                     distance = 1
                 end
@@ -102,7 +103,7 @@ local function onPickupUpdate(_, pickup)
                     distance = 0.9
                 end
                 pickup.Velocity = (pickup.Velocity + (statue.Position - pickup.Position):Normalized()) * distance
-                
+
                 if pickup.Position:Distance(statue.Position) - (pickup.Size + DeathStatue.Size) <= 0 then
                     pickup:Remove()
                     Soul:PlayPickupSound()
@@ -125,7 +126,8 @@ local function onPickupUpdate(_, pickup)
             end
         else
             local entityParent = pickup
-            local trail = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.SPRITE_TRAIL, 0, entityParent.Position, Vector.Zero, entityParent):ToEffect()
+            local trail = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.SPRITE_TRAIL, 0, entityParent.Position,
+                Vector.Zero, entityParent):ToEffect()
             trail:FollowParent(entityParent)
             trail.Color = Soul.TrailColor
             trail.MinRadius = Soul.TrailLength
@@ -137,7 +139,7 @@ local function onPickupUpdate(_, pickup)
         end
 
         if pickup.FrameCount % 2 == 0 then
-            Resouled:SpawnSparkleEffect(pickup.Position, -pickup.Velocity/5, 180, pickup.SpriteOffset)
+            Resouled:SpawnSparkleEffect(pickup.Position, -pickup.Velocity / 5, 180, pickup.SpriteOffset)
         end
     end
 end

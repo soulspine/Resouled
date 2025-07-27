@@ -18,6 +18,16 @@ Resouled.AfterlifeShop.SpecialBuffRoomsConnectionWhitelist = {
 
 Resouled.AfterlifeShop.ChanceToGoBackToSoulSanctumDuringGeneration = 0.15
 
+Resouled.AfterlifeShop.Themes = {
+    Main = Isaac.GetMusicIdByName("Goodbye Cruel World"),
+    Limbo = Isaac.GetMusicIdByName("Limbo"),
+    LimboTutorial = Isaac.GetMusicIdByName("Limbo Tutorial")
+}
+
+Resouled.AfterlifeShop.Themes[Resouled.AfterlifeShop.Themes.Main] = true
+Resouled.AfterlifeShop.Themes[Resouled.AfterlifeShop.Themes.Limbo] = true
+Resouled.AfterlifeShop.Themes[Resouled.AfterlifeShop.Themes.LimboTutorial] = true
+
 ---@param integer integer
 ---@return string
 local function makeLookupKey(integer)

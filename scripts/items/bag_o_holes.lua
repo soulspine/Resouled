@@ -1,11 +1,11 @@
 local mod = Resouled
-local TurtleLightning = {}
+local BagOHoles = {}
 
-local ITEM = Isaac.GetItemIdByName("Turtle Lightningt")
+local ITEM = Isaac.GetItemIdByName("Bag-O-Holes")
 
 
 
-function TurtleLightning:HUDOffset(x, y, anchor)
+function BagOHoles:HUDOffset(x, y, anchor)
     local notches = math.floor(Options.HUDOffset * 10 + 0.5)
     local xoffset = (notches*2)
     local yoffset = ((1/8)*(10*notches+(-1)^notches+7))
@@ -31,12 +31,12 @@ local SelectedPickup = 1
 
 local selector = Sprite()
 selector:Load("gfx/ui/selector_box.anm2")
-local selectorPos = Vector(TurtleLightning:HUDOffset(8, 38, 'topleft'))
+local selectorPos = Vector(BagOHoles:HUDOffset(8, 38, 'topleft'))
 
 local callbacksActive = false
 
 ---@param player EntityPlayer
-function TurtleLightning:Update(player)
+function BagOHoles:Update(player)
     if not player:HasCollectible(ITEM) then return end
     local pressed = Input.IsActionTriggered(ButtonAction.ACTION_DROP, player.ControllerIndex)
     if not pressed then return end
@@ -49,19 +49,19 @@ function TurtleLightning:Update(player)
     end
 
     if SelectedPickup == 1 then
-        selectorPos = Vector(TurtleLightning:HUDOffset(8, 38, 'topleft'))
+        selectorPos = Vector(BagOHoles:HUDOffset(8, 38, 'topleft'))
     elseif SelectedPickup == 2 then
-        selectorPos = Vector(TurtleLightning:HUDOffset(8, 50, 'topleft'))
+        selectorPos = Vector(BagOHoles:HUDOffset(8, 50, 'topleft'))
     elseif SelectedPickup == 3 then
-        selectorPos = Vector(TurtleLightning:HUDOffset(8, 62, 'topleft'))
+        selectorPos = Vector(BagOHoles:HUDOffset(8, 62, 'topleft'))
     end
 end
 
-function TurtleLightning:RenderSelectionBox()
+function BagOHoles:RenderSelectionBox()
     selector:Render(selectorPos)
 end
 
-function TurtleLightning:SelectionBoxUpdate()
+function BagOHoles:SelectionBoxUpdate()
     selector:Update()
     if selector:IsFinished("Select") or selector:GetAnimation() == "" then
         selector:Play("Idle")
@@ -69,30 +69,30 @@ function TurtleLightning:SelectionBoxUpdate()
 end
 
 
-function TurtleLightning:AddCallbacks()
+function BagOHoles:AddCallbacks()
     if PlayerManager.AnyoneHasCollectible(ITEM) and not callbacksActive then
-        mod:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, TurtleLightning.RenderSelectionBox)
-        mod:AddCallback(ModCallbacks.MC_POST_UPDATE, TurtleLightning.SelectionBoxUpdate)
-        mod:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, TurtleLightning.Update, PlayerVariant.PLAYER)
+        mod:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, BagOHoles.RenderSelectionBox)
+        mod:AddCallback(ModCallbacks.MC_POST_UPDATE, BagOHoles.SelectionBoxUpdate)
+        mod:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, BagOHoles.Update, PlayerVariant.PLAYER)
         callbacksActive = true
     end
 end
-TurtleLightning:AddCallbacks()
+BagOHoles:AddCallbacks()
 
-mod:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, TurtleLightning.AddCallbacks, ITEM)
-mod:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, TurtleLightning.AddCallbacks)
+mod:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, BagOHoles.AddCallbacks, ITEM)
+mod:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, BagOHoles.AddCallbacks)
 
-function TurtleLightning:RemoveCallbacks(_, _, force)
+function BagOHoles:RemoveCallbacks(_, _, force)
     if (not PlayerManager.AnyoneHasCollectible(ITEM) or force) and callbacksActive then
-        mod:RemoveCallback(ModCallbacks.MC_POST_HUD_RENDER, TurtleLightning.RenderSelectionBox)
-        mod:RemoveCallback(ModCallbacks.MC_POST_UPDATE, TurtleLightning.SelectionBoxUpdate)
-        mod:RemoveCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, TurtleLightning.Update)
+        mod:RemoveCallback(ModCallbacks.MC_POST_HUD_RENDER, BagOHoles.RenderSelectionBox)
+        mod:RemoveCallback(ModCallbacks.MC_POST_UPDATE, BagOHoles.SelectionBoxUpdate)
+        mod:RemoveCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, BagOHoles.Update)
         callbacksActive = false
     end
 end
-mod:AddCallback(ModCallbacks.MC_POST_TRIGGER_COLLECTIBLE_REMOVED, TurtleLightning.RemoveCallbacks, ITEM)
+mod:AddCallback(ModCallbacks.MC_POST_TRIGGER_COLLECTIBLE_REMOVED, BagOHoles.RemoveCallbacks, ITEM)
 mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, function()
-    TurtleLightning:RemoveCallbacks(nil, nil, true)
+    BagOHoles:RemoveCallbacks(nil, nil, true)
 end)
 
 ThrowableItemLib:RegisterThrowableItem({

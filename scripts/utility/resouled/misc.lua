@@ -617,3 +617,53 @@ end
 function Resouled:CanBeChampion(entity)
     return EntityConfig.GetEntity(entity.Type, entity.Variant, entity.SubType):CanBeChampion()
 end
+
+local CornerFlashSprite = Sprite()
+local CornerFlashFadeSpeed = 0
+CornerFlashSprite:Load("gfx/misc/screen_flash_limbo.anm2", true)
+CornerFlashSprite:Play("Idle", true)
+CornerFlashSprite.Color = Color(0, 0, 0, 0)
+
+---@param color Color
+---@param fadeSpeed number
+function Resouled:FlashCornerOverlay(color, fadeSpeed)
+    CornerFlashSprite.Color = color
+    CornerFlashFadeSpeed = fadeSpeed
+end
+
+Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, function()
+    if CornerFlashSprite.Color.A > 0 then
+
+        local screen = Vector(Isaac.GetScreenWidth(), Isaac.GetScreenHeight())
+        CornerFlashSprite.Scale = screen/1000 -- Sprite Size
+
+        CornerFlashSprite:Render(screen/2)
+
+        CornerFlashSprite.Color.A = CornerFlashSprite.Color.A - CornerFlashFadeSpeed
+    end
+end)
+
+local WhiteOverlaySprite = Sprite()
+local WhiteOverlayFadeSpeed = 0
+WhiteOverlaySprite:Load("gfx/effects/white_overlay.anm2", true)
+WhiteOverlaySprite:Play("Idle", true)
+WhiteOverlaySprite.Color = Color(0, 0, 0, 0)
+
+---@param color Color
+---@param fadeSpeed number
+function Resouled:WhiteOverlay(color, fadeSpeed)
+    WhiteOverlaySprite.Color = color
+    WhiteOverlayFadeSpeed = fadeSpeed
+end
+
+Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, function()
+    if WhiteOverlaySprite.Color.A > 0 then
+
+        local screen = Vector(Isaac.GetScreenWidth(), Isaac.GetScreenHeight())/2
+        WhiteOverlaySprite.Scale = screen
+
+        WhiteOverlaySprite:Render(screen)
+
+        WhiteOverlaySprite.Color.A = WhiteOverlaySprite.Color.A - WhiteOverlayFadeSpeed
+    end
+end)

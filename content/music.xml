@@ -1,3 +1,5 @@
 <music root="music/">
-	<track name="Goodbye Cruel World" path="goodbye_cruel_world.ogg" loop="true"/>	
+	<track name="Goodbye Cruel World" path="goodbye_cruel_world.ogg" loop="true"/>
+	<track name="Limbo Intro" path="isaaclation_tutorial.ogg" loop="false"/>
+	<track name="Limbo" path="isaaclation.ogg" loop="false"/>
 </music>

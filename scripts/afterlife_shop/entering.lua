@@ -74,6 +74,8 @@ local function postGameStarted()
         end)
 
         Game():GetLevel():SetName("Afterlife")
+
+        Resouled.AfterlifeShop:SetShuffleComplete(false)
         
         Resouled:SetPossessedSoulsNum(Resouled.AfterlifeShop.Goto.SoulNum)
         Resouled.AfterlifeShop.Goto.SoulNum = nil

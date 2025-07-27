@@ -23,9 +23,9 @@ local Shuffle = {
     },
 
     SkullCount = 8,
-    ShufflesCount = 18,
+    ShufflesCount = 29, -- How many shuffle anims are in anm2
 
-    KeyShuffleCount = 12,
+    KeyShuffleCount = 27,
 
     SkullPos = {
         [1] = Vector(24, 48),
@@ -50,10 +50,18 @@ local Shuffle = {
     },
 
     Events = {
-        PosUpdate = "UpdateSkullPos"
+        PosUpdate = "UpdateSkullPos",
+        Start = "Start"
     },
 
     SkullSize = 18,
+
+    FlashFadeSpeed = 0.025,
+
+    Music = {
+        Tutorial = Isaac.GetMusicIdByName("Limbo Tutorial"),
+        ShuffleTheme = Isaac.GetMusicIdByName("Limbo")
+    }
 }
 
 
@@ -143,6 +151,8 @@ local function spawnSkull(color, position, seed, disappear, correctSkull)
     end
 end
 
+local music = MusicManager()
+
 ---@param effect EntityEffect
 local function onEffectUpdate(_, effect)
     if effect.SubType == Shuffle.IDS.SubType then
@@ -152,6 +162,11 @@ local function onEffectUpdate(_, effect)
         if data.Resouled_ShuffleMiniGameSkull then
             
             local sprite = effect:GetSprite()
+
+            if sprite:IsFinished("Start") then
+                music:Crossfade(Shuffle.Music.ShuffleTheme)
+                music:Queue(Resouled.AfterlifeShop.Themes.Main)
+            end
             
             if sprite:IsEventTriggered(Shuffle.Events.PosUpdate) then
                 data.Resouled_ShuffleMiniGameSkull.CurrentSkull.CurrentIndex = math.floor(sprite:GetNullFrame("Skull"..tostring(data.Resouled_ShuffleMiniGameSkull.CurrentSkull.CurrentIndex).."Pos"):GetPos().X)
@@ -188,10 +203,12 @@ local function onEffectUpdate(_, effect)
                         local players = Isaac.FindInRadius(skull:GetPos() * 1.5 + effect.Position, Shuffle.SkullSize, EntityPartition.PLAYER)
 
                         if #players > 0 then
+                            local flashColor = sprite:GetLayer("Eyes"..tostring(i)):GetColor()
+                            Resouled:FlashCornerOverlay(flashColor, Shuffle.FlashFadeSpeed)
                             for j = 1, Shuffle.SkullCount do
-
+                                
                                 local skull2 = sprite:GetNullFrame("Skull"..tostring(j).."Position")
-
+                                
                                 if skull2 then
                                     local color = sprite:GetLayer("Eyes"..tostring(j)):GetColor()
                                     local disappear = true
@@ -221,6 +238,11 @@ local function onEffectUpdate(_, effect)
         end
     elseif effect.SubType == Shuffle.IDS_Chosen.SubType then
         local sprite = effect:GetSprite()
+
+        local key = sprite:GetLayer("Key")
+        if sprite:IsEventTriggered("KeySpawn") and key and key:IsVisible() then
+            Resouled.AfterlifeShop:SetShuffleComplete(true)
+        end
 
         if sprite:IsFinished("Disappear") then
             effect:Remove()
@@ -284,11 +306,27 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, WiseSkull.Type)
 ---@param npc EntityNPC
 local function postNpcDeath(_, npc)
     if npc.Variant == WiseSkull.Variant and npc.SubType == WiseSkull.SubType then
-        local FileSave = SAVE_MANAGER.GetPersistentSave()
-        if not FileSave then FileSave = {} end
-        if not FileSave.WiseSkullKilled then FileSave.WiseSkullKilled = false end
 
-        FileSave.WiseSkullKilled = true
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath, WiseSkull.Type)
+
+---@return boolean
+function Resouled.AfterlifeShop:IsShuffleComplete()
+    local FileSave = SAVE_MANAGER.GetPersistentSave()
+
+    if not FileSave then FileSave = {} end
+    if not FileSave.ShuffleGameDone then FileSave.ShuffleGameDone = false end
+
+    return FileSave.ShuffleGameDone
+end
+
+---@param complete boolean
+function Resouled.AfterlifeShop:SetShuffleComplete(complete)
+    local FileSave = SAVE_MANAGER.GetPersistentSave()
+
+    if not FileSave then FileSave = {} end
+    if not FileSave.ShuffleGameDone then FileSave.ShuffleGameDone = complete return end
+
+    FileSave.ShuffleGameDone = complete
+end

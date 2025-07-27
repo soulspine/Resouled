@@ -10,6 +10,8 @@ Resouled.BuffFamilies = {
     BLUE_KING_CROWN = 7,
 
     WAR = 8, --Special start from here
+    DEATH = 9,
+    SOUL_CATCHER = 10,
 }
 
 ---@enum ResouledBuff
@@ -40,6 +42,8 @@ Resouled.Buffs = {
     ROYAL_CROWN = 24,
 
     WAR = 25, -- Special start from here
+    DEATH = 26,
+    SOUL_CATCHER = 27,
 }
 
 ---@enum ResouledBuffRarity
@@ -61,6 +65,8 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.THE_MOON, "The Moon", "gfx/buf
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.BLUE_KING_CROWN, "Blue King Crown", "gfx/buffs/blue_king_crown.png")
 
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.WAR, "War", "gfx/buffs/war.png") -- Special
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.DEATH, "Death", "gfx/buffs/death.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SOUL_CATCHER, "Soul Catcher", "gfx/buffs/soul_catcher.png")
 
 -- REGISTERING BUFF RARITIES
 Resouled:RegisterBuffRarity(Resouled.BuffRarity.COMMON, "Common", 0.65)
@@ -95,6 +101,8 @@ Resouled:RegisterBuff(Resouled.Buffs.KING_CROWN, "King Crown", 5, Resouled.BuffR
 Resouled:RegisterBuff(Resouled.Buffs.ROYAL_CROWN, "Royal Crown", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.BLUE_KING_CROWN, false)
 
 Resouled:RegisterBuff(Resouled.Buffs.WAR, "War", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.WAR, true, Resouled.Souls.WAR) -- Special
+Resouled:RegisterBuff(Resouled.Buffs.DEATH, "Death", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.DEATH, false, Resouled.Souls.DEATH)
+Resouled:RegisterBuff(Resouled.Buffs.SOUL_CATCHER, "Soul Catcher", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.SOUL_CATCHER, false)
 
 Resouled:Log("Loaded "..tostring(#Resouled:GetBuffs()).." buffs")
 
@@ -123,3 +131,5 @@ include("scripts.buffs.fiend")
 include("scripts.buffs.demon")
 
 include("scripts.buffs.war")
+include("scripts.buffs.death")
+include("scripts.buffs.soul_catcher")

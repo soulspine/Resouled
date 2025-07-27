@@ -1,8 +1,8 @@
 <AnimatedActor>
-	<Info CreatedBy="Unknown" CreatedOn="25.07.2025 14:49:59" Version="12" Fps="30"/>
+	<Info CreatedBy="Unknown" CreatedOn="7/27/2025 1:30:01 PM" Version="12" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="..\..\..\..\..\..\..\..\..\..\Users\vorte\Downloads\dooropen.png" Id="0"/>
+			<Spritesheet Path="dooropen.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="Door" Id="0" SpritesheetId="0"/>

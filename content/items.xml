@@ -31,7 +31,7 @@
     <familiar id="29" name="Tumor Ball" gfx="tumor_ball.png" description="" quality="3" craftquality="3" cache="familiars"/>
     <familiar id="30" name="Ultra Flesh Kid" gfx="ultra_flesh_kid.png" description="" quality="2" craftquality="2" cache="familiars" tags="monstermanual"/>
     <familiar id="31" name="White Proglottid" gfx="white_proglottid.png" description="" quality="0" craftquality="0" cache="familiars" tags="monstermanual"/>
-    <active id="32" name="Turtle Lightningt" gfx="bagoholes.png" description="Drop a bowls" quality="1" craftquality="1" maxcharges="0" tags="offensive"/>
+    <active id="32" name="Bag-O-Holes" gfx="bagoholes.png" description="Drop a bowls" quality="1" craftquality="1" maxcharges="0" tags="offensive"/>
 
     <trinket id="1" name="Handicapped Placard" description="" gfx="handicapped_placard.png"/>
     <trinket id="2" name="Hand me Downs" description="Pass them down to the ones in need" gfx="hand_me_downs.png"/>

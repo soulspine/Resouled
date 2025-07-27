@@ -7,8 +7,15 @@ local Door = {
 
     Animations = {
         Open = "Idle",
-        Locked = "Locked"
-    }
+        Locked = "Locked",
+        Unlock = "Unlock",
+        Events = {
+            Sound = "Sound1",
+            Flash = "Light"
+        },
+    },
+    
+    FlashFadeSpeed = 0.01,
 }
 
 ---@param integer integer
@@ -115,6 +122,21 @@ local function postNpcInit(_, npc)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, Door.Type)
 
+---@param position Vector
+---@return boolean
+local function ShouldDoorBeLocked(position)
+    local RunSave = SAVE_MANAGER.GetRunSave()
+    local nearestRoom = Resouled:GetNearestRoomIndexAndDirectionFromPos(position)
+    if nearestRoom and RunSave.AfterlifeShop and RunSave.AfterlifeShop["LevelLayout"] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(nearestRoom.RoomIndex)] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(nearestRoom.RoomIndex)] > 0 then
+
+        if RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(nearestRoom.RoomIndex)] == (Resouled.AfterlifeShop.RoomTypes.SoulSanctum or Resouled.AfterlifeShop.RoomTypes.SpecialBuffsRoom) and not Resouled.AfterlifeShop:IsShuffleComplete()
+        then
+            return true
+        end
+    end
+    return false
+end
+
 ---@param doorSlot DoorSlot
 ---@param position Vector
 local function trySpawnDoor(doorSlot, position)
@@ -139,12 +161,7 @@ local function trySpawnDoor(doorSlot, position)
 
         if RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(nearestRoom.RoomIndex)] == (Resouled.AfterlifeShop.RoomTypes.SoulSanctum or Resouled.AfterlifeShop.RoomTypes.SpecialBuffsRoom) then
 
-            local FileSave = SAVE_MANAGER.GetPersistentSave()
-
-            if not FileSave then FileSave = {} end
-            if not FileSave.WiseSkullKilled then FileSave.WiseSkullKilled = false end
-
-            if FileSave.WiseSkullKilled == false then
+            if not Resouled.AfterlifeShop:IsShuffleComplete() then
                 sprite:Play(Door.Animations.Locked, true)
             end
 
@@ -196,13 +213,21 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_COLLISION, onNpcCollision, Door.Ty
 local function onNpcUpdate(_, npc)
     if npc.Variant == Door.Variant and npc.SubType == Door.SubType then
         local sprite = npc:GetSprite()
-        local FileSave = SAVE_MANAGER.GetPersistentSave()
 
-        if not FileSave then FileSave = {} end
-        if not FileSave.WiseSkullKilled then FileSave.WiseSkullKilled = false end
+        local locked = ShouldDoorBeLocked(npc.Position)
 
-        if sprite:IsPlaying(Door.Animations.Locked) and FileSave.WiseSkullKilled == true then
+        if sprite:IsEventTriggered(Door.Animations.Events.Flash) then
+            Resouled:WhiteOverlay(Color(), Door.FlashFadeSpeed)
+        end
+
+        if sprite:IsFinished(Door.Animations.Unlock) then
             sprite:Play(Door.Animations.Open, true)
+        end
+
+        if sprite:IsPlaying(Door.Animations.Locked) and not locked then
+            sprite:Play(Door.Animations.Unlock, true)
+        elseif sprite:IsPlaying(Door.Animations.Open) and locked then
+            sprite:Play(Door.Animations.Locked, true)
         end
 
         if sprite:IsPlaying(Door.Animations.Open) and npc.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_PLAYERONLY then

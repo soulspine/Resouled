@@ -43,7 +43,7 @@ local function postNpcInit(_, npc)
             data.ResouledIndicatorBeamAlpha = 0
         end
 
-        sprite:GetLayer(8):SetColor(Color(1, 1, 1, 0))
+        sprite:GetLayer("Pointer"):SetColor(Color(1, 1, 1, 0))
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, HUNTER_TYPE)
@@ -72,7 +72,7 @@ local function npcUpdate(_, npc)
             end
         end
 
-        sprite:GetLayer(4):SetPos((Game():GetNearestPlayer(npc.Position).Position - npc.Position):Normalized() * 4)
+        sprite:GetLayer("Pupil"):SetPos((Game():GetNearestPlayer(npc.Position).Position - npc.Position):Normalized() * 2)
 
         if data.ResouledHunterWaiting then
             if data.ResouledHunterWaiting <= 0 then
@@ -111,13 +111,13 @@ local function npcUpdate(_, npc)
                     data.ResouledIndicatorBeamAlpha = data.ResouledIndicatorBeamAlpha + 1
                 end
                 
-                sprite:GetLayer(8):SetRotation((Game():GetNearestPlayer(npc.Position).Position - npc.Position):Normalized():GetAngleDegrees() + (math.random() * math.random(-1, 1)))
-                sprite:GetLayer(8):SetColor(Color(1, 1, 1, data.ResouledIndicatorBeamAlpha/120))
+                sprite:GetLayer("Pointer"):SetRotation((Game():GetNearestPlayer(npc.Position).Position - npc.Position):Normalized():GetAngleDegrees() + (math.random() * math.random(-1, 1)))
+                sprite:GetLayer("Pointer"):SetColor(Color(1, 1, 1, data.ResouledIndicatorBeamAlpha/120))
             else
                 if data.ResouledIndicatorBeamAlpha then
                     if data.ResouledIndicatorBeamAlpha > 0 then
                         data.ResouledIndicatorBeamAlpha = data.ResouledIndicatorBeamAlpha - 6
-                        sprite:GetLayer(8):SetColor(Color(1, 1, 1, data.ResouledIndicatorBeamAlpha/120))
+                        sprite:GetLayer("Pointer"):SetColor(Color(1, 1, 1, data.ResouledIndicatorBeamAlpha/120))
                     end
                 end
             end

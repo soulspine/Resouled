@@ -613,6 +613,39 @@ function Resouled:GetRoomIdxFromDir(direction, currentIndex)
     end
 end
 
+---@param index integer
+---@return Direction
+function Resouled:GetDirToRoomFromIdx(index)
+    local currentIdx = Game():GetLevel():GetCurrentRoomIndex()
+
+    local currentColRow = Resouled:GetRoomColumnAndRowFromIdx(currentIdx)
+    local idxColRow = Resouled:GetRoomColumnAndRowFromIdx(index)
+
+    local directionVector = currentColRow - idxColRow
+    local direction = Direction.NO_DIRECTION
+    
+    local x = directionVector.X
+    local y = directionVector.Y
+
+    if math.abs(x) >= math.abs(y) then
+        y = 0
+    else
+        x = 0
+    end
+
+    if x > 0 then
+        direction = Direction.RIGHT
+    elseif y > 0 then
+        direction = Direction.DOWN
+    elseif x < 0 then
+        direction = Direction.LEFT
+    elseif y < 0 then
+        direction = Direction.UP
+    end
+
+    return direction
+end
+
 ---@param entity Entity
 function Resouled:CanBeChampion(entity)
     return EntityConfig.GetEntity(entity.Type, entity.Variant, entity.SubType):CanBeChampion()

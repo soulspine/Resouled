@@ -200,10 +200,12 @@ Resouled:AddPriorityCallback(ModCallbacks.MC_POST_NEW_ROOM, CallbackPriority.LAT
 ---@param npc EntityNPC
 ---@param collider Entity
 local function onNpcCollision(_, npc, collider)
-    if collider:ToPlayer() then
-        local nearRoomTable = Resouled:GetNearestRoomIndexAndDirectionFromPos(npc.Position)
-        if nearRoomTable then
-            game:StartRoomTransition(nearRoomTable.RoomIndex, nearRoomTable.Direction, RoomTransitionAnim.WALK)
+    if npc.Variant == Door.Variant and npc.SubType == Door.SubType then
+        if collider:ToPlayer() then
+            local nearRoomTable = Resouled:GetNearestRoomIndexAndDirectionFromPos(npc.Position)
+            if nearRoomTable then
+                game:StartRoomTransition(nearRoomTable.RoomIndex, nearRoomTable.Direction, RoomTransitionAnim.WALK)
+            end
         end
     end
 end

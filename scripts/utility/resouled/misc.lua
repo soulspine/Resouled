@@ -6,6 +6,24 @@ function Resouled:LogError(...)
     print("[Resouled ERROR]", ...)
 end
 
+---@class ResouledEntityDesc
+---@field Type EntityType
+---@field Variant integer -- not a dedicated variant enum because there is too many of them and I can't be bothered
+---@field SubType integer -- same with subtypes
+---@field Name string
+
+---Retrieves entity info and packs it into a dedicated object.
+---@param name string
+---@return ResouledEntityDesc
+function Resouled:GetEntityByName(name)
+    return {
+        Type = Isaac.GetEntityTypeByName(name),
+        Variant = Isaac.GetEntityVariantByName(name),
+        SubType = Isaac.GetEntitySubTypeByName(name),
+        Name = name
+    }
+end
+
 --- Spawns a random chaos pool item of the specified quality at specified position
 ---@param quality integer
 ---@param rng RNG
@@ -15,19 +33,19 @@ function Resouled:SpawnChaosItemOfQuality(quality, rng, position, spawner)
     local itemConfig = Isaac.GetItemConfig()
     local itemPool = Game():GetItemPool()
     local validItems = {}
-    
+
     for i = 1, #itemConfig:GetCollectibles() do
         local item = itemConfig:GetCollectible(i)
         if item and item.Quality == quality and not item.Hidden and item:IsAvailable() and not item:HasTags(ItemConfig.TAG_QUEST) then
             table.insert(validItems, i)
         end
     end
-    
+
     ::reroll::
 
     if #validItems > 0 then
         local randomItem = validItems[rng:RandomInt(#validItems) + 1]
-        
+
         if not itemPool:RemoveCollectible(randomItem) then
             --remove raindomItem from valiudItems
             for i = 1, #validItems do
@@ -39,10 +57,10 @@ function Resouled:SpawnChaosItemOfQuality(quality, rng, position, spawner)
             goto reroll
         end
 
-        local entity = Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, Isaac.GetFreeNearPosition(position, 60), Vector.Zero, spawner, randomItem, rng:GetSeed())
+        local entity = Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE,
+            Isaac.GetFreeNearPosition(position, 60), Vector.Zero, spawner, randomItem, rng:GetSeed())
         rng:Next()
         return entity
-
     end
     return nil
 end
@@ -64,12 +82,13 @@ function Resouled:SpawnItemFromPool(pool, rng, position, spawner, defaultItem)
             table.insert(validItems, id)
         end
     end
-    
+
     local itemID = #validItems > 0 and validItems[rng:RandomInt(#validItems) + 1] or DEFAULT_ITEM
 
     game:Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, position, Vector.Zero, spawner, 0, Resouled:NewSeed())
     game:GetItemPool():RemoveCollectible(itemID)
-    local newItem = game:Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, position, Vector.Zero, spawner, itemID, rng:GetSeed())
+    local newItem = game:Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, position, Vector.Zero, spawner,
+        itemID, rng:GetSeed())
     return newItem and newItem:ToPickup() or nil -- return pickup if spawned, nil otherwise
 end
 
@@ -117,9 +136,9 @@ function Resouled:IsPlayingPickupAnimation(player)
     local sprite = player:GetSprite()
     local animationName = sprite:GetAnimation()
     return animationName == "PickupWalkUp"
-    or animationName == "PickupWalkDown"
-    or animationName == "PickupWalkLeft"
-    or animationName == "PickupWalkRight"
+        or animationName == "PickupWalkDown"
+        or animationName == "PickupWalkLeft"
+        or animationName == "PickupWalkRight"
 end
 
 ---@return integer
@@ -136,7 +155,9 @@ end
 ---@param spriteOffset? Vector
 ---@param spawner Entity
 function Resouled:SpawnPaperTear(position, velocity, spriteOffset, spawner)
-    local tear = Game():Spawn(Isaac.GetEntityTypeByName("Blank Canvas Tear"), Isaac.GetEntityVariantByName("Blank Canvas Tear"), position, velocity, spawner, Isaac.GetEntitySubTypeByName("Blank Canvas Tear"), spawner.InitSeed)
+    local tear = Game():Spawn(Isaac.GetEntityTypeByName("Blank Canvas Tear"),
+        Isaac.GetEntityVariantByName("Blank Canvas Tear"), position, velocity, spawner,
+        Isaac.GetEntitySubTypeByName("Blank Canvas Tear"), spawner.InitSeed)
     if spriteOffset then
         tear.SpriteOffset = spriteOffset
     end
@@ -178,7 +199,7 @@ end
 ---@param roomIndex1 integer
 ---@param roomIndex2 integer
 function Resouled:GetGridRoomDistance(roomIndex1, roomIndex2)
-    return math.abs(roomIndex1//13 - roomIndex2//13) + math.abs(roomIndex1%13 - roomIndex2%13)
+    return math.abs(roomIndex1 // 13 - roomIndex2 // 13) + math.abs(roomIndex1 % 13 - roomIndex2 % 13)
 end
 
 ---@param rng RNG
@@ -197,7 +218,7 @@ function Resouled:ChooseItemFromPool(rng, pool, defaultItem)
             table.insert(validItems, id)
         end
     end
-    
+
     local itemID = #validItems > 0 and validItems[rng:RandomInt(#validItems) + 1] or DEFAULT_ITEM
 
     return itemID -- return pickup if spawned, nil otherwise
@@ -216,13 +237,14 @@ function Resouled:GetRandomItemFromPool(pool, rng, quality)
             if quality then
                 if Isaac.GetItemConfig():GetCollectible(id).Quality == quality then
                     table.insert(validItems, id)
-                else end
+                else
+                end
             else
                 table.insert(validItems, id)
             end
         end
     end
-    
+
     local itemID = #validItems > 0 and validItems[rng:RandomInt(#validItems) + 1]
 
     return itemID or CollectibleType.COLLECTIBLE_BREAKFAST
@@ -258,7 +280,8 @@ end
 ---@param item CollectibleType
 ---@param position Vector
 function Resouled:SpawnItemDisappearEffect(item, position)
-    local effect = Game():Spawn(EntityType.ENTITY_EFFECT, Isaac.GetEntityVariantByName("Disappear"), position, Vector.Zero, nil, Isaac.GetEntitySubTypeByName("Disappear"), Game():GetRoom():GetAwardSeed())
+    local effect = Game():Spawn(EntityType.ENTITY_EFFECT, Isaac.GetEntityVariantByName("Disappear"), position,
+        Vector.Zero, nil, Isaac.GetEntitySubTypeByName("Disappear"), Game():GetRoom():GetAwardSeed())
     effect:GetSprite():ReplaceSpritesheet(0, Isaac.GetItemConfig():GetCollectible(item).GfxFileName, true)
 end
 
@@ -370,10 +393,13 @@ end
 ---@param friction number
 ---@param gridCollision GridCollisionClass
 ---@return EntityEffect
-function Resouled:SpawnPrettyParticles(variant, subtype, speed, speedUpwards, maxRotationDownwards, maxRotationUpwards, position, height, direction, maxSpread, weight, bounciness, friction, gridCollision)
+function Resouled:SpawnPrettyParticles(variant, subtype, speed, speedUpwards, maxRotationDownwards, maxRotationUpwards,
+                                       position, height, direction, maxSpread, weight, bounciness, friction,
+                                       gridCollision)
     ---@type EntityEffect
     ---@diagnostic disable-next-line: assign-type-mismatch
-    local particle = Game():Spawn(EntityType.ENTITY_EFFECT, variant, position, Vector.Zero, nil, subtype or 0, Game():GetRoom():GetAwardSeed()):ToEffect()
+    local particle = Game():Spawn(EntityType.ENTITY_EFFECT, variant, position, Vector.Zero, nil, subtype or 0,
+        Game():GetRoom():GetAwardSeed()):ToEffect()
     local data = particle:GetData()
 
     particle.GridCollisionClass = gridCollision
@@ -381,7 +407,7 @@ function Resouled:SpawnPrettyParticles(variant, subtype, speed, speedUpwards, ma
 
     if maxRotationDownwards > 90 then maxRotationDownwards = 90 end
     if maxRotationUpwards > 90 then maxRotationUpwards = 90 end
-    
+
     local rotation
     if direction then
         rotation = direction
@@ -391,14 +417,14 @@ function Resouled:SpawnPrettyParticles(variant, subtype, speed, speedUpwards, ma
     else
         rotation = math.random(360)
     end
-    
+
     local rotationUp = math.random(-maxRotationDownwards, maxRotationUpwards)
     local multiplierUp = Vector(1, 0):Rotated(rotationUp).X
     local newSpeed = Vector(speed * multiplierUp, 0):Rotated(rotation)
     particle.Velocity = newSpeed
     data.Resouled_SpecialParticle = {
         RotationUp = rotationUp,
-        FallSpeed = (weight * (rotationUp/90)) * speedUpwards,
+        FallSpeed = (weight * (rotationUp / 90)) * speedUpwards,
         Weight = weight,
         Height = height,
         Bounciness = bounciness,
@@ -415,7 +441,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, function(_, effect)
         if data.Resouled_SpecialParticle.Height <= 1 then
             effect.Velocity = effect.Velocity * (1 - data.Resouled_SpecialParticle.Friction)
         end
-        effect.Velocity = effect.Velocity * (1 - data.Resouled_SpecialParticle.Friction/10)
+        effect.Velocity = effect.Velocity * (1 - data.Resouled_SpecialParticle.Friction / 10)
     end
 end)
 
@@ -425,25 +451,24 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_EFFECT_RENDER, function(_, effect)
     if data.Resouled_SpecialParticle then
         local height = data.Resouled_SpecialParticle.Height
         local fallSpeed = data.Resouled_SpecialParticle.FallSpeed
-        
+
         if not Game():IsPaused() then
             if height > 0 then
                 height = height + fallSpeed
-                
-                fallSpeed = fallSpeed - data.Resouled_SpecialParticle.Weight/2
-                
-                effect.SpriteRotation = (effect.SpriteRotation + data.Resouled_SpecialParticle.RotationSpeed)%360
+
+                fallSpeed = fallSpeed - data.Resouled_SpecialParticle.Weight / 2
+
+                effect.SpriteRotation = (effect.SpriteRotation + data.Resouled_SpecialParticle.RotationSpeed) % 360
             else
                 local bounciness = data.Resouled_SpecialParticle.Bounciness
                 fallSpeed = -fallSpeed * bounciness
                 height = height + fallSpeed
-                
+
                 data.Resouled_SpecialParticle.RotationSpeed = -data.Resouled_SpecialParticle.RotationSpeed * bounciness
             end
-            
+
             data.Resouled_SpecialParticle.FallSpeed = fallSpeed
             data.Resouled_SpecialParticle.Height = height
-            
         end
         return Vector(0, -data.Resouled_SpecialParticle.Height)
     end
@@ -456,7 +481,9 @@ local friction = 0.35
 ---@param amount integer
 function Resouled:SpawnPaperGore(position, amount)
     for _ = 1, amount do
-        Resouled:SpawnPrettyParticles(Isaac.GetEntityVariantByName("Paper Gore Particle"), Isaac.GetEntitySubTypeByName("Paper Gore Particle"), math.random(7, 15), math.random(8, 12), 15, 90, position, 15, nil, nil, weight, bounciness, friction, GridCollisionClass.COLLISION_SOLID)
+        Resouled:SpawnPrettyParticles(Isaac.GetEntityVariantByName("Paper Gore Particle"),
+            Isaac.GetEntitySubTypeByName("Paper Gore Particle"), math.random(7, 15), math.random(8, 12), 15, 90, position,
+            15, nil, nil, weight, bounciness, friction, GridCollisionClass.COLLISION_SOLID)
     end
 end
 
@@ -475,7 +502,8 @@ end
 ---@param maxSpread integer
 ---@param spriteOffset Vector
 function Resouled:SpawnSparkleEffect(position, velocity, maxSpread, spriteOffset)
-    local sparkle = Game():Spawn(EntityType.ENTITY_EFFECT, Isaac.GetEntityVariantByName("Ball Sparkle"), position, Vector.Zero, nil, Isaac.GetEntitySubTypeByName("Ball Sparkle"), Game():GetRoom():GetAwardSeed())
+    local sparkle = Game():Spawn(EntityType.ENTITY_EFFECT, Isaac.GetEntityVariantByName("Ball Sparkle"), position,
+        Vector.Zero, nil, Isaac.GetEntitySubTypeByName("Ball Sparkle"), Game():GetRoom():GetAwardSeed())
     sparkle.Velocity = velocity:Rotated(math.random(-maxSpread, maxSpread))
     sparkle.SpriteOffset = spriteOffset
 end
@@ -506,7 +534,7 @@ function Resouled:MakeSpriteFrameSave(sprite) -- Returns a frozen current frame 
             if fLayer:GetSpritesheetPath() ~= layer:GetSpritesheetPath() then
                 frame:ReplaceSpritesheet(fLayer:GetLayerID(), layer:GetSpritesheetPath(), false)
             end
-            
+
             fLayer:SetColor(layer:GetColor())
             fLayer:SetPos(layer:GetPos())
             fLayer:SetCropOffset(layer:GetCropOffset())
@@ -539,7 +567,7 @@ end
 ---@param idx integer
 ---@return Vector
 function Resouled:GetRoomColumnAndRowFromIdx(idx)
-    return Vector(idx%13, idx//13)
+    return Vector(idx % 13, idx // 13)
 end
 
 -- returns a table with a Direction and RoomIndex
@@ -666,11 +694,10 @@ end
 
 Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, function()
     if CornerFlashSprite.Color.A > 0 then
-
         local screen = Vector(Isaac.GetScreenWidth(), Isaac.GetScreenHeight())
-        CornerFlashSprite.Scale = screen/1000 -- Sprite Size
+        CornerFlashSprite.Scale = screen / 1000 -- Sprite Size
 
-        CornerFlashSprite:Render(screen/2)
+        CornerFlashSprite:Render(screen / 2)
 
         CornerFlashSprite.Color.A = CornerFlashSprite.Color.A - CornerFlashFadeSpeed
     end
@@ -691,8 +718,7 @@ end
 
 Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, function()
     if WhiteOverlaySprite.Color.A > 0 then
-
-        local screen = Vector(Isaac.GetScreenWidth(), Isaac.GetScreenHeight())/2
+        local screen = Vector(Isaac.GetScreenWidth(), Isaac.GetScreenHeight()) / 2
         WhiteOverlaySprite.Scale = screen
 
         WhiteOverlaySprite:Render(screen)

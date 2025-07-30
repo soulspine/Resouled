@@ -2,7 +2,6 @@
 Resouled = RegisterMod("Resouled", 1)
 
 if REPENTOGON and MinimapAPI then
-
     local thingsToRunAfterImports = {}
 
     --- Does not pass any parameters
@@ -29,8 +28,8 @@ if REPENTOGON and MinimapAPI then
     ---@type CollectiblextensionModule
     Resouled.Collectiblextension = include("scripts.utility.collectiblextension")
 
-    ---@type FamiliarTargetingModule
-    Resouled.FamiliarTargeting = include("scripts.utility.familiar_targeting")
+    ---@type FamiliarModule
+    Resouled.Familiar = include("scripts.utility.familiars")
 
     ---@type NpcHaloModule
     Resouled.NpcHalo = include("scripts.utility.npc_halo")
@@ -47,13 +46,10 @@ if REPENTOGON and MinimapAPI then
     ---@type ProceduralMaxChargeModule
     Resouled.ProceduralMaxCharge = include("scripts.utility.procedural_max_charge")
 
-    ---@type FamiliarFireRateHandlerModule
-    Resouled.FamiliarShooter = include("scripts.utility.familiar_fire_rate_handler")
-
     include("scripts.utility.throwableitemlib").Init()
 
     include("scripts.stats")
-    
+
     -- ALL MODULES UNIQUE TO RESOULED
 
     include("scripts.utility.resouled.misc")
@@ -81,7 +77,6 @@ if REPENTOGON and MinimapAPI then
     for _, func in ipairs(thingsToRunAfterImports) do
         func()
     end
-
 else -- REPENTOGON AND MINIMAPI NOT FOUND
     local messages = {
         "Please enable REPENTOGON script extender,",
@@ -98,9 +93,10 @@ else -- REPENTOGON AND MINIMAPI NOT FOUND
     font:Load("font/terminus.fnt")
 
     Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, function()
-        local player0position = Isaac.WorldToScreen(Isaac.GetPlayer().Position) 
+        local player0position = Isaac.WorldToScreen(Isaac.GetPlayer().Position)
         for i, message in ipairs(messages) do
-            font:DrawStringScaled(message, player0position.X + initOffset.X, player0position.Y + initOffset.Y + i * diffOffset.Y, scale.X, scale.Y, color, boxWidth, center)
+            font:DrawStringScaled(message, player0position.X + initOffset.X,
+                player0position.Y + initOffset.Y + i * diffOffset.Y, scale.X, scale.Y, color, boxWidth, center)
         end
     end)
 end

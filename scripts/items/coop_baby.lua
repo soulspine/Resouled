@@ -11,12 +11,12 @@ local TEAR_SPEED = 15
 local ANIMATION_LENGTH = 16
 local FOLLOW_SPEED = 2
 
-Resouled.FamiliarShooter:RegisterFamiliar(COOP_BABY_VARIANT, COOP_BABY_SUBTYPE)
+Resouled.Familiar.FireRateHandler:RegisterFamiliar(COOP_BABY_VARIANT, COOP_BABY_SUBTYPE)
 
 ---@param velocity Vector
 local function getAngleSprite(velocity)
     local angleDegrees = velocity:GetAngleDegrees() -- + 180
-    
+
     if angleDegrees < 0 then
         angleDegrees = angleDegrees + 360
     end
@@ -43,7 +43,9 @@ end
 ---@param player EntityPlayer
 ---@param cacheFlag CacheFlag
 local function onCacheEval(_, player, cacheFlag)
-    player:CheckFamiliar(COOP_BABY_VARIANT, player:GetCollectibleNum(COOP_BABY) + player:GetEffects():GetCollectibleEffectNum(COOP_BABY), player:GetCollectibleRNG(COOP_BABY), Isaac.GetItemConfig():GetCollectible(COOP_BABY), COOP_BABY_SUBTYPE)
+    player:CheckFamiliar(COOP_BABY_VARIANT,
+        player:GetCollectibleNum(COOP_BABY) + player:GetEffects():GetCollectibleEffectNum(COOP_BABY),
+        player:GetCollectibleRNG(COOP_BABY), Isaac.GetItemConfig():GetCollectible(COOP_BABY), COOP_BABY_SUBTYPE)
 end
 Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACHE_FAMILIARS)
 
@@ -69,19 +71,22 @@ local function onFamiliarUpdate(_, familiar)
             local distanceFromTarget = familiar.Position:Distance(target.Position)
             local size = target.Size / 3
             if distanceFromTarget > BASE_ORBIT_SIZE * size + BASE_ORBIT_SIZE then
-                familiar.Velocity = (familiar.Velocity + (target.Position - familiar.Position):Normalized() * FOLLOW_SPEED) * VELOCITY_MULTIPLIER
+                familiar.Velocity = (familiar.Velocity + (target.Position - familiar.Position):Normalized() * FOLLOW_SPEED) *
+                VELOCITY_MULTIPLIER
             end
             if distanceFromTarget <= (BASE_ORBIT_SIZE * size) - BASE_ORBIT_SIZE then
-                familiar.Velocity = (familiar.Velocity + (familiar.Position - target.Position):Normalized() * FOLLOW_SPEED) * VELOCITY_MULTIPLIER
+                familiar.Velocity = (familiar.Velocity + (familiar.Position - target.Position):Normalized() * FOLLOW_SPEED) *
+                VELOCITY_MULTIPLIER
             end
-            if Resouled.FamiliarShooter:TryShoot(familiar, (target.Position - familiar.Position), FIRE_COOLDOWN, FIRE_DAMAGE) then
-                sprite:Play(sprite:GetAnimation().."Shoot", true)
+            if Resouled.Familiar.FireRateHandler:TryShoot(familiar, (target.Position - familiar.Position), FIRE_COOLDOWN, FIRE_DAMAGE) then
+                sprite:Play(sprite:GetAnimation() .. "Shoot", true)
             end
-            
+
             if distanceFromTarget <= (BASE_ORBIT_SIZE * size) then
-                familiar.Velocity = (familiar.Velocity + target.Velocity)/2 + (target.Position - familiar.Position):Normalized():Rotated(90) * ORBIT_SPEED
+                familiar.Velocity = (familiar.Velocity + target.Velocity) / 2 +
+                (target.Position - familiar.Position):Normalized():Rotated(90) * ORBIT_SPEED
             end
-            
+
             local targetAnim = getAngleSprite(target.Position - familiar.Position)
 
             if sprite:GetAnimation() ~= targetAnim then

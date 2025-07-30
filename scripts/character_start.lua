@@ -43,4 +43,4 @@ local function onPlayerInit(_, player)
         player:AddCollectible(SOULBOND)
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, onPlayerInit)
+--Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, onPlayerInit)

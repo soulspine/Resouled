@@ -30,14 +30,21 @@ local EVENT_TRIGGER_RESOULED_ASCEND = "ResouledAscend"
 local EVENT_TRIGGER_RESOULED_DESCEND = "ResouledDescend"
 
 if EID then
-    EID:addCollectible(DADDY_HAUNT, "Locks onto an enemy and hovers over it slamming down every " .. math.ceil(SLAM_COOLDOWN/30) .. " seconds, dealing " .. math.floor(SLAM_DAMAGE) .. " damage in a small AoE.#Enemies hit have a " .. math.floor(SLAM_FEAR_CHANCE * 100) .. "% chance to be {{Fear}} feared for " .. math.floor(SLAM_FEAR_DURATION/30) .. " seconds.", "Daddy Haunt")
+    EID:addCollectible(DADDY_HAUNT,
+        "Locks onto an enemy and hovers over it slamming down every " ..
+        math.ceil(SLAM_COOLDOWN / 30) ..
+        " seconds, dealing " ..
+        math.floor(SLAM_DAMAGE) ..
+        " damage in a small AoE.#Enemies hit have a " ..
+        math.floor(SLAM_FEAR_CHANCE * 100) ..
+        "% chance to be {{Fear}} feared for " .. math.floor(SLAM_FEAR_DURATION / 30) .. " seconds.", "Daddy Haunt")
 end
 
 ---@param player EntityPlayer
 ---@param cacheFlag CacheFlag
 local function onCacheEval(_, player, cacheFlag)
     if cacheFlag & CacheFlag.CACHE_FAMILIARS then
-        player:CheckFamiliar(DADDY_HAUNT_VARIANT, player:GetCollectibleNum(DADDY_HAUNT) + player:GetEffects():GetCollectibleEffectNum(DADDY_HAUNT), player:GetCollectibleRNG(DADDY_HAUNT), Isaac.GetItemConfig():GetCollectible(DADDY_HAUNT), DADDY_HAUNT_SUBTYPE)
+        Resouled.Familiar:CheckFamiliar(player, DADDY_HAUNT, DADDY_HAUNT_VARIANT, DADDY_HAUNT_SUBTYPE)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval)
@@ -66,7 +73,7 @@ local function onFamiliarUpdate(_, familiar)
         sprite.Scale = SPRITE_SCALE
 
         if room:GetAliveEnemiesCount() > 0 then
-            local target = Resouled.FamiliarTargeting:GetEnemyTarget(familiar)
+            local target = Resouled.Familiar.Targeting:GetEnemyTarget(familiar)
             if target then
                 if familiar.IsFollower then
                     familiar:RemoveFromFollowers()
@@ -83,7 +90,7 @@ local function onFamiliarUpdate(_, familiar)
                     data.ResouledCooldown = data.ResouledCooldown - 1
                 end
             else
-                Resouled.FamiliarTargeting:SelectRandomEnemyTarget(familiar)
+                Resouled.Familiar.Targeting:SelectRandomEnemyTarget(familiar)
                 if sprite:IsPlaying(ANIMATION_IDLE) then
                     familiar.PositionOffset = POSITION_OFFSET_ENEMY_HOVER
                 end
@@ -110,7 +117,8 @@ local function onFamiliarUpdate(_, familiar)
         end
 
         if sprite:IsEventTriggered(EVENT_TRIGGER_RESOULED_SLAM) then
-            Game():Spawn(EntityType.ENTITY_EFFECT, Isaac.GetEntityVariantByName("Air Shockwave"), familiar.Position, Vector(0, 0), familiar, Isaac.GetEntitySubTypeByName("Air Shockwave"), 0)
+            Game():Spawn(EntityType.ENTITY_EFFECT, Isaac.GetEntityVariantByName("Air Shockwave"), familiar.Position,
+                Vector(0, 0), familiar, Isaac.GetEntitySubTypeByName("Air Shockwave"), 0)
             SFXManager():Play(SLAM_SFX, 1, 0, false, 1)
 
             ---@type EntityNPC[]
@@ -131,4 +139,3 @@ local function onFamiliarUpdate(_, familiar)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onFamiliarUpdate, DADDY_HAUNT_VARIANT)
-

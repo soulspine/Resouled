@@ -1,7 +1,8 @@
 local A_FRIEND = Isaac.GetItemIdByName("A Friend")
 
 if EID then
-    EID:addCollectible(A_FRIEND, "Spawns a friend that acts like a player # This friend can't die and can't pick up items")
+    EID:addCollectible(A_FRIEND,
+        "Spawns a friend that acts like a player # This friend can't die and can't pick up items")
 end
 
 local FRIEND_VARIANT = Isaac.GetEntityVariantByName("A Friend")
@@ -53,12 +54,14 @@ local PICKUP_PICK_UP_RANGE = 22
 local BOMB_PLACEMENT_RANGE = 15
 local BOMB_COOLDOWN = 600
 
-Resouled.FamiliarShooter:RegisterFamiliar(FRIEND_VARIANT, FRIEND_SUBTYPE)
+Resouled.Familiar.FireRateHandler:RegisterFamiliar(FRIEND_VARIANT, FRIEND_SUBTYPE)
 
 ---@param player EntityPlayer
 ---@param cacheFlag CacheFlag
 local function onCacheEval(_, player, cacheFlag)
-    player:CheckFamiliar(FRIEND_VARIANT, player:GetCollectibleNum(A_FRIEND) + player:GetEffects():GetCollectibleEffectNum(A_FRIEND), player:GetCollectibleRNG(A_FRIEND), Isaac.GetItemConfig():GetCollectible(A_FRIEND))
+    player:CheckFamiliar(FRIEND_VARIANT,
+        player:GetCollectibleNum(A_FRIEND) + player:GetEffects():GetCollectibleEffectNum(A_FRIEND),
+        player:GetCollectibleRNG(A_FRIEND), Isaac.GetItemConfig():GetCollectible(A_FRIEND))
 end
 Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACHE_FAMILIARS)
 
@@ -96,7 +99,7 @@ local function familiarUpdate(_, familiar)
         if familiar.GridCollisionClass ~= EntityGridCollisionClass.GRIDCOLL_GROUND then
             familiar.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_GROUND
         end
-        
+
         --IDLE ANIMATIONS START
         if squaredLength < 0.01 and not sprite:IsPlaying(BODY_IDLE) then
             sprite:Play(BODY_IDLE, true)
@@ -156,26 +159,27 @@ local function familiarUpdate(_, familiar)
                 elseif not data.Resouled_Target and data.Resouled_GridTarget then
                     distanceFromTarget = familiar.Position:Distance(data.Resouled_GridTarget.Position)
                 end
-                if distanceFromTarget <= FOLLOW_ORBIT + (FOLLOW_ORBIT/10) then
+                if distanceFromTarget <= FOLLOW_ORBIT + (FOLLOW_ORBIT / 10) then
                     local vectorTargetToEnemyNormalized = Vector.Zero
                     if data.Resouled_Target then
                         vectorTargetToEnemyNormalized = (data.Resouled_Target.Position - familiar.Position):Normalized()
                     elseif not data.Resouled_Target and data.Resouled_GridTarget then
-                        vectorTargetToEnemyNormalized = (data.Resouled_GridTarget.Position - familiar.Position):Normalized()
+                        vectorTargetToEnemyNormalized = (data.Resouled_GridTarget.Position - familiar.Position)
+                        :Normalized()
                     end
-                    if vectorTargetToEnemyNormalized.X < 0.75 and vectorTargetToEnemyNormalized.X > -0.75 and vectorTargetToEnemyNormalized.Y < 0 and not sprite:IsOverlayPlaying(HEAD_UP..SHOOT) then
+                    if vectorTargetToEnemyNormalized.X < 0.75 and vectorTargetToEnemyNormalized.X > -0.75 and vectorTargetToEnemyNormalized.Y < 0 and not sprite:IsOverlayPlaying(HEAD_UP .. SHOOT) then
                         if not sprite:IsOverlayPlaying(HEAD_UP) then
                             sprite:PlayOverlay(HEAD_UP)
                         end
-                    elseif vectorTargetToEnemyNormalized.Y > -0.75 and vectorTargetToEnemyNormalized.Y < 0.75 and vectorTargetToEnemyNormalized.X < 0 and not sprite:IsOverlayPlaying(HEAD_LEFT..SHOOT) then
+                    elseif vectorTargetToEnemyNormalized.Y > -0.75 and vectorTargetToEnemyNormalized.Y < 0.75 and vectorTargetToEnemyNormalized.X < 0 and not sprite:IsOverlayPlaying(HEAD_LEFT .. SHOOT) then
                         if not sprite:IsOverlayPlaying(HEAD_LEFT) then
                             sprite:PlayOverlay(HEAD_LEFT)
                         end
-                    elseif vectorTargetToEnemyNormalized.X < 0.75 and vectorTargetToEnemyNormalized.X > -0.75 and vectorTargetToEnemyNormalized.Y > 0 and not sprite:IsOverlayPlaying(HEAD_DOWN..SHOOT) then
+                    elseif vectorTargetToEnemyNormalized.X < 0.75 and vectorTargetToEnemyNormalized.X > -0.75 and vectorTargetToEnemyNormalized.Y > 0 and not sprite:IsOverlayPlaying(HEAD_DOWN .. SHOOT) then
                         if not sprite:IsOverlayPlaying(HEAD_DOWN) then
                             sprite:PlayOverlay(HEAD_DOWN)
                         end
-                    elseif vectorTargetToEnemyNormalized.Y > -0.75 and vectorTargetToEnemyNormalized.Y < 0.75 and vectorTargetToEnemyNormalized.X > 0 and not sprite:IsOverlayPlaying(HEAD_RIGHT..SHOOT) then
+                    elseif vectorTargetToEnemyNormalized.Y > -0.75 and vectorTargetToEnemyNormalized.Y < 0.75 and vectorTargetToEnemyNormalized.X > 0 and not sprite:IsOverlayPlaying(HEAD_RIGHT .. SHOOT) then
                         if not sprite:IsOverlayPlaying(HEAD_RIGHT) then
                             sprite:PlayOverlay(HEAD_RIGHT)
                         end
@@ -204,7 +208,7 @@ local function familiarUpdate(_, familiar)
 
         --WALKING ANIMATION HANDLING END
         local player = Resouled:TryFindPlayerSpawner(familiar)
-        
+
         local enemyPresent = false
         ---@type EntityRef | nil
         local closestPickup = nil
@@ -216,11 +220,12 @@ local function familiarUpdate(_, familiar)
             if npc and npc:IsEnemy() and npc:IsActiveEnemy() and npc:IsVulnerableEnemy() then
                 enemyPresent = true
             end
-            
+
             if entity.Type == EntityType.ENTITY_FAMILIAR and entity.Variant == FRIEND_VARIANT and entity.SubType == FRIEND_SUBTYPE and entity.Position:Distance(familiar.Position) < OTHER_FRIEND_AVOID_RANGE then
-                familiar.Velocity = familiar.Velocity + (familiar.Position - entity.Position):Normalized() * OTHER_FRIEND_AVOID_SPEED
+                familiar.Velocity = familiar.Velocity +
+                (familiar.Position - entity.Position):Normalized() * OTHER_FRIEND_AVOID_SPEED
             end
-            
+
             local closestProjectile = nil
             local projectile = entity:ToProjectile()
             if projectile then
@@ -233,11 +238,12 @@ local function familiarUpdate(_, familiar)
                     end
                 end
             end
-            
+
             if closestProjectile then
-                familiar.Velocity = familiar.Velocity + (familiar.Position - closestProjectile.Position):Normalized() * PROJECTILE_AVOID_SPEED
+                familiar.Velocity = familiar.Velocity +
+                (familiar.Position - closestProjectile.Position):Normalized() * PROJECTILE_AVOID_SPEED
             end
-            
+
             local bomb = entity:ToBomb()
             if bomb then
                 if bomb.Position:Distance(familiar.Position) <= BOMB_AVOID_RANGE then
@@ -248,7 +254,7 @@ local function familiarUpdate(_, familiar)
                     end
                 end
             end
-            
+
             local pickup = entity:ToPickup()
             if pickup then
                 if player and player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) then
@@ -259,9 +265,9 @@ local function familiarUpdate(_, familiar)
                             local subType = pickup.SubType
                             if not pickup:IsShopItem() then
                                 if (variant == PickupVariant.PICKUP_BOMB and subType ~= (BombSubType.BOMB_GIGA or BombSubType.BOMB_GOLDENTROLL or BombSubType.BOMB_SUPERTROLL or BombSubType.BOMB_TROLL) and player:GetNumBombs() < player:GetMaxBombs()) or
-                                (variant == PickupVariant.PICKUP_COIN and subType ~= (CoinSubType.COIN_STICKYNICKEL or CoinSubType.COIN_LUCKYPENNY) and player:GetNumCoins() < player:GetMaxCoins()) or
-                                (variant == PickupVariant.PICKUP_KEY and subType ~= KeySubType.KEY_CHARGED and player:GetNumKeys() < player:GetMaxKeys()) or
-                                (variant == PickupVariant.PICKUP_CHEST and subType ~= (ChestSubType.CHEST_OPENED)) then
+                                    (variant == PickupVariant.PICKUP_COIN and subType ~= (CoinSubType.COIN_STICKYNICKEL or CoinSubType.COIN_LUCKYPENNY) and player:GetNumCoins() < player:GetMaxCoins()) or
+                                    (variant == PickupVariant.PICKUP_KEY and subType ~= KeySubType.KEY_CHARGED and player:GetNumKeys() < player:GetMaxKeys()) or
+                                    (variant == PickupVariant.PICKUP_CHEST and subType ~= (ChestSubType.CHEST_OPENED)) then
                                     if not closestPickup then
                                         closestPickup = EntityRef(pickup)
                                     elseif closestPickup and pickup.Position:Distance(familiar.Position) < closestPickup.Position:Distance(familiar.Position) then
@@ -274,20 +280,21 @@ local function familiarUpdate(_, familiar)
                 end
 
                 if familiar.Position:Distance(pickup.Position) < PICKUP_PICK_UP_RANGE then
-                    pickup.Velocity = (pickup.Velocity + (pickup.Position - familiar.Position):Normalized() * 1.5) * PUSH_POWER
+                    pickup.Velocity = (pickup.Velocity + (pickup.Position - familiar.Position):Normalized() * 1.5) *
+                    PUSH_POWER
                 end
             end
         end)
-            
+
         --RANDOM WALKING IF NOT ENEMIES START
         if not enemyPresent and not data.Resouled_TargetPos and not data.Resouled_GridTarget and not data.Resouled_PickupTarget and not data.Resouled_BombTarget then
-            familiar.Velocity = familiar.Velocity/1.5
+            familiar.Velocity = familiar.Velocity / 1.5
             local randomFloat = math.random()
             if randomFloat < START_WANDERING_AROUND_CHANCE then
                 data.Resouled_TargetPos = Isaac.GetFreeNearPosition(Isaac.GetRandomPosition(), 0)
             end
         end
-        
+
         if data.Resouled_TargetPos then
             pathfinder:FindGridPath(data.Resouled_TargetPos, WALK_SPEED, 1, true)
 
@@ -316,20 +323,24 @@ local function familiarUpdate(_, familiar)
             if data.Resouled_TargetPos then
                 data.Resouled_TargetPos = nil
             end
-            local pathfinderCheck = room:CheckLine(familiar.Position, data.Resouled_Target.Position + (familiar.Position - data.Resouled_Target.Position):Normalized() * 10, LineCheckMode.PROJECTILE)
+            local pathfinderCheck = room:CheckLine(familiar.Position,
+                data.Resouled_Target.Position + (familiar.Position - data.Resouled_Target.Position):Normalized() * 10,
+                LineCheckMode.PROJECTILE)
             local distanceFromTarget = familiar.Position:Distance(data.Resouled_Target.Position)
             if distanceFromTarget >= FOLLOW_ORBIT then
                 pathfinder:FindGridPath(data.Resouled_Target.Position, WALK_SPEED, 1, true)
             elseif distanceFromTarget < FOLLOW_ORBIT and pathfinderCheck then
-                familiar.Velocity = familiar.Velocity + ((familiar.Position - data.Resouled_Target.Position):Normalized() * AVOID_SPEED)
+                familiar.Velocity = familiar.Velocity +
+                ((familiar.Position - data.Resouled_Target.Position):Normalized() * AVOID_SPEED)
             end
-            
-            if distanceFromTarget <= FOLLOW_ORBIT + (FOLLOW_ORBIT/10) then
+
+            if distanceFromTarget <= FOLLOW_ORBIT + (FOLLOW_ORBIT / 10) then
                 if pathfinderCheck then
-                    local tear = Resouled.FamiliarShooter:TryShoot(familiar, data.Resouled_Target.Position - familiar.Position, SHOOT_COOLDOWN, nil, false)
+                    local tear = Resouled.Familiar.FireRateHandler:TryShoot(familiar,
+                        data.Resouled_Target.Position - familiar.Position, SHOOT_COOLDOWN, nil, false)
                     if tear then
                         tear:SetColor(Color(0.1, 0.1, 0.1), 99999, 1, false, false)
-                        sprite:PlayOverlay(sprite:GetOverlayAnimation()..SHOOT, true)
+                        sprite:PlayOverlay(sprite:GetOverlayAnimation() .. SHOOT, true)
                     end
                 else
                     pathfinder:FindGridPath(data.Resouled_Target.Position, WALK_SPEED, 1, true)
@@ -339,7 +350,7 @@ local function familiarUpdate(_, familiar)
             if not data.Resouled_Target:IsVulnerableEnemy() then
                 data.Resouled_Target = nil
             end
-            
+
             if data.Resouled_Target and data.Resouled_Target.HitPoints <= 0 then
                 data.Resouled_Target = nil
             end
@@ -374,7 +385,7 @@ local function familiarUpdate(_, familiar)
                     end
                 end
             end)
-            
+
             if closestPoop then
                 data.Resouled_GridTarget = closestPoop
             end
@@ -394,13 +405,14 @@ local function familiarUpdate(_, familiar)
             if data.Resouled_GridTarget.State ~= 1000 then
                 if pathfinder:HasPathToPos(pos, true) then
                     pathfinder:FindGridPath(pos, WALK_SPEED, 1, true)
-                    if distanceFromTarget <= FOLLOW_ORBIT + (FOLLOW_ORBIT/10) then
+                    if distanceFromTarget <= FOLLOW_ORBIT + (FOLLOW_ORBIT / 10) then
                         if room:CheckLine(familiar.Position, data.Resouled_GridTarget.Position + (familiar.Position - data.Resouled_GridTarget.Position):Normalized() * 35, LineCheckMode.PROJECTILE) then
-                            local tear = Resouled.FamiliarShooter:TryShoot(familiar, data.Resouled_GridTarget.Position - familiar.Position, SHOOT_COOLDOWN, nil, false)
+                            local tear = Resouled.Familiar.FireRateHandler:TryShoot(familiar,
+                                data.Resouled_GridTarget.Position - familiar.Position, SHOOT_COOLDOWN, nil, false)
                             if tear then
                                 tear:SetColor(Color(0.1, 0.1, 0.1), 99999, 1, false, false)
                                 data.Resouled_FireCooldown = SHOOT_COOLDOWN
-                                sprite:PlayOverlay(sprite:GetOverlayAnimation()..SHOOT, true)
+                                sprite:PlayOverlay(sprite:GetOverlayAnimation() .. SHOOT, true)
                             end
                         else
                             pathfinder:FindGridPath(pos, WALK_SPEED, 1, true)
@@ -424,15 +436,13 @@ local function familiarUpdate(_, familiar)
             end
 
             if data.Resouled_PickupTarget.Entity then
-                
                 ---@type EntityPickup
                 ---@diagnostic disable-next-line: assign-type-mismatch
                 local pickup = data.Resouled_PickupTarget.Entity:ToPickup()
-                
+
                 if pickup:GetSprite():GetAnimation() == "Idle" then
-                    
                     pathfinder:FindGridPath(pickup.Position, WALK_SPEED, 1, false)
-                    
+
                     if familiar.Position:Distance(pickup.Position) < PICKUP_PICK_UP_RANGE then
                         if player then
                             local variant = pickup.Variant
@@ -494,7 +504,8 @@ local function familiarUpdate(_, familiar)
             if pathfinder:HasPathToPos(bombPos, true) then
                 pathfinder:FindGridPath(bombPos, WALK_SPEED, 1, true)
                 if familiar.Position:Distance(bombPos) < BOMB_PLACEMENT_RANGE then
-                    Game():Spawn(EntityType.ENTITY_BOMB, BombVariant.BOMB_NORMAL, bombPos, Vector.Zero, familiar, 0, familiar.InitSeed)
+                    Game():Spawn(EntityType.ENTITY_BOMB, BombVariant.BOMB_NORMAL, bombPos, Vector.Zero, familiar, 0,
+                        familiar.InitSeed)
                     SFXManager():Play(SoundEffect.SOUND_FETUS_LAND)
                     data.Resouled_BombTarget = nil
                     data.Resouled_BombCooldown = BOMB_COOLDOWN
@@ -511,7 +522,8 @@ local function familiarUpdate(_, familiar)
             data.Resouled_PickupTarget = nil
             data.Resouled_BombTarget = nil
 
-            familiar.Velocity = familiar.Velocity + (familiar.Position - data.Resouled_AvoidBomb.Position):Normalized() * BOMB_AVOID_SPEED
+            familiar.Velocity = familiar.Velocity +
+            (familiar.Position - data.Resouled_AvoidBomb.Position):Normalized() * BOMB_AVOID_SPEED
 
             if data.Resouled_AvoidBomb.Position:Distance(familiar.Position) > BOMB_AVOID_RANGE then
                 data.Resouled_AvoidBomb = nil

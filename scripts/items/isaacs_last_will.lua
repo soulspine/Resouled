@@ -1,7 +1,7 @@
 local ISAACS_LAST_WILL = Isaac.GetItemIdByName("Isaac's last will")
 
 if EID then
-    EID:addCollectible(ISAACS_LAST_WILL, "")
+    EID:addCollectible(ISAACS_LAST_WILL, "Gives you infinite revives as long as you have items # Has the lowest revive priority # When reviving, deletes your items starting from items you obtained on the 1st floor # Next revive items from the next floor get deleted, and so on")
 end
 
 local itemBlacklist = {
@@ -94,6 +94,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_REVIVE, postPlayerRevive)
 local function playerDeathPostCheckRevives(_, player)
     if player:HasCollectible(ISAACS_LAST_WILL) then
         local RunSave = SAVE_MANAGER.GetRunSave(player)
+        local lastRoomIdx = Game():GetLevel():GetLastRoomDesc().GridIndex
 
         local times = Resouled:GetTimesStagesHaveBeenEntered()
 
@@ -104,9 +105,25 @@ local function playerDeathPostCheckRevives(_, player)
         local nextStage = getNextStageFromSave(player)
 
         if nextStage <= LevelStage.NUM_STAGES or times[makeLookupKey(RunSave.IsaacsLastWill)] then
-            local lastRoomIdx = Game():GetLevel():GetLastRoomDesc().GridIndex
             player:Revive()
             Game():StartRoomTransition(lastRoomIdx, Resouled:GetDirToRoomFromIdx(lastRoomIdx))
+        else
+            local itemCount = 0
+
+            local items = player:GetHistory():GetCollectiblesHistory()
+            for _, item in ipairs(items) do
+                local itemID = item:GetItemID()
+                local itemConfig = Isaac.GetItemConfig():GetCollectible(itemID)
+                if not itemConfig:HasTags(ItemConfig.TAG_QUEST) and not itemBlacklist[itemID] then
+                    itemCount = itemCount + 1
+                    player:RemoveCollectible(itemID)
+                end
+            end
+
+            if itemCount > 0 then
+                player:Revive()
+                Game():StartRoomTransition(lastRoomIdx, Resouled:GetDirToRoomFromIdx(lastRoomIdx))
+            end
         end
     end
 end

@@ -2,17 +2,12 @@ local COTH_TYPE = Isaac.GetEntityTypeByName("COTH attack claws")
 local COTH_VARIANT = Isaac.GetEntityVariantByName("COTH attack claws")
 local COTH_SUBTYPE = Isaac.GetEntitySubTypeByName("COTH attack claws")
 
-local HITBOX_TYPE = Isaac.GetEntityTypeByName("ResouledHitbox")
-local HITBOX_VARIANT = Isaac.GetEntityVariantByName("ResouledHitbox")
-local HITBOX_SUBTYPE = Isaac.GetEntityTypeByName("ResouledHitbox")
-
-local ATTACK_DISTANCE_FROM_CENTER = 10
+local BASE_HITBOX_SIZE = 20
 
 ---@param effect EntityEffect
 local function postEffectInit(_, effect)
     if effect.SubType == COTH_SUBTYPE then
-        effect.SpriteRotation = (Game():GetNearestPlayer(effect.Position).Position - effect.Position):Normalized():GetAngleDegrees() + 90
-        effect.Position = effect.Position + Vector(50, 0):Rotated(effect.SpriteRotation - 90)
+        effect.SpriteRotation = (Game():GetNearestPlayer(effect.Position).Position - effect.Position):Normalized():GetAngleDegrees()
 
         effect:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
     end
@@ -23,71 +18,22 @@ Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, postEffectInit, COTH_VARI
 local function postEffectUpdate(_, effect)
     if effect.SubType == COTH_SUBTYPE then
         local sprite = effect:GetSprite()
-        local data = effect:GetData()
         if sprite:IsFinished("Idle") then
             effect:Remove()
         end
-        
-        if sprite:GetFrame() == 5 then
-            local HITBOX_OFFSET = Vector(-45, -20)
-            local HITBOX_SIZE = 22
-            
-            data.ResouledHitbox = Game():Spawn(HITBOX_TYPE, HITBOX_VARIANT, effect.Position + (HITBOX_OFFSET):Rotated(effect.SpriteRotation), Vector.Zero, effect, HITBOX_SUBTYPE, effect.InitSeed)
-            data.ResouledHitbox.Size = HITBOX_SIZE
-        end
-        
-        if sprite:GetFrame() == 6 then
-            data.ResouledHitbox:Remove()
-            
-            local HITBOX_OFFSET = Vector(-33, -27)
-            local HITBOX_SIZE = 25
-            
-            data.ResouledHitbox = Game():Spawn(HITBOX_TYPE, HITBOX_VARIANT, effect.Position + (HITBOX_OFFSET):Rotated(effect.SpriteRotation), Vector.Zero, effect, HITBOX_SUBTYPE, effect.InitSeed)
-            data.ResouledHitbox.Size = HITBOX_SIZE
-        end
-        
-        if sprite:GetFrame() == 7 then
-            data.ResouledHitbox:Remove()
-            
-            local HITBOX_OFFSET = Vector(-10, -32)
-            local HITBOX_SIZE = 26
-            
-            data.ResouledHitbox = Game():Spawn(HITBOX_TYPE, HITBOX_VARIANT, effect.Position + (HITBOX_OFFSET):Rotated(effect.SpriteRotation), Vector.Zero, effect, HITBOX_SUBTYPE, effect.InitSeed)
-            data.ResouledHitbox.Size = HITBOX_SIZE
-        end
-        
-        if sprite:GetFrame() == 8 then
-            data.ResouledHitbox:Remove()
-            
-            local HITBOX_OFFSET = Vector(12, -28)
-            local HITBOX_SIZE = 26
-            
-            data.ResouledHitbox = Game():Spawn(HITBOX_TYPE, HITBOX_VARIANT, effect.Position + (HITBOX_OFFSET):Rotated(effect.SpriteRotation), Vector.Zero, effect, HITBOX_SUBTYPE, effect.InitSeed)
-            data.ResouledHitbox.Size = HITBOX_SIZE
-        end
-        
-        if sprite:GetFrame() == 9 then
-            data.ResouledHitbox:Remove()
-            
-            local HITBOX_OFFSET = Vector(27, -25)
-            local HITBOX_SIZE = 24
-            
-            data.ResouledHitbox = Game():Spawn(HITBOX_TYPE, HITBOX_VARIANT, effect.Position + (HITBOX_OFFSET):Rotated(effect.SpriteRotation), Vector.Zero, effect, HITBOX_SUBTYPE, effect.InitSeed)
-            data.ResouledHitbox.Size = HITBOX_SIZE
-        end
-        
-        if sprite:GetFrame() == 10 then
-            data.ResouledHitbox:Remove()
-            
-            local HITBOX_OFFSET = Vector(35, -20)
-            local HITBOX_SIZE = 20
-            
-            data.ResouledHitbox = Game():Spawn(HITBOX_TYPE, HITBOX_VARIANT, effect.Position + (HITBOX_OFFSET):Rotated(effect.SpriteRotation), Vector.Zero, effect, HITBOX_SUBTYPE, effect.InitSeed)
-            data.ResouledHitbox.Size = HITBOX_SIZE
-        end
-        
-        if sprite:GetFrame() == 10 then
-            data.ResouledHitbox:Remove()
+
+        local attackPos = sprite:GetNullFrame("AttackPos")
+        if attackPos then
+            local hitboxPos = effect.Position + attackPos:GetPos():Rotated(effect.SpriteRotation)
+            local attackPosSize = attackPos:GetScale()
+            local hitboxSize = (attackPosSize.X + attackPosSize.Y)/2
+
+            local players = Isaac.FindInRadius(hitboxPos, hitboxSize * BASE_HITBOX_SIZE, EntityPartition.PLAYER)
+
+            ---@param player EntityPlayer
+            for _, player in pairs(players) do
+                player:TakeDamage(1, DamageFlag.DAMAGE_NO_MODIFIERS, EntityRef(effect.SpawnerEntity or nil), 30)
+            end
         end
     end
 end

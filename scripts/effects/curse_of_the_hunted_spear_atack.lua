@@ -69,7 +69,7 @@ local function postEffectUpdate(_, effect)
 
             sprite.Rotation = effect.Velocity:GetAngleDegrees()
             
-            local Screen = Vector(Isaac.GetScreenHeight(), Isaac.GetScreenWidth())
+            local Screen = Vector(Isaac.GetScreenWidth(), Isaac.GetScreenHeight())
             local renderPos = Isaac.WorldToScreen(effect.Position)
 
             if renderPos.X < -maxOffScreenDistance or renderPos.X > Screen.X + maxOffScreenDistance or renderPos.Y < -maxOffScreenDistance or renderPos.Y > Screen.Y + maxOffScreenDistance then

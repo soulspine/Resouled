@@ -17,6 +17,7 @@ local TELEPORT_TRIGGER = "ResouledTeleport"
 local TIME_BEFORE_ATTACKING = 90
 local POST_TELEPORT_COOLDOWN = 15
 local POST_ATTACK_DISAPPEAR_COOLDOWN = 20
+local DISTANCE_FROM_PLAYER_POST_TELEPORT = 35
 
 ---@param npc EntityNPC
 local function postNpcInit(_, npc)
@@ -97,7 +98,7 @@ local function npcUpdate(_, npc)
             local player = Isaac.GetPlayer(randomPlayerID)
             local playerPos = player.Position
             local randomAngle = math.random(0, 360)
-            local distanceFromPlayer = 75
+            local distanceFromPlayer = DISTANCE_FROM_PLAYER_POST_TELEPORT
                 
             npc.Position = playerPos + Vector(1, 0):Normalized():Rotated(randomAngle) * distanceFromPlayer
 

@@ -725,3 +725,38 @@ Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, function()
         WhiteOverlaySprite.Color.A = WhiteOverlaySprite.Color.A - WhiteOverlayFadeSpeed
     end
 end)
+
+---@param player EntityPlayer
+---@param amount number
+function Resouled:AddTears(player, amount)
+    local newfireDelay = 30 / (player.MaxFireDelay + 1) + amount
+    player.MaxFireDelay = (30 - newfireDelay)/newfireDelay
+end
+
+---@param player EntityPlayer
+---@param amount number
+function Resouled:AddRange(player, amount)
+    player.TearRange = player.TearRange + (amount * 40)
+end
+
+---@param player EntityPlayer
+Resouled:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.IMPORTANT, function(_, player)
+    local RunSave = SAVE_MANAGER.GetRunSave(player)
+
+    if not RunSave.StartingStats then
+        RunSave.StartingStats = {
+            Speed = player.MoveSpeed,
+            Tears = player.MaxFireDelay,
+            Damage = player.Damage,
+            Range = player.TearRange,
+            ShotSpeed = player.ShotSpeed,
+            Luck = player.Luck
+        }
+    end
+end)
+
+---@param player EntityPlayer
+function Resouled:GetPlayerStartingStats(player)
+    local RunSave = SAVE_MANAGER.GetRunSave(player)
+    return RunSave.StartingStats
+end

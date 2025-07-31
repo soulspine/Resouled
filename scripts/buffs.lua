@@ -12,6 +12,11 @@ Resouled.BuffFamilies = {
     WAR = 8, --Special start from here
     DEATH = 9,
     SOUL_CATCHER = 10,
+    SIGHT = 11,
+    FORTUNE = 12,
+    AGILITY = 13,
+    STRENGTH = 14,
+    SADNESS = 15,
 }
 
 ---@enum ResouledBuff
@@ -44,6 +49,11 @@ Resouled.Buffs = {
     WAR = 25, -- Special start from here
     DEATH = 26,
     SOUL_CATCHER = 27,
+    SIGHT = 28,
+    FORTUNE = 29,
+    AGILITY = 30,
+    STRENGTH = 31,
+    SADNESS = 32,
 }
 
 ---@enum ResouledBuffRarity
@@ -63,6 +73,11 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.ZODIAC_SIGN, "Zodiac Sign", "g
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.IMP, "Imp", "gfx/buffs/imp.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.THE_MOON, "The Moon", "gfx/buffs/the_moon.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.BLUE_KING_CROWN, "Blue King Crown", "gfx/buffs/blue_king_crown.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SIGHT, "Sight", "gfx/buffs/sight.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.FORTUNE, "Fortune", "gfx/buffs/fortune.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.AGILITY, "Agility", "gfx/buffs/agility.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.STRENGTH, "Strength", "gfx/buffs/strength.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SADNESS, "Sadness", "gfx/buffs/sadness.png")
 
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.WAR, "War", "gfx/buffs/war.png") -- Special
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.DEATH, "Death", "gfx/buffs/death.png")
@@ -103,6 +118,11 @@ Resouled:RegisterBuff(Resouled.Buffs.ROYAL_CROWN, "Royal Crown", 8, Resouled.Buf
 Resouled:RegisterBuff(Resouled.Buffs.WAR, "War", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.WAR, true, Resouled.Souls.WAR) -- Special
 Resouled:RegisterBuff(Resouled.Buffs.DEATH, "Death", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.DEATH, false, Resouled.Souls.DEATH)
 Resouled:RegisterBuff(Resouled.Buffs.SOUL_CATCHER, "Soul Catcher", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.SOUL_CATCHER, false)
+Resouled:RegisterBuff(Resouled.Buffs.SIGHT, "Sight", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.SIGHT, false)
+Resouled:RegisterBuff(Resouled.Buffs.FORTUNE, "Fortune", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.FORTUNE, false)
+Resouled:RegisterBuff(Resouled.Buffs.AGILITY, "Agility", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.AGILITY, false)
+Resouled:RegisterBuff(Resouled.Buffs.STRENGTH, "Strength", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.STRENGTH, false)
+Resouled:RegisterBuff(Resouled.Buffs.SADNESS, "Sadness", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.SADNESS, false)
 
 Resouled:Log("Loaded "..tostring(#Resouled:GetBuffs()).." buffs")
 
@@ -133,3 +153,8 @@ include("scripts.buffs.demon")
 include("scripts.buffs.war")
 include("scripts.buffs.death")
 include("scripts.buffs.soul_catcher")
+include("scripts.buffs.sight")
+include("scripts.buffs.fortune")
+include("scripts.buffs.agility")
+include("scripts.buffs.strength")
+include("scripts.buffs.sadness")

@@ -319,18 +319,17 @@ function Resouled:TryFindSpecificSpawner(entity, searchedType, searchedVariant, 
 end
 
 ---@param entity Entity
----@param step? integer
+---@param step? integer default 45
 ---@return EntityNPC | nil
 function Resouled:TryFindNearestEnemyByFindInRadius(entity, step) -- Tries to find the nearest enemy by using Isaac.FindInRadius() (less accurate than Resouled:TryFindNearestEnemyByIteration(), more optimized)
-    local STEP
-    if step then
-        if step <= 0 then
-            return nil
-        end
-        STEP = step
-    else
-        STEP = 45
+    step = step or 45
+
+    if step <= 0 then
+        Resouled:LogError(
+            "Tried to call Resouled:TryFindNearestEnemyByFindInRadius() with step <= 0 (" .. step .. "), returning nil")
+        return nil
     end
+
     local x = 0
     local nearestEnemy = nil
     local bottomRightPos = Game():GetRoom():GetBottomRightPos()
@@ -351,7 +350,7 @@ function Resouled:TryFindNearestEnemyByFindInRadius(entity, step) -- Tries to fi
                 end
             end
         end
-        x = x + STEP
+        x = x + step
     end
 
     return nearestEnemy
@@ -651,7 +650,7 @@ function Resouled:GetDirToRoomFromIdx(index)
 
     local directionVector = currentColRow - idxColRow
     local direction = Direction.NO_DIRECTION
-    
+
     local x = directionVector.X
     local y = directionVector.Y
 

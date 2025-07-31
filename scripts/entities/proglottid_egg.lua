@@ -12,6 +12,8 @@ local WHITE_EGG_SPRITESHEET = "gfx/tears/egg_white.png"
 
 local SPRITESHEET_LAYER = 0
 
+local TEAR_FALLING_SPEED = 1         -- -90
+local TEAR_FALLIING_ACCELERATION = 1 -- 7
 local TEAR_FLAGS = TearFlags.TEAR_SPECTRAL | TearFlags.TEAR_HOMING
 
 local ANIMATION_IDLE = "Idle"
@@ -30,6 +32,8 @@ local function onTearInit(_, tear)
         sprite:ReplaceSpritesheet(SPRITESHEET_LAYER, SPRITESHEETS[tear.SubType], true)
         sprite:Play(ANIMATION_IDLE, true)
         tear:AddTearFlags(TEAR_FLAGS)
+        tear.FallingAcceleration = TEAR_FALLIING_ACCELERATION
+        tear.FallingSpeed = TEAR_FALLING_SPEED
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_TEAR_INIT, onTearInit, BLACK_PROGLOTTIDS_EGG.Variant)

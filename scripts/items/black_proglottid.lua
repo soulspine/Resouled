@@ -1,12 +1,16 @@
 local ENTITY = Resouled:GetEntityByName("Black Proglottid")
 local ITEM = Isaac.GetItemIdByName("Black Proglottid")
-
 local EGG = Resouled:GetEntityByName("Black Proglottid's Egg")
+local STUN_TENTACLE = Resouled:GetEntityByName("Stun Tentacle (Black)")
 
 local ON_KILL_EFFECT_VARIANT = EffectVariant.PLAYER_CREEP_BLACK
 local ON_KILL_EFFECT_SUBTYPE = 0
 local ON_KILL_EFFECT_DURATION = 1200 -- updates
-local ON_KILL_EFFECT_RADIUS = 10
+local ON_KILL_EFFECT_RADIUS = 3
+
+local STUN_TENTACLE_TARGET_SEEK_RADIUS = 55
+local STUN_TENTACLE_EFFECT_MIN_COOLDOWN = 150
+local STUN_TENTACLE_EFFECT_MAX_COOLDOWN = 250
 
 local SPRITESHEET_LAYER = 0
 local SPRITESHEET_PATH = "gfx/familiar/black_proglottid.png"
@@ -21,8 +25,8 @@ local ANIMATION_EVENT_SHOOT = "ResouledShoot"
 
 if EID then
     EID:addCollectible(ITEM,
-        "Familiar that shoots an egg once per room#Enemy hit by this egg will spawn a moderately large black creep pool on death#Enemies standing in this creep get slowed and occasionally stunned#Creep lasts " ..
-        math.floor(1200 / 30) .. " seconds",
+        "Familiar that shoots an egg once per room#Enemy hit by this egg will spawn a moderately large black creep pool on death#Enemies standing in this creep get slowed and occasionally immobilized#Creep lasts " ..
+        math.floor(ON_KILL_EFFECT_DURATION / 30) .. " seconds",
         "Black Proglottid")
 end
 
@@ -125,3 +129,41 @@ local function onEntityKill(_, entity)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, onEntityKill)
+
+---@param effect EntityEffect
+local function setRandomStunCooldown(effect)
+    effect:GetData().RESOULED__BLACK_PROGLOTTID_STUN_COOLDOWN = math.random(STUN_TENTACLE_EFFECT_MIN_COOLDOWN,
+        STUN_TENTACLE_EFFECT_MAX_COOLDOWN)
+end
+
+---@param effect EntityEffect
+local function onEffectUpdate(_, effect)
+    local data = effect:GetData()
+    if data.RESOULED__BLACK_PROGLOTTID_CREEP then
+        if not data.RESOULED__BLACK_PROGLOTTID_STUN_COOLDOWN then
+            setRandomStunCooldown(effect)
+        end
+
+        if data.RESOULED__BLACK_PROGLOTTID_STUN_COOLDOWN > 0 then
+            data.RESOULED__BLACK_PROGLOTTID_STUN_COOLDOWN = data.RESOULED__BLACK_PROGLOTTID_STUN_COOLDOWN - 1
+        else
+            local targets = Isaac.FindInRadius(effect.Position, STUN_TENTACLE_TARGET_SEEK_RADIUS, EntityPartition.ENEMY)
+
+            local validTargets = {}
+
+            for _, target in ipairs(targets) do
+                if not target:IsFlying() then
+                    table.insert(validTargets, target)
+                end
+            end
+
+            if #validTargets > 0 then
+                local target = validTargets[math.random(#validTargets)]
+                Game():Spawn(STUN_TENTACLE.Type, STUN_TENTACLE.Variant, target.Position, Vector.Zero, effect,
+                    STUN_TENTACLE.SubType, Resouled:NewSeed())
+                setRandomStunCooldown(effect)
+            end
+        end
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_PRE_EFFECT_UPDATE, onEffectUpdate, ON_KILL_EFFECT_VARIANT)

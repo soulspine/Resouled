@@ -17,6 +17,7 @@ Resouled.BuffFamilies = {
     AGILITY = 13,
     STRENGTH = 14,
     SADNESS = 15,
+    PESTILENCE = 16,
 }
 
 ---@enum ResouledBuff
@@ -54,6 +55,7 @@ Resouled.Buffs = {
     AGILITY = 30,
     STRENGTH = 31,
     SADNESS = 32,
+    PESTILENCE = 33,
 }
 
 ---@enum ResouledBuffRarity
@@ -78,6 +80,7 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.FORTUNE, "Fortune", "gfx/buffs
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.AGILITY, "Agility", "gfx/buffs/agility.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.STRENGTH, "Strength", "gfx/buffs/strength.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SADNESS, "Sadness", "gfx/buffs/sadness.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.PESTILENCE, "Pestilence", "gfx/buffs/pestilence.png")
 
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.WAR, "War", "gfx/buffs/war.png") -- Special
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.DEATH, "Death", "gfx/buffs/death.png")
@@ -123,6 +126,7 @@ Resouled:RegisterBuff(Resouled.Buffs.FORTUNE, "Fortune", 0, Resouled.BuffRarity.
 Resouled:RegisterBuff(Resouled.Buffs.AGILITY, "Agility", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.AGILITY, false)
 Resouled:RegisterBuff(Resouled.Buffs.STRENGTH, "Strength", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.STRENGTH, false)
 Resouled:RegisterBuff(Resouled.Buffs.SADNESS, "Sadness", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.SADNESS, false)
+Resouled:RegisterBuff(Resouled.Buffs.PESTILENCE, "Pestilence", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.PESTILENCE, false)
 
 Resouled:Log("Loaded "..tostring(#Resouled:GetBuffs()).." buffs")
 
@@ -158,3 +162,4 @@ include("scripts.buffs.fortune")
 include("scripts.buffs.agility")
 include("scripts.buffs.strength")
 include("scripts.buffs.sadness")
+include("scripts.buffs.pestilence")

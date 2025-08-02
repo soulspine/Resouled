@@ -66,12 +66,12 @@ if REPENTOGON and MinimapAPI then
     include("scripts.items")
     include("scripts.effects")
     include("scripts.curses")
-    include("scripts.entities")
     include("scripts.challenges")
     include("scripts.pickups")
     include("scripts.room_events")
     include("scripts.souls")
     include("scripts.buffs")
+    include("scripts.entities")
     include("scripts.afterlife_shop")
     include("scripts.other")
 

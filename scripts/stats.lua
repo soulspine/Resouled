@@ -122,3 +122,10 @@ Resouled.Stats.WiseSkull = {
     Variant = Isaac.GetEntityVariantByName("Wise Skull"),
     SubType = Isaac.GetEntitySubTypeByName("Wise Skull")
 }
+
+Resouled.Stats.BuffDescriptions = {}
+---@param buffId ResouledBuff
+---@param description string
+function Resouled:AddBuffDescription(buffId, description)
+    Resouled.Stats.BuffDescriptions[buffId] = description
+end

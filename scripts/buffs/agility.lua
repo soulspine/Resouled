@@ -14,3 +14,5 @@ local function postGameEnd()
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, postGameEnd)
+
+Resouled:AddBuffDescription(Resouled.Buffs.AGILITY, "Grants +0.3 speed")

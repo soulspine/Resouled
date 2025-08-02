@@ -137,7 +137,9 @@ function Resouled:GetBuffById(buffID)
     if buff then
         return buff
     end
-    Resouled:LogError("Tried to get a buff description for an unregistered buff: " .. buffID)
+    if buffID ~= 0 then
+        Resouled:LogError("Tried to get a buff description for an unregistered buff: " .. buffID)
+    end
     return nil
 end
 

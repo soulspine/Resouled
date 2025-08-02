@@ -8,6 +8,7 @@ Resouled.BuffFamilies = {
     IMP = 5,
     THE_MOON = 6,
     BLUE_KING_CROWN = 7,
+    SCARY_FACE = 18,
 
     WAR = 8, --Special start from here
     DEATH = 9,
@@ -47,6 +48,9 @@ Resouled.Buffs = {
     BLUE_KING_CROWN = 22,
     KING_CROWN = 23,
     ROYAL_CROWN = 24,
+    SCARY_FACE = 35,
+    FRIGHTENING_VISAGE = 36,
+    TERRIFYING_PHYSIOGNOMY = 37,
 
     WAR = 25, -- Special start from here
     DEATH = 26,
@@ -84,6 +88,7 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.STRENGTH, "Strength", "gfx/buf
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SADNESS, "Sadness", "gfx/buffs/sadness.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.PESTILENCE, "Pestilence", "gfx/buffs/pestilence.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.FAMINE, "Famine", "gfx/buffs/famine.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SCARY_FACE, "Scary Face", "gfx/buffs/scary_face.png")
 
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.WAR, "War", "gfx/buffs/war.png") -- Special
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.DEATH, "Death", "gfx/buffs/death.png")
@@ -120,8 +125,11 @@ Resouled:RegisterBuff(Resouled.Buffs.BLACK_HOLE, "Black Hole", 8, Resouled.BuffR
 Resouled:RegisterBuff(Resouled.Buffs.BLUE_KING_CROWN, "Blue King Crown", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.BLUE_KING_CROWN, false)
 Resouled:RegisterBuff(Resouled.Buffs.KING_CROWN, "King Crown", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.BLUE_KING_CROWN, false)
 Resouled:RegisterBuff(Resouled.Buffs.ROYAL_CROWN, "Royal Crown", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.BLUE_KING_CROWN, false)
+Resouled:RegisterBuff(Resouled.Buffs.SCARY_FACE, "Scary Face", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.SCARY_FACE, false)
+Resouled:RegisterBuff(Resouled.Buffs.FRIGHTENING_VISAGE, "Frightening Visage", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.SCARY_FACE, false)
+Resouled:RegisterBuff(Resouled.Buffs.TERRIFYING_PHYSIOGNOMY, "Terrifying Physiognomy", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.SCARY_FACE, false)
 
-Resouled:RegisterBuff(Resouled.Buffs.WAR, "War", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.WAR, true, Resouled.Souls.WAR) -- Special
+Resouled:RegisterBuff(Resouled.Buffs.WAR, "War", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.WAR, false, Resouled.Souls.WAR) -- Special
 Resouled:RegisterBuff(Resouled.Buffs.DEATH, "Death", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.DEATH, false, Resouled.Souls.DEATH)
 Resouled:RegisterBuff(Resouled.Buffs.SOUL_CATCHER, "Soul Catcher", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.SOUL_CATCHER, false)
 Resouled:RegisterBuff(Resouled.Buffs.SIGHT, "Sight", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.SIGHT, false)
@@ -157,6 +165,9 @@ include("scripts.buffs.royal_crown")
 include("scripts.buffs.imp")
 include("scripts.buffs.fiend")
 include("scripts.buffs.demon")
+include("scripts.buffs.scary_face")
+include("scripts.buffs.frightening_visage")
+include("scripts.buffs.terrifying_physiognomy")
 
 include("scripts.buffs.war")
 include("scripts.buffs.death")

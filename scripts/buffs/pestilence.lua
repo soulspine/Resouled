@@ -2,6 +2,8 @@ local pestilence = {}
 local mod = Resouled
 local callbacksActive = false
 
+pestilence.CharmChance = 0.5
+
 local enemiesWhitelist = {}
 
 ---@param param1 integer
@@ -33,7 +35,7 @@ whitelistEnemy(EntityType.ENTITY_SMALL_LEECH, 0, 0)
 
 ---@param npc EntityNPC
 function pestilence:onNpcInit(npc)
-    if enemiesWhitelist[makeLookupKey(npc.Type, npc.Variant, npc.SubType)] then
+    if RNG(npc.InitSeed):RandomFloat() < pestilence.CharmChance and enemiesWhitelist[makeLookupKey(npc.Type, npc.Variant, npc.SubType)] then
         npc:AddCharmed(EntityRef(nil), -1)
         npc:AddEntityFlags(EntityFlag.FLAG_PERSISTENT)
     end

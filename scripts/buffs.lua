@@ -18,6 +18,7 @@ Resouled.BuffFamilies = {
     STRENGTH = 14,
     SADNESS = 15,
     PESTILENCE = 16,
+    FAMINE = 17,
 }
 
 ---@enum ResouledBuff
@@ -56,6 +57,7 @@ Resouled.Buffs = {
     STRENGTH = 31,
     SADNESS = 32,
     PESTILENCE = 33,
+    FAMINE = 34,
 }
 
 ---@enum ResouledBuffRarity
@@ -81,6 +83,7 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.AGILITY, "Agility", "gfx/buffs
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.STRENGTH, "Strength", "gfx/buffs/strength.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SADNESS, "Sadness", "gfx/buffs/sadness.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.PESTILENCE, "Pestilence", "gfx/buffs/pestilence.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.FAMINE, "Famine", "gfx/buffs/famine.png")
 
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.WAR, "War", "gfx/buffs/war.png") -- Special
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.DEATH, "Death", "gfx/buffs/death.png")
@@ -126,7 +129,8 @@ Resouled:RegisterBuff(Resouled.Buffs.FORTUNE, "Fortune", 0, Resouled.BuffRarity.
 Resouled:RegisterBuff(Resouled.Buffs.AGILITY, "Agility", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.AGILITY, false)
 Resouled:RegisterBuff(Resouled.Buffs.STRENGTH, "Strength", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.STRENGTH, false)
 Resouled:RegisterBuff(Resouled.Buffs.SADNESS, "Sadness", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.SADNESS, false)
-Resouled:RegisterBuff(Resouled.Buffs.PESTILENCE, "Pestilence", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.PESTILENCE, false)
+Resouled:RegisterBuff(Resouled.Buffs.PESTILENCE, "Pestilence", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.PESTILENCE, false, Resouled.Souls.PESTILENCE)
+Resouled:RegisterBuff(Resouled.Buffs.FAMINE, "Famine", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.FAMINE, false, Resouled.Souls.FAMINE)
 
 Resouled:Log("Loaded "..tostring(#Resouled:GetBuffs()).." buffs")
 
@@ -163,3 +167,4 @@ include("scripts.buffs.agility")
 include("scripts.buffs.strength")
 include("scripts.buffs.sadness")
 include("scripts.buffs.pestilence")
+include("scripts.buffs.famine")

@@ -33,19 +33,41 @@ local function loadProperSprite(sprite, buffId)
     end
 end
 
-EID:addColor("ResouledCommon", KColor(117/255, 152/255, 161/255, 255/255))
-EID:addColor("ResouledRare", KColor(154/255, 113/255, 176/255, 255/255))
-EID:addColor("ResouledLegendary", KColor(182/255, 170/255, 35/255, 255/255))
-EID:addColor("ResouledSpecial", KColor(255/255, 255/255, 255/255, 255/255))
-
 local eid = {
-    Rarities = {
-        [Resouled.BuffRarity.COMMON] = "{{ResouledCommon}}",
-        [Resouled.BuffRarity.RARE] = "{{ResouledRare}}",
-        [Resouled.BuffRarity.LEGENDARY] = "{{ResouledLegendary}}",
-        [Resouled.BuffRarity.SPECIAL] = "{{ResouledSpecial}}"
-    },
+    Rarities = {},
+    RaritiyColors = {},
 }
+
+---@param rarityID ResouledBuffRarity
+---@param color KColor
+function Resouled:AddEIDBuffRarityColor(rarityID, color)
+    local rarity = Resouled:GetBuffRarityById(rarityID)
+    if rarity then
+        if eid.Rarities[rarityID] then
+            Resouled:LogError("Trying to override EID buff rarity color with the id: "..tostring(rarityID))
+            return
+        end
+        local colorName = "Resouled"..tostring(rarity.Name)
+
+        EID:addColor(colorName, color)
+
+        eid.RaritiyColors[rarityID] = color
+    else
+        Resouled:LogError("Provided an unregistered rarity with the id: "..tostring(rarityID).." while trying to add a buff rarity color")
+    end
+end
+
+Resouled:AddEIDBuffRarityColor(Resouled.BuffRarity.COMMON, KColor(117/255*2, 152/255*2, 161/255*2, 255/255))
+Resouled:AddEIDBuffRarityColor(Resouled.BuffRarity.RARE, KColor(154/255*2, 113/255*2, 176/255*2, 255/255))
+Resouled:AddEIDBuffRarityColor(Resouled.BuffRarity.LEGENDARY, KColor(182/255*2, 170/255*2, 35/255*2, 255/255))
+Resouled:AddEIDBuffRarityColor(Resouled.BuffRarity.SPECIAL, KColor(255/255*2, 255/255*2, 255/255*2, 255/255))
+
+for _, rarityID in pairs(Resouled.BuffRarity) do
+    local rarity = Resouled:GetBuffRarityById(rarityID)
+    if rarity then
+        eid.Rarities[rarityID] = "{{Resouled"..tostring(rarity.Name).."}}"
+    end
+end
 
 ---@param pickup EntityPickup
 local function setProperEIDDesc(pickup)

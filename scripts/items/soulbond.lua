@@ -1,5 +1,10 @@
 local SOULBOND = Isaac.GetItemIdByName("Soulbond")
 
+if EID then
+    EID:addCollectible(SOULBOND,
+    "Creates a bond between 2 enemies # There can be more than one bond")
+end
+
 local DAMAGE_SHARE = 0.25
 
 local BEAM_SPRITE_MIN = 0

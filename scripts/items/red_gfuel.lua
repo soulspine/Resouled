@@ -1,5 +1,10 @@
 local GFUEL = Isaac.GetItemIdByName("Red GFUEL")
 
+if EID then
+    EID:addCollectible(GFUEL,
+    "On use spawns a controllable red hush laser")
+end
+
 local GFUEL_SPRITE = Sprite()
 GFUEL_SPRITE:Load("gfx/red_gfuel.anm2", true)
 GFUEL_SPRITE:Play("Idle", true)

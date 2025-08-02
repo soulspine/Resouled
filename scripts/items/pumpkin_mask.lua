@@ -1,6 +1,11 @@
 ---@diagnostic disable: need-check-nil
 local PUMPKIN_MASK = Isaac.GetItemIdByName("Pumpkin Mask")
 
+if EID then
+    EID:addCollectible(PUMPKIN_MASK,
+    "When taking damage fears all enemies in the room")
+end
+
 local FEAR_TIME = 180
 
 local COSTUME_ID = Isaac.GetCostumeIdByPath("gfx/characters/pumpkin_mask.anm2")

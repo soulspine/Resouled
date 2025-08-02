@@ -2,6 +2,11 @@ local COOP_BABY = Isaac.GetItemIdByName("Co-Op Baby")
 local COOP_BABY_VARIANT = Isaac.GetEntityVariantByName("Coop Baby")
 local COOP_BABY_SUBTYPE = Isaac.GetEntitySubTypeByName("Coop Baby")
 
+if EID then
+    EID:addCollectible(COOP_BABY,
+    "Spawns a co-op baby familiar that targets last damaged enemy")
+end
+
 local FIRE_DAMAGE = 2.5
 local FIRE_COOLDOWN = 20
 local BASE_ORBIT_SIZE = 20

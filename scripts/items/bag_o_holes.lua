@@ -3,6 +3,11 @@ local BagOHoles = {}
 
 local ITEM = Isaac.GetItemIdByName("Bag-O-Holes")
 
+if EID then
+    EID:addCollectible(ITEM,
+    "Allows you to switch between coin, bombs, keys to throw # Coin: Thows 3 midas tears # Bomb: Throws a bomb # Key: Throws 2 sharp keys")
+end
+
 
 
 function BagOHoles:HUDOffset(x, y, anchor)

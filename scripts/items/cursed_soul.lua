@@ -1,5 +1,10 @@
 local CURSED_SOUL = Isaac.GetItemIdByName("Cursed Soul")
 
+if EID then
+    EID:addCollectible(CURSED_SOUL,
+    "When taking damage you have a chance to gain a soul # When entering an uncleared room you take damage (can't kill you) # If you don't get a soul on hit, your chance to gain a soul goes up # Spawns up to 6 souls")
+end
+
 local SOULS_PER_ITEM = 6
 local SOUL_OBTAIN_CHANCE = 0.25
 

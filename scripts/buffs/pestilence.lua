@@ -80,3 +80,5 @@ local function postPlayerInit()
     end
 end
 mod:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.LATE, postPlayerInit)
+
+Resouled:AddBuffDescription(Resouled.Buffs.PESTILENCE, "All maggot enemies have 50% chance to become charmed")

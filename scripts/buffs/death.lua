@@ -44,3 +44,5 @@ end)
 mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, function()
     Death:RemoveCallbacks()
 end)
+
+Resouled:AddBuffDescription(Resouled.Buffs.DEATH, "Kills all enemies in the room the first time you take damage")

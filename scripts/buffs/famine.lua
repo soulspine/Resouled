@@ -88,3 +88,5 @@ function famine:removeCallbacks()
         callbacksActive = false
     end
 end
+
+Resouled:AddBuffDescription(Resouled.Buffs.FAMINE, "Food items can not appear the whole run")

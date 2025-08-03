@@ -57,3 +57,5 @@ end)
 mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, function()
     SoulCatcher:RemoveCallbacks()
 end)
+
+Resouled:AddBuffDescription(Resouled.Buffs.SOUL_CATCHER, "15% chance to spawn another soul on spawn (obtained by ending the run with 30+ souls)")

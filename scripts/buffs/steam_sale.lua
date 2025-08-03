@@ -14,3 +14,5 @@ local function postNewFloor()
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
+
+Resouled:AddBuffDescription(Resouled.Buffs.STEAM_SALE, "First floor shop has a steam sale effect")

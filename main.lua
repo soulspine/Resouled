@@ -52,6 +52,11 @@ if REPENTOGON and MinimapAPI then
 
     -- ALL MODULES UNIQUE TO RESOULED
 
+    if EID then
+        ---@type ResouledEID
+        Resouled.EID = include("scripts.utility.resouled.eid_functions")
+    end
+
     include("scripts.utility.resouled.misc")
     include("scripts.utility.resouled.buffs")
     include("scripts.utility.resouled.souls")

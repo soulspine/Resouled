@@ -1,7 +1,9 @@
 local ISAACS_LAST_WILL = Isaac.GetItemIdByName("Isaac's last will")
 
+local e = Resouled.EID
+
 if EID then
-    EID:addCollectible(ISAACS_LAST_WILL, "Gives you infinite revives as long as you have items # Has the lowest revive priority # When reviving, deletes your items starting from items you obtained on the 1st floor # Next revive items from the next floor get deleted, and so on")
+    EID:addCollectible(ISAACS_LAST_WILL, e:FadePositiveStatNextLine("Gives you infinite revives as long as you have items")..e:FadeWarningNextLine("Has the lowest revive priority")..e:FadeNegativeStatNextLine("When reviving, deletes your items starting from items you obtained on the 1st floor").."# Next revive items from the next floor get deleted, and so on")
 end
 
 local itemBlacklist = {

@@ -15,9 +15,11 @@ local SLEIGHT_OF_HAND = Isaac.GetItemIdByName("Sleight of Hand")
 ---@field Variant number
 ---@field IsOpen boolean
 
+local e = Resouled.EID
+
 if EID then
     EID:addCollectible(SLEIGHT_OF_HAND,
-        "Peeks into the closest room and makes Isaac hold all {{Coin}} pickups and {{Collectible}} items in that room#Usable only if current room is cleared#Cannot peek into uncleared Boss Rooms",
+        "Peeks into the closest room and makes Isaac hold all {{Coin}} pickups and {{Collectible}} items in that room"..e:FadeWarningNextLine("Usable only if current room is cleared")..e:FadeWarningNextLine("Cannot peek into uncleared Boss Rooms"),
         "Sleight of Hand")
 end
 

@@ -1,7 +1,9 @@
 local CONJOINED_D6 = Isaac.GetItemIdByName("Conjoined D6")
 
+local e = Resouled.EID
+
 if EID then
-    EID:addCollectible(CONJOINED_D6, "Rerolls pedestal items in the room. #{{ArrowUp}} If the quality of the pedestal after the roll is lower than the quality before roll, the player recieves stat ups. #{{ArrowDown}} If the quality of the pedestal after the roll is higher than the quality before roll, the player recieves stat downs.")
+    EID:addCollectible(CONJOINED_D6, "Rerolls pedestal items in the room."..e:FadePositiveStatNextLine("If the quality of the pedestal after the roll is lower than the quality before roll, the player recieves stat ups.")..e:FadeNegativeStatNextLine("If the quality of the pedestal after the roll is higher than the quality before roll, the player recieves stat downs."))
 end
 
 local CONJOINED_CD6_BASE_MULTIPLIER = 1

@@ -38,29 +38,31 @@ local eid = {
     RaritiyColors = {},
 }
 
----@param rarityID ResouledBuffRarity
----@param color KColor
-function Resouled:AddEIDBuffRarityColor(rarityID, color)
-    local rarity = Resouled:GetBuffRarityById(rarityID)
-    if rarity then
-        if eid.Rarities[rarityID] then
-            Resouled:LogError("Trying to override EID buff rarity color with the id: "..tostring(rarityID))
-            return
+if EID then
+    ---@param rarityID ResouledBuffRarity
+    ---@param color KColor
+    function Resouled:AddEIDBuffRarityColor(rarityID, color)
+        local rarity = Resouled:GetBuffRarityById(rarityID)
+        if rarity then
+            if eid.Rarities[rarityID] then
+                Resouled:LogError("Trying to override EID buff rarity color with the id: "..tostring(rarityID))
+                return
+            end
+            local colorName = "Resouled"..tostring(rarity.Name)
+            
+            EID:addColor(colorName, color)
+            
+            eid.RaritiyColors[rarityID] = color
+        else
+            Resouled:LogError("Provided an unregistered rarity with the id: "..tostring(rarityID).." while trying to add a buff rarity color")
         end
-        local colorName = "Resouled"..tostring(rarity.Name)
-
-        EID:addColor(colorName, color)
-
-        eid.RaritiyColors[rarityID] = color
-    else
-        Resouled:LogError("Provided an unregistered rarity with the id: "..tostring(rarityID).." while trying to add a buff rarity color")
     end
+    
+    Resouled:AddEIDBuffRarityColor(Resouled.BuffRarity.COMMON, KColor(117/255*2, 152/255*2, 161/255*2, 255/255))
+    Resouled:AddEIDBuffRarityColor(Resouled.BuffRarity.RARE, KColor(154/255*2, 113/255*2, 176/255*2, 255/255))
+    Resouled:AddEIDBuffRarityColor(Resouled.BuffRarity.LEGENDARY, KColor(182/255*2, 170/255*2, 35/255*2, 255/255))
+    Resouled:AddEIDBuffRarityColor(Resouled.BuffRarity.SPECIAL, KColor(255/255*2, 255/255*2, 255/255*2, 255/255))
 end
-
-Resouled:AddEIDBuffRarityColor(Resouled.BuffRarity.COMMON, KColor(117/255*2, 152/255*2, 161/255*2, 255/255))
-Resouled:AddEIDBuffRarityColor(Resouled.BuffRarity.RARE, KColor(154/255*2, 113/255*2, 176/255*2, 255/255))
-Resouled:AddEIDBuffRarityColor(Resouled.BuffRarity.LEGENDARY, KColor(182/255*2, 170/255*2, 35/255*2, 255/255))
-Resouled:AddEIDBuffRarityColor(Resouled.BuffRarity.SPECIAL, KColor(255/255*2, 255/255*2, 255/255*2, 255/255))
 
 for _, rarityID in pairs(Resouled.BuffRarity) do
     local rarity = Resouled:GetBuffRarityById(rarityID)

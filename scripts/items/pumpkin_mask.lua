@@ -1,9 +1,11 @@
 ---@diagnostic disable: need-check-nil
 local PUMPKIN_MASK = Isaac.GetItemIdByName("Pumpkin Mask")
 
+local e = Resouled.EID
+
 if EID then
     EID:addCollectible(PUMPKIN_MASK,
-    "When taking damage fears all enemies in the room")
+    "When taking damage "..e:FadeBlue("fears all enemies").." in the room")
 end
 
 local FEAR_TIME = 180

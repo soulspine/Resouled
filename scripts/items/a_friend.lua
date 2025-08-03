@@ -1,8 +1,10 @@
 local A_FRIEND = Isaac.GetItemIdByName("A Friend")
 
+local e = Resouled.EID
+
 if EID then
     EID:addCollectible(A_FRIEND,
-        "Spawns a friend that acts like a player # This friend can't die and can't pick up items")
+        "Spawns a friend that "..e:FadeBlue("acts like a player")..e:FadeWarningNextLine("This friend can't die and can't pick up items"))
 end
 
 local FRIEND_VARIANT = Isaac.GetEntityVariantByName("A Friend")

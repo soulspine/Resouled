@@ -1,8 +1,10 @@
 local SOULBOND = Isaac.GetItemIdByName("Soulbond")
 
+local e = Resouled.EID
+
 if EID then
     EID:addCollectible(SOULBOND,
-    "Creates a bond between 2 enemies # There can be more than one bond")
+    "Creates a bond between 2 enemies"..e:FadeWarningNextLine("There can be more than one bond")..e:FadePositiveStatNextLine("Bond shares 25% of the damage taken"))
 end
 
 local DAMAGE_SHARE = 0.25

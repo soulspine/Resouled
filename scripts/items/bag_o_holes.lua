@@ -1,11 +1,13 @@
 local mod = Resouled
 local BagOHoles = {}
 
+local e = Resouled.EID
+
 local ITEM = Isaac.GetItemIdByName("Bag-O-Holes")
 
 if EID then
     EID:addCollectible(ITEM,
-    "Allows you to switch between coin, bombs, keys to throw # Coin: Thows 3 midas tears # Bomb: Throws a bomb # Key: Throws 2 sharp keys")
+    "Allows you to switch between "..e:Coin().."/"..e:Bomb().."/"..e:Key().." to throw # "..e:Coin()..": Thows 3 midas tears # "..e:Bomb()..": Throws a bomb # "..e:Key()..": Throws 2 sharp keys")
 end
 
 

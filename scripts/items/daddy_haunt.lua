@@ -29,15 +29,18 @@ local EVENT_TRIGGER_RESOULED_SLAM = "ResouledSlam"
 local EVENT_TRIGGER_RESOULED_ASCEND = "ResouledAscend"
 local EVENT_TRIGGER_RESOULED_DESCEND = "ResouledDescend"
 
+local e = Resouled.EID
+
 if EID then
     EID:addCollectible(DADDY_HAUNT,
         "Locks onto an enemy and hovers over it slamming down every " ..
         math.ceil(SLAM_COOLDOWN / 30) ..
         " seconds, dealing " ..
         math.floor(SLAM_DAMAGE) ..
-        " damage in a small AoE.#Enemies hit have a " ..
+        " damage in a small AoE."..
+        e:FadePositiveStatNextLine("Enemies hit have a " ..
         math.floor(SLAM_FEAR_CHANCE * 100) ..
-        "% chance to be {{Fear}} feared for " .. math.floor(SLAM_FEAR_DURATION / 30) .. " seconds.", "Daddy Haunt")
+        "% chance to be {{Fear}} feared for " .. math.floor(SLAM_FEAR_DURATION / 30) .. " seconds."), "Daddy Haunt")
 end
 
 ---@param player EntityPlayer

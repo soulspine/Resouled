@@ -15,4 +15,4 @@ local function postGameEnd()
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, postGameEnd)
 
-Resouled:AddBuffDescription(Resouled.Buffs.STRENGTH, "Grants +1 Damage")
+Resouled:AddBuffDescription(Resouled.Buffs.STRENGTH, Resouled.EID:AutoIcons("Grants +1 Damage"))

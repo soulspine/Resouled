@@ -18,4 +18,6 @@ local function postGameEnded()
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, postGameEnded)
 
-Resouled:AddBuffDescription(Resouled.Buffs.BROKEN_MEMORY, "Golden chests have 50% chance to be replaced with dire chests for the whole run")
+local e = Resouled.EID
+
+Resouled:AddBuffDescription(Resouled.Buffs.BROKEN_MEMORY, "All "..e:Chest("Golden").." locked chests chest chest chest chest have 50% chance to be replaced with "..e:Chest("Dirty").." old chests for the whole run")

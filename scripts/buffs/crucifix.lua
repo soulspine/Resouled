@@ -34,4 +34,4 @@ local function prePickupCollision(_, pickup, collider)
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, prePickupCollision, PickupVariant.PICKUP_COLLECTIBLE)
 
-Resouled:AddBuffDescription(Resouled.Buffs.CRUCIFIX, "The boss item is replaced with a q4 angel deal item, #it costs one heart container. #If you dont have containers, the item is free.")
+Resouled:AddBuffDescription(Resouled.Buffs.CRUCIFIX, Resouled.EID:AutoIcons("The boss item is replaced with a q4 angel deal item, #it costs one heart container. #If you dont have containers, the item is free."))

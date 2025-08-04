@@ -89,4 +89,4 @@ function famine:removeCallbacks()
     end
 end
 
-Resouled:AddBuffDescription(Resouled.Buffs.FAMINE, "Food items can not appear the whole run")
+Resouled:AddBuffDescription(Resouled.Buffs.FAMINE, Resouled.EID:AutoIcons("Food items can not appear the whole run"))

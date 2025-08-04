@@ -51,4 +51,4 @@ local function postNewRoom()
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)
 
-Resouled:AddBuffDescription(Resouled.Buffs.HEAVENS_CALL, "First floor has a planetarium. +20% planetarium chance until a planetarium spawns")
+Resouled:AddBuffDescription(Resouled.Buffs.HEAVENS_CALL, Resouled.EID:AutoIcons("First floor has a planetarium. +20% planetarium chance until a planetarium spawns"))

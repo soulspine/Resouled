@@ -559,3 +559,30 @@ local function buffAddCommandAutocomplete()
 end
 ---@diagnostic disable-next-line: param-type-mismatch
 Resouled:AddCallback(ModCallbacks.MC_CONSOLE_AUTOCOMPLETE, buffAddCommandAutocomplete, COMMAND.Name)
+
+---@param buffId integer
+---@return string | nil
+function Resouled:GetBuffEIDIcon(buffId)
+    local buff = Resouled:GetBuffById(buffId)
+    if buff then
+        return "{{"..buff.Name..buff.FamilyName.."}}"
+    end
+    return nil
+end
+
+Resouled:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, function() --Create EID icons
+    if EID then
+        local buffs = Resouled:GetBuffs()
+        ---@param buff ResouledBuffDesc
+        for _, buff in pairs(buffs) do
+            local family = Resouled:GetBuffFamilyById(buff.Family)
+            if family then
+                local IconSprite = Sprite()
+                IconSprite:Load("gfx/buffs/buffEID.anm2", false)
+                IconSprite:ReplaceSpritesheet(0, family.Spritesheet, true)
+                
+                EID:addIcon(buff.Name..buff.FamilyName, Resouled:GetBuffRarityById(buff.Rarity).Name, -1, 12, 9, 3, 6, IconSprite)
+            end
+        end
+    end
+end)

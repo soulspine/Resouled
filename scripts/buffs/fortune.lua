@@ -15,4 +15,4 @@ local function postGameEnd()
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, postGameEnd)
 
-Resouled:AddBuffDescription(Resouled.Buffs.FORTUNE, "Grants +2 Luck")
+Resouled:AddBuffDescription(Resouled.Buffs.FORTUNE, Resouled.EID:AutoIcons("Grants +2 Luck"))

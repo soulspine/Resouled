@@ -6,4 +6,4 @@ local function postGameStarted()
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, postGameStarted)
 
-Resouled:AddBuffDescription(Resouled.Buffs.FORGOTTEN_POLAROID, "Spawns a dire chest at the start")
+Resouled:AddBuffDescription(Resouled.Buffs.FORGOTTEN_POLAROID, Resouled.EID:AutoIcons("Spawns a dire chest at the start"))

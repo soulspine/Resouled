@@ -18,4 +18,4 @@ local function onRunEnd()
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, onRunEnd)
 
-Resouled:AddBuffDescription(Resouled.Buffs.AGILITY, "Has a chance for a small bomb to spawn near a random enemy, lasts the whole run")
+Resouled:AddBuffDescription(Resouled.Buffs.FIEND, Resouled.EID:AutoIcons("Has a chance for a small bomb to spawn near a random enemy, lasts the whole run"))

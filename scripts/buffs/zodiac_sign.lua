@@ -31,4 +31,4 @@ local function postPickupInit(_, pickup)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, postPickupInit, PickupVariant.PICKUP_COLLECTIBLE)
 
-Resouled:AddBuffDescription(Resouled.Buffs.AGILITY, "First treasure room item is a zodiac sign")
+Resouled:AddBuffDescription(Resouled.Buffs.ZODIAC_SIGN, Resouled.EID:AutoIcons("First treasure room item is a zodiac sign"))

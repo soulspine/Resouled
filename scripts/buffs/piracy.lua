@@ -39,4 +39,4 @@ Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, function()
     end
 end)
 
-Resouled:AddBuffDescription(Resouled.Buffs.PIRACY, "You can steal from the shops if you dont have enough money. #You will get a broken heart for each robbed thing")
+Resouled:AddBuffDescription(Resouled.Buffs.PIRACY, Resouled.EID:AutoIcons("You can steal from the shops if you dont have enough money. #You will get a broken heart for each robbed thing"))

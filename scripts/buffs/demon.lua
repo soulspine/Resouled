@@ -20,4 +20,5 @@ local function entityTakeDMG(_, entity)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, entityTakeDMG)
-Resouled:AddBuffDescription(Resouled.Buffs.DEMON, "Enemies on death have a 5% chance to explode. Bosses have a 1% chance to mini-bomb explode on hit. lasts the whole run")
+
+Resouled:AddBuffDescription(Resouled.Buffs.DEMON, Resouled.EID:AutoIcons("Enemies on death have a 5% chance to explode. Bosses have a 1% chance to mini-bomb explode on hit. lasts the whole run"))

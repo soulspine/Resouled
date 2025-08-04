@@ -17,4 +17,4 @@ local function preSpawnCleanReward()
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, preSpawnCleanReward)
 
-Resouled:AddBuffDescription(Resouled.Buffs.DEVILS_HEAD, "The first floor has a guaranteed devil deal. You get a curse of unknown")
+Resouled:AddBuffDescription(Resouled.Buffs.DEVILS_HEAD, Resouled.EID:AutoIcons("The first floor has a guaranteed devil deal. You get a curse of unknown"))

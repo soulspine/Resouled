@@ -78,7 +78,7 @@ local function setProperEIDDesc(pickup)
     if buff then
 
         local description = {
-            ["Name"] = eid.Rarities[buff.Rarity]..buff.Name.."{{ColorFade}}".." < "..Resouled:GetBuffRarityById(buff.Rarity).Name.." >",
+            ["Name"] = Resouled:GetBuffEIDIcon(buff.Id)..eid.Rarities[buff.Rarity]..buff.Name.."{{ColorFade}}".." < "..Resouled:GetBuffRarityById(buff.Rarity).Name.." >",
             ["Description"] = Resouled.Stats.BuffDescriptions[buff.Id] or "No Description"
         }
         

@@ -41,5 +41,4 @@ mod:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.LATE,
 mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, scaryFace.removeCallbacks)
 mod:AddCallback(ModCallbacks.MC_POST_GAME_END, scaryFace.postGameEnd)
 
-Resouled:AddBuffDescription(Resouled.Buffs.SCARY_FACE,
-"Reduces enemy health by 5%")
+Resouled:AddBuffDescription(Resouled.Buffs.SCARY_FACE, Resouled.EID:AutoIcons("Reduces enemy health by 5%"))

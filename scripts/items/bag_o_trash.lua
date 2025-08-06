@@ -4,7 +4,7 @@ local e = Resouled.EID
 
 if EID then
     EID:addCollectible(BAG_O_TRASH,
-    "On use swings a bag that can collect small pickups # Hold to use 3 collected pickups and spawn "..e:FadeBlue("6 blue flies / random trinket / uncommon pickup"))
+    e:AutoIcons("On use swings a bag that can collect small pickups # Hold to use 3 collected pickups and spawn 6 blue flies / random trinket / uncommon pickup"))
 end
 
 local USE_CHARGE = 3

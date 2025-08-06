@@ -3,7 +3,7 @@ local TRICK_PENNY = Isaac.GetItemIdByName("Trick Penny")
 local e = Resouled.EID
 
 if EID then
-    EID:addCollectible(TRICK_PENNY, e:FadePositiveStatNextLine("Removes 1 cent from all shop prices")..e:FadePositiveStatNextLine("Has a 50% chance to give back a coin if a coin was used"))
+    EID:addCollectible(TRICK_PENNY, e:AutoIcons("Removes 1 penny from all shop prices # Has a 50% chance to give back a coin if a coin was used"))
 end
 
 local DECREASE = 1

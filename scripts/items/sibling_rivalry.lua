@@ -1,7 +1,9 @@
 local SIBLING_RIVALRY = Isaac.GetItemIdByName("Sibling Rivalry")
 
+local e = Resouled.EID
+
 if EID then
-    EID:addCollectible(SIBLING_RIVALRY, "On use, player starts to accelerate. If the player hits anything, they start to spin dealing contact damage, while being invulnerable.")
+    EID:addCollectible(SIBLING_RIVALRY, e:AutoIcons("On use, player starts to accelerate. If the player hits anything, they start to spin ").."dealing"..e:AutoIcons(" contact damage, while being invulnerable."))
 end
 
 local GRID_BOUCE_VELOCITY_LOSS_MULTIPLIER = 0.1

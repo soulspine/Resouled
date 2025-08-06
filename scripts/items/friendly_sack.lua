@@ -3,7 +3,7 @@ local FRIENDLY_SACK = Isaac.GetItemIdByName("Friendly Sack")
 local e = Resouled.EID
 
 if EID then
-    EID:addCollectible(FRIENDLY_SACK, "After clearing 6 rooms, "..e:FadeBlue("each familiar spawns a pickup"))
+    EID:addCollectible(FRIENDLY_SACK, e:AutoIcons("After clearing 6 rooms, each familiar spawns a pickup"))
 end
 
 local ROOMS_TO_SPAWN_PICKUP = 6

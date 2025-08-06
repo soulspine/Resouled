@@ -1,8 +1,10 @@
 local GFUEL = Isaac.GetItemIdByName("Red GFUEL")
 
+local e = Resouled.EID
+
 if EID then
     EID:addCollectible(GFUEL,
-    "On use spawns a controllable red hush laser")
+    e:AutoIcons("On use spawns a controllable red hush laser"))
 end
 
 local GFUEL_SPRITE = Sprite()

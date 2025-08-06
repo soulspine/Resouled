@@ -23,10 +23,12 @@ local ANIMATION_SHOOT = "Shoot"
 
 local ANIMATION_EVENT_SHOOT = "ResouledShoot"
 
+local e = Resouled.EID
+
 if EID then
     EID:addCollectible(ITEM,
-        "Familiar that shoots an egg once per room#Enemy hit by this egg will spawn a moderately large black creep pool on death#Enemies standing in this creep get slowed and occasionally immobilized#Creep lasts " ..
-        math.floor(ON_KILL_EFFECT_DURATION / 30) .. " seconds",
+        e:AutoIcons("Familiar that shoots an egg once per room#Enemy hit by this egg will spawn a moderately large black creep pool on death#Enemies standing in this creep get slowed and occasionally immobilized # Creep lasts " ..
+        math.floor(ON_KILL_EFFECT_DURATION / 30) .. " seconds"),
         "Black Proglottid")
 end
 

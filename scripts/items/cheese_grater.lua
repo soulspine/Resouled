@@ -21,7 +21,7 @@ local GRATED_OFF_ENEMY_SPAWN_VELOCITY_MULTIPLIER = 3
 local e = Resouled.EID
 
 if EID then
-    EID:addCollectible(CHEESE_GRATER, "Adds a luck "..e:LuckSmall().." based chance to shoot a special tear that deals " .. DAMAGE_MULTIPLIER .. "x damage"..e:FadeWarning("but spawns a leech with 1HP")..e:FadePositiveStatNextLine("Reveals all{{QuestionMark}}question mark items."), "Cheese Grater")
+    EID:addCollectible(CHEESE_GRATER, e:AutoIcons("Adds a luck based chance to shoot a special tear that ").."deals " .. e:AutoIcons(DAMAGE_MULTIPLIER .. "x damage but spawns a leech with 1HP # Reveals all{{QuestionMark}}question mark items."), "Cheese Grater")
 end
 
 ---@param luck number

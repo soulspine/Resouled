@@ -10,9 +10,11 @@ local VELOCITY_MULTIPLIER = 0.85
 local DAMAGE = 8
 local ATTACK_COOLDOWN = 20
 
+local e = Resouled.EID
+
 if EID then
     EID:addCollectible(ULTRA_FLESH_KID,
-    "Spawns a ultra flesh kid that crawls towards enemies # Ultra Flesh Kid deals "..tostring(DAMAGE).." every "..tostring(ATTACK_COOLDOWN).." updates")
+    e:AutoIcons("Spawns a ultra flesh kid that crawls towards enemies # Ultra Flesh Kid ").."deals "..e:AutoIcons(tostring(DAMAGE).." every "..tostring(ATTACK_COOLDOWN).." updates"))
 end
 
 local PLAYER_FOLLOW_ORBIT = 80

@@ -45,6 +45,17 @@ blacklistItem(CollectibleType.COLLECTIBLE_MILK)
 blacklistItem(CollectibleType.COLLECTIBLE_GHOST_PEPPER)
 blacklistItem(CollectibleType.COLLECTIBLE_LEMON_MISHAP)
 
+mod:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, function()
+    local itemConfig = Isaac.GetItemConfig()
+    local items = itemConfig:GetCollectibles()
+    for i = 1, #items - 1 do
+        local item = itemConfig:GetCollectible(i)
+        if item:HasTags(ItemConfig.TAG_FOOD) then
+            blacklistItem(i)
+        end
+    end
+end)
+
 function famine:removeItemsFromPools()
     local itemPool = Game():GetItemPool()
     for itemID, _ in pairs(itemBlacklist) do

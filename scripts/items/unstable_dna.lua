@@ -3,7 +3,7 @@ local UNSTABLE_DNA = Isaac.GetItemIdByName("Unstable DNA")
 local e = Resouled.EID
 
 if EID then
-    EID:addCollectible(UNSTABLE_DNA, "When entering a new room, there's a:"..e:FadePositiveStatNextLine("25% chance to gain a temporary Hp up")..e:FadeNegativeStatNextLine("25% chance to gain a random temporary stat up")..e:FadeWarningNextLine("50% chance to remove all the temporary effects"))
+    EID:addCollectible(UNSTABLE_DNA, e:AutoIcons("When entering a new room, there's a: # 25% chance to gain a temporary Hp up # 25% chance to gain a random temporary stat up # 50% chance to remove all the temporary effects"))
 end
 
 local STAT_UP_CHANCE = 0.5

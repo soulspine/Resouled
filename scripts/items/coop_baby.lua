@@ -6,7 +6,7 @@ local e = Resouled.EID
 
 if EID then
     EID:addCollectible(COOP_BABY,
-    "Spawns a co-op baby familiar that "..e:FadeBlue("targets last damaged enemy"))
+    "Spawns a co-op baby familiar that targets last damaged enemy")
 end
 
 local FIRE_DAMAGE = 2.5

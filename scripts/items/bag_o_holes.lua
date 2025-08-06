@@ -7,7 +7,7 @@ local ITEM = Isaac.GetItemIdByName("Bag-O-Holes")
 
 if EID then
     EID:addCollectible(ITEM,
-    "Allows you to switch between "..e:Coin().."/"..e:Bomb().."/"..e:Key().." to throw # "..e:Coin()..": Thows 3 midas tears # "..e:Bomb()..": Throws a bomb # "..e:Key()..": Throws 2 sharp keys")
+    e:AutoIcons("Allows you to switch between coin / bomb / key to throw ").."#"..e:Coin().." Coin: Thows 3 midas tears"..e:AutoIcons("# Bomb: Throws a bomb # Key: Throws 2 sharp keys"))
 end
 
 

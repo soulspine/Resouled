@@ -38,7 +38,7 @@ local ENEMY_KILL_WHITELISTED_PICKUPS = {
 local e = Resouled.EID
 
 if EID then
-    EID:addCollectible(CEREMONIAL_BLADE, math.floor(ENEMY_KILL_BASE_PICKUP_DROP_CHANCE*100) .. "% chance to drop a "..e:Coin().." / "..e:Bomb().." / "..e:Key().." when killing an enemy.#On room clear makes Isaac "..e:FadeOrange("drop 1 pickup").." with no way to pick it up and "..e:FadeBlue("spawns a new random pickup").."#"..e:Luck().." " .. math.floor((ENEMY_KILL_BASE_PICKUP_DROP_CHANCE + 10*ENEMY_KILL_PICKUP_DROP_CHANCE_PER_1_LUCK) * 100) .. "% chance at 10 "..e:LuckSmall().."", "Ceremonial Blade")
+    EID:addCollectible(CEREMONIAL_BLADE, e:AutoIcons(tostring(math.floor(ENEMY_KILL_BASE_PICKUP_DROP_CHANCE*100) .. "% chance to drop a coin / bomb / key when killing an enemy.#On room clear makes Isaac drop 1 pickup with no way to pick it up and spawns a new random pickup #".. math.floor((ENEMY_KILL_BASE_PICKUP_DROP_CHANCE + 10*ENEMY_KILL_PICKUP_DROP_CHANCE_PER_1_LUCK) * 100) .. "% chance at 10 luck")), "Ceremonial Blade")
 end
 
 ---@param spawner Entity

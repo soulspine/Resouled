@@ -9,7 +9,7 @@ local PICKUP_SFX = SoundEffect.SOUND_EDEN_GLITCH
 
 local e = Resouled.EID
 
-local EID_DESCRIPTION = "Limits pedestal options to " .. ITEM_COUNT .. " other passive items from current item pool and inherits those effects. "..e:FadeBlue("Only one effect takes place at a time").." and it changes after clearing a room."..e:FadeWarningNextLine("Having multiple copies of this item increases effect pool.")
+local EID_DESCRIPTION = e:AutoIcons("Limits pedestal options to " .. ITEM_COUNT .. " other passive items from current item pool and inherits those effects. Only one effect takes place at a time and it changes after clearing a room. # Having multiple copies of this item increases effect pool.")
 
 if EID then
     EID:addCollectible(GLITCH, EID_DESCRIPTION, "Glitch")

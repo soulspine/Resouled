@@ -21,4 +21,11 @@ local function entityTakeDMG(_, entity)
 end
 Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, entityTakeDMG)
 
+local function postGameEnd()
+    if Resouled:ActiveBuffPresent(Resouled.Buffs.DEMON) then
+        Resouled:RemoveActiveBuff(Resouled.Buffs.DEMON)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, postGameEnd)
+
 Resouled:AddBuffDescription(Resouled.Buffs.DEMON, Resouled.EID:AutoIcons("Enemies on death have a 5% chance to explode. Bosses have a 1% chance to mini-bomb explode on hit. lasts the whole run"))

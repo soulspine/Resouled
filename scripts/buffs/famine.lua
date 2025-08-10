@@ -50,7 +50,7 @@ mod:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, function()
     local items = itemConfig:GetCollectibles()
     for i = 1, #items - 1 do
         local item = itemConfig:GetCollectible(i)
-        if item:HasTags(ItemConfig.TAG_FOOD) then
+        if item and item:HasTags(ItemConfig.TAG_FOOD) then
             blacklistItem(i)
         end
     end

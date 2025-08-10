@@ -196,6 +196,21 @@ function Resouled:TryFindPlayerSpawnerIfEntityFamiliar(entity)
     return nil
 end
 
+---@param entity Entity
+---@param searchedSpawner Entity
+---@return boolean
+function Resouled:IsRelatedBySpawner(entity, searchedSpawner)
+    while entity ~= nil do
+        if entity.Index == searchedSpawner.Index then
+            return true
+        else
+            entity = entity.SpawnerEntity
+        end
+    end
+
+    return false
+end
+
 ---@param roomIndex1 integer
 ---@param roomIndex2 integer
 function Resouled:GetGridRoomDistance(roomIndex1, roomIndex2)
@@ -739,11 +754,20 @@ function Resouled:AddRange(player, amount)
     player.TearRange = player.TearRange + (amount * 40)
 end
 
+---@class ResouledPlayerStats
+---@field Speed number
+---@field Tears number
+---@field Damage number
+---@field Range number
+---@field ShotSpeed number
+---@field Luck number
+
 ---@param player EntityPlayer
 Resouled:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.IMPORTANT, function(_, player)
     local RunSave = SAVE_MANAGER.GetRunSave(player)
 
     if not RunSave.StartingStats then
+        ---@type ResouledPlayerStats
         RunSave.StartingStats = {
             Speed = player.MoveSpeed,
             Tears = player.MaxFireDelay,
@@ -756,7 +780,16 @@ Resouled:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.
 end)
 
 ---@param player EntityPlayer
+---@return ResouledPlayerStats
 function Resouled:GetPlayerStartingStats(player)
     local RunSave = SAVE_MANAGER.GetRunSave(player)
     return RunSave.StartingStats
+end
+
+---@param rotation number
+function Resouled:Get360angleRotation(rotation)
+    if rotation < 0 then
+        rotation = 360 + rotation
+    end
+    return rotation % 360
 end

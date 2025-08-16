@@ -10,21 +10,23 @@ local CLEAR_EGG_SPRITESHEET = "gfx/tears/egg_clear.png"
 local PINK_EGG_SPRITESHEET = "gfx/tears/egg_pink.png"
 local WHITE_EGG_SPRITESHEET = "gfx/tears/egg_white.png"
 
-local PINK_EGG_PARTICLE = Resouled:GetEntityByName("Pink Proglottid's Cracked Egg Particle")
+local PINK_EGG_PARTICLE = Resouled:GetEntityByName("Pink Cracked Egg Particle")
 
 local PINK_EGG_PARTICLE_SPRITESHEET = "gfx/effects/particles/egg_cracked_pink.png"
 
+local EGG_HIT_SOUND = SoundEffect.SOUND_BOIL_HATCH
+local EGG_HIT_SOUND_VOLUME = 1
 local EGG_HIT_PARTICLE_SPAWN_COUNT_MIN = 4
 local EGG_HIT_PARTICLE_SPAWN_COUNT_MAX = 5
 local EGG_PARTICLE_ANIMATION_COUNT = 4 -- PARTICLES HAVE ANIMATIONS 1-4 - DIFFERENT PARTS OF THE CRACKED EGG
-local EGG_PARTICLE_SPEED = 2
-local EGG_PARTICLE_SPEED_UPWARDS = 7
-local EGG_PARTICLE_MAX_ROTATION_DOWNWARDS = 15
+local EGG_PARTICLE_SPEED = 10
+local EGG_PARTICLE_SPEED_UPWARDS = 0
+local EGG_PARTICLE_MAX_ROTATION_DOWNWARDS = 90
 local EGG_PARTICLE_MAX_ROTATION_UPWARDS = 90
-local EGG_PARTICLE_HEIGHT = 20
+local EGG_PARTICLE_HEIGHT = 5
 local EGG_PARTICLE_WEIGHT = 0.75
-local EGG_PARTICLE_BOUNCINESS = 0.35
-local EGG_PARTICLE_FRICTION = 0.35
+local EGG_PARTICLE_BOUNCINESS = 0.5
+local EGG_PARTICLE_FRICTION = 0.3
 local EGG_PARTICLE_GRID_COLLISION = GridCollisionClass.COLLISION_SOLID
 
 local SPRITESHEET_LAYER = 0
@@ -73,11 +75,14 @@ Resouled:AddCallback(ModCallbacks.MC_POST_TEAR_INIT, onTearInit, BLACK_PROGLOTTI
 
 ---@param effect EntityEffect
 local function onEffectInit(_, effect)
-    if PARTICLE_SPRITESHEETS[effect.SubType] then
-        local sprite = effect:GetSprite()
-        sprite:ReplaceSpritesheet(SPRITESHEET_LAYER, PARTICLE_SPRITESHEETS[effect.SubType], true)
-        sprite:Play(tostring(math.random(EGG_PARTICLE_ANIMATION_COUNT)))
-    end
+    local targetSpritesheet = PARTICLE_SPRITESHEETS[effect.SubType]
+    if not targetSpritesheet then return end
+
+    print(targetSpritesheet)
+
+    local sprite = effect:GetSprite()
+    sprite:ReplaceSpritesheet(SPRITESHEET_LAYER, targetSpritesheet, true)
+    sprite:Play(tostring(math.random(EGG_PARTICLE_ANIMATION_COUNT)))
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, onEffectInit, PINK_EGG_PARTICLE.Variant)
 
@@ -104,5 +109,6 @@ local function onTearDeath(_, tear)
             EGG_PARTICLE_GRID_COLLISION
         )
     end
+    SFXManager():Play(EGG_HIT_SOUND, EGG_HIT_SOUND_VOLUME)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_TEAR_DEATH, onTearDeath, BLACK_PROGLOTTIDS_EGG.Variant)

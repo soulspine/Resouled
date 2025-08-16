@@ -10,30 +10,99 @@ local CLEAR_EGG_SPRITESHEET = "gfx/tears/egg_clear.png"
 local PINK_EGG_SPRITESHEET = "gfx/tears/egg_pink.png"
 local WHITE_EGG_SPRITESHEET = "gfx/tears/egg_white.png"
 
-local SPRITESHEET_LAYER = 0
+local PINK_EGG_PARTICLE = Resouled:GetEntityByName("Pink Proglottid's Cracked Egg Particle")
 
-local TEAR_FALLING_SPEED = 1         -- -90
-local TEAR_FALLIING_ACCELERATION = 1 -- 7
-local TEAR_FLAGS = TearFlags.TEAR_SPECTRAL | TearFlags.TEAR_HOMING
+local PINK_EGG_PARTICLE_SPRITESHEET = "gfx/effects/particles/egg_cracked_pink.png"
+
+local EGG_HIT_PARTICLE_SPAWN_COUNT_MIN = 4
+local EGG_HIT_PARTICLE_SPAWN_COUNT_MAX = 5
+local EGG_PARTICLE_ANIMATION_COUNT = 4 -- PARTICLES HAVE ANIMATIONS 1-4 - DIFFERENT PARTS OF THE CRACKED EGG
+local EGG_PARTICLE_SPEED = 2
+local EGG_PARTICLE_SPEED_UPWARDS = 7
+local EGG_PARTICLE_MAX_ROTATION_DOWNWARDS = 15
+local EGG_PARTICLE_MAX_ROTATION_UPWARDS = 90
+local EGG_PARTICLE_HEIGHT = 20
+local EGG_PARTICLE_WEIGHT = 0.75
+local EGG_PARTICLE_BOUNCINESS = 0.35
+local EGG_PARTICLE_FRICTION = 0.35
+local EGG_PARTICLE_GRID_COLLISION = GridCollisionClass.COLLISION_SOLID
+
+local SPRITESHEET_LAYER = 0
 
 local ANIMATION_IDLE = "Idle"
 
-local SPRITESHEETS = {
+local TEAR_FALLING_SPEED = -30
+local TEAR_FALLING_ACCELERATION = 2.5
+local TEAR_FLAGS = TearFlags.TEAR_SPECTRAL | TearFlags.TEAR_HOMING
+
+local EGG_SPRITESHEETS = {
     [BLACK_PROGLOTTIDS_EGG.SubType] = PINK_EGG_SPRITESHEET,
     [WHITE_PROGLOTTIDS_EGG.SubType] = WHITE_EGG_SPRITESHEET,
     [PINK_PROGLOTTIDS_EGG.SubType] = WHITE_EGG_SPRITESHEET,
     [RED_PROGLOTTIDS_EGG.SubType] = CLEAR_EGG_SPRITESHEET,
 }
 
+local PARTICLE_SPRITESHEETS = {
+    [PINK_EGG_PARTICLE.SubType] = PINK_EGG_PARTICLE_SPRITESHEET,
+}
+
+local EGG_TO_PARTICLE_LOOKUP = {
+    [BLACK_PROGLOTTIDS_EGG.SubType] = PINK_EGG_PARTICLE.SubType,
+}
+
+--- Passed string has to be formatted like this: something_red.png, then return would be "color"
+---@param str string
+local function pullColorOutOfString(str)
+    return str:match("_(.-)%.png$")
+end
+
 ---@param tear EntityTear
 local function onTearInit(_, tear)
-    if SPRITESHEETS[tear.SubType] then
-        local sprite = tear:GetSprite()
-        sprite:ReplaceSpritesheet(SPRITESHEET_LAYER, SPRITESHEETS[tear.SubType], true)
-        sprite:Play(ANIMATION_IDLE, true)
-        tear:AddTearFlags(TEAR_FLAGS)
-        tear.FallingAcceleration = TEAR_FALLIING_ACCELERATION
-        tear.FallingSpeed = TEAR_FALLING_SPEED
-    end
+    local targetSpritesheet = EGG_SPRITESHEETS[tear.SubType]
+    if not targetSpritesheet then return end
+
+    local sprite = tear:GetSprite()
+    sprite:ReplaceSpritesheet(SPRITESHEET_LAYER, targetSpritesheet, true)
+    sprite:Play(ANIMATION_IDLE, true)
+    tear:AddTearFlags(TEAR_FLAGS)
+    tear.FallingAcceleration = TEAR_FALLING_ACCELERATION
+    tear.FallingSpeed = TEAR_FALLING_SPEED
+    tear:GetData().RESOULED_PROGLOTTID_EGG_COLOR = pullColorOutOfString(targetSpritesheet)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_TEAR_INIT, onTearInit, BLACK_PROGLOTTIDS_EGG.Variant)
+
+---@param effect EntityEffect
+local function onEffectInit(_, effect)
+    if PARTICLE_SPRITESHEETS[effect.SubType] then
+        local sprite = effect:GetSprite()
+        sprite:ReplaceSpritesheet(SPRITESHEET_LAYER, PARTICLE_SPRITESHEETS[effect.SubType], true)
+        sprite:Play(tostring(math.random(EGG_PARTICLE_ANIMATION_COUNT)))
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, onEffectInit, PINK_EGG_PARTICLE.Variant)
+
+---@param tear EntityTear
+local function onTearDeath(_, tear)
+    local targetSubType = EGG_TO_PARTICLE_LOOKUP[tear.SubType]
+    if not targetSubType then return end
+
+    for _ = 1, math.random(EGG_HIT_PARTICLE_SPAWN_COUNT_MIN, EGG_HIT_PARTICLE_SPAWN_COUNT_MAX) do
+        Resouled:SpawnPrettyParticles(
+            PINK_EGG_PARTICLE.Variant,
+            targetSubType,
+            EGG_PARTICLE_SPEED,
+            EGG_PARTICLE_SPEED_UPWARDS,
+            EGG_PARTICLE_MAX_ROTATION_DOWNWARDS,
+            EGG_PARTICLE_MAX_ROTATION_UPWARDS,
+            tear.Position,
+            EGG_PARTICLE_HEIGHT,
+            nil, -- ROTATION
+            nil, -- SPREAD
+            EGG_PARTICLE_WEIGHT,
+            EGG_PARTICLE_BOUNCINESS,
+            EGG_PARTICLE_FRICTION,
+            EGG_PARTICLE_GRID_COLLISION
+        )
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_TEAR_DEATH, onTearDeath, BLACK_PROGLOTTIDS_EGG.Variant)

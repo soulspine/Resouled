@@ -1,0 +1,64 @@
+<AnimatedActor>
+    <Info CreatedBy="soulspine" CreatedOn="6/20/2025 5:34:40 PM" Version="8" Fps="30"/>
+    <Content>
+        <Spritesheets>
+            <Spritesheet Path="egg_cracked_pink.png" Id="0"/>
+        </Spritesheets>
+        <Layers>
+            <Layer Name="New Layer" Id="-1" SpritesheetId="-1"/>
+            <Layer Name="particle" Id="0" SpritesheetId="0"/>
+        </Layers>
+        <Nulls/>
+        <Events/>
+    </Content>
+    <Animations DefaultAnimation="1">
+        <Animation Name="1" FrameNum="1" Loop="false">
+            <RootAnimation>
+                <Frame XPosition="0" YPosition="0" XPivot="0" YPivot="0" XScale="100" YScale="100" Delay="1" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="255" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="false"/>
+            </RootAnimation>
+            <LayerAnimations>
+                <LayerAnimation LayerId="0" Visible="true">
+                    <Frame XPosition="0" YPosition="0" XPivot="4" YPivot="4" XCrop="4" YCrop="4" Width="8" Height="8" XScale="100" YScale="100" Delay="1" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="255" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="false"/>
+                </LayerAnimation>
+            </LayerAnimations>
+            <NullAnimations/>
+            <Triggers/>
+        </Animation>
+        <Animation Name="2" FrameNum="1" Loop="false">
+            <RootAnimation>
+                <Frame XPosition="0" YPosition="0" XPivot="0" YPivot="0" XScale="100" YScale="100" Delay="1" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="255" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="false"/>
+            </RootAnimation>
+            <LayerAnimations>
+                <LayerAnimation LayerId="0" Visible="true">
+                    <Frame XPosition="0" YPosition="0" XPivot="4" YPivot="4" XCrop="20" YCrop="4" Width="8" Height="8" XScale="100" YScale="100" Delay="1" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="255" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="false"/>
+                </LayerAnimation>
+            </LayerAnimations>
+            <NullAnimations/>
+            <Triggers/>
+        </Animation>
+        <Animation Name="3" FrameNum="1" Loop="false">
+            <RootAnimation>
+                <Frame XPosition="0" YPosition="0" XPivot="0" YPivot="0" XScale="100" YScale="100" Delay="1" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="255" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="false"/>
+            </RootAnimation>
+            <LayerAnimations>
+                <LayerAnimation LayerId="0" Visible="true">
+                    <Frame XPosition="0" YPosition="0" XPivot="4" YPivot="4" XCrop="36" YCrop="4" Width="8" Height="8" XScale="100" YScale="100" Delay="1" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="255" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="false"/>
+                </LayerAnimation>
+            </LayerAnimations>
+            <NullAnimations/>
+            <Triggers/>
+        </Animation>
+        <Animation Name="4" FrameNum="1" Loop="false">
+            <RootAnimation>
+                <Frame XPosition="0" YPosition="0" XPivot="0" YPivot="0" XScale="100" YScale="100" Delay="1" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="255" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="false"/>
+            </RootAnimation>
+            <LayerAnimations>
+                <LayerAnimation LayerId="0" Visible="true">
+                    <Frame XPosition="0" YPosition="0" XPivot="4" YPivot="4" XCrop="52" YCrop="4" Width="8" Height="8" XScale="100" YScale="100" Delay="1" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="255" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="false"/>
+                </LayerAnimation>
+            </LayerAnimations>
+            <NullAnimations/>
+            <Triggers/>
+        </Animation>
+    </Animations>
+</AnimatedActor>

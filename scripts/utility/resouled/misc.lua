@@ -407,9 +407,21 @@ end
 ---@param friction number
 ---@param gridCollision GridCollisionClass
 ---@return EntityEffect
-function Resouled:SpawnPrettyParticles(variant, subtype, speed, speedUpwards, maxRotationDownwards, maxRotationUpwards,
-                                       position, height, direction, maxSpread, weight, bounciness, friction,
-                                       gridCollision)
+function Resouled:SpawnPrettyParticles(
+    variant,
+    subtype,
+    speed,
+    speedUpwards,
+    maxRotationDownwards,
+    maxRotationUpwards,
+    position,
+    height,
+    direction,
+    maxSpread,
+    weight,
+    bounciness,
+    friction,
+    gridCollision)
     ---@type EntityEffect
     ---@diagnostic disable-next-line: assign-type-mismatch
     local particle = Game():Spawn(EntityType.ENTITY_EFFECT, variant, position, Vector.Zero, nil, subtype or 0,
@@ -745,7 +757,7 @@ end)
 ---@param amount number
 function Resouled:AddTears(player, amount)
     local newfireDelay = 30 / (player.MaxFireDelay + 1) + amount
-    player.MaxFireDelay = (30 - newfireDelay)/newfireDelay
+    player.MaxFireDelay = (30 - newfireDelay) / newfireDelay
 end
 
 ---@param player EntityPlayer

@@ -15,17 +15,17 @@ local SLEIGHT_OF_HAND = Isaac.GetItemIdByName("Sleight of Hand")
 ---@field Variant number
 ---@field IsOpen boolean
 
-local e = Resouled.EID
-
 if EID then
     EID:addCollectible(SLEIGHT_OF_HAND,
-        e:AutoIcons("Peeks into the closest room and makes Isaac hold all pickups and items in that room # Usable only if current room is cleared # Cannot peek into uncleared Boss Rooms"),
+        Resouled.EID:AutoIcons(
+            "Peeks into the closest room and makes Isaac hold all pickups and items in that room # Usable only if current room is cleared # Cannot peek into uncleared Boss Rooms"),
         "Sleight of Hand")
 end
 
 local TIMEOUT = 100
 local PICKUP_ANIMATE_COOLDOWN = 20
 
+local ANIMATION_IDLE = "Idle"
 local ANIMATION_TELEPORT_UP = "TeleportUp"
 local ANIMATION_TELEPORT_UP_FRAME_NUM = 19
 
@@ -80,7 +80,6 @@ local function onActiveUse(_, itemId, rng, player, useFlags, activeSlot, customV
 
     if door then
         SFXManager():Play(SFX_USE)
-        returnTable.Discharge = true
         local doorSprite = door:GetSprite()
         local level = game:GetLevel()
         local targetRoomDesc = level:GetRoomByIdx(door.TargetRoomIndex)
@@ -88,6 +87,8 @@ local function onActiveUse(_, itemId, rng, player, useFlags, activeSlot, customV
         if door.TargetRoomType == RoomType.ROOM_BOSS and not targetRoomDesc.Clear then -- dont use when boss room is not cleared
             return returnTable
         end
+
+        returnTable.Discharge = true
 
         local playerData = {}
 
@@ -214,6 +215,15 @@ local function onUpdate()
             elseif runSave.SleightOfHand.RoomEnterCounter == 2 then -- back to original room
                 local door = room:GetDoor(runSave.SleightOfHand.TargetDoorSlot)
 
+                -- if player holds glowing hourglass, charge is removed from one they have, this compensates for it and gives one charge back
+                for i = 0, ActiveSlot.SLOT_POCKET2 do
+                    local itemDesc = player:GetActiveItemDesc(i)
+                    if itemDesc.Item == CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS and itemDesc.VarData < 3 then
+                        player:SetActiveVarData(itemDesc.VarData - 1, i)
+                        break;
+                    end
+                end
+
                 if door then
                     local savedDoorInfo = runSave.SleightOfHand.RestoreDoorInfo
                     local doorSprite = door:GetSprite()
@@ -283,6 +293,7 @@ local function onUpdate()
 
                 -- we restore players to their original positions and collision classes
                 for playerIndexKey, playerInfo in pairs(runSave.SleightOfHand.RestorePlayerData) do
+                    ---@diagnostic disable-next-line: param-type-mismatch
                     local player = game:GetPlayer(tonumber(playerIndexKey))
                     if player then
                         player.Position = playerInfo.Position and playerInfo.Position or player.Position
@@ -322,7 +333,7 @@ local function onUpdate()
                         -- we load the animation and play it
                         local pickupSprite = Sprite()
                         pickupSprite:Load(pickup.Animation.File, true)
-                        pickupSprite:Play(pickup.Animation.Name, true)
+                        pickupSprite:Play(ANIMATION_IDLE, true)
                         player:AnimatePickup(pickupSprite, true)
                     end
                     -- we remove the pickup from the list
@@ -338,7 +349,7 @@ local function onUpdate()
             if runSave.SleightOfHand.Timeout > 0 then
                 runSave.SleightOfHand.Timeout = runSave.SleightOfHand.Timeout - 1
             else
-                -- compensate for that it timed out and give charge back
+                -- compensate for it timing out and give charge back
                 for i = 0, ActiveSlot.SLOT_POCKET2 do
                     local activeItem = player:GetActiveItem(i)
                     if activeItem == SLEIGHT_OF_HAND then

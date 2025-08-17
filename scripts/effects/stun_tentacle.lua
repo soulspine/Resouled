@@ -26,28 +26,29 @@ local ANIMATION_EVENT_RELEASE = "Release"
 
 ---@param effect EntityEffect
 local function onEffectInit(_, effect)
-    if SPRITESHEETS[effect.SubType] then
-        effect:GetSprite():ReplaceSpritesheet(SPRITESHEET_LAYER, SPRITESHEETS[effect.SubType], true)
-        local entitiesInRadius = Isaac.FindInRadius(effect.Position, MAX_GRAB_DISTANCE, EntityPartition.ENEMY)
+    local spritesheet = SPRITESHEETS[effect.SubType]
+    if not spritesheet then return end
 
-        local closestTarget = nil
-        local closestTargetDistance = math.huge
-        for _, entity in ipairs(entitiesInRadius) do
-            if entity:IsActiveEnemy() and entity:IsVulnerableEnemy() and (CAN_STUN_BOSSES or not entity:IsBoss()) then
-                local distance = entity.Position:Distance(effect.Position)
-                if distance < closestTargetDistance then
-                    closestTarget = entity
-                    closestTargetDistance = distance
-                end
+    effect:GetSprite():ReplaceSpritesheet(SPRITESHEET_LAYER, spritesheet, true)
+    local entitiesInRadius = Isaac.FindInRadius(effect.Position, MAX_GRAB_DISTANCE, EntityPartition.ENEMY)
+
+    local closestTarget = nil
+    local closestTargetDistance = math.huge
+    for _, entity in ipairs(entitiesInRadius) do
+        if entity:IsActiveEnemy() and entity:IsVulnerableEnemy() and (CAN_STUN_BOSSES or not entity:IsBoss()) then
+            local distance = entity.Position:Distance(effect.Position)
+            if distance < closestTargetDistance then
+                closestTarget = entity
+                closestTargetDistance = distance
             end
         end
+    end
 
-        if closestTarget then
-            effect.Target = closestTarget
-            effect:GetSprite():Play(ANIMATION_GRAB, true)
-        else
-            effect:Remove() -- nothing to grab so despawn
-        end
+    if closestTarget then
+        effect.Target = closestTarget
+        effect:GetSprite():Play(ANIMATION_GRAB, true)
+    else
+        effect:Remove() -- nothing to grab so despawn
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, onEffectInit, TENTACLE_BLACK.Variant)

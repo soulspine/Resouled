@@ -7,7 +7,8 @@ local SiblingRivalry = {
     Damage = 10,
     Knockback = 50,
 
-    TargetSpeed = 0.85
+    HitRangeMultiplier = 1.5,
+    AdditionalRange = 16,
 }
 
 local e = Resouled.EID
@@ -22,7 +23,7 @@ local function makeAngry(npc)
 
     ---@param npc2 EntityNPC
     Resouled.Iterators:IterateOverRoomNpcs(function(npc2)
-        if npc2.Index ~= npc.Index and npc2.Type == npc.Type then
+        if npc2.Index ~= npc.Index and npc2.Type == npc.Type and not npc2:IsBoss() then
             table.insert(validEnemies, EntityRef(npc2))
         end
     end)
@@ -36,21 +37,29 @@ local function makeAngry(npc)
 end
 
 ---@param npc EntityNPC
+local function clearTarget(npc)
+    local data = npc:GetData()
+    if data.Resouled_SiblingRivalryAngryTarget then
+        data.Resouled_SiblingRivalryAngryTarget = nil
+
+        npc.Target = npc:GetPlayerTarget()
+    end
+end
+
+---@param npc EntityNPC
 local function checkTarget(npc)
     local data = npc:GetData()
     ---@return EntityRef | nil
     local target = data.Resouled_SiblingRivalryAngryTarget
-    ---@type Entity | nil
-    local targetE = target.Entity
     if target then
+        ---@type Entity | nil
+        local targetE = target.Entity
         if targetE then
             if targetE:IsDead() or targetE.HitPoints <= 0 then
-                data.Resouled_SiblingRivalryAngryTarget = nil
-                npc.Target = npc:GetPlayerTarget()
+                clearTarget(npc)
             end
         else
-            data.Resouled_SiblingRivalryAngryTarget = nil
-            npc.Target = npc:GetPlayerTarget()
+            clearTarget(npc)
         end
     end
 end
@@ -61,19 +70,22 @@ local function getTarget(npc)
     return npc:GetData().Resouled_SiblingRivalryAngryTarget
 end
 
----@param target EntityNPC
----@param angryNpc EntityNPC
-local function isTarget(target, angryNpc)
-    local target2 = getTarget(angryNpc)
-
-    return target2 and target2.Entity.Index == target.Index
+---@param npc EntityNPC
+local function isNearTarget(npc)
+    local target = getTarget(npc)
+    if target then
+        return target.Entity.Position:Distance(npc.Position) <= npc.Size * SiblingRivalry.HitRangeMultiplier + SiblingRivalry.AdditionalRange
+    end
 end
 
----@param npc EntityNPC
-local function clearTarget(npc)
-    local data = npc:GetData()
-    if data.Resouled_SiblingRivalryAngryTarget then
-        data.Resouled_SiblingRivalryAngryTarget = nil
+local function hitTarget(npc)
+    local target = getTarget(npc)
+    if target then
+        target.Entity:TakeDamage(SiblingRivalry.Damage, DamageFlag.DAMAGE_NO_MODIFIERS, EntityRef(npc), 0)
+
+        target.Entity:AddVelocity((target.Entity.Position - npc.Position):Normalized() * SiblingRivalry.Knockback)
+
+        clearTarget(npc)
     end
 end
 
@@ -81,7 +93,7 @@ end
 local function onNpcUpdate(_, npc)
     local target = getTarget(npc)
 
-    if not target and npc.FrameCount % SiblingRivalry.AngryChanceRate == 0 and npc:IsActiveEnemy() and math.random() < SiblingRivalry.ChanceToGetAngry and PlayerManager.AnyoneHasCollectible(SiblingRivalry.ID) then
+    if not target and npc.FrameCount % SiblingRivalry.AngryChanceRate == 0 and not npc:IsBoss() and npc:IsActiveEnemy() and math.random() < SiblingRivalry.ChanceToGetAngry and PlayerManager.AnyoneHasCollectible(SiblingRivalry.ID) then
         makeAngry(npc)
     end
 
@@ -91,32 +103,11 @@ local function onNpcUpdate(_, npc)
 
         npc.Target = target.Entity
 
-        local pathfinder = npc.Pathfinder
-        local checkLine = Game():GetRoom():CheckLine(npc.Position, target.Position, LineCheckMode.ENTITY)
-
-        if not checkLine then
-            pathfinder:FindGridPath(target.Position, npc.Friction, 1, true)
-        else
-            npc.Velocity = npc.Velocity + (target.Position - npc.Position):Normalized() * npc.Friction * SiblingRivalry.TargetSpeed
+        if isNearTarget(npc) then
+            hitTarget(npc)
         end
 
         checkTarget(npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, onNpcUpdate)
-
----@param npc EntityNPC
----@param collider Entity
-local function postNpcCollision(_, npc, collider)
-    local npc2 = collider:ToNPC()
-    if npc2 then
-        if isTarget(npc2, npc) then
-            npc2:TakeDamage(SiblingRivalry.Damage, DamageFlag.DAMAGE_NO_MODIFIERS, EntityRef(npc), 0)
-
-            npc2.Velocity = npc2.Velocity + (npc2.Position - npc.Position):Normalized() * SiblingRivalry.Knockback
-
-            clearTarget(npc)
-        end
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_NPC_COLLISION, postNpcCollision)

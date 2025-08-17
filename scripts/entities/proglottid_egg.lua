@@ -20,12 +20,11 @@ local EGG_HIT_PARTICLE_SPAWN_COUNT_MIN = 4
 local EGG_HIT_PARTICLE_SPAWN_COUNT_MAX = 5
 local EGG_PARTICLE_ANIMATION_COUNT = 4 -- PARTICLES HAVE ANIMATIONS 1-4 - DIFFERENT PARTS OF THE CRACKED EGG
 local EGG_PARTICLE_SPEED = 10
-local EGG_PARTICLE_SPEED_UPWARDS = 0
-local EGG_PARTICLE_MAX_ROTATION_DOWNWARDS = 90
-local EGG_PARTICLE_MAX_ROTATION_UPWARDS = 90
-local EGG_PARTICLE_HEIGHT = 5
-local EGG_PARTICLE_WEIGHT = 0.75
-local EGG_PARTICLE_BOUNCINESS = 0.5
+local EGG_PARTICLE_MAX_ROTATION_DOWNWARDS = 25
+local EGG_PARTICLE_MAX_ROTATION_UPWARDS = 25
+local EGG_PARTICLE_MAX_SPREAD = 45
+local EGG_PARTICLE_WEIGHT = 0.6
+local EGG_PARTICLE_BOUNCINESS = 0.25
 local EGG_PARTICLE_FRICTION = 0.3
 local EGG_PARTICLE_GRID_COLLISION = GridCollisionClass.COLLISION_SOLID
 
@@ -78,8 +77,6 @@ local function onEffectInit(_, effect)
     local targetSpritesheet = PARTICLE_SPRITESHEETS[effect.SubType]
     if not targetSpritesheet then return end
 
-    print(targetSpritesheet)
-
     local sprite = effect:GetSprite()
     sprite:ReplaceSpritesheet(SPRITESHEET_LAYER, targetSpritesheet, true)
     sprite:Play(tostring(math.random(EGG_PARTICLE_ANIMATION_COUNT)))
@@ -96,13 +93,13 @@ local function onTearDeath(_, tear)
             PINK_EGG_PARTICLE.Variant,
             targetSubType,
             EGG_PARTICLE_SPEED,
-            EGG_PARTICLE_SPEED_UPWARDS,
+            tear.FallingSpeed,
             EGG_PARTICLE_MAX_ROTATION_DOWNWARDS,
             EGG_PARTICLE_MAX_ROTATION_UPWARDS,
             tear.Position,
-            EGG_PARTICLE_HEIGHT,
-            nil, -- ROTATION
-            nil, -- SPREAD
+            -tear.Height,
+            tear.Velocity:GetAngleDegrees(), -- DIRECTION
+            EGG_PARTICLE_MAX_SPREAD, -- SPREAD
             EGG_PARTICLE_WEIGHT,
             EGG_PARTICLE_BOUNCINESS,
             EGG_PARTICLE_FRICTION,

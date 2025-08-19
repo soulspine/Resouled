@@ -25,12 +25,12 @@
     <familiar id="23" name="Fetal Haunt" gfx="fetal_haunt.png" description="Crybaby ghost" quality="1" craftquality="1" cache="familiars" tags="monstermanual"/>
     <active id="24" name="Red GFUEL" gfx="GFUEL.png" description="BLOOD LASER BARRAGE UP!" quality="1" craftquality="1" chargetype="normal" maxcharges="4"/>
     <familiar id="25" name="Mama Haunt" gfx="mama_haunt.png" description="" quality="2" craftquality="2" cache="familiars" tags="monstermanual"/>
-    <familiar id="26" name="Pink Proglottid" gfx="pink_proglottid.png" description="" quality="0" craftquality="0" cache="familiars" tags="monstermanual"/>
+    <familiar id="26" name="Pink Proglottid" gfx="pink_proglottid.png" description="" quality="3" craftquality="3" cache="familiars" tags="monstermanual"/>
     <passive id="27" name="Pumpkin Mask" gfx="pumpkin_mask.png" description="Boo" quality="0" tags="nolostbr" craftquality="0"/>
     <familiar id="28" name="Red Proglottid" gfx="red_proglottid.png" description="" quality="0" craftquality="0" cache="familiars" tags="monstermanual"/>
     <familiar id="29" name="Tumor Ball" gfx="tumor_ball.png" description="" quality="3" craftquality="3" cache="familiars"/>
     <familiar id="30" name="Ultra Flesh Kid" gfx="ultra_flesh_kid.png" description="" quality="2" craftquality="2" cache="familiars" tags="monstermanual"/>
-    <familiar id="31" name="White Proglottid" gfx="white_proglottid.png" description="" quality="0" craftquality="0" cache="familiars" tags="monstermanual"/>
+    <familiar id="31" name="White Proglottid" gfx="white_proglottid.png" description="" quality="3" craftquality="3" cache="familiars" tags="monstermanual"/>
     <active id="32" name="Bag-O-Holes" gfx="bagoholes.png" description="Drop a bowls" quality="1" craftquality="1" maxcharges="0" tags="offensive"/>
 
     <trinket id="1" name="Handicapped Placard" description="" gfx="handicapped_placard.png"/>

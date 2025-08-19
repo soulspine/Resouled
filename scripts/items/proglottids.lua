@@ -21,6 +21,18 @@ local STUN_TENTACLE_EFFECT_MIN_COOLDOWN = 150
 local STUN_TENTACLE_EFFECT_MAX_COOLDOWN = 250
 
 -- WHITE CONFIG
+local WHITE_ON_KILL_EFFECT_EXPLOSION_VARIANT = EffectVariant.ENEMY_GHOST
+local WHITE_ON_KILL_EFFECT_EXPLOSION_SUBTYPE = 1
+local WHITE_ON_KILL_EFFECT_EXPLOSION_DAMAGE = 50
+local WHITE_ON_KILL_EFFECT_EXPLOSION_RADIUS = 65
+local WHITE_ON_KILL_EFFECT_EXPLOSION_DAMAGE_FLAGS = DamageFlag.DAMAGE_EXPLOSION
+local WHITE_ON_KILL_EFFECT_EXPLOSION_DAMAGE_COUNTDOWN = 30
+
+local WHITE_ON_KILL_EFFECT_GHOST_VARIANT = EffectVariant.PURGATORY
+local WHITE_ON_KILL_EFFECT_GHOST_SUBTYPE = 1
+
+-- PINK CONFIG
+local PINK_ON_KILL_EFFECT_ENTITY_FLAGS = EntityFlag.FLAG_CHARM | EntityFlag.FLAG_PERSISTENT
 
 ---@param str string
 ---@return string
@@ -91,6 +103,14 @@ end
 ---@param player EntityPlayer
 ---@param cacheFlag CacheFlag
 local function onCacheEval(_, player, cacheFlag)
+    for _, entity in pairs(ENTITIES) do
+        if not string.find(string.lower(entity.Name), "proglottid") then goto continue end
+
+        Resouled.Familiar:CheckFamiliar(player, ITEMS[entity.SubType], entity.Variant, entity.SubType)
+
+        ::continue::
+    end
+
     Resouled.Familiar:CheckFamiliar(
         player, ITEMS[ENTITIES.BLACK.SubType], ENTITIES.BLACK.Variant, ENTITIES.BLACK.SubType)
 
@@ -164,6 +184,9 @@ Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onFamiliarUpdate, ENTITIES
 
 
 local function onRoomEnter()
+    -- clearing kill count for white proglottid
+    Isaac.GetPlayer():GetData().RESOULED__WHITE_PROGLOTTID_DEAD_ENEMIES_POSITIONS = nil
+
     Resouled.Iterators:IterateOverRoomFamiliars(function(familiar)
         if isProglottid(familiar) then
             setRandomCooldown(familiar)
@@ -184,31 +207,75 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onRoomEnter)
 local function onTearCollision(_, tear, collider, low)
     if tear.Variant ~= EGG_VARIANT or not collider:ToNPC() or not tear.SpawnerEntity then return end
 
-    local color = COLORS[tear.SpawnerEntity.SubType]
-    collider:GetData().RESOULED__TAGGED_BY_PROGLOTTID = color
+    collider:GetData().RESOULED__TAGGED_BY_PROGLOTTID = {
+        Color = COLORS[tear.SpawnerEntity.SubType],
+        Source = EntityRef(tear.SpawnerEntity),
+    }
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_TEAR_COLLISION, onTearCollision)
 
 
-
+---@param entity Entity
 local function onEntityKill(_, entity)
-    local data = entity:GetData()
-    local color = data.RESOULED__TAGGED_BY_PROGLOTTID
-    if not color then return end
+    -- tracking room kills for white proglottid
+    if PlayerManager.AnyoneHasCollectible(ITEMS[ENTITIES.WHITE.SubType]) and entity:IsEnemy() then
+        local player0data = Isaac.GetPlayer():GetData()
+        if not player0data.RESOULED__WHITE_PROGLOTTID_DEAD_ENEMIES_POSITIONS then
+            player0data.RESOULED__WHITE_PROGLOTTID_DEAD_ENEMIES_POSITIONS = {}
+        end
 
-    if color == COLORS[ENTITIES.BLACK.SubType] then -- BLACK EFFECT
+        table.insert(player0data.RESOULED__WHITE_PROGLOTTID_DEAD_ENEMIES_POSITIONS, entity.Position)
+    end
+
+    local data = entity:GetData()
+    if not data.RESOULED__TAGGED_BY_PROGLOTTID then return end
+    ---@type string
+    local color = data.RESOULED__TAGGED_BY_PROGLOTTID.Color
+    ---@type EntityRef
+    local source = data.RESOULED__TAGGED_BY_PROGLOTTID.Source
+
+    -- BLACK EFFECT
+    if color == COLORS[ENTITIES.BLACK.SubType] then
         local effect = Game():Spawn(EntityType.ENTITY_EFFECT, BLACK_ON_KILL_EFFECT_VARIANT, entity.Position, Vector.Zero,
-            entity, BLACK_ON_KILL_EFFECT_SUBTYPE, Resouled:NewSeed()):ToEffect()
-        if effect then
-            effect:SetTimeout(BLACK_ON_KILL_EFFECT_DURATION)
-            effect.SpriteScale = Vector(1, 1) * BLACK_ON_KILL_EFFECT_RADIUS
-            effect:Update()
-            effect:GetData().RESOULED__BLACK_PROGLOTTID_CREEP = true
+            source.Entity, BLACK_ON_KILL_EFFECT_SUBTYPE, Resouled:NewSeed()):ToEffect()
+        if not effect then return end
+
+        effect:SetTimeout(BLACK_ON_KILL_EFFECT_DURATION)
+        effect.SpriteScale = Vector(1, 1) * BLACK_ON_KILL_EFFECT_RADIUS
+        effect:Update()
+        effect:GetData().RESOULED__BLACK_PROGLOTTID_CREEP = true
+    end
+
+    -- WHITE EFFECT
+    if color == COLORS[ENTITIES.WHITE.SubType] then
+        Game():Spawn(EntityType.ENTITY_EFFECT, WHITE_ON_KILL_EFFECT_EXPLOSION_VARIANT, entity.Position, Vector.Zero,
+            source.Entity, WHITE_ON_KILL_EFFECT_EXPLOSION_SUBTYPE, Resouled:NewSeed())
+
+        for _, entity in ipairs(Isaac.FindInRadius(entity.Position, WHITE_ON_KILL_EFFECT_EXPLOSION_RADIUS, EntityPartition.ENEMY)) do
+            entity:TakeDamage(WHITE_ON_KILL_EFFECT_EXPLOSION_DAMAGE, WHITE_ON_KILL_EFFECT_EXPLOSION_DAMAGE_FLAGS,
+                source, WHITE_ON_KILL_EFFECT_EXPLOSION_DAMAGE_COUNTDOWN)
+
+            ---@type Vector[]?
+            local ghostSpawnPositions = Isaac.GetPlayer():GetData().RESOULED__WHITE_PROGLOTTID_DEAD_ENEMIES_POSITIONS
+            if not ghostSpawnPositions then return end
+
+            for _, position in ipairs(ghostSpawnPositions) do
+                Game():Spawn(EntityType.ENTITY_EFFECT, WHITE_ON_KILL_EFFECT_GHOST_VARIANT, position, Vector.Zero,
+                    entity,
+                    WHITE_ON_KILL_EFFECT_GHOST_SUBTYPE, Resouled:NewSeed()):ToEffect()
+            end
         end
     end
 
-    if color == COLORS[ENTITIES.WHITE.SubType] then -- WHITE EFFECT
-        -- TODO WHITE EFFECT
+    -- PINK EFFECT
+    if color == COLORS[ENTITIES.PINK.SubType] then
+        local newNpc = Game():Spawn(entity.Type, entity.Variant, entity.Position, Vector.Zero, source.Entity,
+            entity.SubType, Resouled:NewSeed()):ToNPC()
+        if not newNpc then return end
+
+        ---@diagnostic disable-next-line: param-type-mismatch
+        newNpc:AddEntityFlags(PINK_ON_KILL_EFFECT_ENTITY_FLAGS)
+        newNpc:AddCharmed(source, -1)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, onEntityKill)

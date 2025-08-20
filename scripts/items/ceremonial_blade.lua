@@ -1,4 +1,4 @@
-local CEREMONIAL_BLADE = Isaac.GetItemIdByName("Ceremonial Blade")
+local CEREMONIAL_BLADE = Resouled.Enums.Items.CEREMONIAL_BLADE
 
 local ROOM_CLEAR_FADING_PICKUP_VELOCITY = 2
 local ROOM_CLEAR_FADING_PICKUP_TIMEOUT = 60
@@ -34,12 +34,6 @@ local ENEMY_KILL_WHITELISTED_PICKUPS = {
     PickupVariant.PICKUP_BOMB,
     PickupVariant.PICKUP_KEY,
 }
-
-local e = Resouled.EID
-
-if EID then
-    EID:addCollectible(CEREMONIAL_BLADE, e:AutoIcons(tostring(math.floor(ENEMY_KILL_BASE_PICKUP_DROP_CHANCE*100) .. "% chance to drop a coin / bomb / key when killing an enemy.#On room clear makes Isaac drop 1 pickup with no way to pick it up and spawns a new random pickup #".. math.floor((ENEMY_KILL_BASE_PICKUP_DROP_CHANCE + 10*ENEMY_KILL_PICKUP_DROP_CHANCE_PER_1_LUCK) * 100) .. "% chance at 10 luck")), "Ceremonial Blade")
-end
 
 ---@param spawner Entity
 local function spawnEffect(spawner)

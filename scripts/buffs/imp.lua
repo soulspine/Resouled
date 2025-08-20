@@ -46,5 +46,3 @@ local function postPickupIint(_, pickup)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, postPickupIint, PickupVariant.PICKUP_COLLECTIBLE)
-
-Resouled:AddBuffDescription(Resouled.Buffs.IMP, Resouled.EID:AutoIcons("First treasure room item is a bomb related item"))

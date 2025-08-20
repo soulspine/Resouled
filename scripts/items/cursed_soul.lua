@@ -1,9 +1,4 @@
-local CURSED_SOUL = Isaac.GetItemIdByName("Cursed Soul")
-
-if EID then
-    EID:addCollectible(CURSED_SOUL,
-    "When taking damage you have a chance to gain a soul # When entering an uncleared room you take damage (can't kill you) # If you don't get a soul on hit, your chance to gain a soul goes up # Spawns up to 6 souls")
-end
+local CURSED_SOUL = Resouled.Enums.Items.CURSED_SOUL
 
 local SOULS_PER_ITEM = 6
 local SOUL_OBTAIN_CHANCE = 0.25
@@ -31,6 +26,8 @@ Resouled:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, postAddCollectible)
 ---@param flags DamageFlag
 local function playerTakeDamage(_, entity, amount, flags)
     local player = entity:ToPlayer()
+    if not player then return end
+
     local RUN_SAVE = SAVE_MANAGER.GetRunSave(player)
     if RUN_SAVE.Resouled_CursedSoul and RUN_SAVE.Resouled_CursedSoul.SOULS > 0 then
         if DamageFlag ~= DamageFlag.DAMAGE_FAKE and player:HasCollectible(CURSED_SOUL) then

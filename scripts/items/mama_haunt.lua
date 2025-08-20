@@ -1,15 +1,9 @@
-local MAMA_HAUNT = Isaac.GetItemIdByName("Mama Haunt")
+local MAMA_HAUNT = Resouled.Enums.Items.MAMA_HAUNT
 local MAMA_HAUNT_VARIANT = Isaac.GetEntityVariantByName("Mama Haunt")
 local MAMA_HAUNT_SUBTYPE = Isaac.GetEntitySubTypeByName("Mama Haunt")
 
 local SING_PETRIFY_DURATION = 90
 local SING_PETRIFY_COOLDOWN = 210 -- in updates, each second is 30 updates
-
-local e = Resouled.EID
-
-if EID then
-    EID:addCollectible(MAMA_HAUNT, e:AutoIcons("Every " .. math.ceil(SING_PETRIFY_COOLDOWN/30) .. " seconds, Mama Haunt sings, petrifying all enemies in the room for " .. math.ceil(SING_PETRIFY_DURATION/30) .. " seconds"), "Mama Haunt")
-end
 
 local Note = {
     Variant = Isaac.GetEntityVariantByName("Music Note"),

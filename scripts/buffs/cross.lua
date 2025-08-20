@@ -12,7 +12,3 @@ local function postGameStarted()
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, postGameStarted)
-
-local e = Resouled.EID
-
-Resouled:AddBuffDescription(Resouled.Buffs.CROSS, e:AutoIcons("You spawn with an eternal heart#"..e:FadePurple("Holy card for lost and tainted lost")))

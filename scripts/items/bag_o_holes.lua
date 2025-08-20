@@ -1,16 +1,7 @@
 local mod = Resouled
 local BagOHoles = {}
 
-local e = Resouled.EID
-
-local ITEM = Isaac.GetItemIdByName("Bag-O-Holes")
-
-if EID then
-    EID:addCollectible(ITEM,
-    e:AutoIcons("Allows you to switch between coin / bomb / key to throw ").."#"..e:Coin().." Coin: Thows 3 midas tears"..e:AutoIcons("# Bomb: Throws a bomb # Key: Throws 2 sharp keys"))
-end
-
-
+local ITEM = Resouled.Enums.Items.BAG_O_HOLES
 
 function BagOHoles:HUDOffset(x, y, anchor)
     local notches = math.floor(Options.HUDOffset * 10 + 0.5)

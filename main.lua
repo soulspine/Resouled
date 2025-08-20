@@ -12,6 +12,9 @@ if REPENTOGON and MinimapAPI then
 
     -- ALL EXTERNAL IMPORTS
 
+    ---@type ResouledEnums
+    Resouled.Enums = include("scripts.enums")
+
     ---@type SaveManager
     SAVE_MANAGER = include("scripts.utility.save_manager")
     SAVE_MANAGER.Init(Resouled)
@@ -55,6 +58,8 @@ if REPENTOGON and MinimapAPI then
     if EID then
         ---@type ResouledEID
         Resouled.EID = include("scripts.utility.resouled.eid_functions")
+
+        include("scripts.eid")
     end
 
     include("scripts.utility.resouled.misc")

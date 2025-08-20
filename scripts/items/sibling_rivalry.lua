@@ -1,5 +1,5 @@
 local SiblingRivalry = {
-    ID = Isaac.GetItemIdByName("Sibling Rivalry"),
+    ID = Resouled.Enums.Items.SIBLING_RIVALRY,
 
     ChanceToGetAngry = 0.05,
     AngryChanceRate = 30,
@@ -10,12 +10,6 @@ local SiblingRivalry = {
     HitRangeMultiplier = 1.5,
     AdditionalRange = 16,
 }
-
-local e = Resouled.EID
-
-if EID then
-    EID:addCollectible(SiblingRivalry.ID, e:AutoIcons("Has a "..tostring(SiblingRivalry.ChanceToGetAngry*100).."% chance to make a random enemy angry # Angey enemies target a random other enemy of the same type # If the enemy gets close it punches the targeted enemy for "..tostring(SiblingRivalry.Damage).." damage and applies huge knockback"))
-end
 
 ---@param npc EntityNPC
 local function makeAngry(npc)

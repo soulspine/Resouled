@@ -8,5 +8,3 @@ local function postGameStarted(_, isContinued)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, postGameStarted)
-
-Resouled:AddBuffDescription(Resouled.Buffs.KIDS_DRAWING, Resouled.EID:AutoIcons("You start with gulped Kid's Drawing"))

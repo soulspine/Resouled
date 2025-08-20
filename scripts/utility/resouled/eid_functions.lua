@@ -1,7 +1,12 @@
 ---@class ResouledEID
-local Reid = {
-    TextColors = {}
-}
+local Reid = {}
+
+if not EID then
+    Resouled:LogError("EID not loaded, skipping ResouledEID function")
+    goto noEID
+end
+
+Reid.TextColors = {}
 
 ---@param string1 string
 ---@param string2 string
@@ -951,4 +956,5 @@ function Reid:AutoIcons(String)
     return String
 end
 
+::noEID::
 return Reid

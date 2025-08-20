@@ -13,5 +13,3 @@ local function postNewRoom()
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)
-
-Resouled:AddBuffDescription(Resouled.Buffs.STEAM_GIVEAWAY, Resouled.EID:AutoIcons("First floor shop is free"))

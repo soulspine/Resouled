@@ -1,6 +1,6 @@
 local game = Game()
 
-local ULTRA_FLESH_KID = Isaac.GetItemIdByName("Ultra Flesh Kid")
+local ULTRA_FLESH_KID = Resouled.Enums.Items.ULTRA_FLESH_KID
 
 local FAMILIAR_VARIANT = Isaac.GetEntityVariantByName("Ultra Flesh Kid")
 local FAMILIAR_SUBTYPE = Isaac.GetEntitySubTypeByName("Ultra Flesh Kid")
@@ -9,13 +9,6 @@ local VELOCITY_MULTIPLIER = 0.85
 
 local DAMAGE = 8
 local ATTACK_COOLDOWN = 20
-
-local e = Resouled.EID
-
-if EID then
-    EID:addCollectible(ULTRA_FLESH_KID,
-    e:AutoIcons("Spawns a ultra flesh kid that crawls towards enemies # Ultra Flesh Kid ").."deals "..e:AutoIcons(tostring(DAMAGE).." every "..tostring(ATTACK_COOLDOWN).." updates"))
-end
 
 local PLAYER_FOLLOW_ORBIT = 80
 

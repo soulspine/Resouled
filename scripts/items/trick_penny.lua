@@ -1,10 +1,4 @@
-local TRICK_PENNY = Isaac.GetItemIdByName("Trick Penny")
-
-local e = Resouled.EID
-
-if EID then
-    EID:addCollectible(TRICK_PENNY, e:AutoIcons("Removes 1 penny from all shop prices # Has a 50% chance to give back a coin if a coin was used"))
-end
+local TRICK_PENNY = Resouled.Enums.Items.TRICK_PENNY
 
 local DECREASE = 1
 local MIN_PRICE = 1

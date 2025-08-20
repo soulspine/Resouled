@@ -1,12 +1,5 @@
 local AUCTION_GAVEL = Isaac.GetItemIdByName("Auction Gavel")
 
-local e = Resouled.EID
-
-if EID then
-    EID:addCollectible(AUCTION_GAVEL,
-    e:AutoIcons("On use removes a random item from your inventory and spawns 10 coins # The next shop item will be the last sold item and will always have a price of 15 cents"))
-end
-
 local ITEM_DISAPPEAR_EFFECT_OFFSET = Vector(0, -60)
 
 local GAVEL_VARIANT = Isaac.GetEntityVariantByName("Gavel")

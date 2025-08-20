@@ -9,5 +9,3 @@ local function prePlaceRoom(_, slot, roomConfig, seed)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_LEVEL_PLACE_ROOM, prePlaceRoom)
-
-Resouled:AddBuffDescription(Resouled.Buffs.CONSTELLATION, Resouled.EID:AutoIcons("Treasure room is replaced by planetarium"))

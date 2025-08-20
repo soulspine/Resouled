@@ -1,12 +1,6 @@
-local TUMOR_BALL = Isaac.GetItemIdByName("Tumor Ball")
+local TUMOR_BALL = Resouled.Enums.Items.TUMOR_BALL
 local FAMILIAR_VARIANT = Isaac.GetEntityVariantByName("Tumor Ball")
 local FAMILIAR_SUBTYPE = Isaac.GetEntitySubTypeByName("Tumor Ball")
-
-local e = Resouled.EID
-
-if EID then
-    EID:addCollectible(TUMOR_BALL, e:AutoIcons("Spawns a familiar that blocks projectiles and grows # If it grows enough it splits into 2 tumor balls # Tumors can split only once per room"))
-end
 
 local TUMOR_LIMIT = 20
 local TUMOR_SPAWN_WHEN_SPLIT = 2

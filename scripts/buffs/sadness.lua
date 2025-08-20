@@ -14,5 +14,3 @@ local function postGameEnd()
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, postGameEnd)
-
-Resouled:AddBuffDescription(Resouled.Buffs.SADNESS, Resouled.EID:AutoIcons("Grants +0.7 Tear rate"))

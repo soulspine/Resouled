@@ -1,11 +1,4 @@
-local SOULBOND = Isaac.GetItemIdByName("Soulbond")
-
-local e = Resouled.EID
-
-if EID then
-    EID:addCollectible(SOULBOND,
-    e:AutoIcons("Creates a bond between 2 enemies # There can be more than one bond # Bond shares 25% of the damage taken"))
-end
+local SOULBOND = Resouled.Enums.Items.SOULBOND
 
 local DAMAGE_SHARE = 0.25
 

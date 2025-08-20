@@ -1,4 +1,4 @@
-local THE_MONSTER = Isaac.GetItemIdByName("The Monster")
+local THE_MONSTER = Resouled.Enums.Items.THE_MONSTER
 
 local Monster = {
     Sprite = Sprite(),

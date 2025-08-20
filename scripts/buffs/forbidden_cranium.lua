@@ -25,5 +25,3 @@ local function postPickupInit(_, pickup)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, postPickupInit, PickupVariant.PICKUP_COLLECTIBLE)
-
-Resouled:AddBuffDescription(Resouled.Buffs.FORBIDDEN_CRANIUM, Resouled.EID:AutoIcons("You get curse of the lost, unknown, maze, darkness, pain, greed but the first boss item has a q4 devil deal item cycle"))

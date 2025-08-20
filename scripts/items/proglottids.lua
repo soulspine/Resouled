@@ -82,15 +82,6 @@ local ANIMATION_SHOOT = "Shoot"
 
 local ANIMATION_EVENT_SHOOT = "ResouledShoot"
 
-if EID then
-    EID:addCollectible(ITEMS[ENTITIES.BLACK.SubType],
-        Resouled.EID:AutoIcons(
-            "Familiar that shoots an egg once per room#Enemy hit by this egg will spawn a moderately large black creep pool on death#Enemies standing in this creep get slowed and occasionally immobilized # Creep lasts " ..
-            math.floor(BLACK_ON_KILL_EFFECT_DURATION / 30) .. " seconds"),
-        ENTITIES.BLACK.Name)
-end
-
-
 
 ---@param familiar EntityFamiliar
 local function setRandomCooldown(familiar)

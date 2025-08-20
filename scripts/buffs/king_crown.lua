@@ -54,5 +54,3 @@ Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, function()
         Resouled:RemoveActiveBuff(Resouled.Buffs.KING_CROWN)
     end
 end)
-
-Resouled:AddBuffDescription(Resouled.Buffs.KING_CROWN, Resouled.EID:AutoIcons("Enemies have a 10% chance to turn into champions, rare pickup and chests appear 5% more often"))

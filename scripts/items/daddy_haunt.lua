@@ -1,4 +1,4 @@
-local DADDY_HAUNT = Isaac.GetItemIdByName("Daddy Haunt")
+local DADDY_HAUNT = Resouled.Enums.Items.DADDY_HAUNT
 local DADDY_HAUNT_VARIANT = Isaac.GetEntityVariantByName("Daddy Haunt")
 local DADDY_HAUNT_SUBTYPE = Isaac.GetEntitySubTypeByName("Daddy Haunt")
 
@@ -28,20 +28,6 @@ local ATTACK_DESCEND_FRAME_LENGTH = 4
 local EVENT_TRIGGER_RESOULED_SLAM = "ResouledSlam"
 local EVENT_TRIGGER_RESOULED_ASCEND = "ResouledAscend"
 local EVENT_TRIGGER_RESOULED_DESCEND = "ResouledDescend"
-
-local e = Resouled.EID
-
-if EID then
-    EID:addCollectible(DADDY_HAUNT,
-        e:AutoIcons("Locks onto an enemy and hovers over it slamming down every " ..
-        math.ceil(SLAM_COOLDOWN / 30) ..
-        " seconds,").." dealing " ..
-        e:AutoIcons(math.floor(SLAM_DAMAGE) ..
-        " damage in a small AoE."..
-        "# Enemies hit have a " ..
-        math.floor(SLAM_FEAR_CHANCE * 100) ..
-        "% chance to be feared for " .. math.floor(SLAM_FEAR_DURATION / 30) .. " seconds."), "Daddy Haunt")
-end
 
 ---@param player EntityPlayer
 ---@param cacheFlag CacheFlag

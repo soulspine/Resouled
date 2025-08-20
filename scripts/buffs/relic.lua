@@ -7,5 +7,3 @@ local function preSpawnCleanReward()
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, preSpawnCleanReward)
-
-Resouled:AddBuffDescription(Resouled.Buffs.RELIC, Resouled.EID:AutoIcons("The first floor has a guaranteed angel deal."))

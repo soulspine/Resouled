@@ -1,12 +1,6 @@
-local CLASSIC_ROLLER = Isaac.GetItemIdByName("Classic Roller")
+local CLASSIC_ROLLER = Resouled.Enums.Items.CLASSIC_ROLLER
 
 local DEFAULT_ITEM = CollectibleType.COLLECTIBLE_BREAKFAST
-
-local e = Resouled.EID
-
-if EID then
-    EID:addCollectible(CLASSIC_ROLLER, e:AutoIcons("Rerolls items into items with the same quality"))
-end
 
 ---@param type CollectibleType
 ---@param rng RNG

@@ -1,10 +1,4 @@
-local KEEPERS_PENNY = Isaac.GetItemIdByName("Keeper's Penny")
-
-local e = Resouled.EID
-
-if EID then
-    EID:addCollectible(KEEPERS_PENNY, e:AutoIcons("On use, max charge is increased by 1 (max 12) # Spawns a penny for each charge"))
-end
+local KEEPERS_PENNY = Resouled.Enums.Items.KEEPERS_PENNY
 
 local MAX_CHARGE = 12
 local CHARGE_INCREMENT = 1

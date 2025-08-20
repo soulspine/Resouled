@@ -1,10 +1,4 @@
-local BLAST_MINER = Isaac.GetItemIdByName("Blast Miner TNT!")
-
-local e = Resouled.EID
-
-if EID then
-    EID:addCollectible(BLAST_MINER, e:AutoIcons("+5 bombs # Replaces your bombs with pushable tnt crates # The crates explode in 3 hits and use your bomb effects"))
-end
+local BLAST_MINER = Resouled.Enums.Items.BLAST_MINER
 
 local TNT_VARIANT = Isaac.GetEntityVariantByName("Blast Miner TNT")
 local TNT_SUBTYPE = Isaac.GetEntitySubTypeByName("Blast Miner TNT")

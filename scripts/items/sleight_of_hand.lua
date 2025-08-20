@@ -1,4 +1,4 @@
-local SLEIGHT_OF_HAND = Isaac.GetItemIdByName("Sleight of Hand")
+local SLEIGHT_OF_HAND = Resouled.Enums.Items.SLEIGHT_OF_HAND
 
 -- THIS WORKS LIKE THAT:
 -- 1. GETS THE CLOSEST DOOR AND DETERMINES THE TARGET ROOM
@@ -14,13 +14,6 @@ local SLEIGHT_OF_HAND = Isaac.GetItemIdByName("Sleight of Hand")
 ---@field Frame number
 ---@field Variant number
 ---@field IsOpen boolean
-
-if EID then
-    EID:addCollectible(SLEIGHT_OF_HAND,
-        Resouled.EID:AutoIcons(
-            "Peeks into the closest room and makes Isaac hold all pickups and items in that room # Usable only if current room is cleared # Cannot peek into uncleared Boss Rooms"),
-        "Sleight of Hand")
-end
 
 local TIMEOUT = 100
 local PICKUP_ANIMATE_COOLDOWN = 20

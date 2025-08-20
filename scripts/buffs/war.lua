@@ -16,5 +16,3 @@ local function postBombInit(_, bomb)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_BOMB_INIT, postBombInit)
-
-Resouled:AddBuffDescription(Resouled.Buffs.WAR, Resouled.EID:AutoIcons("First bomb used in a run has a mama mega explosion"))

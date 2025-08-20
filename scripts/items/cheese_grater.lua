@@ -1,4 +1,4 @@
-local CHEESE_GRATER = Isaac.GetItemIdByName("Cheese Grater")
+local CHEESE_GRATER = Resouled.Enums.Items.CHEESE_GRATER
 
 local DAMAGE_MULTIPLIER = 2.5
 local COOLDOWN = 10
@@ -17,12 +17,6 @@ local GRATED_OFF_ENEMY_TYPE = EntityType.ENTITY_SMALL_MAGGOT
 local GRATED_OFF_ENEMY_VARIANT = 0
 local GRATED_OFF_ENEMY_SUBTYPE = 0
 local GRATED_OFF_ENEMY_SPAWN_VELOCITY_MULTIPLIER = 3
-
-local e = Resouled.EID
-
-if EID then
-    EID:addCollectible(CHEESE_GRATER, e:AutoIcons("Adds a luck based chance to shoot a special tear that ").."deals " .. e:AutoIcons(DAMAGE_MULTIPLIER .. "x damage but spawns a leech with 1HP # Reveals all{{QuestionMark}}question mark items."), "Cheese Grater")
-end
 
 ---@param luck number
 ---@return number
@@ -78,7 +72,7 @@ local function onEntityTakeDamage(_, entity, amount, damageFlag, source, countdo
                     --Spawn pos explanation: I take an offset vector that's 10 pixels bigger than maggot innacuracy (so the maggot doesn't spawn in the enemy), i rotate it to the player and randomly rotate it within a -45 to 45 degree angle, then i take a vector that's size is between 0 and maggot innacuracy and i rotate it randomly from 0 to 360 degrees
                     local maggotSpawnPos = npc.Position + (Vector(MAGGOT_INNACURACY + 10, 0):Rotated((player.Position - npc.Position):GetAngleDegrees() + math.random(-INNACURACY_ROTATION, INNACURACY_ROTATION)) + Vector(math.random(0, MAGGOT_INNACURACY), 0):Rotated(math.random(0, 360)))
 
-                    local maggot = EntityNPC.ThrowMaggotAtPos(npc.Position, maggotSpawnPos, 0)
+                    local maggot = EntityNPC:ThrowMaggotAtPos(npc.Position, maggotSpawnPos, 0)
                     maggot.Velocity = maggot.Velocity:Normalized() * (0.8 - (math.random()/2))
                     maggot.MaxHitPoints = 1 / 100
                     maggot.HitPoints = maggot.MaxHitPoints

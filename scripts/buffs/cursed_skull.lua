@@ -26,5 +26,3 @@ local function postGameStart()
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, postGameStart)
-
-Resouled:AddBuffDescription(Resouled.Buffs.CURSED_SKULL, Resouled.EID:AutoIcons("You're guaranteed to get a curse first floor, but you will gain one of each pickup and a random trinket spawns"))

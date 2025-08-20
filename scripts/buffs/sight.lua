@@ -14,5 +14,3 @@ local function postGameEnd()
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, postGameEnd)
-
-Resouled:AddBuffDescription(Resouled.Buffs.SIGHT, Resouled.EID:AutoIcons("Grants +3 Range"))

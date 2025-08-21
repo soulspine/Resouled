@@ -355,7 +355,7 @@ function Resouled:TryFindNearestEnemyByFindInRadius(entity, step) -- Tries to fi
         local entities = Isaac.FindInRadius(entity.Position, x, EntityPartition.ENEMY)
         ---@param npc EntityNPC
         for _, npc in ipairs(entities) do
-            if npc and Resouled:IsValidEnemy(npc) then
+            if npc and Resouled:IsValidEnemy(npc) and not npc:HasEntityFlags(EntityFlag.FLAG_CHARM) then
                 if not nearestEnemy then
                     nearestEnemy = npc
                 else
@@ -804,4 +804,14 @@ function Resouled:Get360angleRotation(rotation)
         rotation = 360 + rotation
     end
     return rotation % 360
+end
+
+---@param path string
+---@param animation? string Default animation if unspecified
+---@return Sprite
+function Resouled:CreateLoadedSprite(path, animation)
+    local sprite = Sprite()
+    sprite:Load(path, true)
+    sprite:Play(animation or sprite:GetDefaultAnimation(), true)
+    return sprite
 end

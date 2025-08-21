@@ -5,6 +5,7 @@ enums.Items = {
     A_FRIEND = Isaac.GetItemIdByName("A Friend"),
     AUCTION_GAVEL = Isaac.GetItemIdByName("Auction Gavel"),
     BAG_O_HOLES = Isaac.GetItemIdByName("Bag-O-Holes"),
+    BAG_O_TRASH = Isaac.GetItemIdByName("Bag-O-Trash"),
     BLAST_MINER = Isaac.GetItemIdByName("Blast Miner TNT!"),
     CEREMONIAL_BLADE = Isaac.GetItemIdByName("Ceremonial Blade"),
     CHEESE_GRATER = Isaac.GetItemIdByName("Cheese Grater"),
@@ -35,5 +36,13 @@ enums.Items = {
 }
 
 enums.Buffs = Resouled.Buffs
+
+-- Values double down as animation names in /gfx/status_effects/status_effects.anm2
+enums.StatusEffects = {
+    BLACK_PROGLOTTID = "Black Proglottid's Tentacles",
+    PINK_PROGLOTTID = "Pink Proglottid's Heart",
+    RED_PROGLOTTID = "Red Proglottid's Tomato",
+    WHITE_PROGLOTTID = "White Proglottid's Ghost"
+}
 
 return enums

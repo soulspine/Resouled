@@ -20,7 +20,8 @@ local RoomEventSign = {
 
     SpriteYSize = 96,
 }
-RoomEventSign.Sprite:Load("gfx/ui/room_event_sign.anm2") RoomEventSign.Sprite:Play("Idle", true)
+RoomEventSign.Sprite:Load("gfx/ui/room_event_sign.anm2")
+RoomEventSign.Sprite:Play("Idle", true)
 RoomEventSign.FontName:Load("font/teammeatfont16bold.fnt")
 RoomEventSign.FontDescription:Load("font/teammeatfont10.fnt")
 
@@ -42,9 +43,9 @@ local BASE_ROOM_EVENT_NUM_PER_FLOOR = 2
 local ROOM_EVENTS_TO_ADD_PER_CHAPTER = 1
 
 local STAGES_BLACKLIST = {
-    [1] = true, -- BASEMENT
-    [2] = true, -- BASEMENT 2
-    [9] = true, -- HUSH
+    [1] = true,  -- BASEMENT
+    [2] = true,  -- BASEMENT 2
+    [9] = true,  -- HUSH
     [13] = true, -- HOME
 }
 
@@ -141,14 +142,14 @@ end
 local function chooseRandomRoomEvent(roomIndex)
     local rng = RNG(game:GetRoom():GetAwardSeed())
     ::RollRoomEvent::
-        
+
     Resouled:NewSeed()
     local randomNum = rng:RandomInt(#Resouled:GetRoomEvents()) + 1
-        
+
     if checkRoomEventFilters(randomNum) == false then
         goto RollRoomEvent
     end
-        
+
     return randomNum
 end
 
@@ -167,53 +168,54 @@ local function postNewFloor()
 
     local RUN_SAVE = SAVE_MANAGER.GetRunSave()
     local rooms = game:GetLevel():GetRooms()
-    
+
 
     if not RUN_SAVE.RoomEvents or (RUN_SAVE.RoomEvents and RUN_SAVE.RoomEvents.CurrentChapter ~= Resouled.AccurateStats:GetCurrentChapter()) then -- we moved onto different chapter and refresh amount of room events to distribute
         RUN_SAVE.RoomEvents = {
             CurrentChapter = Resouled.AccurateStats:GetCurrentChapter(),
-            EventsToDistribute = BASE_ROOM_EVENT_NUM_PER_FLOOR + Resouled.AccurateStats:GetCurrentChapter() * ROOM_EVENTS_TO_ADD_PER_CHAPTER,
+            EventsToDistribute = BASE_ROOM_EVENT_NUM_PER_FLOOR +
+            Resouled.AccurateStats:GetCurrentChapter() * ROOM_EVENTS_TO_ADD_PER_CHAPTER,
             LastFloor = Resouled.AccurateStats:IsCurrentFloorLastFloorOfChapter(),
         }
     end
-    
+
     local rng = RNG()
     rng:SetSeed(game:GetLevel():GetDevilAngelRoomRNG():GetSeed(), 7)
-    
-    local roomEventsThisFloor = RUN_SAVE.RoomEvents.LastFloor and RUN_SAVE.RoomEvents.EventsToDistribute or rng:RandomInt(RUN_SAVE.RoomEvents.EventsToDistribute)
-    
+
+    local roomEventsThisFloor = RUN_SAVE.RoomEvents.LastFloor and RUN_SAVE.RoomEvents.EventsToDistribute or
+    rng:RandomInt(RUN_SAVE.RoomEvents.EventsToDistribute)
+
     RUN_SAVE.RoomEvents.EventsToDistribute = RUN_SAVE.RoomEvents.EventsToDistribute - roomEventsThisFloor
 
     local correctRooms = {}
-    
-    for i = 0, rooms.Size-1 do --GET VALID ROOMS
+
+    for i = 0, rooms.Size - 1 do --GET VALID ROOMS
         local room = rooms:Get(i)
         table.insert(correctRooms, room.ListIndex)
     end
 
     for _ = 1, roomEventsThisFloor do
-
         local seed = Resouled:NewSeed()
 
         ::RollRoom::
         rng:SetSeed(seed)
         seed = Resouled:NewSeed()
-        
+
         local randomRoomIndex = rng:RandomInt(#correctRooms)
         local roomListIndex = correctRooms[randomRoomIndex]
-        
+
         if correctRooms[randomRoomIndex] == nil then
             goto RollRoom
         end
-        
+
         local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(nil, false, roomListIndex)
         ROOM_SAVE.RoomEvent = chooseRandomRoomEvent()
-        
+
         table.remove(correctRooms, randomRoomIndex)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
-    
+
 local function postNewRoom()
     local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
 
@@ -237,11 +239,14 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_ROOM_EXIT, preRoomExit)
 
 local COMMAND = {
     Name = "roomevent",
-    Description = "Forces a room event to a specified room index or based on relative door position in the room you're currently in",
+    Description =
+    "Forces a room event to a specified room index or based on relative door position in the room you're currently in",
     HelpText = "Usage: "
 }
 
-Console.RegisterCommand(COMMAND.Name, "Forces a room event to a specified room index or based on relative  door position in the room you're currently in", "help text", false, AutocompleteType.CUSTOM)
+Console.RegisterCommand(COMMAND.Name,
+    "Forces a room event to a specified room index or based on relative  door position in the room you're currently in",
+    "help text", false, AutocompleteType.CUSTOM)
 
 local function executeRoomEventCommand(_, command, paramsRaw)
     if command == COMMAND.Name then
@@ -257,7 +262,7 @@ local function executeRoomEventCommand(_, command, paramsRaw)
         local roomEvent = Resouled:GetRoomEventByID(tonumber(params[1]) or params[1])
 
         if not roomEvent then
-            Resouled:LogError("Room event with ID: "..tostring(params[1]).." hasn't been registered.")
+            Resouled:LogError("Room event with ID: " .. tostring(params[1]) .. " hasn't been registered.")
             return
         end
 
@@ -281,9 +286,9 @@ Resouled:AddCallback(ModCallbacks.MC_EXECUTE_CMD, executeRoomEventCommand)
 
 local autocompleteTable = {}
 
-Resouled:RunAfterImports(function ()
+Resouled:RunAfterImports(function()
     for _, roomEvent in ipairs(Resouled:GetRoomEvents()) do
-        table.insert(autocompleteTable, {tostring(roomEvent.Id), roomEvent.Name})
+        table.insert(autocompleteTable, { tostring(roomEvent.Id), roomEvent.Name })
     end
 end)
 
@@ -294,7 +299,6 @@ end
 Resouled:AddCallback(ModCallbacks.MC_CONSOLE_AUTOCOMPLETE, roomEventCommandAutocomplete, COMMAND.Name)
 
 local function onRoomEventSignRender()
-
     if RoomTransition.GetTransitionMode() ~= 4 then -- Stuff like boss intro
         if RoomEventSign.AppearTime > 0 then
             RoomEventSign.AppearTime = RoomEventSign.AppearTime - 1
@@ -303,7 +307,7 @@ local function onRoomEventSignRender()
                 RoomEventSign.TargetPositionY = 0
             end
         end
-        
+
         if RoomEventSign.CurrentPositionY < RoomEventSign.TargetPositionY then
             RoomEventSign.CurrentPositionY = RoomEventSign.CurrentPositionY + RoomEventSign.Speed
             if RoomEventSign.CurrentPositionY > RoomEventSign.TargetPositionY then
@@ -317,15 +321,17 @@ local function onRoomEventSignRender()
         end
     end
 
-    local signPos = Vector(Isaac.GetScreenWidth()/2, 0) + Vector(0, RoomEventSign.CurrentPositionY)
+    local signPos = Vector(Isaac.GetScreenWidth() / 2, 0) + Vector(0, RoomEventSign.CurrentPositionY)
     local namePos = RoomEventSign.Sprite:GetNullFrame("NamePos"):GetPos() + signPos
     local descPos = RoomEventSign.Sprite:GetNullFrame("DescriptionPos"):GetPos() + signPos
 
     if RoomEventSign.CurrentPositionY > 0 then
         RoomEventSign.Sprite:Render(signPos)
 
-        RoomEventSign.FontName:DrawString(RoomEventSign.NameString, namePos.X, namePos.Y, RoomEventSign.TextColor, 1, true)
-        RoomEventSign.FontDescription:DrawString(RoomEventSign.DescriptionString, descPos.X, descPos.Y, RoomEventSign.TextColor, 1, true)
+        RoomEventSign.FontName:DrawString(RoomEventSign.NameString, namePos.X, namePos.Y, RoomEventSign.TextColor, 1,
+            true)
+        RoomEventSign.FontDescription:DrawString(RoomEventSign.DescriptionString, descPos.X, descPos.Y,
+            RoomEventSign.TextColor, 1, true)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_HUD_RENDER, onRoomEventSignRender)

@@ -1,4 +1,4 @@
--- I PUT THE ACTUAL LOGIC BEHIND THEIR EFFECT IN RESPECIVE PROGLOTTID FILES
+-- I PUT THE ACTUAL LOGIC BEHIND THEIR EFFECT IN PROGLOTTIDS FILE
 -- THIS JUST REPLACES THEIR SPRITESHEETS AND ADDS TEAR FLAGS
 
 local BLACK_PROGLOTTIDS_EGG = Resouled:GetEntityByName("Black Proglottid's Egg")
@@ -13,6 +13,21 @@ local WHITE_EGG_SPRITESHEET = "gfx/tears/egg_white.png"
 local PINK_EGG_PARTICLE = Resouled:GetEntityByName("Pink Cracked Egg Particle")
 
 local PINK_EGG_PARTICLE_SPRITESHEET = "gfx/effects/particles/egg_cracked_pink.png"
+
+local EGG_SPRITESHEETS = {
+    [BLACK_PROGLOTTIDS_EGG.SubType] = PINK_EGG_SPRITESHEET,
+    [WHITE_PROGLOTTIDS_EGG.SubType] = WHITE_EGG_SPRITESHEET,
+    [PINK_PROGLOTTIDS_EGG.SubType] = WHITE_EGG_SPRITESHEET,
+    [RED_PROGLOTTIDS_EGG.SubType] = CLEAR_EGG_SPRITESHEET,
+}
+
+local PARTICLE_SPRITESHEETS = {
+    [PINK_EGG_PARTICLE.SubType] = PINK_EGG_PARTICLE_SPRITESHEET,
+}
+
+local EGG_TO_PARTICLE_LOOKUP = {
+    [BLACK_PROGLOTTIDS_EGG.SubType] = PINK_EGG_PARTICLE.SubType,
+}
 
 local EGG_HIT_SOUND = SoundEffect.SOUND_BOIL_HATCH
 local EGG_HIT_SOUND_VOLUME = 1
@@ -35,21 +50,6 @@ local ANIMATION_IDLE = "Idle"
 local TEAR_FALLING_SPEED = -30
 local TEAR_FALLING_ACCELERATION = 2.5
 local TEAR_FLAGS = TearFlags.TEAR_SPECTRAL | TearFlags.TEAR_HOMING
-
-local EGG_SPRITESHEETS = {
-    [BLACK_PROGLOTTIDS_EGG.SubType] = PINK_EGG_SPRITESHEET,
-    [WHITE_PROGLOTTIDS_EGG.SubType] = WHITE_EGG_SPRITESHEET,
-    [PINK_PROGLOTTIDS_EGG.SubType] = WHITE_EGG_SPRITESHEET,
-    [RED_PROGLOTTIDS_EGG.SubType] = CLEAR_EGG_SPRITESHEET,
-}
-
-local PARTICLE_SPRITESHEETS = {
-    [PINK_EGG_PARTICLE.SubType] = PINK_EGG_PARTICLE_SPRITESHEET,
-}
-
-local EGG_TO_PARTICLE_LOOKUP = {
-    [BLACK_PROGLOTTIDS_EGG.SubType] = PINK_EGG_PARTICLE.SubType,
-}
 
 --- Passed string has to be formatted like this: something_red.png, then return would be "color"
 ---@param str string
@@ -99,7 +99,7 @@ local function onTearDeath(_, tear)
             tear.Position,
             -tear.Height,
             tear.Velocity:GetAngleDegrees(), -- DIRECTION
-            EGG_PARTICLE_MAX_SPREAD, -- SPREAD
+            EGG_PARTICLE_MAX_SPREAD,         -- SPREAD
             EGG_PARTICLE_WEIGHT,
             EGG_PARTICLE_BOUNCINESS,
             EGG_PARTICLE_FRICTION,

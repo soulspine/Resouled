@@ -21,6 +21,8 @@ local STUN_TENTACLE_EFFECT_MIN_COOLDOWN = 150
 local STUN_TENTACLE_EFFECT_MAX_COOLDOWN = 250
 
 -- WHITE CONFIG
+local WHITE_ON_KILL_EFFECT_EXPLOSION_SFX = SoundEffect.SOUND_EXPLOSION_WEAK
+local WHITE_ON_KILL_EFFECT_EXPLOSION_SFX_VOLUME = 0.6
 local WHITE_ON_KILL_EFFECT_EXPLOSION_VARIANT = EffectVariant.ENEMY_GHOST
 local WHITE_ON_KILL_EFFECT_EXPLOSION_SUBTYPE = 1
 local WHITE_ON_KILL_EFFECT_EXPLOSION_DAMAGE = 50
@@ -34,6 +36,14 @@ local WHITE_ON_KILL_EFFECT_GHOST_SUBTYPE = 1
 -- PINK CONFIG
 local PINK_ON_KILL_EFFECT_ENTITY_FLAGS = EntityFlag.FLAG_CHARM | EntityFlag.FLAG_PERSISTENT
 
+-- RED CONFIG
+local RED_ON_KILL_EFFECT_EXPLOSION_SFX = SoundEffect.SOUND_EXPLOSION_DEBRIS
+local RED_ON_KILL_EFFECT_EXPLOSION_SFX_VOLUME = 0.5
+local RED_ON_KILL_EFFECT_EXPLOSION_VARIANT = EffectVariant.LARGE_BLOOD_EXPLOSION
+local RED_ON_KILL_EFFECT_EXPLOSION_SUBTYPE = 0
+local RED_ON_KILL_EFFECT_EXPLOSION_RADIUS = 85
+local RED_ON_KILL_EFFECT_EXPLOSION_BAITED_DURATION = 290
+
 ---@param str string
 ---@return string
 local function getFirstWord(str)
@@ -44,23 +54,29 @@ end
 ---@type table<integer, string>
 local SPRITESHEETS = {}
 
----@type table<integer, string>
-local COLORS = {}
-
 ---@type table<integer, ResouledEntityDesc>
 local EGGS = {}
 
 ---@type table<integer, CollectibleType>
 local ITEMS = {}
 
+---@type table<integer, integer>
+local STATUS_EFFECTS = {}
+
 for _, entity in pairs(ENTITIES) do
     if not string.find(string.lower(entity.Name), "proglottid") then goto continue end
 
     local color = getFirstWord(entity.Name)
-    COLORS[entity.SubType] = color
     SPRITESHEETS[entity.SubType] = string.lower("gfx/familiar/" .. color .. "_proglottid.png")
     EGGS[entity.SubType] = Resouled:GetEntityByName(entity.Name .. "'s Egg")
     ITEMS[entity.SubType] = Isaac.GetItemIdByName(entity.Name)
+
+    for name, flag in pairs(StatusEffectLibrary.StatusFlag) do
+        if string.find(string.lower(name), string.lower(color .. " proglottid")) then
+            STATUS_EFFECTS[entity.SubType] = flag
+            break
+        end
+    end
 
     ::continue::
 end
@@ -198,10 +214,12 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onRoomEnter)
 local function onTearCollision(_, tear, collider, low)
     if tear.Variant ~= EGG_VARIANT or not collider:ToNPC() or not tear.SpawnerEntity then return end
 
-    collider:GetData().RESOULED__TAGGED_BY_PROGLOTTID = {
-        Color = COLORS[tear.SpawnerEntity.SubType],
-        Source = EntityRef(tear.SpawnerEntity),
-    }
+    StatusEffectLibrary:AddStatusEffect(
+        collider,
+        STATUS_EFFECTS[tear.SpawnerEntity.SubType],
+        -1,
+        EntityRef(tear.SpawnerEntity)
+    )
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_TEAR_COLLISION, onTearCollision)
 
@@ -218,33 +236,33 @@ local function onEntityKill(_, entity)
         table.insert(player0data.RESOULED__WHITE_PROGLOTTID_DEAD_ENEMIES_POSITIONS, entity.Position)
     end
 
-    local data = entity:GetData()
-    if not data.RESOULED__TAGGED_BY_PROGLOTTID then return end
-    ---@type string
-    local color = data.RESOULED__TAGGED_BY_PROGLOTTID.Color
-    ---@type EntityRef
-    local source = data.RESOULED__TAGGED_BY_PROGLOTTID.Source
+    local blackEffect = StatusEffectLibrary:GetStatusEffectData(entity, STATUS_EFFECTS[ENTITIES.BLACK.SubType])
+    local whiteEffect = StatusEffectLibrary:GetStatusEffectData(entity, STATUS_EFFECTS[ENTITIES.WHITE.SubType])
+    local pinkEffect = StatusEffectLibrary:GetStatusEffectData(entity, STATUS_EFFECTS[ENTITIES.PINK.SubType])
+    local redEffect = StatusEffectLibrary:GetStatusEffectData(entity, STATUS_EFFECTS[ENTITIES.RED.SubType])
 
-    -- BLACK EFFECT
-    if color == COLORS[ENTITIES.BLACK.SubType] then
+    if not (blackEffect or whiteEffect or pinkEffect or redEffect) then return end
+
+    if blackEffect then
         local effect = Game():Spawn(EntityType.ENTITY_EFFECT, BLACK_ON_KILL_EFFECT_VARIANT, entity.Position, Vector.Zero,
-            source.Entity, BLACK_ON_KILL_EFFECT_SUBTYPE, Resouled:NewSeed()):ToEffect()
+            blackEffect.Source.Entity, BLACK_ON_KILL_EFFECT_SUBTYPE, Resouled:NewSeed()):ToEffect()
         if not effect then return end
 
         effect:SetTimeout(BLACK_ON_KILL_EFFECT_DURATION)
         effect.SpriteScale = Vector(1, 1) * BLACK_ON_KILL_EFFECT_RADIUS
         effect:Update()
         effect:GetData().RESOULED__BLACK_PROGLOTTID_CREEP = true
+        StatusEffectLibrary:RemoveStatusEffect(entity, STATUS_EFFECTS[ENTITIES.BLACK.SubType])
     end
 
-    -- WHITE EFFECT
-    if color == COLORS[ENTITIES.WHITE.SubType] then
-        Game():Spawn(EntityType.ENTITY_EFFECT, WHITE_ON_KILL_EFFECT_EXPLOSION_VARIANT, entity.Position, Vector.Zero,
-            source.Entity, WHITE_ON_KILL_EFFECT_EXPLOSION_SUBTYPE, Resouled:NewSeed())
+    if whiteEffect then
+        local effect = Game():Spawn(EntityType.ENTITY_EFFECT, WHITE_ON_KILL_EFFECT_EXPLOSION_VARIANT, entity.Position,
+            Vector.Zero, whiteEffect.Source.Entity, WHITE_ON_KILL_EFFECT_EXPLOSION_SUBTYPE, Resouled:NewSeed())
+        if not effect then return end
 
         for _, entity in ipairs(Isaac.FindInRadius(entity.Position, WHITE_ON_KILL_EFFECT_EXPLOSION_RADIUS, EntityPartition.ENEMY)) do
             entity:TakeDamage(WHITE_ON_KILL_EFFECT_EXPLOSION_DAMAGE, WHITE_ON_KILL_EFFECT_EXPLOSION_DAMAGE_FLAGS,
-                source, WHITE_ON_KILL_EFFECT_EXPLOSION_DAMAGE_COUNTDOWN)
+                whiteEffect.Source, WHITE_ON_KILL_EFFECT_EXPLOSION_DAMAGE_COUNTDOWN)
 
             ---@type Vector[]?
             local ghostSpawnPositions = Isaac.GetPlayer():GetData().RESOULED__WHITE_PROGLOTTID_DEAD_ENEMIES_POSITIONS
@@ -256,17 +274,30 @@ local function onEntityKill(_, entity)
                     WHITE_ON_KILL_EFFECT_GHOST_SUBTYPE, Resouled:NewSeed()):ToEffect()
             end
         end
+        SFXManager():Play(WHITE_ON_KILL_EFFECT_EXPLOSION_SFX, WHITE_ON_KILL_EFFECT_EXPLOSION_SFX_VOLUME)
+        StatusEffectLibrary:RemoveStatusEffect(entity, STATUS_EFFECTS[ENTITIES.WHITE.SubType])
     end
 
-    -- PINK EFFECT
-    if color == COLORS[ENTITIES.PINK.SubType] then
-        local newNpc = Game():Spawn(entity.Type, entity.Variant, entity.Position, Vector.Zero, source.Entity,
+    if pinkEffect then
+        local newNpc = Game():Spawn(entity.Type, entity.Variant, entity.Position, Vector.Zero, pinkEffect.Source.Entity,
             entity.SubType, Resouled:NewSeed()):ToNPC()
         if not newNpc then return end
 
         ---@diagnostic disable-next-line: param-type-mismatch
         newNpc:AddEntityFlags(PINK_ON_KILL_EFFECT_ENTITY_FLAGS)
-        newNpc:AddCharmed(source, -1)
+        newNpc:AddCharmed(pinkEffect.Source, -1)
+        StatusEffectLibrary:RemoveStatusEffect(entity, STATUS_EFFECTS[ENTITIES.PINK.SubType])
+    end
+
+    if redEffect then
+        Game():Spawn(EntityType.ENTITY_EFFECT, RED_ON_KILL_EFFECT_EXPLOSION_VARIANT, entity.Position, Vector.Zero,
+            redEffect.Source.Entity, RED_ON_KILL_EFFECT_EXPLOSION_SUBTYPE, Resouled:NewSeed())
+
+        for _, entity in ipairs(Isaac.FindInRadius(entity.Position, RED_ON_KILL_EFFECT_EXPLOSION_RADIUS, EntityPartition.ENEMY)) do
+            entity:AddBaited(redEffect.Source, RED_ON_KILL_EFFECT_EXPLOSION_BAITED_DURATION)
+        end
+
+        SFXManager():Play(RED_ON_KILL_EFFECT_EXPLOSION_SFX, RED_ON_KILL_EFFECT_EXPLOSION_SFX_VOLUME)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, onEntityKill)

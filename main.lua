@@ -19,6 +19,8 @@ if REPENTOGON and MinimapAPI then
     SAVE_MANAGER = include("scripts.utility.save_manager")
     SAVE_MANAGER.Init(Resouled)
 
+    include("scripts.utility.status_effect_library")
+
     ---@type AccurateStatsModule
     Resouled.AccurateStats = include("scripts.utility.accurate_stats")
 
@@ -55,12 +57,11 @@ if REPENTOGON and MinimapAPI then
 
     -- ALL MODULES UNIQUE TO RESOULED
 
-    if EID then
-        ---@type ResouledEID
-        Resouled.EID = include("scripts.utility.resouled.eid_functions")
-
-        include("scripts.eid")
-    end
+    --if EID then
+    --    ---@type ResouledEID
+    --    Resouled.EID = include("scripts.utility.resouled.eid_functions")
+    --end
+    include("scripts.eid")
 
     include("scripts.utility.resouled.misc")
     include("scripts.utility.resouled.buffs")
@@ -68,7 +69,6 @@ if REPENTOGON and MinimapAPI then
     include("scripts.utility.resouled.tear_effects")
     include("scripts.utility.resouled.curses")
     include("scripts.utility.resouled.room_events")
-
 
     --- ALL RESOULED SCRIPTS
 
@@ -83,6 +83,7 @@ if REPENTOGON and MinimapAPI then
     include("scripts.buffs")
     include("scripts.entities")
     include("scripts.afterlife_shop")
+    include("scripts.status_effects")
     include("scripts.other")
 
     for _, func in ipairs(thingsToRunAfterImports) do

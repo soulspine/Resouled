@@ -91,6 +91,15 @@ local function isProglottid(familiar)
     return false
 end
 
+local function isEgg(tear)
+    for _, egg in pairs(EGGS) do
+        if tear.Variant == egg.Variant and tear.SubType == egg.SubType then
+            return true
+        end
+    end
+    return false
+end
+
 local SPRITESHEET_LAYER = 0
 
 local ANIMATION_IDLE = "Idle"
@@ -117,12 +126,6 @@ local function onCacheEval(_, player, cacheFlag)
 
         ::continue::
     end
-
-    Resouled.Familiar:CheckFamiliar(
-        player, ITEMS[ENTITIES.BLACK.SubType], ENTITIES.BLACK.Variant, ENTITIES.BLACK.SubType)
-
-    Resouled.Familiar:CheckFamiliar(
-        player, ITEMS[ENTITIES.WHITE.SubType], ENTITIES.WHITE.Variant, ENTITIES.WHITE.SubType)
 end
 Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACHE_FAMILIARS)
 
@@ -212,7 +215,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onRoomEnter)
 ---@param collider Entity
 ---@param low boolean
 local function onTearCollision(_, tear, collider, low)
-    if tear.Variant ~= EGG_VARIANT or not collider:ToNPC() or not tear.SpawnerEntity then return end
+    if not isEgg(tear) or not collider:ToNPC() or not tear.SpawnerEntity then return end
 
     StatusEffectLibrary:AddStatusEffect(
         collider,

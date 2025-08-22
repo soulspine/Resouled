@@ -43,4 +43,28 @@ function vectorModule:SnapDirectionToAxis(vector)
     return Vector(0, 0) -- fallback
 end
 
+---@param vector Vector
+---@return boolean
+function vectorModule:IsFacingLeft(vector)
+    return vector.X < 0
+end
+
+---@param vector Vector
+---@return boolean
+function vectorModule:IsFacingRight(vector)
+    return vector.X > 0
+end
+
+---@param vector Vector
+---@return boolean
+function vectorModule:IsFacingUp(vector)
+    return vector.Y < 0
+end
+
+---@param vector Vector
+---@return boolean
+function vectorModule:IsFacingDown(vector)
+    return vector.Y > 0
+end
+
 return vectorModule

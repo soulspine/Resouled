@@ -12,9 +12,6 @@ if REPENTOGON and MinimapAPI then
 
     -- ALL EXTERNAL IMPORTS
 
-    ---@type ResouledEnums
-    Resouled.Enums = include("scripts.enums")
-
     ---@type SaveManager
     SAVE_MANAGER = include("scripts.utility.save_manager")
     SAVE_MANAGER.Init(Resouled)
@@ -61,14 +58,15 @@ if REPENTOGON and MinimapAPI then
     --    ---@type ResouledEID
     --    Resouled.EID = include("scripts.utility.resouled.eid_functions")
     --end
-    include("scripts.eid")
-
     include("scripts.utility.resouled.misc")
     include("scripts.utility.resouled.buffs")
     include("scripts.utility.resouled.souls")
     include("scripts.utility.resouled.tear_effects")
     include("scripts.utility.resouled.curses")
     include("scripts.utility.resouled.room_events")
+
+    ---@type ResouledEnums
+    Resouled.Enums = include("scripts.utility.resouled.enums")
 
     --- ALL RESOULED SCRIPTS
 
@@ -84,6 +82,7 @@ if REPENTOGON and MinimapAPI then
     include("scripts.entities")
     include("scripts.afterlife_shop")
     include("scripts.status_effects")
+    include("scripts.eid")
     include("scripts.other")
 
     for _, func in ipairs(thingsToRunAfterImports) do

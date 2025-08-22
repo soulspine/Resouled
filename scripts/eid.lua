@@ -23,6 +23,8 @@ local EID_ITEMS = {
     "When taking damage you have a chance to gain a soul # When entering an uncleared room you take damage (can't kill you) # If you don't get a soul on hit, your chance to gain a soul goes up # Can spawn up to 6 souls",
     [Resouled.Enums.Items.DADDY_HAUNT] =
     "Locks onto an enemy and hovers around them # Occasionally slams down dealing damage in a small area # Enemies hit have a chance to get feared",
+    [Resouled.Enums.Items.FETAL_HAUNT] =
+    "Familiar that occasionally rests and cries on the floor shooting tears in every direction",
     [Resouled.Enums.Items.FRIENDLY_SACK] = "After clearing 6 rooms, each familiar spawns a pickup",
     [Resouled.Enums.Items.GLITCH] =
     "Spawns with 3 other passive items cycling the same pedestal # Mutates into next item after clearing a room",

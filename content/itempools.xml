@@ -98,5 +98,15 @@ Tag descriptions:
     <Item Name="Auction Gavel" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
     <Item Name="Co-Op Baby" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
   </Pool>
+  <Pool Name="muggerBeanPool">
+    <Item Name="The Bean" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Black Bean" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Butter Bean" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Mega Bean" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Kidney Bean" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Linger Bean" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Wait What?" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+    <Item Name="Belly Jelly" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
+  </Pool>
   
 </ItemPools>

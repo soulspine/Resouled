@@ -32,3 +32,5 @@ include("scripts.items.fetal_haunt")
 
 include("scripts.trinkets.recycling_sticker")
 include("scripts.trinkets.library_card")
+include("scripts.trinkets.mugger_bean")
+include("scripts.trinkets.game_squid")

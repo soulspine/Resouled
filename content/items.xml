@@ -35,7 +35,7 @@
 
     <trinket id="1" name="Handicapped Placard" description="" gfx="handicapped_placard.png"/>
     <trinket id="2" name="Hand me Downs" description="Pass them down to the ones in need" gfx="hand_me_downs.png"/>
-    <trinket id="3" name="Mugger Bean" description="" gfx="mugger_bean.png"/>
+    <trinket id="3" name="Mugger Bean" description="Sharp fart - Shart" gfx="mugger_bean.png"/>
     <trinket id="4" name="Recycling Sticker" description="" gfx="recycling_sticker.png"/>
     <trinket id="5" name="Library Card" description="Common libraries" gfx="library_card.png"/>
     <trinket id="6" name="Game Squid" description="" gfx="game_squid.png"/>

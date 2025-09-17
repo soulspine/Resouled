@@ -49,6 +49,7 @@
     <entity name="Blank Canvas Tear" id="417" variant="4" subtype="0" anm2path="blank_canvas_tear.anm2" collisionMass="1" collisionRadius="6" friction="1" numGridCollisionPoints="12" shadowSize="6" baseHP="1"/>
     <entity name="Blank Canvas Dip" id="417" variant="5" subtype="0" anm2path="blank_canvas_dip.anm2" collisionMass="1" collisionRadius="8" collisionDamage="1" friction="1" numGridCollisionPoints="12" shadowSize="12" baseHP="8"/> 
     <entity name="Wise Skull" id="418" variant="0" subtype="0" anm2path="misc/wise_skull.anm2" collisionMass="1" collisionRadius="10" collisionDamage="1" friction="1" numGridCollisionPoints="12" baseHP="1"/> 
+    <entity name="Isaac Enemy" id="419" variant="0" subtype="0" anm2path="isaac_enemy.anm2" collisionMass="5" collisionRadius="10" collisionDamage="1" friction="1" numGridCollisionPoints="12" baseHP="10" stageHP="2" shadowSize="16"/> 
 
 <!-- Effects-->
     <entity anm2path="effects/air_shockwave.anm2" name="Air Shockwave" id="1000" variant="200"/>

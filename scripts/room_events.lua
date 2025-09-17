@@ -32,6 +32,7 @@ Resouled.RoomEvents = {
     MIGHT_FOR_THE_MEEK = 30,
     PITY_FOR_THE_POOR = 31,
     GUPPYS_PIECES = 32,
+    THE_ISAAC_OF_ISAAC_ISAAC = 33,
 }
 
 ---@return boolean
@@ -150,6 +151,7 @@ Resouled:RegisterRoomEvent(Resouled.RoomEvents.BUM_BO_IS_LOOSE, "Bum-Bo is loose
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.MIGHT_FOR_THE_MEEK, "Might for the Meek!", {filters.ENEMIES_PRESENT})
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.PITY_FOR_THE_POOR, "Pity for the Poor", {filters.SHOP_ONLY}, true)
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.GUPPYS_PIECES, "Guppy's Pieces", {filters.TREASURE_ONLY})
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.THE_ISAAC_OF_ISAAC_ISAAC, "The Isaac Of Isaac: Isaac", {filters.ENEMIES_PRESENT, filters.NO_BOSS_ROOM})
 
 Resouled:Log("Loaded "..tostring(#Resouled:GetRoomEvents()).." room events.")
 
@@ -186,3 +188,4 @@ include("scripts.room_events.bum_bo_is_loose")
 include("scripts.room_events.might_for_the_meek")
 include("scripts.room_events.pity_for_the_poor")
 include("scripts.room_events.guppys_pieces")
+include("scripts.room_events.the_isaac_of_isaac_isaac")

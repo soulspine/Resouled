@@ -33,6 +33,7 @@ Resouled.RoomEvents = {
     PITY_FOR_THE_POOR = 31,
     GUPPYS_PIECES = 32,
     THE_ISAAC_OF_ISAAC_ISAAC = 33,
+    SPIDER_WEBS = 34,
 }
 
 ---@return boolean
@@ -80,8 +81,7 @@ local filters = {
         return true
     end,
     NO_TAINTED_LOST = function()
-        local tLostPresent = PlayerManager.AnyoneIsPlayerType(PlayerType.PLAYER_THELOST_B)
-        return tLostPresent
+        return PlayerManager.AnyoneIsPlayerType(PlayerType.PLAYER_THELOST_B)
     end,
     BOSS_ROOM_ONLY = function()
         local room = Game():GetRoom()
@@ -119,41 +119,45 @@ local filters = {
     end,
 }
 
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.ALL_HALLOWS_EVE, "All Hallow's Eve", {filters.ENEMIES_PRESENT})
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.ANGELIC_INTERVENTION, "Angelic Intervention", {filters.NO_TAINTED_LOST})
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.BLACK_CHAMPIONS, "Black Champions", {filters.ENEMIES_PRESENT})
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.BLESSING_OF_GLUTTONY, "Blessing of Gluttony", {filters.ROOM_NOT_CLEAR, filters.NO_BOSS_ROOM})
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.BLESSING_OF_GREED, "Blessing of Greed", {filters.ENEMIES_PRESENT})
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.BLESSING_OF_THE_SACK, "Blessing of The Sack", {filters.PICKUPS_PRESENT})
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.BLOOD_LUST, "Blood Lust", {filters.ENEMIES_PRESENT, filters.ROOM_NOT_CLEAR})
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.ALL_HALLOWS_EVE, "All Hallow's Eve", { filters.ENEMIES_PRESENT })
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.ANGELIC_INTERVENTION, "Angelic Intervention", { filters.NO_TAINTED_LOST })
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.BLACK_CHAMPIONS, "Black Champions", { filters.ENEMIES_PRESENT })
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.BLESSING_OF_GLUTTONY, "Blessing of Gluttony",
+    { filters.ROOM_NOT_CLEAR, filters.NO_BOSS_ROOM })
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.BLESSING_OF_GREED, "Blessing of Greed", { filters.ENEMIES_PRESENT })
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.BLESSING_OF_THE_SACK, "Blessing of The Sack", { filters.PICKUPS_PRESENT })
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.BLOOD_LUST, "Blood Lust",
+    { filters.ENEMIES_PRESENT, filters.ROOM_NOT_CLEAR })
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.BUTTER_FINGERS, "Butter Fingers", {}, true)
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.RED_CHAMPIONS, "Red Champions", {filters.ENEMIES_PRESENT})
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.RED_CHAMPIONS, "Red Champions", { filters.ENEMIES_PRESENT })
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.SHADOW_OF_WAR, "Shadow of War", {}, true)
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.STATIC_SHOCK, "Static Shock", {}, true)
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.SPOILS_OF_WAR, "Spoils of War", {filters.BOSS_ROOM_ONLY})
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.SPOILS_OF_WAR, "Spoils of War", { filters.BOSS_ROOM_ONLY })
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.MAGGYS_BLESSING, "Maggy's Blessing", {})
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.SAMSONS_BLESSING, "Samson's Blessing", {filters.ENEMIES_PRESENT})
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.RED_VISE, "Red Vise", {filters.PICKUPS_PRESENT})
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.SPLASH_DAMAGE, "Splash Damage", {filters.ENEMIES_PRESENT})
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.EDENS_BLESSING, "Eden's Blessing", {filters.ITEM_PRESENT})
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.GREED_LOOMS, "Greed Looms", {filters.SHOP_ONLY}, true)
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.TAX_FOR_THE_MIGHTY, "Tax for The Mighty", {filters.SHOP_ONLY}, true)
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.SAMSONS_BLESSING, "Samson's Blessing", { filters.ENEMIES_PRESENT })
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.RED_VISE, "Red Vise", { filters.PICKUPS_PRESENT })
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.SPLASH_DAMAGE, "Splash Damage", { filters.ENEMIES_PRESENT })
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.EDENS_BLESSING, "Eden's Blessing", { filters.ITEM_PRESENT })
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.GREED_LOOMS, "Greed Looms", { filters.SHOP_ONLY }, true)
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.TAX_FOR_THE_MIGHTY, "Tax for The Mighty", { filters.SHOP_ONLY }, true)
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.SHADOW_OF_FAMINE, "Shadow of Famine", {}, true)
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.BLESSING_OF_STEAM, "Blessing of Steam", {filters.SHOP_ONLY}, true)
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.BLESSING_OF_STEAM, "Blessing of Steam", { filters.SHOP_ONLY }, true)
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.BLESSING_OF_INNER_EYE, "Blessing of Inner Eye", {})
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.CONJOINED_TWIN, "Conjoined Twin", {}, true)
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.BLOOD_MONEY, "Blood Money", {}, true)
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.HEAVY_IS_THE_HEAD, "Heavy is The Head", {})
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.BLIND_RAGE, "Blind Rage", {filters.ROOM_NOT_CLEAR})
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.BLIND_RAGE, "Blind Rage", { filters.ROOM_NOT_CLEAR })
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.EQUALITY, "Equality", {}, true)
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.ISAACS_BLESSING, "Isaac's Blessing", {filters.ITEM_PRESENT})
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.ISAACS_BLESSING, "Isaac's Blessing", { filters.ITEM_PRESENT })
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.BUM_BO_IS_LOOSE, "Bum-Bo is loose!", {})
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.MIGHT_FOR_THE_MEEK, "Might for the Meek!", {filters.ENEMIES_PRESENT})
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.PITY_FOR_THE_POOR, "Pity for the Poor", {filters.SHOP_ONLY}, true)
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.GUPPYS_PIECES, "Guppy's Pieces", {filters.TREASURE_ONLY})
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.THE_ISAAC_OF_ISAAC_ISAAC, "The Isaac Of Isaac: Isaac", {filters.ENEMIES_PRESENT, filters.NO_BOSS_ROOM})
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.MIGHT_FOR_THE_MEEK, "Might for the Meek!", { filters.ENEMIES_PRESENT })
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.PITY_FOR_THE_POOR, "Pity for the Poor", { filters.SHOP_ONLY }, true)
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.GUPPYS_PIECES, "Guppy's Pieces", { filters.TREASURE_ONLY })
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.THE_ISAAC_OF_ISAAC_ISAAC, "The Isaac Of Isaac: Isaac",
+    { filters.ENEMIES_PRESENT, filters.NO_BOSS_ROOM })
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.SPIDER_WEBS, "Spider Webs", {}, true)
 
-Resouled:Log("Loaded "..tostring(#Resouled:GetRoomEvents()).." room events.")
+Resouled:Log("Loaded " .. tostring(#Resouled:GetRoomEvents()) .. " room events.")
 
 -- IMPORTING ROOM EVENT SCRIPTS
 include("scripts.room_events.all_hallows_eve")
@@ -189,3 +193,4 @@ include("scripts.room_events.might_for_the_meek")
 include("scripts.room_events.pity_for_the_poor")
 include("scripts.room_events.guppys_pieces")
 include("scripts.room_events.the_isaac_of_isaac_isaac")
+include("scripts.room_events.spider_webs")

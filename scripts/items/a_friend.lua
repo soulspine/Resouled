@@ -160,7 +160,7 @@ local function familiarUpdate(_, familiar)
                         vectorTargetToEnemyNormalized = (data.Resouled_Target.Position - familiar.Position):Normalized()
                     elseif not data.Resouled_Target and data.Resouled_GridTarget then
                         vectorTargetToEnemyNormalized = (data.Resouled_GridTarget.Position - familiar.Position)
-                        :Normalized()
+                            :Normalized()
                     end
                     if vectorTargetToEnemyNormalized.X < 0.75 and vectorTargetToEnemyNormalized.X > -0.75 and vectorTargetToEnemyNormalized.Y < 0 and not sprite:IsOverlayPlaying(HEAD_UP .. SHOOT) then
                         if not sprite:IsOverlayPlaying(HEAD_UP) then
@@ -218,7 +218,7 @@ local function familiarUpdate(_, familiar)
 
             if entity.Type == EntityType.ENTITY_FAMILIAR and entity.Variant == FRIEND_VARIANT and entity.SubType == FRIEND_SUBTYPE and entity.Position:Distance(familiar.Position) < OTHER_FRIEND_AVOID_RANGE then
                 familiar.Velocity = familiar.Velocity +
-                (familiar.Position - entity.Position):Normalized() * OTHER_FRIEND_AVOID_SPEED
+                    (familiar.Position - entity.Position):Normalized() * OTHER_FRIEND_AVOID_SPEED
             end
 
             local closestProjectile = nil
@@ -236,7 +236,7 @@ local function familiarUpdate(_, familiar)
 
             if closestProjectile then
                 familiar.Velocity = familiar.Velocity +
-                (familiar.Position - closestProjectile.Position):Normalized() * PROJECTILE_AVOID_SPEED
+                    (familiar.Position - closestProjectile.Position):Normalized() * PROJECTILE_AVOID_SPEED
             end
 
             local bomb = entity:ToBomb()
@@ -276,7 +276,7 @@ local function familiarUpdate(_, familiar)
 
                 if familiar.Position:Distance(pickup.Position) < PICKUP_PICK_UP_RANGE then
                     pickup.Velocity = (pickup.Velocity + (pickup.Position - familiar.Position):Normalized() * 1.5) *
-                    PUSH_POWER
+                        PUSH_POWER
                 end
             end
         end)
@@ -326,7 +326,7 @@ local function familiarUpdate(_, familiar)
                 pathfinder:FindGridPath(data.Resouled_Target.Position, WALK_SPEED, 1, true)
             elseif distanceFromTarget < FOLLOW_ORBIT and pathfinderCheck then
                 familiar.Velocity = familiar.Velocity +
-                ((familiar.Position - data.Resouled_Target.Position):Normalized() * AVOID_SPEED)
+                    ((familiar.Position - data.Resouled_Target.Position):Normalized() * AVOID_SPEED)
             end
 
             if distanceFromTarget <= FOLLOW_ORBIT + (FOLLOW_ORBIT / 10) then
@@ -359,7 +359,7 @@ local function familiarUpdate(_, familiar)
             ---@type GridEntity | nil
             local closestTintedRock = nil
             ---@param gridEntity GridEntity
-            Resouled.Iterators:IterateOverGrid(function(gridEntity)
+            Resouled.Iterators:IterateOverGridEntities(function(gridEntity)
                 if pathfinder:HasPathToPos(gridEntity.Position, false) then
                     if gridEntity:GetType() == GridEntityType.GRID_POOP then
                         if gridEntity.State ~= 1000 then
@@ -518,7 +518,7 @@ local function familiarUpdate(_, familiar)
             data.Resouled_BombTarget = nil
 
             familiar.Velocity = familiar.Velocity +
-            (familiar.Position - data.Resouled_AvoidBomb.Position):Normalized() * BOMB_AVOID_SPEED
+                (familiar.Position - data.Resouled_AvoidBomb.Position):Normalized() * BOMB_AVOID_SPEED
 
             if data.Resouled_AvoidBomb.Position:Distance(familiar.Position) > BOMB_AVOID_RANGE then
                 data.Resouled_AvoidBomb = nil

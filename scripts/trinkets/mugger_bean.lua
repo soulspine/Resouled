@@ -1,16 +1,16 @@
 local TRINKET = Isaac.GetTrinketIdByName("Mugger Bean")
 
-ITEM_REPLACE_CHANCE = 0.15
-BEAN_ITEM_POOL = Isaac.GetPoolIdByName("muggerBeanPool")
+local ITEM_REPLACE_CHANCE = 0.15
+local BEAN_ITEM_POOL = Isaac.GetPoolIdByName("muggerBeanPool")
 
-FART_EFFECTS = {
+local FART_EFFECTS = {
     [EffectVariant.FART] = true,
     [EffectVariant.FARTWAVE] = true,
 }
 
-DAMAGE_BUFF_BASE_RADIUS = 78
-DAMAGE_BUFF_DURATION = 90 -- updates
-DAMAGE_BUFF_FORMULA = function(amount)
+local DAMAGE_BUFF_BASE_RADIUS = 78
+local DAMAGE_BUFF_DURATION = 90 -- updates
+local DAMAGE_BUFF_FORMULA = function(amount)
     return 1.5 * amount + 6
 end
 

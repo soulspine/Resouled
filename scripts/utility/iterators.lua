@@ -136,17 +136,25 @@ function iteratorsModule:IterateOverRooms(callback, ...)
     end
 end
 
----@param callback fun(gridEntity: GridEntity, ...: any)
-function iteratorsModule:IterateOverGrid(callback, ...)
+--- Iterates over all existing grid entities, empty spaces are skipped.
+---@param callback fun(gridEntity: GridEntity, index: integer)
+function iteratorsModule:IterateOverGridEntities(callback)
     local room = Game():GetRoom()
     for i = 0, room:GetGridSize() - 1 do
         local gridEntity = room:GetGridEntity(i)
         if gridEntity then
-            callback(gridEntity, ...)
+            callback(gridEntity, i)
         end
     end
 end
 
-
+--- Iterates over all grid positions. Check `gridEntity` for nil because empty spaces are included.
+--- @param callback fun(gridEntity: GridEntity|nil, index: integer)
+function iteratorsModule:IterateOverGrid(callback)
+    local room = Game():GetRoom()
+    for i = 0, room:GetGridSize() - 1 do
+        callback(room:GetGridEntity(i), i)
+    end
+end
 
 return iteratorsModule

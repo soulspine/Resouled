@@ -815,3 +815,12 @@ function Resouled:CreateLoadedSprite(path, animation)
     sprite:Play(animation or sprite:GetDefaultAnimation(), true)
     return sprite
 end
+
+--- Checks if player is inputting a shoot action in any direction
+---@param player EntityPlayer
+function Resouled:IsPlayerShooting(player)
+    return Input.IsActionPressed(ButtonAction.ACTION_SHOOTLEFT, player.ControllerIndex) or
+        Input.IsActionPressed(ButtonAction.ACTION_SHOOTRIGHT, player.ControllerIndex) or
+        Input.IsActionPressed(ButtonAction.ACTION_SHOOTUP, player.ControllerIndex) or
+        Input.IsActionPressed(ButtonAction.ACTION_SHOOTDOWN, player.ControllerIndex)
+end

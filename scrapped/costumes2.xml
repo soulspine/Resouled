@@ -1,4 +1,0 @@
-<costumes anm2root="gfx/characters/">
-    <costume anm2path="pizza_time.anm2" type="none" priority="1000"/>
-    <costume anm2path="isaac-8.anm2" type="none" priority="1000"/>
-</costumes>

@@ -11,8 +11,12 @@ local PINK_EGG_SPRITESHEET = "gfx/tears/egg_pink.png"
 local WHITE_EGG_SPRITESHEET = "gfx/tears/egg_white.png"
 
 local PINK_EGG_PARTICLE = Resouled:GetEntityByName("Pink Cracked Egg Particle")
+local WHITE_EGG_PARTICLE = Resouled:GetEntityByName("White Cracked Egg Particle")
+local CLEAR_EGG_PARTICLE = Resouled:GetEntityByName("Clear Cracked Egg Particle")
 
 local PINK_EGG_PARTICLE_SPRITESHEET = "gfx/effects/particles/egg_cracked_pink.png"
+local WHITE_EGG_PARTICLE_SPRITESHEET = "gfx/effects/particles/egg_cracked_white.png"
+local CLEAR_EGG_PARTICLE_SPRITESHEET = "gfx/effects/particles/egg_cracked_clear.png"
 
 local EGG_SPRITESHEETS = {
     [BLACK_PROGLOTTIDS_EGG.SubType] = PINK_EGG_SPRITESHEET,
@@ -23,10 +27,15 @@ local EGG_SPRITESHEETS = {
 
 local PARTICLE_SPRITESHEETS = {
     [PINK_EGG_PARTICLE.SubType] = PINK_EGG_PARTICLE_SPRITESHEET,
+    [WHITE_EGG_PARTICLE.SubType] = WHITE_EGG_PARTICLE_SPRITESHEET,
+    [CLEAR_EGG_PARTICLE.SubType] = CLEAR_EGG_PARTICLE_SPRITESHEET,
 }
 
 local EGG_TO_PARTICLE_LOOKUP = {
     [BLACK_PROGLOTTIDS_EGG.SubType] = PINK_EGG_PARTICLE.SubType,
+    [WHITE_PROGLOTTIDS_EGG.SubType] = WHITE_EGG_PARTICLE.SubType,
+    [PINK_PROGLOTTIDS_EGG.SubType] = WHITE_EGG_PARTICLE.SubType,
+    [RED_PROGLOTTIDS_EGG.SubType] = CLEAR_EGG_PARTICLE.SubType,
 }
 
 local EGG_HIT_SOUND = SoundEffect.SOUND_BOIL_HATCH

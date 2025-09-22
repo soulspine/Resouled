@@ -24,6 +24,46 @@ function Resouled:GetEntityByName(name)
     }
 end
 
+--- Constructs a ResouledEntityDesc object from specified parameters.
+--- If name is not specified, it will be set to an empty string.
+--- @param type EntityType
+--- @param variant integer
+--- @param subtype integer
+--- @param name? string
+--- @return ResouledEntityDesc
+function Resouled:EntityDescConstructor(type, variant, subtype, name)
+    return {
+        Type = type,
+        Variant = variant,
+        SubType = subtype,
+        Name = name or ""
+    }
+end
+
+--- Compares specified entity with entity description. If checkVariant or checkSubType is false, that field is ignored in the comparison and any value will be accepted.
+---@param entity Entity
+---@param entityDesc ResouledEntityDesc
+---@param checkVariant? boolean default: `true`
+---@param checkSubType? boolean default: `true`
+function Resouled:MatchesEntityDesc(entity, entityDesc, checkVariant, checkSubType)
+    checkVariant = checkVariant or true
+    checkSubType = checkSubType or true
+
+    if entity.Type ~= entityDesc.Type then
+        return false
+    end
+
+    if checkVariant and entity.Variant ~= entityDesc.Variant then
+        return false
+    end
+
+    if checkSubType and entity.SubType ~= entityDesc.SubType then
+        return false
+    end
+
+    return true
+end
+
 --- Spawns a random chaos pool item of the specified quality at specified position
 ---@param quality integer
 ---@param rng RNG

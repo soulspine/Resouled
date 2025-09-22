@@ -202,7 +202,7 @@ local function chargebarPlayerUpdate(_, player)
     local playerAnimation = player:GetSprite():GetAnimation()
 
     -- shoot or reset on release
-    if player:GetShootingInput():Length() == 0 or playerAnimation:find("Item") or playerAnimation:find("Pickup") then
+    if not Resouled:IsPlayerShooting(player) or playerAnimation:find("Item") or playerAnimation:find("Pickup") then
         if data.RESOULED__MONSTER_CHARGEBAR and data.RESOULED__MONSTER_CHARGEBAR.Remaining == 0 then
             -- shoot here
             data.RESOULED__MONSTER_BEAMS = {

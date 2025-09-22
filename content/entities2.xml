@@ -6,6 +6,11 @@
     <entity name="Red Proglottid's Egg" id="2" variant="444" subtype="3" anm2path="proglottid_egg.anm2" boss="0" champion="0" collisionDamage="0" collisionMass="8" collisionRadius="7" friction="1" numGridCollisionPoints="8" shadowSize="8" stageHP="0"/>
 
 <!-- Npcs-->
+    <entity name="Holy Dip" id="444" variant="0" subtype="0" anm2path="monsters/holy_dip.anm2" baseHP="20" stageHP="3" collisionMass="5" collisionRadius="13" friction="1.2" numGridCollisionPoints="12" shadowSize="14" champion="0" collisionDamage="1" reroll="true">
+        <beastiary anim="Idle" tramsform="0,0,1"/>
+        <devolve id="217.0.0" weight="1" />
+    </entity>
+
     <entity name="Cursed Gaper" id="10" variant="4" anm2path="cursed_gaper.anm2" baseHP="14" stageHP="3" collisionMass="5" collisionRadius="13" friction="1.2" numGridCollisionPoints="12" shadowSize="14" champion="0" collisionDamage="1" reroll="true">
         <beastiary anim="Idle" tramsform="0,0,1"/>
         <devolve id="10.1.0" weight="1" />

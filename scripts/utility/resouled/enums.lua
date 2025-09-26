@@ -36,6 +36,15 @@ enums.Items = {
     UNSTABLE_DNA = Isaac.GetItemIdByName("Unstable DNA"),
 }
 
+enums.Trinkets = {
+    HANDICAPPED_PLACARD = Isaac.GetTrinketIdByName("Handicapped Placard"),
+    HAND_ME_DOWNS = Isaac.GetTrinketIdByName("Hand me Downs"),
+    MUGGER_BEAN = Isaac.GetTrinketIdByName("Mugger Bean"),
+    RECYCLING_STICKER = Isaac.GetTrinketIdByName("Recycling Sticker"),
+    LIBRARY_CARD = Isaac.GetTrinketIdByName("Library Card"),
+    GAME_SQUID = Isaac.GetTrinketIdByName("Game Squid"),
+}
+
 enums.Buffs = Resouled.Buffs
 
 -- Values double down as animation names in /gfx/status_effects/status_effects.anm2

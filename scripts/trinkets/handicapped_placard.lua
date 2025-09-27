@@ -6,6 +6,8 @@ local CONFIG = {
     DoorActivationTime = 120,
     DoorActivationDistance = 10,
     OnDoorEffectDuration = 100,
+    ActivationSFX = SoundEffect.SOUND_GOLDENKEY,
+    BreakSFX = Resouled.Enums.SoundEffects.PAPER_DEATH_2,
 }
 
 local DOOR_OVERLAY_SPRITE = Sprite()
@@ -77,6 +79,7 @@ local function onTrinketUpdate(_, pickup)
             door:Open()
             door:SetVariant(DoorVariant.DOOR_UNLOCKED)
             pickup:Remove()
+            local sfx = SFXManager()
             if rng:RandomFloat() >= CONFIG.AfterUseBreakChance then
                 local newTrinket = Game():Spawn(
                     EntityType.ENTITY_PICKUP,
@@ -88,6 +91,9 @@ local function onTrinketUpdate(_, pickup)
                     Resouled:NewSeed()
                 )
                 newTrinket:GetData().Resouled__HandicappedPlacard = nil
+                sfx:Play(CONFIG.ActivationSFX)
+            else
+                sfx:Play(CONFIG.BreakSFX)
             end
         end
     end

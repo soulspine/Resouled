@@ -68,7 +68,6 @@ Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onNpcUpdate)
 
 ---@param effect EntityEffect
 local function onFartEffectUpdate(_, effect)
-    print(effect.Variant, effect.SubType)
     if not FART_EFFECTS[effect.Variant] or not PlayerManager.AnyoneHasTrinket(TRINKET) then return end
 
     for _, entity in ipairs(Isaac.FindInRadius(effect.Position, DAMAGE_BUFF_BASE_RADIUS * math.max(effect.SpriteScale.X, effect.SpriteScale.Y), EntityPartition.ENEMY)) do

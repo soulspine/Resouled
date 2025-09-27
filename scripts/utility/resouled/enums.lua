@@ -69,4 +69,28 @@ enums.Familiars = {
     FETAL_HAUNT = Resouled:GetEntityByName("Fetal Haunt"),
 }
 
+enums.SoundEffects = {
+    PAPER_FLIP = Isaac.GetSoundIdByName("Paper Flip"),
+    PAPER_DEATH_1 = Isaac.GetSoundIdByName("Paper Death 1"),
+    PAPER_DEATH_2 = Isaac.GetSoundIdByName("Paper Death 2"),
+    PAPER_DEATH_3 = Isaac.GetSoundIdByName("Paper Death 3"),
+    BUFF0 = Isaac.GetSoundIdByName("Buff0"),
+    BUFF1 = Isaac.GetSoundIdByName("Buff1"),
+    BUFF2 = Isaac.GetSoundIdByName("Buff2"),
+    BUFF3 = Isaac.GetSoundIdByName("Buff3"),
+    AUCTION_GAVEL_SOLD = Isaac.GetSoundIdByName("Auction Gavel Sold"),
+    HOLY_SPAWN_1 = Isaac.GetSoundIdByName("Holy Spawn 1"),
+    HOLY_SPAWN_2 = Isaac.GetSoundIdByName("Holy Spawn 2"),
+    HOLY_SPAWN_3 = Isaac.GetSoundIdByName("Holy Spawn 3"),
+    SOUL_PICKUP_1 = Isaac.GetSoundIdByName("Soul Pickup 1"),
+    SOUL_PICKUP_2 = Isaac.GetSoundIdByName("Soul Pickup 2"),
+    SOUL_PICKUP_3 = Isaac.GetSoundIdByName("Soul Pickup 3"),
+    SOUL_PICKUP_4 = Isaac.GetSoundIdByName("Soul Pickup 4"),
+    GAVEL = Isaac.GetSoundIdByName("Gavel"),
+    JUMPSCARE = Isaac.GetSoundIdByName("Jumpscare"),
+    SOULBOND1 = Isaac.GetSoundIdByName("Soulbond1"),
+    SOULBOND2 = Isaac.GetSoundIdByName("Soulbond2"),
+    SOULBOND3 = Isaac.GetSoundIdByName("Soulbond3"),
+}
+
 return enums

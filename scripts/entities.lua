@@ -20,6 +20,7 @@ include("scripts.entities.blank_canvas_dip")
 include("scripts.entities.holy_psy_horf")
 include("scripts.entities.proglottid_egg")
 include("scripts.entities.isaac_enemy")
+include("scripts.entities.holy_squirt")
 
 include("scripts.effects.stun_tentacle")
 

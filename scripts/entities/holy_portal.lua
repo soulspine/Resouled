@@ -13,6 +13,7 @@ local HOLY_ENEMIES = {
     BRAIN = Resouled:GetEntityByName("Holy Brain"),
     PSY_HORF = Resouled:GetEntityByName("Holy Psy Horf"),
     DIP = Resouled:GetEntityByName("Holy Dip"),
+    SQUIRT = Resouled:GetEntityByName("Holy Squirt"),
 }
 
 ---@type table<ResouledEntityDesc, ResouledEntityDesc>
@@ -32,6 +33,8 @@ local ENTITIES_SPAWN_LOOKUP = {
     [Resouled:EntityDescConstructor(217, 1, 0, "Corn")] = HOLY_ENEMIES.DIP,
     [Resouled:EntityDescConstructor(217, 2, 0, "Brownie Corn")] = HOLY_ENEMIES.DIP,
     [Resouled:EntityDescConstructor(217, 3, 0, "Big Corn")] = HOLY_ENEMIES.DIP,
+    [Resouled:EntityDescConstructor(220, 0, 0, "Squirt")] = HOLY_ENEMIES.SQUIRT,
+    [Resouled:EntityDescConstructor(220, 1, 0, "Dank Squirt")] = HOLY_ENEMIES.SQUIRT,
 }
 
 ---@param type integer

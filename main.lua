@@ -58,6 +58,8 @@ if REPENTOGON and MinimapAPI then
     --    ---@type ResouledEID
     --    Resouled.EID = include("scripts.utility.resouled.eid_functions")
     --end
+    ---@type ResouledEID
+    Resouled.EID = include("scripts.utility.resouled.eid")
     include("scripts.utility.resouled.misc")
     include("scripts.utility.resouled.buffs")
     include("scripts.utility.resouled.souls")

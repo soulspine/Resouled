@@ -8,29 +8,56 @@ local CONFIG = {
     OnDoorEffectDuration = 100,
     ActivationSFX = SoundEffect.SOUND_GOLDENKEY,
     BreakSFX = Resouled.Enums.SoundEffects.PAPER_DEATH_2,
+    EidDescriptionPreFormat =
+    "Dropping it close to a locked door will open said door#Has %s%% chance to break after each use",
+    EidGoldenDescriptionAppend =
+    "Can mark {{SecretRoom}} Secret and {{SuperSecretRoom}} Super Secret Rooms"
 }
 
 local DOOR_OVERLAY_SPRITE = Sprite()
 DOOR_OVERLAY_SPRITE:Load("gfx/effects/handicapped_placard_door_overlay.anm2", true)
 DOOR_OVERLAY_SPRITE:Play("Idle", true)
 
+Resouled.EID:AddTrinket(TRINKET,
+    string.format(CONFIG.EidDescriptionPreFormat, Resouled.EID:FormatFloat(CONFIG.AfterUseBreakChance * 100))
+)
+Resouled.EID:AddTrinketConditional(TRINKET, "Resouled__HandicappedPlacard_Golden",
+    Resouled.EID.CommonConditions.HigherTrinketMult,
+    function(desc)
+        local newChance = (CONFIG.AfterUseBreakChance ^ Resouled.EID.GetTrinketMultFromDesc(desc)) * 100
+
+        desc.Description = string.format(
+                CONFIG.EidDescriptionPreFormat,
+                "{{ColorGold}}" .. Resouled.EID:FormatFloat(newChance) .. "{{ColorText}}"
+            ) ..
+            "#{{ColorGold}}" .. CONFIG.EidGoldenDescriptionAppend .. "{{ColorText}}"
+
+        return desc
+    end
+)
+
 ---@param door GridEntityDoor
 ---@param offset Vector
 local function postDoorRender(_, door, offset)
-    if not PlayerManager.AnyoneHasTrinket(TRINKET) then return end
-    local player0 = Isaac.GetPlayer()
-    local keyNum = player0:GetNumKeys()
-    local coinNum = player0:GetNumCoins()
+    if door:IsOpen() then return end
+    local trinketMult = 0
+    Resouled.Iterators:IterateOverPlayers(function(player)
+        trinketMult = math.max(trinketMult, player:GetTrinketMultiplier(TRINKET))
+    end)
+    if trinketMult == 0 then return end
 
-    local whatOpensLockedDoor = Resouled.Doors:WhatOpensDoorLock(door)
+    local reveal = true
 
-    if not door:IsOpen()
-        or (whatOpensLockedDoor ~= nil and ((whatOpensLockedDoor and keyNum == 0) or (not whatOpensLockedDoor and coinNum == 0))) then
+    if trinketMult < 2 and (door.TargetRoomType == RoomType.ROOM_SECRET or door.TargetRoomType == RoomType.ROOM_SUPERSECRET) then
+        reveal = false
+    end
+
+    if reveal then
         DOOR_OVERLAY_SPRITE.Rotation = Resouled.Doors:GetRotationFromDoor(door)
         DOOR_OVERLAY_SPRITE:Render(Isaac.WorldToScreen(door.Position))
     end
 end
---Resouled:AddCallback(ModCallbacks.MC_POST_GRID_ENTITY_DOOR_RENDER, postDoorRender)
+Resouled:AddCallback(ModCallbacks.MC_POST_GRID_ENTITY_DOOR_RENDER, postDoorRender)
 
 local function onTrinketInit(_, pickup)
     if not pickup.SubType == TRINKET then return end
@@ -44,7 +71,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onTrinketInit, PickupVari
 
 ---@param pickup EntityPickup
 local function onTrinketUpdate(_, pickup)
-    if pickup.SubType ~= TRINKET then return end
+    if Resouled.Collectiblextension:GetTrinketPickupSubType(pickup) ~= TRINKET then return end
     local data = pickup:GetData().Resouled__HandicappedPlacard
     if not data then return end
 
@@ -80,14 +107,15 @@ local function onTrinketUpdate(_, pickup)
             door:SetVariant(DoorVariant.DOOR_UNLOCKED)
             pickup:Remove()
             local sfx = SFXManager()
-            if rng:RandomFloat() >= CONFIG.AfterUseBreakChance then
+            local trinketMult = Resouled.Collectiblextension:GetPotentialTrinketPickupMultiplier(pickup)
+            if rng:RandomFloat() >= (CONFIG.AfterUseBreakChance) ^ trinketMult then
                 local newTrinket = Game():Spawn(
                     EntityType.ENTITY_PICKUP,
                     PickupVariant.PICKUP_TRINKET,
                     door.Position,
                     Vector.Zero,
                     nil,
-                    TRINKET,
+                    pickup.SubType,
                     Resouled:NewSeed()
                 )
                 newTrinket:GetData().Resouled__HandicappedPlacard = nil

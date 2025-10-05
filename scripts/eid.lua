@@ -59,11 +59,6 @@ local EID_ITEMS = {
     "When entering a new room, there's: # 25% chance to gain a temporary HP up # 25% chance to gain a random temporary stat up # 50% chance to remove all previously granted effects",
 }
 
-local EID_TRINKETS = {
-    [Resouled.Enums.Trinkets.HANDICAPPED_PLACARD] =
-    "Dropping it close to a locked door will open said door#Has 50% chance to break after each use"
-}
-
 local EID_BUFFS = {
     --    [Resouled.Enums.Buffs.AGILITY] = e:AutoIcons("Grants +0.3 speed"),
     --    [Resouled.Enums.Buffs.BLUE_KING_CROWN] = e:AutoIcons(
@@ -119,10 +114,6 @@ local EID_BUFFS = {
 
 for item, description in pairs(EID_ITEMS) do
     EID:addCollectible(item, description)
-end
-
-for trinket, description in pairs(EID_TRINKETS) do
-    EID:addTrinket(trinket, description)
 end
 
 for buff, description in pairs(EID_BUFFS) do

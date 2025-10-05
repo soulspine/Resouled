@@ -83,11 +83,11 @@ function collectiblextension:ChooseRandomPlayerItemID(player, rng)
     for i = 1, #itemConfig:GetCollectibles() do
         local collectible = itemConfig:GetCollectible(i)
         if collectible
-        and not collectible.Hidden
-        and not collectible:HasTags(ItemConfig.TAG_QUEST)
-        and player:HasCollectible(i)
-        and collectible.ID ~= player:GetActiveItem(ActiveSlot.SLOT_POCKET)
-        and collectible.ID ~= player:GetActiveItem(ActiveSlot.SLOT_POCKET2)
+            and not collectible.Hidden
+            and not collectible:HasTags(ItemConfig.TAG_QUEST)
+            and player:HasCollectible(i)
+            and collectible.ID ~= player:GetActiveItem(ActiveSlot.SLOT_POCKET)
+            and collectible.ID ~= player:GetActiveItem(ActiveSlot.SLOT_POCKET2)
         then
             table.insert(items, i)
         end
@@ -103,8 +103,8 @@ end
 -- THIS IS FROM EID'S CODE BUT MODIFIED A BIT
 -- https://github.com/wofsauge/External-Item-Descriptions/blob/9908279ec579f2b1ec128c9c513e4cb3c3138a93/main.lua#L221
 local questionMarkSprite = Sprite()
-questionMarkSprite:Load("gfx/005.100_collectible.anm2",true)
-questionMarkSprite:ReplaceSpritesheet(1,"gfx/items/collectibles/questionmark.png")
+questionMarkSprite:Load("gfx/005.100_collectible.anm2", true)
+questionMarkSprite:ReplaceSpritesheet(1, "gfx/items/collectibles/questionmark.png")
 questionMarkSprite:LoadGraphics()
 
 --- Checks whether the pickup is a question mark item. \
@@ -112,9 +112,6 @@ questionMarkSprite:LoadGraphics()
 ---@param pickup EntityPickup
 ---@return boolean | nil
 function collectiblextension:IsQuestionMarkItem(pickup)
-
-    
-
     if pickup.Variant ~= PickupVariant.PICKUP_COLLECTIBLE then
         return nil
     end
@@ -129,36 +126,36 @@ function collectiblextension:IsQuestionMarkItem(pickup)
     local overlayFrame = entitySprite:GetOverlayFrame()
 
     if overlayFrame == 4 -- this is so stupid XD
-    or overlayFrame == 5
-    or overlayFrame == 6
-    or overlayFrame == 7
-    or overlayFrame == 8
-    or overlayFrame == 9
-    or overlayFrame == 10
-    or overlayFrame == 12
-    or overlayFrame == 13
-    or overlayFrame == 14
-    or overlayFrame == 16
-    or overlayFrame == 17
-    or overlayFrame == 18
-    or overlayFrame == 19 then
+        or overlayFrame == 5
+        or overlayFrame == 6
+        or overlayFrame == 7
+        or overlayFrame == 8
+        or overlayFrame == 9
+        or overlayFrame == 10
+        or overlayFrame == 12
+        or overlayFrame == 13
+        or overlayFrame == 14
+        or overlayFrame == 16
+        or overlayFrame == 17
+        or overlayFrame == 18
+        or overlayFrame == 19 then
         offsetY = -5
     elseif overlayFrame == 11 then
         offsetY = -8
     end
 
-    questionMarkSprite:SetFrame(entitySprite:GetAnimation(),entitySprite:GetFrame())
+    questionMarkSprite:SetFrame(entitySprite:GetAnimation(), entitySprite:GetFrame())
 
-    for i = -1,1,1 do
-		for j = -40,10,3 do
-			local qcolor = questionMarkSprite:GetTexel(Vector(i,j - offsetY), Vector.Zero, 1, 1)
-			local ecolor = entitySprite:GetTexel(Vector(i,j), Vector.Zero, 1, 1)
-			if qcolor.Red ~= ecolor.Red or qcolor.Green ~= ecolor.Green or qcolor.Blue ~= ecolor.Blue then
-				-- it is not same with question mark sprite
-				return false
-			end
-		end
-	end
+    for i = -1, 1, 1 do
+        for j = -40, 10, 3 do
+            local qcolor = questionMarkSprite:GetTexel(Vector(i, j - offsetY), Vector.Zero, 1, 1)
+            local ecolor = entitySprite:GetTexel(Vector(i, j), Vector.Zero, 1, 1)
+            if qcolor.Red ~= ecolor.Red or qcolor.Green ~= ecolor.Green or qcolor.Blue ~= ecolor.Blue then
+                -- it is not same with question mark sprite
+                return false
+            end
+        end
+    end
     return true
 end
 
@@ -168,13 +165,12 @@ end
 ---@param pickup EntityPickup
 ---@return boolean | nil
 function collectiblextension:TryRevealQuestionMarkItem(pickup)
-
     if pickup.Variant ~= PickupVariant.PICKUP_COLLECTIBLE then
         return nil
     end
 
     local data = pickup:GetData()
-    
+
     if not data.QuestionmarkRevealed and collectiblextension:IsQuestionMarkItem(pickup) then
         local sprite = pickup:GetSprite()
         local item = Isaac.GetItemConfig():GetCollectible(pickup.SubType)
@@ -243,6 +239,51 @@ function collectiblextension:GetHistoryIndexByTimeAndItemId(player, time, itemId
         end
     end
     return nil
-end 
+end
+
+--- Checks if a trinket pickup is golden.
+---@param pickup EntityPickup
+function collectiblextension:IsTrinketPickupGolden(pickup)
+    if pickup.Type ~= EntityType.ENTITY_PICKUP or pickup.Variant ~= PickupVariant.PICKUP_TRINKET then
+        return false
+    end
+
+    -- https://bindingofisaacrebirth.fandom.com/wiki/Golden_Trinket#Trivia
+    return pickup.SubType & TrinketType.TRINKET_GOLDEN_FLAG ~= 0
+end
+
+--- Returns the SubType of a trinket pickup, accounting for golden trinkets. If the pickup is not a trinket, returns 0
+---@param pickup EntityPickup
+---@return TrinketType | integer
+function collectiblextension:GetTrinketPickupSubType(pickup)
+    if pickup.Type ~= EntityType.ENTITY_PICKUP or pickup.Variant ~= PickupVariant.PICKUP_TRINKET then
+        return 0
+    end
+
+    return pickup.SubType & (TrinketType.TRINKET_GOLDEN_FLAG ~ 0xFFFFFFFF)
+end
+
+--- Tries to evaluate the potential trinket multiplier of a trinket pickup. It essentially checks whether someone has mom's box and checks if trinket is golden.
+--- Returned value can be 0 (wrong entity), 1 (normal trinket), 2 (golden trinket or normal trinket with mom's box) or 3 (golden trinket with mom's box)
+---@param pickup EntityPickup
+---@return integer
+function collectiblextension:GetPotentialTrinketPickupMultiplier(pickup)
+    if pickup.Type ~= EntityType.ENTITY_PICKUP or pickup.Variant ~= PickupVariant.PICKUP_TRINKET then
+        Resouled:LogError("GetPotentialTrinketPickupMultiplier was called on a non-trinket entity!")
+        return 0
+    end
+
+    local mult = 1
+
+    if collectiblextension:IsTrinketPickupGolden(pickup) then
+        mult = mult + 1
+    end
+
+    if PlayerManager.AnyoneHasCollectible(CollectibleType.COLLECTIBLE_MOMS_BOX) then
+        mult = mult + 1
+    end
+
+    return mult
+end
 
 return collectiblextension

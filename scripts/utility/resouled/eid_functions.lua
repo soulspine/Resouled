@@ -1,4 +1,4 @@
----@class ResouledEID
+---@class PreResouledEID
 local Reid = {}
 
 if not EID then
@@ -89,7 +89,7 @@ end
 ---@return string
 function Reid:FadeNegativeStatNextLine(String)
     return "#{{ArrowDown}} " .. " " .. Reid:GetColorByShortcut("FadeNegativeStat") .. String ..
-    Reid:ResetColorModifiers()
+        Reid:ResetColorModifiers()
 end
 
 Reid:RegisterFadeColor("FadePositiveStat", KColor(0, 1, 0, 1), 50)
@@ -752,7 +752,8 @@ end
 ---@param String string
 ---@return string
 function Reid:AutoIcons(String)
-    String = repeatFindInsertUntilStringEnds(String, "bomb", Reid:Bomb(), nil, { [1] = "golden", [2] = Reid:GoldenBomb() })
+    String = repeatFindInsertUntilStringEnds(String, "bomb", Reid:Bomb(), nil,
+        { [1] = "golden", [2] = Reid:GoldenBomb() })
     String = repeatFindInsertUntilStringEnds(String, "coin", Reid:Coin())
     String = repeatFindInsertUntilStringEnds(String, "penny", Reid:Coin())
     String = repeatFindInsertUntilStringEnds(String, "key", Reid:Key(), nil, { [1] = "golden", [2] = Reid:GoldenKey() })
@@ -857,7 +858,8 @@ function Reid:AutoIcons(String)
         { [1] = "demon", [2] = Reid:Heart(hearts.Black) }, { [1] = "bone", [2] = Reid:Heart(hearts.Bone) },
         { [1] = "half bone", [2] = Reid:Heart(hearts.Bone) }, { [1] = "empty bone", [2] = Reid:Heart(hearts.EmptyBone) },
         { [1] = "full", [2] = Reid:Heart() }, { [1] = "rotten", [2] = Reid:Heart(hearts.Rotten) },
-        { [1] = "rotten bone", [2] = Reid:Heart(hearts.RottenBone) }, { [1] = "blended", [2] = Reid:Heart(hearts.Blended) },
+        { [1] = "rotten bone", [2] = Reid:Heart(hearts.RottenBone) },
+        { [1] = "blended", [2] = Reid:Heart(hearts.Blended) },
         { [1] = "golden", [2] = Reid:Heart(hearts.Golden) }, { [1] = "coin", [2] = Reid:Heart(hearts.Coin) },
         { [1] = "half coin", [2] = Reid:Heart(hearts.HalfCoin) },
         { [1] = "empty coin", [2] = Reid:Heart(hearts.EmptyCoin) }, { [1] = "broken", [2] = Reid:Heart(hearts.Broken) },

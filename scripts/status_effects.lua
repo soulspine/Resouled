@@ -35,3 +35,11 @@ StatusEffectLibrary.RegisterStatusEffect(
     nil,
     true
 )
+
+StatusEffectLibrary.RegisterStatusEffect(
+    effects.MUGGER_BEAN,
+    Resouled:CreateLoadedSprite(anm2path, effects.MUGGER_BEAN),
+    Color(1, 1, 1),
+    nil,
+    true
+)

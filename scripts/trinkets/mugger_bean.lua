@@ -1,32 +1,66 @@
 local TRINKET = Isaac.GetTrinketIdByName("Mugger Bean")
 
-local ITEM_REPLACE_CHANCE = 0.15
-local BEAN_ITEM_POOL = Isaac.GetPoolIdByName("muggerBeanPool")
-
-local FART_EFFECTS = {
-    [EffectVariant.FART] = true,
-    [EffectVariant.FARTWAVE] = true,
-    [EffectVariant.SMOKE_CLOUD] = true,
+local CONFIG = {
+    ItemReplaceChance = 0.15,
+    ItemPool = Isaac.GetPoolIdByName("muggerBeanPool"),
+    FartEffects = {
+        [EffectVariant.FART] = true,
+        [EffectVariant.FARTWAVE] = true,
+        [EffectVariant.SMOKE_CLOUD] = true,
+    },
+    BuffStatusEffect = Resouled.Enums.StatusEffects.MUGGER_BEAN,
+    BuffDuration = 90,
+    BuffRadius = 78,
+    BuffFormula = function(amount)
+        return 1.5 * amount + 6
+    end,
+    EidDescriptionPreFormat =
+    "Enemies that get farted on take more damage for %s seconds#Bean items are added to all item pools"
 }
 
-local DAMAGE_BUFF_BASE_RADIUS = 78
-local DAMAGE_BUFF_DURATION = 90 -- updates
-local DAMAGE_BUFF_FORMULA = function(amount)
-    return 1.5 * amount + 6
-end
+Resouled.EID:AddTrinket(TRINKET,
+    string.format(
+        CONFIG.EidDescriptionPreFormat,
+        Resouled.EID:FormatFloat(Resouled.EID:FormatFloat(CONFIG.BuffDuration / 30))
+    )
+)
+Resouled.EID:AddTrinketConditional(TRINKET, "Resouled__MuggerBean_Golden",
+    Resouled.EID.CommonConditions.HigherTrinketMult,
+    function(desc)
+        local mult = Resouled.EID.GetTrinketMultFromDesc(desc)
+        local newDuration = CONFIG.BuffDuration * mult / 30
+
+        desc.Description = string.format(
+            CONFIG.EidDescriptionPreFormat,
+            "{{ColorGold}}" .. Resouled.EID:FormatFloat(newDuration) .. "{{ColorText}}"
+        )
+        return desc
+    end
+)
+
+local statusEffectId = 0
+
+Resouled:RunAfterImports(function()
+    for name, flag in pairs(StatusEffectLibrary.StatusFlag) do
+        if name == CONFIG.BuffStatusEffect then
+            statusEffectId = flag
+            break
+        end
+    end
+end)
 
 ---@param itempool ItemPoolType
 ---@param decrease boolean
 ---@param seed integer
 local function onItemGet(_, itempool, decrease, seed)
-    if itempool == BEAN_ITEM_POOL then return end -- to prevent stack overflow
-    local defaultItem = 143
+    if itempool == CONFIG.ItemPool then return end -- to prevent stack overflow
+    local defaultItem = 143                        -- just to know when pool is depleted, if this item is returned, its not a bean anymore
     if not PlayerManager.AnyoneHasTrinket(TRINKET) then return end
 
     local rng = RNG(seed, 43)
-    if rng:RandomFloat() > ITEM_REPLACE_CHANCE then return end
+    if rng:RandomFloat() > CONFIG.ItemReplaceChance then return end
 
-    local chosenItem = Game():GetItemPool():GetCollectible(BEAN_ITEM_POOL, true, rng:GetSeed(), defaultItem)
+    local chosenItem = Game():GetItemPool():GetCollectible(CONFIG.ItemPool, true, rng:GetSeed(), defaultItem)
     if chosenItem ~= defaultItem then
         return chosenItem
     end
@@ -39,8 +73,10 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_GET_COLLECTIBLE, onItemGet)
 ---@param source EntityRef
 ---@param countdown integer
 local function onEntityDamage(_, entity, amount, flags, source, countdown)
+    local effectData = StatusEffectLibrary:GetStatusEffectData(entity, statusEffectId)
+    if not effectData then return end
+
     local data = entity:GetData()
-    if not data.Resouled__MuggerBeanDurationLeft then return end
 
     if data.Resouled__MuggerBeanDamageTick then
         data.Resouled__MuggerBeanDamageTick = nil
@@ -48,33 +84,28 @@ local function onEntityDamage(_, entity, amount, flags, source, countdown)
     end
 
     data.Resouled__MuggerBeanDamageTick = true
-    entity:TakeDamage(DAMAGE_BUFF_FORMULA(amount), flags, source, countdown)
+    entity:TakeDamage(CONFIG.BuffFormula(amount), flags, source, countdown)
     return false
 end
 Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, onEntityDamage)
 
----@param npc EntityNPC
-local function onNpcUpdate(_, npc)
-    local data = npc:GetData()
-    if not data.Resouled__MuggerBeanDurationLeft then return end
-
-    if data.Resouled__MuggerBeanDurationLeft > 0 then
-        data.Resouled__MuggerBeanDurationLeft = data.Resouled__MuggerBeanDurationLeft - 1
-    else
-        data.Resouled__MuggerBeanDurationLeft = nil
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onNpcUpdate)
-
 ---@param effect EntityEffect
 local function onFartEffectUpdate(_, effect)
-    if not FART_EFFECTS[effect.Variant] or not PlayerManager.AnyoneHasTrinket(TRINKET) then return end
+    if not CONFIG.FartEffects[effect.Variant] or not PlayerManager.AnyoneHasTrinket(TRINKET) then return end
 
-    for _, entity in ipairs(Isaac.FindInRadius(effect.Position, DAMAGE_BUFF_BASE_RADIUS * math.max(effect.SpriteScale.X, effect.SpriteScale.Y), EntityPartition.ENEMY)) do
+    --- Jupiter is the only fart effect that actually has player as spawner,
+    --- thats why I'm checking for highest multiplier and just applying duration based on that
+    local highestMult = Resouled.AccurateStats:GetHighestTrinketMultiplier(TRINKET)
+
+    for _, entity in ipairs(Isaac.FindInRadius(effect.Position, CONFIG.BuffRadius * math.max(effect.SpriteScale.X, effect.SpriteScale.Y), EntityPartition.ENEMY)) do
         local npc = entity:ToNPC()
         if not npc or not npc:IsVulnerableEnemy() then goto continue end
-        local data = npc:GetData()
-        data.Resouled__MuggerBeanDurationLeft = DAMAGE_BUFF_DURATION
+        StatusEffectLibrary:AddStatusEffect(
+            npc,
+            statusEffectId,
+            CONFIG.BuffDuration * highestMult,
+            EntityRef(Isaac.GetPlayer())
+        )
         ::continue::
     end
 end

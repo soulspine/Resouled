@@ -9,7 +9,7 @@ local accurateStatsModule = {}
 function accurateStatsModule:GetEffectiveHP(player)
     -- TODO
     local red = player:GetHearts()
-    local soul = player:GetSoulHearts() -- black hearts are counted in
+    local soul = player:GetSoulHearts()     -- black hearts are counted in
     local bone = player:GetBoneHearts()
     local rotten = player:GetRottenHearts() -- we substract this because rotten hearts are counted in red hearts as well
     local eternal = player:GetEternalHearts()
@@ -20,14 +20,14 @@ end
 ---@param player EntityPlayer
 ---@return integer
 function accurateStatsModule:GetEffectiveRedHP(player)
-    return player:GetHearts() - 2*player:GetRottenHearts()
+    return player:GetHearts() - 2 * player:GetRottenHearts()
 end
 
 --- Returns exactly how much soul HP player has
 ---@param player EntityPlayer
 ---@return integer
 function accurateStatsModule:GetEffectiveSoulHP(player)
-    return math.max(player:GetSoulHearts() - 2*player:GetBlackHearts(), 0)
+    return math.max(player:GetSoulHearts() - 2 * player:GetBlackHearts(), 0)
 end
 
 --- Returns exactly how much black HP player has
@@ -67,9 +67,9 @@ end
 function accurateStatsModule:GetCurrentChapter()
     local stage = Game():GetLevel():GetStage()
     if stage < 9 then
-        return (stage+1)//2
+        return (stage + 1) // 2
     else
-        return 4 + (stage-8)
+        return 4 + (stage - 8)
     end
 end
 
@@ -80,6 +80,19 @@ function accurateStatsModule:IsCurrentFloorLastFloorOfChapter()
     else
         return true
     end
+end
+
+--- Given a trinket, returns the highest multipler that players have, for example if
+--- Isaac has a golden trinket and Eden has a normal one, it will return 2.
+---@param trinket TrinketType
+---@return integer
+function accurateStatsModule:GetHighestTrinketMultiplier(trinket)
+    local mult = 0
+    for i = 0, Game():GetNumPlayers() - 1 do
+        local player = Isaac.GetPlayer(i)
+        mult = math.max(mult, player:GetTrinketMultiplier(trinket))
+    end
+    return mult
 end
 
 return accurateStatsModule

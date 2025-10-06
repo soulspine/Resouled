@@ -53,6 +53,7 @@ enums.StatusEffects = {
     PINK_PROGLOTTID = "Pink Proglottid's Heart",
     RED_PROGLOTTID = "Red Proglottid's Tomato",
     WHITE_PROGLOTTID = "White Proglottid's Ghost",
+    MUGGER_BEAN = "Mugger Bean"
 }
 
 enums.Familiars = {

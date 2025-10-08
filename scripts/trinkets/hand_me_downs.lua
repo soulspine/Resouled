@@ -12,7 +12,7 @@ Resouled.EID:AddTrinket(HAND_ME_DOWNS,
 Resouled.EID:AddTrinketConditional(HAND_ME_DOWNS, "Resouled__HandMeDowns_Golden",
     Resouled.EID.CommonConditions.HigherTrinketMult,
     function(desc)
-        local newChance = (CONFIG.EffectApplyChance * Resouled.EID.GetTrinketMultFromDesc(desc)) * 100
+        local newChance = (CONFIG.EffectApplyChance * Resouled.EID:GetTrinketMultFromDesc(desc)) * 100
 
         desc.Description = string.format(
             CONFIG.EidDescriptionPreFormat,

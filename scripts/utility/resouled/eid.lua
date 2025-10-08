@@ -18,6 +18,9 @@ eid.Languages = {
 eid.CommonConditions = {
     ---@param descObj ResouledEID_Description
     HigherTrinketMult = function(descObj)
+        if not descObj.ObjType == EntityType.ENTITY_PICKUP or descObj.ObjVariant ~= PickupVariant.PICKUP_TRINKET then
+            return false
+        end
         if descObj.Entity then
             ---@diagnostic disable-next-line: param-type-mismatch
             return Resouled.Collectiblextension:GetPotentialTrinketPickupMultiplier(descObj.Entity) > 1
@@ -42,7 +45,7 @@ eid.CommonConditions = {
 }
 
 ---@param desc ResouledEID_Description
-function eid.GetTrinketMultFromDesc(desc)
+function eid:GetTrinketMultFromDesc(desc)
     if desc.Entity then
         ---@diagnostic disable-next-line: param-type-mismatch
         return Resouled.Collectiblextension:GetPotentialTrinketPickupMultiplier(desc.Entity)

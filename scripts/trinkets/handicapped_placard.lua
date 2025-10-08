@@ -24,7 +24,7 @@ Resouled.EID:AddTrinket(TRINKET,
 Resouled.EID:AddTrinketConditional(TRINKET, "Resouled__HandicappedPlacard_Golden",
     Resouled.EID.CommonConditions.HigherTrinketMult,
     function(desc)
-        local newChance = (CONFIG.AfterUseBreakChance ^ Resouled.EID.GetTrinketMultFromDesc(desc)) * 100
+        local newChance = (CONFIG.AfterUseBreakChance ^ Resouled.EID:GetTrinketMultFromDesc(desc)) * 100
 
         desc.Description = string.format(
                 CONFIG.EidDescriptionPreFormat,

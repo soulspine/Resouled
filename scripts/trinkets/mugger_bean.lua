@@ -21,13 +21,13 @@ local CONFIG = {
 Resouled.EID:AddTrinket(TRINKET,
     string.format(
         CONFIG.EidDescriptionPreFormat,
-        Resouled.EID:FormatFloat(Resouled.EID:FormatFloat(CONFIG.BuffDuration / 30))
+        Resouled.EID:FormatFloat(CONFIG.BuffDuration / 30)
     )
 )
 Resouled.EID:AddTrinketConditional(TRINKET, "Resouled__MuggerBean_Golden",
     Resouled.EID.CommonConditions.HigherTrinketMult,
     function(desc)
-        local mult = Resouled.EID.GetTrinketMultFromDesc(desc)
+        local mult = Resouled.EID:GetTrinketMultFromDesc(desc)
         local newDuration = CONFIG.BuffDuration * mult / 30
 
         desc.Description = string.format(

@@ -18,7 +18,7 @@ Resouled.EID:AddTrinket(TRINKET,
 Resouled.EID:AddTrinketConditional(TRINKET, "Resouled__GameSquid_Golden",
     Resouled.EID.CommonConditions.HigherTrinketMult,
     function(desc)
-        local mult = Resouled.EID.GetTrinketMultFromDesc(desc)
+        local mult = Resouled.EID:GetTrinketMultFromDesc(desc)
         local newChance = CONFIG.ApplyChance * mult * 100
         local newCooldown = CONFIG.TentacleCooldown / mult / 30
 

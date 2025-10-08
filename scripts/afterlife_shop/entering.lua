@@ -83,3 +83,22 @@ local function postGameStarted()
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, postGameStarted)
+
+local COMMAND = {
+    Name = "afterlife",
+    Description = "Teleports you to Afterlife Shop",
+}
+
+Console.RegisterCommand(COMMAND.Name, COMMAND.Description, "", false, AutocompleteType.CUSTOM)
+
+local function executeAfterlifeCommand(_, command, paramsRaw)
+    if command == COMMAND.Name then
+        if Isaac.IsInGame() then
+            Resouled.AfterlifeShop:SetAfterlifeShop()
+            Game():End(Ending.CREDITS)
+        else
+            Resouled:LogError("You need to be in a run to use this command!")
+        end
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_EXECUTE_CMD, executeAfterlifeCommand)

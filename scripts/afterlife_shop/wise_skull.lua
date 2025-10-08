@@ -303,14 +303,6 @@ local function onNpcInit(_, npc)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, WiseSkull.Type)
 
----@param npc EntityNPC
-local function postNpcDeath(_, npc)
-    if npc.Variant == WiseSkull.Variant and npc.SubType == WiseSkull.SubType then
-
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath, WiseSkull.Type)
-
 ---@return boolean
 function Resouled.AfterlifeShop:IsShuffleComplete()
     local FileSave = SAVE_MANAGER.GetPersistentSave()

@@ -181,7 +181,6 @@ local function spawnDoors()
             local door = room:GetDoor(i)
             if door then
                 room:RemoveDoor(i)
-                
             end
             if i < 4 then
                 trySpawnDoor(i, doorsPos[i + 1])
@@ -236,6 +235,10 @@ local function onNpcUpdate(_, npc)
             npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
         elseif sprite:IsPlaying(Door.Animations.Locked) and npc.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_NONE  then
             npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
+        end
+
+        if npc.SizeMulti.Y >= 1 then
+            npc:Remove()
         end
     end
 end

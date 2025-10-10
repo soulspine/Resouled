@@ -32,6 +32,22 @@ local BUFF_PEDESTAL_TYPE = Isaac.GetEntityTypeByName("Buff Pedestal")
 local BUFF_PEDESTAL_VARIANT = Isaac.GetEntityVariantByName("Buff Pedestal")
 local BUFF_PEDESTAL_SUBTYPE = Isaac.GetEntitySubTypeByName("Buff Pedestal")
 
+
+local function makeSureSavesExist()
+    local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
+
+    if not FILE_SAVE then
+        FILE_SAVE = {}
+    end
+
+    if not FILE_SAVE.Resouled_PendingBuffs then
+        FILE_SAVE.Resouled_PendingBuffs = {}
+    end
+    if not FILE_SAVE.Resouled_ActiveBuffs then
+        FILE_SAVE.Resouled_ActiveBuffs = {}
+    end
+end
+
 ---@param buffID ResouledBuff
 ---@param position? Vector
 ---@return EntityPickup | nil
@@ -474,6 +490,7 @@ end
 
 function Resouled:ActivatePendingBuffs()
     local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
+
     if FILE_SAVE and FILE_SAVE.Resouled_PendingBuffs then
         if not FILE_SAVE.Resouled_ActiveBuffs then
             FILE_SAVE.Resouled_ActiveBuffs = {}
@@ -503,6 +520,8 @@ end
 local function postPlayerInit() --Appearently this is THE first callback when starting a run
     local RUN_SAVE = SAVE_MANAGER.GetRunSave()
     local FileSave = SAVE_MANAGER.GetPersistentSave()
+
+    makeSureSavesExist()
 
     if not FileSave then
         FileSave = {}

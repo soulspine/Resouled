@@ -147,6 +147,12 @@ local function postNewRoom()
             end
         end
 
+        ---@param grid GridEntity | nil
+        Resouled.Iterators:IterateOverGrid(function(grid)
+            if grid and grid:GetType() == GridEntityType.GRID_DECORATION then
+                room:RemoveGridEntityImmediate(grid:GetGridIndex(), 0, false)
+            end
+        end)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)

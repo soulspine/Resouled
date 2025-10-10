@@ -101,6 +101,7 @@ Resouled:AddPriorityCallback(ModCallbacks.MC_PRE_LEVEL_INIT, CallbackPriority.IM
 include("scripts.afterlife_shop.backdrop")
 include("scripts.afterlife_shop.doors_and_floor_layout")
 include("scripts.afterlife_shop.room_layout")
+include("scripts.afterlife_shop.entities")
 include("scripts.afterlife_shop.entering")
 include("scripts.afterlife_shop.music")
 include("scripts.afterlife_shop.casket")

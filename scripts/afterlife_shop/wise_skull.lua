@@ -303,6 +303,19 @@ local function onNpcInit(_, npc)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, WiseSkull.Type)
 
+---@param npc EntityNPC
+---@param collider Entity
+local function onNpcCollision(_, npc, collider)
+    if npc.Variant == WiseSkull.Variant and npc.SubType == WiseSkull.SubType then
+        local player = collider:ToPlayer()
+        if player then
+            Game():Spawn(EntityType.ENTITY_EFFECT, Shuffle.IDS.Variant, npc.Position, Vector.Zero, nil, Shuffle.IDS.SubType, npc.InitSeed)
+            npc:Remove()
+        end
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_COLLISION, onNpcCollision, WiseSkull.Type)
+
 ---@return boolean
 function Resouled.AfterlifeShop:IsShuffleComplete()
     local FileSave = SAVE_MANAGER.GetPersistentSave()

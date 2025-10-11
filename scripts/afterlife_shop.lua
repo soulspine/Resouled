@@ -98,6 +98,17 @@ local function preNewLevel()
 end
 Resouled:AddPriorityCallback(ModCallbacks.MC_PRE_LEVEL_INIT, CallbackPriority.IMPORTANT, preNewLevel)
 
+---@param visible boolean
+function Resouled.AfterlifeShop:SetMapVisibility(visible)
+    MinimapAPI.Config.Disable = not visible
+end
+
+Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, function()
+    if not Resouled.AfterlifeShop:IsAfterlifeShop() then
+        Resouled.AfterlifeShop:SetMapVisibility(true)
+    end
+end)
+
 include("scripts.afterlife_shop.backdrop")
 include("scripts.afterlife_shop.doors_and_floor_layout")
 include("scripts.afterlife_shop.room_layout")

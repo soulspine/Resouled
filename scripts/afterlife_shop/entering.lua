@@ -78,6 +78,8 @@ local function postGameStarted()
         Resouled:SetPossessedSoulsNum(Resouled.AfterlifeShop.Goto.SoulNum)
         Resouled.AfterlifeShop.Goto.SoulNum = nil
         Resouled.AfterlifeShop.Goto.Activate = false
+
+        Resouled.AfterlifeShop:SetMapVisibility(false)
     else
         Resouled.AfterlifeShop.Goto.SpecialBuffs = {}
     end

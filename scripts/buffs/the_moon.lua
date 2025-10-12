@@ -56,22 +56,19 @@ local function onUpdate()
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 
-local function onRender()
+---@param player EntityPlayer
+local function onRender(_, player)
     if not render then return end
-    local player = Isaac.GetPlayer()
-    INDICATOR_SPRITE:Render(Isaac.WorldToScreen(player.Position + player.SpriteOffset + CONFIG.MoonIconOffset +
-        player:GetFlyingOffset()))
+    INDICATOR_SPRITE:Render(Isaac.WorldToScreen(player.Position + player.SpriteOffset + CONFIG.MoonIconOffset + player:GetFlyingOffset()))
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, onRender)
+Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, onRender)
 
 ---@param player EntityPlayer
 ---@param cacheFlag CacheFlag
 local function onCacheEval(_, player, cacheFlag)
     if not Resouled:ActiveBuffPresent(Resouled.Buffs.THE_MOON) then return end
     if cacheFlag & CacheFlag.CACHE_FIREDELAY ~= 0 then
-        Resouled.AccurateStats:AddTears(
-            player,
-            Resouled.AccurateStats:GetFireRate(player) * CONFIG.MaxGainMult * getBrightSideLevel()
+        Resouled.AccurateStats:AddTears(player, Resouled.AccurateStats:GetFireRate(player) * CONFIG.MaxGainMult * getBrightSideLevel()
         )
     end
 
@@ -81,3 +78,10 @@ local function onCacheEval(_, player, cacheFlag)
 end
 Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACHE_FIREDELAY)
 Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACHE_DAMAGE)
+
+local function postGameEnd()
+    if Resouled:ActiveBuffPresent(Resouled.Buffs.THE_MOON) then
+        Resouled:RemoveActiveBuff(Resouled.Buffs.THE_MOON)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, postGameEnd)

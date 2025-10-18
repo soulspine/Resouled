@@ -1,5 +1,5 @@
 <AnimatedActor>
-	<Info CreatedBy="Unknown" CreatedOn="10/18/2025 3:29:43 PM" Version="1" Fps="30"/>
+	<Info CreatedBy="Unknown" CreatedOn="10/18/2025 8:08:40 PM" Version="2" Fps="30"/>
 	<Content>
 		<Spritesheets>
 			<Spritesheet Path="afterlife_minimap.png" Id="0"/>

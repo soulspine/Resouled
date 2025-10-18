@@ -4,6 +4,7 @@ Resouled.AfterlifeShop.Goto = {
     Difficulty = nil,
     SoulNum = nil,
     ReplaceMusic = false,
+    PlayTime = nil,
     SpecialBuffs = {}
 }
 
@@ -33,6 +34,7 @@ local function postGameEnd(_, isGameOver)
         Resouled.AfterlifeShop.Goto.Activate = true
         Resouled.AfterlifeShop.Goto.SoulNum = Resouled:GetPossessedSoulsNum()
         Resouled.AfterlifeShop.Goto.ReplaceMusic = true
+        Resouled.AfterlifeShop.Goto.PlayTime = Game().TimeCounter
     else
         Resouled.AfterlifeShop.Goto.SpecialBuffs = {}
     end
@@ -77,9 +79,13 @@ local function postGameStarted()
 
         Resouled:SetPossessedSoulsNum(Resouled.AfterlifeShop.Goto.SoulNum)
         Resouled.AfterlifeShop.Goto.SoulNum = nil
-        Resouled.AfterlifeShop.Goto.Activate = false
-
+        
         Resouled.AfterlifeShop:SetMapVisibility(false)
+        
+        Game().TimeCounter = Resouled.AfterlifeShop.Goto.PlayTime
+        Resouled.AfterlifeShop.Goto.PlayTime = nil
+
+        Resouled.AfterlifeShop.Goto.Activate = false
     else
         Resouled.AfterlifeShop.Goto.SpecialBuffs = {}
     end

@@ -109,6 +109,16 @@ Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, function()
     end
 end)
 
+---@param player EntityPlayer
+Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, function(_, player) -- Players are ghosts
+    --if Resouled.AfterlifeShop:IsAfterlifeShop() then
+    --    local effect = player:GetEffects()
+    --    if not effect:HasNullEffect(NullItemID.ID_LOST_CURSE) then
+    --        effect:AddNullEffect(NullItemID.ID_LOST_CURSE)
+    --    end
+    --end
+end)
+
 include("scripts.afterlife_shop.backdrop")
 include("scripts.afterlife_shop.doors_and_floor_layout")
 include("scripts.afterlife_shop.room_layout")
@@ -117,3 +127,4 @@ include("scripts.afterlife_shop.entering")
 include("scripts.afterlife_shop.music")
 include("scripts.afterlife_shop.casket")
 include("scripts.afterlife_shop.wise_skull")
+include("scripts.afterlife_shop.minimap")

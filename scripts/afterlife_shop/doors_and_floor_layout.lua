@@ -137,6 +137,23 @@ local function ShouldDoorBeLocked(position)
     return false
 end
 
+---@return boolean
+function Resouled.AfterlifeShop:AreRoomsConnected(roomIdx1, roomIdx2)
+    local RunSave = SAVE_MANAGER.GetRunSave()
+    if RunSave.AfterlifeShop and RunSave.AfterlifeShop["LevelLayout"] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(roomIdx2)] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(roomIdx2)] > 0 then
+        if (not Resouled.AfterlifeShop.SpecialBuffRoomsConnectionWhitelist[RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(roomIdx1)]] and
+        RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(roomIdx2)] == Resouled.AfterlifeShop.RoomTypes.SpecialBuffsRoom) or
+        (RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(roomIdx1)] == Resouled.AfterlifeShop.RoomTypes.SpecialBuffsRoom and
+        not Resouled.AfterlifeShop.SpecialBuffRoomsConnectionWhitelist[RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(roomIdx2)]])
+        then
+            return false
+        else
+            return true
+        end
+    end
+    return false
+end
+
 ---@param doorSlot DoorSlot
 ---@param position Vector
 local function trySpawnDoor(doorSlot, position)
@@ -338,3 +355,17 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_LEVEL_PLACE_ROOM, function()
         return roomConfig
     end
 end)
+
+---@return table|nil
+function Resouled.AfterlifeShop:GetLayout()
+    local RunSave = SAVE_MANAGER.GetRunSave()
+    if Resouled.AfterlifeShop:IsAfterlifeShop() and RunSave.AfterlifeShop["LevelLayout"] then
+        return RunSave.AfterlifeShop["LevelLayout"]
+    end
+    return nil
+end
+
+---@return string
+function Resouled.AfterlifeShop:GetRoomLookupKey(index)
+    return tostring(math.floor(index + 0.5))
+end

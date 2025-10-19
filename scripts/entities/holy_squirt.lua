@@ -13,7 +13,8 @@ local CONFIG = {
     AfterSpawnDashCooldown = 30,
     DashVelocityLengthGain = 0.7, -- how much velocity it will gain per update while dashing, up to the max
     MaxDashVelocityLength = 12, -- max velocity length while dashing
-    DashDuration = "∞" -- unused (spierdalaj)
+    DashDuration = "∞", -- unused (spierdalaj)
+    OnDeathDipSpawnCount = 2
 }
 
 local CONSTANTS = {
@@ -102,3 +103,13 @@ local function onNpcUpdate(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onNpcUpdate, ENTITY.Type)
+
+---@param npc EntityNPC
+local function onNpcDeath(_, npc)
+    if not Resouled:MatchesEntityDesc(npc, ENTITY) then return end
+    local dip = Resouled:GetEntityByName("Holy Dip")
+    for _ = 1, CONFIG.OnDeathDipSpawnCount do
+        Game():Spawn(dip.Type, dip.Variant, npc.Position, Vector.Zero, npc, dip.SubType, Resouled:NewSeed())
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNpcDeath, ENTITY.Type)

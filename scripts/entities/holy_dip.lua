@@ -6,11 +6,12 @@ local CONFIG = {
     GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_WALLS,
     AfterSpawnDashCooldown = 90,
     DashDuration = 90,
-    ChargeVelocityGainX = 0.15,        -- how much velocity it will gain per update while charging up after spawning
-    ChargeVelocityRangeY = 2,          -- how much velocity it will gain or lose per update while charging up after spawning
-    MaxChargeVelocityVectorLength = 3, -- max velocity it can reach while charging up after spawning
-    MaxDashVelocityVectorLength = 20,  -- max velocity it can reach while dashing
-    DashVelocityLengthGain = 3,        -- how much velocity it will gain per update while dashing, up to the max
+    ChargeVelocityGainX = 0.15,           -- how much velocity it will gain per update while charging up after spawning
+    ChargeVelocityRangeY = 2,             -- how much velocity it will gain or lose per update while charging up after spawning
+    MaxChargeVelocityVectorLength = 3,    -- max velocity it can reach while charging up after spawning
+    MaxDashVelocityVectorLength = 20,     -- max velocity it can reach while dashing
+    DashVelocityLengthGain = 2,           -- how much velocity it will gain per update while dashing, up to the max
+    DashVelocityCollisionReduction = 0.4, -- how much velocity it will lose on collision while dashing
 }
 
 local CONSTANTS = {
@@ -102,6 +103,15 @@ local function onNpcUpdate(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onNpcUpdate, ENTITY.Type)
+
+---@param npc EntityNPC
+---@param gridIndex integer
+---@param gridEntity GridEntity | nil
+local function onNpcGridCollision(_, npc, gridIndex, gridEntity)
+    if not Resouled:MatchesEntityDesc(npc, ENTITY) then return end
+    npc.Velocity = npc.Velocity * (1 - CONFIG.DashVelocityCollisionReduction)
+end
+Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_GRID_COLLISION, onNpcGridCollision, ENTITY.Type)
 
 local function onEntityTakeDamage(_, entity, amount, flags, source, countdown)
     if Resouled:MatchesEntityDesc(entity, ENTITY) then

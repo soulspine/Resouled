@@ -73,6 +73,7 @@ if REPENTOGON and MinimapAPI then
     --- ALL RESOULED SCRIPTS
 
     include("scripts.character_start")
+    include("scripts.status_effects")
     include("scripts.items")
     include("scripts.effects")
     include("scripts.curses")
@@ -83,7 +84,6 @@ if REPENTOGON and MinimapAPI then
     include("scripts.buffs")
     include("scripts.entities")
     include("scripts.afterlife_shop")
-    include("scripts.status_effects")
     include("scripts.eid")
     include("scripts.other")
 

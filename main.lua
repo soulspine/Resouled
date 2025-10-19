@@ -84,7 +84,6 @@ if REPENTOGON and MinimapAPI then
     include("scripts.buffs")
     include("scripts.entities")
     include("scripts.afterlife_shop")
-    include("scripts.eid")
     include("scripts.other")
 
     for _, func in ipairs(thingsToRunAfterImports) do

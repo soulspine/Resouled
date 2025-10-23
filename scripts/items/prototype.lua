@@ -417,4 +417,32 @@ local function handlePassiveDataTransferUponDrop_Init(_, pickup)
     print(itemData.Prototype)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, handlePassiveDataTransferUponDrop_Init,
-    PickupVariant.PICKUP_COLLECTIBLE)
+PickupVariant.PICKUP_COLLECTIBLE)
+
+---@param pickup EntityPickup
+---@param collider Entity
+local function onPickupCollision(_, pickup, collider)
+
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_COLLISION, onPickupCollision, PickupVariant.PICKUP_COLLECTIBLE)
+
+---@param id CollectibleType
+---@param player EntityPlayer
+local function postAddCollectible(_, id, _, _, _, _, player)
+    if id ~= CONSTANTS.Items.Passive then return end
+
+    local data = player:GetData()
+    if not data.Resouled_PrototypePickupSave then return end
+
+    local runSave = SAVE_MANAGER.GetRunSave(player).Prototype
+    if not runSave then runSave = {} end
+
+    local collectibleHistory = player:GetHistory():GetCollectiblesHistory()
+
+    for _, item in pairs(collectibleHistory) do
+        if not runSave[tostring(item:GetTime())] then
+            runSave[tostring(item:GetTime())] = data.Resouled_PrototypePickupSave
+        end
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, postAddCollectible)

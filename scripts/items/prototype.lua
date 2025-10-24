@@ -380,69 +380,92 @@ end
 Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, postPlayerRender)
 
 ---@param pickup EntityPickup
-local function handlePassiveDataTransferUponDrop_Init(_, pickup)
+local function handlePassiveDataTransferUponDrop_FirstUpdate(_, pickup)
+    if pickup.FrameCount > 1 then return end
     if pickup.SubType ~= CONSTANTS.Items.Passive then return end
     local itemData = SAVE_MANAGER.GetRoomFloorSave(pickup).NoRerollSave
     Resouled.Iterators:IterateOverPlayers(function(player)
-        local playerData = SAVE_MANAGER.GetRunSave(player).Prototype
+        local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+        local playerData = playerRunSave.Prototype
         if not playerData then return end
 
         local itemHistory = player:GetHistory():GetCollectiblesHistory()
 
         local found = false
-        local containerId = 0
-        for _, container in ipairs(playerData) do
-            containerId = containerId + 1
+        for i, container in ipairs(playerData) do
             local bitset = container.Bitset
             local time = container.Time
 
             for _, item in ipairs(itemHistory) do
-                -- item history is not updated here yet so i can just do this
-                if found then break end
-
-                if item:GetTime() == time then
-                    itemData.Prototype = bitset
+                if item:GetTime() > time or found then break end
+                if item:GetTime() == time and item:GetItemID() == CONSTANTS.Items.Passive then
                     found = true
                 end
             end
 
-            if found then break end
-        end
+            if not found then
+                itemData.Prototype = bitset
+                table.remove(playerData, i)
 
-        if found then
-            table.remove(playerData, containerId)
-            return
+                if #playerData == 0 then
+                    playerRunSave.Prototype = nil
+                end
+            end
         end
     end)
-    print(itemData.Prototype)
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, handlePassiveDataTransferUponDrop_Init,
-PickupVariant.PICKUP_COLLECTIBLE)
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, handlePassiveDataTransferUponDrop_FirstUpdate,
+    PickupVariant.PICKUP_COLLECTIBLE)
 
 ---@param pickup EntityPickup
 ---@param collider Entity
-local function onPickupCollision(_, pickup, collider)
+local function passiveCollisionBitsetTransfer(_, pickup, collider)
+    if pickup.SubType ~= CONSTANTS.Items.Passive then return end
+    local player = collider:ToPlayer()
+    if not player then return end
+    local itemSave = SAVE_MANAGER.GetRoomFloorSave(pickup).NoRerollSave
+    if not itemSave.Prototype then return end
 
+    local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+
+    if not playerRunSave.PrototypeQueue then
+        playerRunSave.PrototypeQueue = {}
+    end
+
+    table.insert(playerRunSave.PrototypeQueue, itemSave.Prototype)
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_COLLISION, onPickupCollision, PickupVariant.PICKUP_COLLECTIBLE)
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_COLLISION, passiveCollisionBitsetTransfer,
+    PickupVariant.PICKUP_COLLECTIBLE)
 
----@param id CollectibleType
+---@param item CollectibleType
+---@param charge integer
+---@param firstTime boolean
+---@param slot ActiveSlot
+---@param varData integer
 ---@param player EntityPlayer
-local function postAddCollectible(_, id, _, _, _, _, player)
-    if id ~= CONSTANTS.Items.Passive then return end
+local function onPassiveGetPostCollision(_, item, charge, firstTime, slot, varData, player)
+    if item ~= CONSTANTS.Items.Passive then return end
+    local playerData = SAVE_MANAGER.GetRunSave(player)
+    if not playerData.PrototypeQueue then return end
 
-    local data = player:GetData()
-    if not data.Resouled_PrototypePickupSave then return end
+    local itemHistory = player:GetHistory():GetCollectiblesHistory()
+    if not playerData.Prototype then
+        playerData.Prototype = {}
+    end
 
-    local runSave = SAVE_MANAGER.GetRunSave(player).Prototype
-    if not runSave then runSave = {} end
+    table.insert(playerData.Prototype, {
+        Time = itemHistory[#itemHistory]:GetTime(),
+        Bitset = playerData.PrototypeQueue[1]
+    })
 
-    local collectibleHistory = player:GetHistory():GetCollectiblesHistory()
+    table.remove(playerData.PrototypeQueue, 1)
 
-    for _, item in pairs(collectibleHistory) do
-        if not runSave[tostring(item:GetTime())] then
-            runSave[tostring(item:GetTime())] = data.Resouled_PrototypePickupSave
-        end
+    if #playerData.PrototypeQueue == 0 then
+        playerData.PrototypeQueue = nil
+    end
+
+    for _, field in ipairs(playerData.Prototype) do
+        print(field.Time, field.Bitset)
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, postAddCollectible)
+Resouled:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, onPassiveGetPostCollision)

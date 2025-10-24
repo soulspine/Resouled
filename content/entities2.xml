@@ -83,6 +83,7 @@
     <entity name="Pink Cracked Egg Particle" id="1000" variant="444" subtype="2" anm2path="effects/particles/egg_cracked.anm2" friction="1"/>
     <entity name="White Cracked Egg Particle" id="1000" variant="444" subtype="3" anm2path="effects/particles/egg_cracked.anm2" friction="1"/>
     <entity name="Clear Cracked Egg Particle" id="1000" variant="444" subtype="4" anm2path="effects/particles/egg_cracked.anm2" friction="1"/>
+    <entity name="Afterlife Backdrop Decoration" id="1000" variant="445" subtype="0" anm2path="misc/afterlife_backdrop_decoration.anm2" friction="1"/>
 
 <!-- Familiars-->
     <entity name="A Friend" id="3" variant="244" subtype="0" anm2path="a_friend.anm2" collisionMass="5" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="16" tags="cansacrifice"/>

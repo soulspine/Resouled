@@ -1,8 +1,22 @@
+local game = Game()
+
 local DeathStatue = Resouled.Stats.DeathStatue
 local BuffPedestal = Resouled.Stats.BuffPedestal
 local WiseSkull = Resouled.Stats.WiseSkull
 
 local ShopLevels = Resouled.AfterlifeShop.ShopLevels
+
+local DecorationConfig = {
+    MinDecorations = 5,
+    MaxDecorations = 15,
+
+    Variant = Isaac.GetEntityVariantByName("Afterlife Backdrop Decoration"),
+    SubType = Isaac.GetEntitySubTypeByName("Afterlife Backdrop Decoration"),
+
+    AniamationNum = 21,
+
+    SpriteWidth = 24,
+}
 
 ---@param position Vector
 local function spawnBuffPedestal(position)
@@ -126,6 +140,66 @@ local layouts = {
     [Resouled.AfterlifeShop.RoomTypes.SecretFight] = bossfightLayout,
 }
 
+---@param seed integer
+local function advanceSeed(seed)
+    return seed + 169
+end
+
+---@param squarePos Vector
+---@param squareSize number
+---@param pos Vector
+local function isInSquareArea(squarePos, squareSize, pos)
+    local topLeft = squarePos - Vector(squareSize/2, squareSize/2)
+    local bottomRight = squarePos + Vector(squareSize/2, squareSize/2)
+
+    return pos.X >= topLeft.X and pos.X <= bottomRight.X and pos.Y >= topLeft.Y and pos.Y <= bottomRight.Y
+end
+
+---@param room Room
+local function replaceBackdropDetails(room)
+    local level = game:GetLevel()
+    local startSeed = game:GetSeeds():GetStartSeed()
+
+    ---@param grid GridEntity | nil
+    Resouled.Iterators:IterateOverGrid(function(grid)
+        if grid and grid:GetType() == GridEntityType.GRID_DECORATION then
+            room:RemoveGridEntityImmediate(grid:GetGridIndex(), 0, false)
+        end
+    end)
+
+    local seed = level:GetCurrentRoomIndex() + startSeed
+
+    local rng = RNG(seed)
+
+    local decorationNum = rng:RandomInt(DecorationConfig.MinDecorations, DecorationConfig.MaxDecorations + 1)
+
+    local decorationPositions = {}
+
+    local topLeft = room:GetTopLeftPos() + Vector(DecorationConfig.SpriteWidth, DecorationConfig.SpriteWidth)
+    local bottomRight = room:GetBottomRightPos() + Vector(-DecorationConfig.SpriteWidth, -DecorationConfig.SpriteWidth)
+
+    for _ = 1, decorationNum do
+        rng:SetSeed(seed)
+
+        local pos = Vector(rng:RandomInt(topLeft.X, bottomRight.X), rng:RandomInt(topLeft.Y, bottomRight.Y))
+        for _, position in pairs(decorationPositions) do
+            while isInSquareArea(position, DecorationConfig.SpriteWidth, pos) do
+                seed = advanceSeed(seed)
+                rng:SetSeed(seed)
+                pos = Vector(rng:RandomInt(topLeft.X, bottomRight.X), rng:RandomInt(topLeft.Y, bottomRight.Y))
+            end
+        end
+
+        table.insert(decorationPositions, pos)
+
+        local detail = game:Spawn(EntityType.ENTITY_EFFECT, DecorationConfig.Variant, pos, Vector.Zero, nil, DecorationConfig.SubType, seed):ToEffect()
+        detail.DepthOffset = -1000
+        detail:AddEntityFlags(EntityFlag.FLAG_BACKDROP_DETAIL)
+        detail:GetSprite():Play(tostring(rng:RandomInt(DecorationConfig.AniamationNum + 1)), true)
+
+        seed = advanceSeed(seed)
+    end
+end
 
 local function postNewRoom()
     if Resouled.AfterlifeShop:IsAfterlifeShop() then
@@ -147,12 +221,8 @@ local function postNewRoom()
             end
         end
 
-        ---@param grid GridEntity | nil
-        Resouled.Iterators:IterateOverGrid(function(grid)
-            if grid and grid:GetType() == GridEntityType.GRID_DECORATION then
-                room:RemoveGridEntityImmediate(grid:GetGridIndex(), 0, false)
-            end
-        end)
+        replaceBackdropDetails(room)
+        
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)

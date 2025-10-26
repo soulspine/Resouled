@@ -7,6 +7,7 @@ local CONFIG = {
     SpawnVelocityLength = 20,
     DashVelocityLengthDecrease = 0.03,    -- how much velocity it will lose per update
     DashVelocityCollisionReduction = 0.1, -- how much velocity % it will lose on collision while dashing
+    DisappearDuration = 25,               -- how many updates it will take to disappear before dying
 }
 
 local CONSTANTS = {
@@ -23,6 +24,7 @@ local function onNpcInit(_, npc)
     npc:GetData().Resouled__HolyDip = {
         MaxVelocityLength = CONFIG.SpawnVelocityLength,
         InitialVelocityLength = CONFIG.SpawnVelocityLength,
+        Dying = false,
     }
     ---@diagnostic disable-next-line: param-type-mismatch
     npc:AddEntityFlags(CONFIG.EntityFlags)
@@ -49,6 +51,15 @@ local function onNpcUpdate(_, npc)
 
     sprite.PlaybackSpeed = velocityProgress
 
+    if data.Dying then
+        sprite.Color.A = sprite.Color.A - 1 / CONFIG.DisappearDuration
+
+        if sprite.Color.A < 0 then
+            npc:Die()
+        end
+        return
+    end
+
     if velocityProgress > 0 then
         npc.Velocity = npc.Velocity:Resized(data.MaxVelocityLength)
 
@@ -67,7 +78,7 @@ local function onNpcUpdate(_, npc)
         data.MaxVelocityLength = math.max(0, data.MaxVelocityLength - CONFIG.DashVelocityLengthDecrease)
         return
     elseif sprite:IsPlaying(CONSTANTS.Animations.Dash) then
-        npc:Die()
+        data.Dying = true
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onNpcUpdate, ENTITY.Type)

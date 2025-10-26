@@ -1,36 +1,30 @@
 local ENTITY = Resouled:GetEntityByName("Holy Dip")
 
 local CONFIG = {
-    EntityFlags = EntityFlag.FLAG_NO_BLOOD_SPLASH,
+    EntityFlags = EntityFlag.FLAG_NO_BLOOD_SPLASH | EntityFlag.FLAG_NO_PHYSICS_KNOCKBACK,
     EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL,
     GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_WALLS,
-    AfterSpawnDashCooldown = 90,
-    DashDuration = 90,
-    ChargeVelocityGainX = 0.15,           -- how much velocity it will gain per update while charging up after spawning
-    ChargeVelocityRangeY = 2,             -- how much velocity it will gain or lose per update while charging up after spawning
-    MaxChargeVelocityVectorLength = 3,    -- max velocity it can reach while charging up after spawning
-    MaxDashVelocityVectorLength = 20,     -- max velocity it can reach while dashing
-    DashVelocityLengthGain = 2,           -- how much velocity it will gain per update while dashing, up to the max
-    DashVelocityCollisionReduction = 0.4, -- how much velocity it will lose on collision while dashing
+    SpawnVelocityLength = 20,
+    DashVelocityLengthDecrease = 0.03,    -- how much velocity it will lose per update
+    DashVelocityCollisionReduction = 0.1, -- how much velocity % it will lose on collision while dashing
 }
 
 local CONSTANTS = {
     Animations = {
-        Idle = "Idle",
-        Dash = "Move",
-        Flush = "Flush",
+        Spawn = "Drop",
+        Dash = "Spin",
     }
 }
 
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
     if not Resouled:MatchesEntityDesc(npc, ENTITY) then return end
-    npc:GetSprite():Play(CONSTANTS.Animations.Idle, true)
+    npc:GetSprite():Play(CONSTANTS.Animations.Spawn, true)
     npc:GetData().Resouled__HolyDip = {
-        DashCooldown = CONFIG.AfterSpawnDashCooldown,
-        DashDuration = CONFIG.DashDuration,
-        RNG = RNG(npc.InitSeed, 22)
+        MaxVelocityLength = CONFIG.SpawnVelocityLength,
+        InitialVelocityLength = CONFIG.SpawnVelocityLength,
     }
+    ---@diagnostic disable-next-line: param-type-mismatch
     npc:AddEntityFlags(CONFIG.EntityFlags)
     npc.EntityCollisionClass = CONFIG.EntityCollisionClass
     npc.GridCollisionClass = CONFIG.GridCollisionClass
@@ -41,43 +35,24 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, ENTITY.Type)
 local function onNpcUpdate(_, npc)
     if not Resouled:MatchesEntityDesc(npc, ENTITY) then return end
 
-    local data = npc:GetData().Resouled__HolyDip
     local sprite = npc:GetSprite()
-    ---@type RNG
-    local rng = data.RNG
 
-    if data.DashCooldown > 0 then
-        data.DashCooldown = data.DashCooldown - 1
-        local setNegative = npc.Velocity.X > 0
-
-        npc.Velocity = Vector(
-            math.abs(npc.Velocity.X) + CONFIG.ChargeVelocityGainX,
-            npc.Velocity.Y + rng:RandomInt(-CONFIG.ChargeVelocityRangeY * 100, CONFIG.ChargeVelocityRangeY * 100) / 100
-        )
-        if setNegative then
-            npc.Velocity = Vector(-npc.Velocity.X, npc.Velocity.Y)
-        end
-
-        if npc.Velocity:Length() > CONFIG.MaxChargeVelocityVectorLength then
-            npc.Velocity = npc.Velocity:Resized(CONFIG.MaxChargeVelocityVectorLength)
-        end
-
-        return -- do nothing until cooldown is over
-    elseif sprite:IsPlaying(CONSTANTS.Animations.Idle) then
+    if sprite:IsPlaying(CONSTANTS.Animations.Spawn) then return end
+    if sprite:IsFinished(CONSTANTS.Animations.Spawn) then
         sprite:Play(CONSTANTS.Animations.Dash, true)
+        npc.Velocity = (npc:GetPlayerTarget().Position - npc.Position):Resized(CONFIG.SpawnVelocityLength)
     end
 
-    if data.DashDuration > 0 then
-        local velLength = npc.Velocity:Length()
-        if velLength < CONFIG.MaxDashVelocityVectorLength then
-            npc.Velocity = npc.Velocity:Resized(velLength + CONFIG.DashVelocityLengthGain)
-        else
-            npc.Velocity = npc.Velocity:Resized(CONFIG.MaxDashVelocityVectorLength)
-        end
+    local data = npc:GetData().Resouled__HolyDip
 
-        sprite.FlipX = npc.Velocity.X < 0
+    local velocityProgress = data.MaxVelocityLength / data.InitialVelocityLength
 
-        local oValues = 1 - data.DashDuration / CONFIG.DashDuration
+    sprite.PlaybackSpeed = velocityProgress
+
+    if velocityProgress > 0 then
+        npc.Velocity = npc.Velocity:Resized(data.MaxVelocityLength)
+
+        local oValues = 1 - velocityProgress
 
         sprite.Color = Color(
             sprite.Color.R,
@@ -89,16 +64,9 @@ local function onNpcUpdate(_, npc)
             oValues
         )
 
-        data.DashDuration = data.DashDuration - 1
+        data.MaxVelocityLength = math.max(0, data.MaxVelocityLength - CONFIG.DashVelocityLengthDecrease)
         return
     elseif sprite:IsPlaying(CONSTANTS.Animations.Dash) then
-        npc.Velocity = Vector.Zero
-        sprite:Play(CONSTANTS.Animations.Flush, true)
-        npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
-        return
-    end
-
-    if sprite:IsFinished(CONSTANTS.Animations.Flush) then
         npc:Die()
     end
 end
@@ -109,7 +77,9 @@ Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onNpcUpdate, ENTITY.Type)
 ---@param gridEntity GridEntity | nil
 local function onNpcGridCollision(_, npc, gridIndex, gridEntity)
     if not Resouled:MatchesEntityDesc(npc, ENTITY) then return end
-    npc.Velocity = npc.Velocity * (1 - CONFIG.DashVelocityCollisionReduction)
+    local data = npc:GetData()
+    data.Resouled__HolyDip.MaxVelocityLength = data.Resouled__HolyDip.MaxVelocityLength *
+        (1 - CONFIG.DashVelocityCollisionReduction)
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_GRID_COLLISION, onNpcGridCollision, ENTITY.Type)
 

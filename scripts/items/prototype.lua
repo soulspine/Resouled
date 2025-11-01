@@ -2,14 +2,16 @@ local CONFIG = {
     ItemName = "Prototype",
     FontPath = "font/teammeatfont16.fnt",
     TextScale = Vector(0.5, 0.5),
-    InitialPositionOffset = Vector(0, -45),
+    InitialPositionOffset = Vector(0, -32),
     BetweenRowsSpacing = 15,
     NotSelectedString = "Unselected",
-    NotSelectedColor = KColor(1, 0, 0, 1), -- red
-    SelectedColor = KColor(1, 1, 1, 1),    -- white
-    HighlightColor = KColor(1, 1, 0, 1),   -- yellow
-    InputCooldown = 10,                    -- how many updates between input changes
+    NotSelectedColor = KColor(1, 0, 0, 1),
+    SelectedColor = KColor(0, 0, 0, 1),
+    HighlightColor = KColor(0.3, 0.3, 0.3, 1),
+    LabelColor = KColor(0.5, 0.5, 0.5, 1),
+    InputCooldown = 10, -- how many updates between input changes
     -- each option has a bitfield assinged to it representing the choice but they are hardcoded so adding new ones requires code changes
+    TextOpacityStep = 0.1,
     OptionStrings = {
         {
             "Upon entering a room",
@@ -27,10 +29,33 @@ local CONFIG = {
             "Loses 1-3 pickups"
         },
     },
+    LabelButtonSpacing = 8,
     MenuButtonActions = {
-        Confirm = ButtonAction.ACTION_ITEM,
-        Cancel = ButtonAction.ACTION_DROP,
-    }
+        Confirm = {
+            Label = "Confirm",
+            Action = ButtonAction.ACTION_ITEM,
+            ControllerAnimation = "LT",
+            KeyboardButtonLabel = "SPACE"
+        },
+        Cancel = {
+            Label = "Cancel",
+            Action = ButtonAction.ACTION_DROP,
+            ControllerAnimation = "RT",
+            KeyboardButtonLabel = "CTRL"
+        },
+    },
+    BackgroundScale = Vector(2.3, 1.75),
+    BackgroundAnimations = {
+        In = {
+            Name = "FoldIn",
+            FrameNum = 19
+        },
+        Out = {
+            Name = "FoldOut",
+            FrameNum = 19
+        }
+    },
+    MenuOpacityStep = 0.2
 }
 
 local CONSTANTS = {
@@ -170,6 +195,12 @@ local function onDummyActiveUse(_, item, rng, player, flags, slot, varData)
         Selections = {},
         CurrentHighlight = 1,
         Slot = slot,
+        TextOpacity = 0,
+        BgAnimation = CONFIG.BackgroundAnimations.Out.Name,
+        BgFrame = 0,
+        Selected = false,
+        Cancelled = false,
+        ReadyToDelete = false,
     }
 
     -- selection 0 translates to unselected in the menu, filling it up with them first
@@ -222,8 +253,6 @@ local function postPlayerUpdate(_, player)
     local data = fullData.Resouled__PrototypeConfig
     if not data then return end
 
-    local runSave = SAVE_MANAGER.GetRunSave(player)
-
     local slot = data.Slot
     local selections = data.Selections
     local inputVector = player:GetMovementInput() + player:GetShootingInput()
@@ -232,25 +261,11 @@ local function postPlayerUpdate(_, player)
     local numSelections = #selections
     local inputTolerance = 0.25
 
-    -- cancel action
-    if Input.IsActionPressed(CONFIG.MenuButtonActions.Cancel, player.ControllerIndex) then
+    if data.ReadyToDelete then
         fullData.Resouled__PrototypeConfig = nil
-        return
-    end
 
-    -- confirm action
-    if Input.IsActionPressed(CONFIG.MenuButtonActions.Confirm, player.ControllerIndex) then
-        local allSelectionsMade = true
-
-        for _, selection in ipairs(selections) do
-            if selection == 0 then
-                allSelectionsMade = false
-                break
-            end
-        end
-
-        if allSelectionsMade then
-            fullData.Resouled__PrototypeConfig = nil
+        if data.Selected then
+            local runSave = SAVE_MANAGER.GetRunSave(player)
 
             local bitset = 0
             local offset = 0
@@ -280,7 +295,28 @@ local function postPlayerUpdate(_, player)
                     Bitset = bitset
                 })
             end
+        end
+    end
 
+    -- cancel action
+    if Input.IsActionPressed(CONFIG.MenuButtonActions.Cancel.Action, player.ControllerIndex) then
+        data.Cancelled = true
+        return
+    end
+
+    -- confirm action
+    if Input.IsActionPressed(CONFIG.MenuButtonActions.Confirm.Action, player.ControllerIndex) then
+        local allSelectionsMade = true
+
+        for _, selection in ipairs(selections) do
+            if selection == 0 then
+                allSelectionsMade = false
+                break
+            end
+        end
+
+        if allSelectionsMade then
+            data.Selected = true
             return
         end
     end
@@ -324,7 +360,24 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_ROOM_EXIT, removeContainerPreRoomExit)
 
 local font = Font()
 font:Load(CONFIG.FontPath)
---local background = Resouled:CreateLoadedSprite()
+local background = Resouled:CreateLoadedSprite("gfx/ui/prototype_menu.anm2")
+background.Scale = CONFIG.BackgroundScale
+
+local buttons = Resouled:CreateLoadedSprite("gfx/ui/prototype_keys.anm2")
+local keycapParts = {
+    Left = {
+        Width = 4,
+        Name = "KeycapLeft"
+    },
+    Right = {
+        Width = 4,
+        Name = "KeycapRight"
+    },
+    Middle = {
+        Width = 8,
+        Name = "KeycapMiddle"
+    }
+}
 
 local boxWidth = 0
 
@@ -334,47 +387,183 @@ for _, optionList in ipairs(CONFIG.OptionStrings) do
     end
 end
 
----@param player EntityPickup
+---@param player EntityPlayer
 ---@param offset Vector
 local function postPlayerRender(_, player, offset)
     local data = player:GetData().Resouled__PrototypeConfig
     if not data then return end
 
-    local onScreenPos = Isaac.WorldToScreen(player.Position) + CONFIG.InitialPositionOffset - Vector(boxWidth / 2, 0)
+    local isaacPos = Isaac.WorldToScreen(player.Position)
+    local textOnScreenPos = isaacPos - Vector(boxWidth / 2, 0) + CONFIG.InitialPositionOffset
 
-    for i, selection in ipairs(data.Selections) do
-        local text = CONFIG.NotSelectedString
-        local color = CONFIG.NotSelectedColor
+    if (data.Selected or data.Cancelled) and data.BgAnimation ~= CONFIG.BackgroundAnimations.In.Name then
+        data.BgAnimation = CONFIG.BackgroundAnimations.In.Name
+        data.BgFrame = 0
+    end
 
-        if selection ~= 0 then
-            text = CONFIG.OptionStrings[i][selection]
-            color = CONFIG.SelectedColor
+    if not background:IsPlaying(data.BgAnimation) then
+        background:Play(data.BgAnimation, true)
+    end
+
+    if not background:GetFrame() == data.BgFrame then
+        background:SetFrame(data.BgFrame)
+    end
+
+    if Game():IsPaused() then goto noFrameAdvance end
+
+    if data.BgAnimation == CONFIG.BackgroundAnimations.Out.Name then
+        if data.BgFrame < CONFIG.BackgroundAnimations.Out.FrameNum - 1 then
+            data.BgFrame = data.BgFrame + 1
+            background:Update()
         end
 
-        font:DrawStringScaled(text,
-            onScreenPos.X, onScreenPos.Y,
+        if data.BgFrame == CONFIG.BackgroundAnimations.Out.FrameNum - 1 then
+            data.TextOpacity = math.min(1, data.TextOpacity + CONFIG.TextOpacityStep)
+        end
+    elseif data.BgAnimation == CONFIG.BackgroundAnimations.In.Name then
+        data.TextOpacity = math.max(0, data.TextOpacity - CONFIG.TextOpacityStep)
+
+        if data.BgFrame < CONFIG.BackgroundAnimations.In.FrameNum - 1 then
+            data.BgFrame = data.BgFrame + 1
+            background:Update()
+        end
+
+        if data.BgFrame == CONFIG.BackgroundAnimations.In.FrameNum - 1 then
+            data.ReadyToDelete = true
+        end
+    end
+
+    ::noFrameAdvance::
+
+    background:Render(isaacPos)
+
+    if data.TextOpacity > 0 then
+        for i, selection in ipairs(data.Selections) do
+            local text = CONFIG.NotSelectedString
+            local color = CONFIG.NotSelectedColor
+
+            if selection ~= 0 then
+                text = CONFIG.OptionStrings[i][selection]
+                color = CONFIG.SelectedColor
+            end
+
+            local highlightColor = CONFIG.HighlightColor
+            highlightColor.Alpha = data.TextOpacity
+
+            font:DrawStringScaled(text,
+                textOnScreenPos.X, textOnScreenPos.Y,
+                CONFIG.TextScale.X, CONFIG.TextScale.Y,
+                color, boxWidth, true
+            )
+
+            color.Alpha = data.TextOpacity
+
+            if i == data.CurrentHighlight then
+                local width = font:GetStringWidth(text) * CONFIG.TextScale.X / 2 * 1.2
+
+                font:DrawStringScaled(
+                    "<",
+                    textOnScreenPos.X - width, textOnScreenPos.Y,
+                    CONFIG.TextScale.X, CONFIG.TextScale.Y,
+                    highlightColor, boxWidth, true
+                )
+                font:DrawStringScaled(
+                    ">",
+                    textOnScreenPos.X + width, textOnScreenPos.Y,
+                    CONFIG.TextScale.X, CONFIG.TextScale.Y,
+                    highlightColor, boxWidth, true
+                )
+            end
+
+            textOnScreenPos.Y = textOnScreenPos.Y + CONFIG.BetweenRowsSpacing
+        end
+
+        textOnScreenPos.Y = textOnScreenPos.Y + CONFIG.BetweenRowsSpacing
+
+        local buttonHeight = textOnScreenPos.Y - CONFIG.BetweenRowsSpacing / 2
+
+        local leftButtonPos = Vector(textOnScreenPos.X - boxWidth / 2, buttonHeight)
+        local rightButtonPos = Vector(textOnScreenPos.X + 1.5 * boxWidth, buttonHeight)
+
+        buttons.Color.A = data.TextOpacity
+
+        if Resouled.Player:IsUsingGamepad(player) then
+            buttons:Play(CONFIG.MenuButtonActions.Confirm.ControllerAnimation, true)
+            buttons:Render(leftButtonPos)
+
+            buttons:Play(CONFIG.MenuButtonActions.Cancel.ControllerAnimation, true)
+            buttons:Render(rightButtonPos)
+        else
+            -- single letter has width of 12 so this is the baseline for a scale 1 keycap
+            local leftTextWidth = math.ceil(font:GetStringWidth(CONFIG.MenuButtonActions.Confirm.KeyboardButtonLabel) *
+                CONFIG.TextScale.X)
+            buttons:Play(keycapParts.Left.Name, true)
+            buttons:Render(leftButtonPos)
+            local oneCharWidth = math.ceil(12 * CONFIG.TextScale.X)
+            local currentWidth = 0
+            if leftTextWidth > oneCharWidth then
+                buttons:Play(keycapParts.Middle.Name)
+                for _ = 1, math.floor(leftTextWidth / oneCharWidth) do
+                    buttons:Render(Vector(leftButtonPos.X + currentWidth, leftButtonPos.Y))
+                    currentWidth = currentWidth + keycapParts.Middle.Width
+                end
+                currentWidth = currentWidth - keycapParts.Middle.Width / 2
+            end
+            buttons:Play(keycapParts.Right.Name, true)
+            buttons:Render(Vector(leftButtonPos.X + currentWidth, leftButtonPos.Y))
+
+
+            font:DrawStringScaled(
+                CONFIG.MenuButtonActions.Confirm.KeyboardButtonLabel,
+                leftButtonPos.X, leftButtonPos.Y - keycapParts.Middle.Width / 2,
+                CONFIG.TextScale.X, CONFIG.TextScale.Y / 2,
+                KColor(0, 0, 0, data.TextOpacity), leftTextWidth, true
+            )
+
+
+            local rightTextWidth = math.ceil(font:GetStringWidth(CONFIG.MenuButtonActions.Cancel.KeyboardButtonLabel) *
+                CONFIG.TextScale.X)
+            buttons:Play(keycapParts.Right.Name, true)
+            buttons:Render(rightButtonPos)
+            local currentWidth = 0
+            if rightTextWidth > oneCharWidth then
+                buttons:Play(keycapParts.Middle.Name)
+                for _ = 1, math.floor(rightTextWidth / oneCharWidth) do
+                    buttons:Render(Vector(rightButtonPos.X - currentWidth, rightButtonPos.Y))
+                    currentWidth = currentWidth + keycapParts.Middle.Width
+                end
+                currentWidth = currentWidth - keycapParts.Middle.Width / 2
+            end
+            buttons:Play(keycapParts.Left.Name, true)
+            buttons:Render(Vector(rightButtonPos.X - currentWidth, rightButtonPos.Y))
+
+
+            font:DrawStringScaled(
+                CONFIG.MenuButtonActions.Cancel.KeyboardButtonLabel,
+                rightButtonPos.X - currentWidth, rightButtonPos.Y - keycapParts.Middle.Width / 2,
+                CONFIG.TextScale.X, CONFIG.TextScale.Y / 2,
+                KColor(0, 0, 0, data.TextOpacity), rightTextWidth, true
+            )
+
+            print(rightTextWidth, leftTextWidth)
+        end
+
+        local labelColor = CONFIG.LabelColor
+        labelColor.Alpha = data.TextOpacity
+
+        font:DrawStringScaled(
+            CONFIG.MenuButtonActions.Confirm.Label,
+            leftButtonPos.X - CONFIG.LabelButtonSpacing, textOnScreenPos.Y,
             CONFIG.TextScale.X, CONFIG.TextScale.Y,
-            color, boxWidth, true
+            labelColor, 0, false
         )
 
-        if i == data.CurrentHighlight then
-            local width = font:GetStringWidth(text) * CONFIG.TextScale.X / 2 * 1.2
-
-            font:DrawStringScaled(
-                "<",
-                onScreenPos.X - width, onScreenPos.Y,
-                CONFIG.TextScale.X, CONFIG.TextScale.Y,
-                CONFIG.HighlightColor, boxWidth, true
-            )
-            font:DrawStringScaled(
-                ">",
-                onScreenPos.X + width, onScreenPos.Y,
-                CONFIG.TextScale.X, CONFIG.TextScale.Y,
-                CONFIG.HighlightColor, boxWidth, true
-            )
-        end
-
-        onScreenPos.Y = onScreenPos.Y + CONFIG.BetweenRowsSpacing
+        font:DrawStringScaled(
+            CONFIG.MenuButtonActions.Cancel.Label,
+            rightButtonPos.X + CONFIG.LabelButtonSpacing - boxWidth, textOnScreenPos.Y,
+            CONFIG.TextScale.X, CONFIG.TextScale.Y,
+            labelColor, boxWidth, false
+        )
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, postPlayerRender)

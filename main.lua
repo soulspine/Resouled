@@ -48,6 +48,9 @@ if REPENTOGON and MinimapAPI then
     ---@type ProceduralMaxChargeModule
     Resouled.ProceduralMaxCharge = include("scripts.utility.procedural_max_charge")
 
+    ---@type PlayerModule
+    Resouled.Player = include("scripts.utility.player")
+
     include("scripts.utility.throwableitemlib").Init()
 
     include("scripts.stats")

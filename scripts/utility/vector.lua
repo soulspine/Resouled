@@ -17,7 +17,8 @@ function vectorModule:GetBounceOffGridElementVector(vector, entity1Pos, entity2P
         vector.X = -vector.X
     elseif dirHelper.X < 0 and dirHelper.Y >= -DISTANCE_FROM_GRID_ENTITY_CENTER and dirHelper.Y <= DISTANCE_FROM_GRID_ENTITY_CENTER then
         vector.X = -vector.X
-    elseif dirHelper.Y > 0 and dirHelper.X >= -DISTANCE_FROM_GRID_ENTITY_CENTER and dirHelper.X <= DISTANCE_FROM_GRID_ENTITY_CENTER then
+    end
+    if dirHelper.Y > 0 and dirHelper.X >= -DISTANCE_FROM_GRID_ENTITY_CENTER and dirHelper.X <= DISTANCE_FROM_GRID_ENTITY_CENTER then
         vector.Y = -vector.Y
     elseif dirHelper.Y < 0 and dirHelper.X >= -DISTANCE_FROM_GRID_ENTITY_CENTER and dirHelper.X <= DISTANCE_FROM_GRID_ENTITY_CENTER then
         vector.Y = -vector.Y

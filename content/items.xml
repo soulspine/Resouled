@@ -35,7 +35,8 @@
     <active id="33" name="Prototype" gfx="prototype.png" description="" quality="2" craftquality="2" tags="offensive"/>
     <passive id="34" name="Prototype_Passive" gfx="prototype.png" description="" quality="2" craftquality="-1" tags="offensive" hidden="true"/>
     <active id="35" name="Prototype_Active" gfx="prototype.png" description="" quality="2" craftquality="-1" tags="offensive" hidden="true"/>
-    <passive id="36"name="Stacy's Extra Head" gfx="stacyhead.png" description="" quality="1" craftquality="1" tags="offensive"/>
+    <passive id="36" name="Stacy's Extra Head" gfx="stacyhead.png" description="" quality="1" craftquality="1" tags="offensive"/>
+    <active id="37" name="Mini Nuke" gfx="mini_nuke.png" description="" quality="2" craftquality="2" tags="offensive" maxcharges="9"/>
 
     <trinket id="1" name="Handicapped Placard" description="" gfx="handicapped_placard.png"/>
     <trinket id="2" name="Hand me Downs" description="Pass them down to the ones in need" gfx="hand_me_downs.png"/>

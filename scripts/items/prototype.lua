@@ -60,9 +60,9 @@ local CONFIG = {
 
 local CONSTANTS = {
     Items = {
-        Dummy = Isaac.GetItemIdByName("Prototype"),
-        Active = Isaac.GetItemIdByName("Prototype_Active"),
-        Passive = Isaac.GetItemIdByName("Prototype_Passive"),
+        Dummy = Resouled.Enums.Items.PROTOTYPE_DUMMY,
+        Active = Resouled.Enums.Items.PROTOTYPE_ACTIVE,
+        Passive = Resouled.Enums.Items.PROTOTYPE_PASSIVE,
     },
 }
 

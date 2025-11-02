@@ -34,6 +34,10 @@ enums.Items = {
     TUMOR_BALL = Isaac.GetItemIdByName("Tumor Ball"),
     ULTRA_FLESH_KID = Isaac.GetItemIdByName("Ultra Flesh Kid"),
     UNSTABLE_DNA = Isaac.GetItemIdByName("Unstable DNA"),
+    PROTOTYPE_DUMMY = Isaac.GetItemIdByName("Prototype"),
+    PROTOTYPE_ACTIVE = Isaac.GetItemIdByName("Prototype_Active"),
+    PROTOTYPE_PASSIVE = Isaac.GetItemIdByName("Prototype_Passive"),
+    STACYS_EXTRA_HEAD = Isaac.GetItemIdByName("Stacy's Extra Head"),
 }
 
 enums.Trinkets = {

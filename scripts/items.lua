@@ -30,6 +30,7 @@ include("scripts.items.ultra_flesh_kid")
 include("scripts.items.bag_o_holes")
 include("scripts.items.fetal_haunt")
 include("scripts.items.prototype")
+include("scripts.items.stacys_extra_head")
 
 include("scripts.trinkets.recycling_sticker")
 include("scripts.trinkets.library_card")

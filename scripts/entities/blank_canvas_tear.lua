@@ -1,7 +1,7 @@
 local TEAR_TYPE = Isaac.GetEntityTypeByName("Blank Canvas Tear")
 local TEAR_VARIANT = Isaac.GetEntityVariantByName("Blank Canvas Tear")
 
-local GORE_VARIANT = Isaac.GetEntityVariantByName("Paper Gore Particle 1")
+local GORE_VARIANT = Isaac.GetEntityVariantByName("Paper Gore Particle")
 local GORE_PARTICLE_COUNT = 3
 
 local IDLE = "Idle"
@@ -55,9 +55,7 @@ local function postNpcCollision(_, npc, collider)
             player:TakeDamage(1, DamageFlag.DAMAGE_NO_MODIFIERS, EntityRef(npc.SpawnerEntity), 1)
             local randomNum = math.random(1, 3)
             SFXManager():Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
-            for _ = 1, GORE_PARTICLE_COUNT + math.random(-1, 1) do
-                Game():SpawnParticles(npc.Position, GORE_VARIANT, 1, math.random(3, 11), Color.Default, 0, math.random(1, 10)-1)
-            end
+            Resouled:SpawnPaperGore(npc.Position, GORE_PARTICLE_COUNT + math.random(-1, 1))
             npc:Remove()
         end
     end
@@ -69,9 +67,7 @@ local function postGridCollision(_, npc)
     if npc.Variant == TEAR_VARIANT then
         local randomNum = math.random(1, 3)
         SFXManager():Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
-        for _ = 1, GORE_PARTICLE_COUNT + math.random(-1, 1) do
-            Game():SpawnParticles(npc.Position, GORE_VARIANT, 1, math.random(3, 11), Color.Default, 0, math.random(1, 10)-1)
-        end
+        Resouled:SpawnPaperGore(npc.Position, GORE_PARTICLE_COUNT + math.random(-1, 1))
         npc:Remove()
     end
 end

@@ -23,7 +23,8 @@ local CursedFatty = {
 
 ---@type ProjectileParams
 local params = CursedFatty.ProjectileParams
-params.Color = Color(0.25, 0, 0.5, 1, 0.5 * 0.5, 0, 1 * 0.5)
+params.Color = Color(0.5, 0, 0.75, 1, 0.5 * 0.55, 0, 0.75 * 0.55)
+params.Variant = ProjectileVariant.PROJECTILE_TEAR
 
 local PICKUP_BLACKLIST = {
     [PickupVariant.PICKUP_BED] = true,

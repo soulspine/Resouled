@@ -24,9 +24,19 @@ local CurseFlyConfig = {
 
         for _, entity in pairs(Isaac.GetRoomEntities()) do
             local npc2 = entity:ToNPC()
-            if npc2 and npc2.Index ~= npc.Index and npc2.Type ~= npc.Type and npc2:IsActiveEnemy() and npc2:IsEnemy() and npc2:IsVulnerableEnemy() and not (npc.SpawnerEntity and npc.SpawnerEntity.Index == npc2.Index) then
-                enemies:AddOutcomeWeight(npc2.Index, math.floor(npc2.HitPoints/npc2.MaxHitPoints * 100 + math.abs(maxDistance - npc2.Position:Distance(npc.Position)/2) + 0.5))
-                enemiesIndexes[npc2.Index] = npc2
+            if npc2 then
+                local data = npc2:GetData()
+                
+                if npc2.Index ~= npc.Index and npc2.Type ~= npc.Type and npc2:IsActiveEnemy() and npc2:IsEnemy() and npc2:IsVulnerableEnemy() and not (npc.SpawnerEntity and npc.SpawnerEntity.Index == npc2.Index) and
+                not data.Resouled_NoCursedMulliganTargetting
+                then
+                    local weight = math.floor(npc2.HitPoints/npc2.MaxHitPoints * 100 + math.abs(maxDistance - npc2.Position:Distance(npc.Position)/2) + 0.5)
+                    if data.Resouled_CursedMulliganDeath then
+                        weight = math.max(weight - 15, 0)
+                    end
+                    enemies:AddOutcomeWeight(npc2.Index, weight)
+                    enemiesIndexes[npc2.Index] = npc2
+                end
             end
         end
         return enemiesIndexes[enemies:PickOutcome(RNG(npc.InitSeed))]
@@ -84,8 +94,11 @@ local ON_DEATH_SPAWNS = {
         Count = 1
     },
 }
-local ON_DEATH_SPAWN_MIN_COUNT = 2
-local ON_DEATH_SPAWN_MAX_COUNT = 5
+local ON_DEATH_CURSE_FLY_SPAWN_MIN_COUNT = 2
+local ON_DEATH_CURSE_FLY_SPAWN_MAX_COUNT = 5
+
+local ON_DEATH_FROM_POOL_SPAWN_MIN_COUNT = 1
+local ON_DEATH_FROM_POOL_SPAWN_MAX_COUNT = 2
 
 local DEATH_POOL = WeightedOutcomePicker()
 
@@ -97,7 +110,7 @@ end
 local function curseMulliganDeathEffect(npc)
     local rng = RNG(npc.InitSeed)
 
-    local spawnCount = rng:RandomInt(ON_DEATH_SPAWN_MIN_COUNT, ON_DEATH_SPAWN_MAX_COUNT)
+    local spawnCount = rng:RandomInt(ON_DEATH_CURSE_FLY_SPAWN_MIN_COUNT, ON_DEATH_CURSE_FLY_SPAWN_MAX_COUNT)
 
     for _ = 1, spawnCount do
         CurseFlyConfig.spawn(npc)
@@ -108,13 +121,15 @@ end
 local function curseMulliganCurseDeathEffect(npc)
     local rng = RNG(npc.InitSeed)
 
-    local spawnCount = rng:RandomInt(ON_DEATH_SPAWN_MIN_COUNT, ON_DEATH_SPAWN_MAX_COUNT)
+    local spawnCount = rng:RandomInt(ON_DEATH_FROM_POOL_SPAWN_MIN_COUNT, ON_DEATH_FROM_POOL_SPAWN_MAX_COUNT)
 
     for _ = 1, spawnCount do
         local config = ON_DEATH_SPAWNS[DEATH_POOL:PickOutcome(rng)]
         for _ = 1, config.Count do
             local spawn = Game():Spawn(config.T, config.V, npc.Position, Vector.Zero, npc, config.S, rng:GetSeed())
             spawn:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
+            spawn.Color = Color(1, 1, 1, 1, 0.125, 0, 0.25)
+            spawn:GetData().Resouled_NoCursedMulliganTargetting = true
         end
         Resouled:NewSeed()
     end
@@ -196,6 +211,7 @@ local function onNpcUpdate(_, npc)
 
         if sprite:IsEventTriggered("Flap") then
             CurseFlyConfig.smoke(npc, 1.25, 0.25)
+            SFXManager():Play(SoundEffect.SOUND_BIRD_FLAP, 0.25, nil, nil, 1.5)
         end
 
         local alpha = math.min(1, npc.Position:Distance(npc.Target.Position)/100, npc.FrameCount/15) * 1.5
@@ -226,6 +242,11 @@ local function onNpcUpdate(_, npc)
             local fly = Game():Spawn(EntityType.ENTITY_FLY, 0, npc.Target.Position + npc.Velocity:Resized(15), npc.Velocity, npc, 0, Random() + 1)
             fly:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
             fly.Velocity = npc.Velocity
+
+            color = fly:GetColor()
+            color.RO = color.RO + 0.5
+            color.BO = color.BO + 1
+            fly:SetColor(color, 10, 1, true, true)
 
             npc.Target:GetData().Resouled_CursedMulliganDeath = true
 

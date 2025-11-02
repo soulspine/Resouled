@@ -53,6 +53,11 @@
         <gibs amount="5" blood="1" bone="0" eye="0" gut="0" large="0"/>
     	<devolve id="229.0.0" weight="1" />
 	</entity>
+    <entity id="260" variant="10" subtype="1" name="Cursed Lil Haunt" baseHP="28" stageHP="0" boss="0" champion="0" collisionDamage="1" collisionMass="16" collisionRadius="13" friction="1" numGridCollisionPoints="12" shadowSize="11" portrait="173" anm2path="cursed_lil_haunt.anm2" gridCollision="none" tags="ghost">
+		<bestiary transform="0,0,1" anim="FloatChase" />
+        <gibs amount="6" blood="1" bone="0" eye="0" gut="0" large="0" />
+        <devolve id="260.10.0" weight="1" />
+    </entity>
     <entity anm2path="monsters/hunter.anm2" name="Hunter" id="416" variant="0" collisionMass="999" collisionRadius="15" friction="0" numGridCollisionPoints="12" collisionDamage="1"/>
     <entity name="Holy Portal" id="418" variant="0" anm2path="holy_portal.anm2" collisionMass="999" collisionRadius="20" friction="0" numGridCollisionPoints="12" collisionDamage="0" champion="0" shadowSize="26"/>
     <entity name="Holy Brain" id="419" variant="0" anm2path="holy_brain.anm2" collisionMass="10" friction="1" collisionRadius="18" collisionDamage="1" champion="1" baseHP="30" numGridCollisionPoints="12" shadowSize="22"/>

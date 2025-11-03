@@ -10,7 +10,7 @@ local SPEED_MULTI = 0.75
 
 local CREEP_SPAWN_CHANCE = 0.1
 local CREEP_PETRIFY_DISTANCE = 16
-local CREEP_COLOR = Color(1.25, 1.25, 1.25, 1, 0, 1, 2)
+local CREEP_COLOR = Color(0, 0, 0, 1, 0.55, 0.65, 0.8)
 
 local PETRIFY_COLOR = Color(0.1, 0.1, 0.1, 1, 0.35, 0.35, 0.35)
 

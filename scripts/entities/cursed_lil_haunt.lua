@@ -10,9 +10,7 @@ local TP_DOWN_END = "ResouledTeleportDownEnd"
 local DISTANCE_TO_TELEPORT = 150
 local POST_TELEPORT_DISTANCE = 125
 
-local PROJECTILE_PARAMS = ProjectileParams()
-PROJECTILE_PARAMS.Color = Color(0.5, 0, 0.75, 1, 0.5 * 0.55, 0, 0.75 * 0.55)
-PROJECTILE_PARAMS.Variant = ProjectileVariant.PROJECTILE_TEAR
+local PROJECTILE_PARAMS = Resouled.Stats:GetCursedProjectileParams()
 local PROJECTILE_SPEED = 10
 
 local DEFAULT_ENTITY_COLLISION_CLASS = EntityCollisionClass.ENTCOLL_ALL

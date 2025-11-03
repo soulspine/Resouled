@@ -2,6 +2,17 @@ Resouled.Stats = {}
 
 Resouled.Stats.CursedEnemyMorphChance = 0.1
 
+Resouled.Stats.CursedProjectileColor = Color(0.5, 0, 0.75, 1, 0.5 * 0.45, 0, 0.75 * 0.45)
+Resouled.Stats.CursedProjectileVariant = ProjectileVariant.PROJECTILE_TEAR
+
+---@return ProjectileParams
+function Resouled.Stats:GetCursedProjectileParams()
+    local x = ProjectileParams()
+    x.Color = Resouled.Stats.CursedProjectileColor
+    x.Variant = Resouled.Stats.CursedProjectileVariant
+    return x
+end
+
 Resouled.Stats.BlueKingCrownBuff = {
     [PickupVariant.PICKUP_BOMB] = {
         [BombSubType.BOMB_NORMAL] = {[1] = BombSubType.BOMB_DOUBLEPACK, [2] = BombSubType.BOMB_GOLDEN}

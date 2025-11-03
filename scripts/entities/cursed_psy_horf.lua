@@ -6,8 +6,8 @@ local CURSED_ENEMY_MORPH_CHANCE = 0.1
 
 local SHOOT = "ResouledShoot"
 
-local PROJECTILE_PARAMS = ProjectileParams()
-local PROJECTILE_FLAGS = (ProjectileFlags.SMART)
+local PROJECTILE_PARAMS = Resouled.Stats:GetCursedProjectileParams()
+PROJECTILE_PARAMS.BulletFlags = ProjectileFlags.SMART
 
 local REFLECTED_BULLET_SPEED = 2
 
@@ -17,14 +17,6 @@ local function onNpcInit(_, npc)
     if Game():GetLevel():GetCurses() > 0 then
         Resouled:TryEnemyMorph(npc, CURSED_ENEMY_MORPH_CHANCE, CURSED_PSY_HORF_TYPE, CURSED_PSY_HORF_VARIANT, CURSED_PSY_HORF_SUBTYPE)
     end
-    
-
-    --Add halo
-    if npc.Variant == CURSED_PSY_HORF_VARIANT then
-        local data = npc:GetData()
-        PROJECTILE_PARAMS.BulletFlags = PROJECTILE_FLAGS
-        data.ProjectileParams = PROJECTILE_PARAMS
-    end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CURSED_PSY_HORF_TYPE)
 
@@ -32,9 +24,8 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CURSED_PSY_HORF_T
 local function preNpcUpdate(_, npc)
     if npc.Variant == CURSED_PSY_HORF_VARIANT then
         local sprite = npc:GetSprite()
-        local data = npc:GetData()
         if sprite:IsEventTriggered(SHOOT) then
-            npc:FireProjectiles(npc.Position, (npc:GetPlayerTarget().Position - npc.Position) / 25, 0, data.ProjectileParams)
+            npc:FireProjectiles(npc.Position, (npc:GetPlayerTarget().Position - npc.Position) / 25, 0, PROJECTILE_PARAMS)
         end
     end
 end

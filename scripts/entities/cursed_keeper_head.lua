@@ -14,6 +14,7 @@ local ATTACK2 = {
     [3] = 40
 }
 
+local PROJECTILE_PARAMS = Resouled.Stats:GetCursedProjectileParams()
 local PROJECTILE_SPEED = 7
 
 ---@param npc EntityNPC
@@ -34,13 +35,13 @@ local function preNpcUpdate(_, npc)
         if sprite:IsEventTriggered("Shoot1") then
             local npcToPlayerVector = (player.Position - npc.Position):Normalized() * PROJECTILE_SPEED
             for i = 1, #ATTACK1 do
-                npc:FireProjectiles(npc.Position, npcToPlayerVector:Rotated(ATTACK1[i]), 0, ProjectileParams())
+                npc:FireProjectiles(npc.Position, npcToPlayerVector:Rotated(ATTACK1[i]), 0, PROJECTILE_PARAMS)
             end
         end
         if sprite:IsEventTriggered("Shoot2") then
             local npcToPlayerVector = (player.Position - npc.Position):Normalized() * PROJECTILE_SPEED
             for i = 1, #ATTACK2 do
-                npc:FireProjectiles(npc.Position, npcToPlayerVector:Rotated(ATTACK2[i]), 0, ProjectileParams())
+                npc:FireProjectiles(npc.Position, npcToPlayerVector:Rotated(ATTACK2[i]), 0, PROJECTILE_PARAMS)
             end
         end
     end

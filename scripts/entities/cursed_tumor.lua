@@ -8,12 +8,10 @@ local TEAR_SPEED = 5
 
 local ATTACK_FREQUENCY = 200
 
-local PROJECTILE_PARAMS = ProjectileParams()
+local PROJECTILE_PARAMS = Resouled.Stats:GetCursedProjectileParams()
 PROJECTILE_PARAMS.BulletFlags = (PROJECTILE_PARAMS.BulletFlags | ProjectileFlags.SINE_VELOCITY)
 PROJECTILE_PARAMS.FallingSpeedModifier = 0.4
 PROJECTILE_PARAMS.FallingAccelModifier = -0.1
-PROJECTILE_PARAMS.Color = Color(0.5, 0, 0.75, 1, 0.5 * 0.55, 0, 0.75 * 0.55)
-PROJECTILE_PARAMS.Variant = ProjectileVariant.PROJECTILE_TEAR
 
 ---@param npc EntityNPC
 local function getShootingAnimation(npc)

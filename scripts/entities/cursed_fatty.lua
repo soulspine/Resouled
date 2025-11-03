@@ -13,7 +13,6 @@ local CursedFatty = {
     MinProjectileDistance = 3,
     MaxProjectileTrajectory = 5,
     MinProjectileTrajectory = 1,
-    ProjectileParams = ProjectileParams(),
     MaxProjectileFallSpeed = 8,
     MinProjectileFallSpeed = 1,
     ProjectileFallSpeedMultiplier = 0.5,
@@ -21,10 +20,7 @@ local CursedFatty = {
     DeathTearsMultiplier = 3,
 }
 
----@type ProjectileParams
-local params = CursedFatty.ProjectileParams
-params.Color = Color(0.5, 0, 0.75, 1, 0.5 * 0.55, 0, 0.75 * 0.55)
-params.Variant = ProjectileVariant.PROJECTILE_TEAR
+local params = Resouled.Stats:GetCursedProjectileParams()
 
 local PICKUP_BLACKLIST = {
     [PickupVariant.PICKUP_BED] = true,

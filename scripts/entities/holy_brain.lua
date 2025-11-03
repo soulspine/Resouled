@@ -10,7 +10,9 @@ local SPEED_MULTI = 0.75
 
 local CREEP_SPAWN_CHANCE = 0.1
 local CREEP_PETRIFY_DISTANCE = 16
-local CREEP_COLOR = Color(0, 0, 0, 1, 0.55, 0.65, 0.8)
+local CREEP_COLOR = Color(0, 0, 0, 1, 0.5, 0.6, 0.75)
+local COLOR_MAX_GAIN = 0.2
+local BLINK_SPEED = 10
 
 local PETRIFY_COLOR = Color(0.1, 0.1, 0.1, 1, 0.35, 0.35, 0.35)
 
@@ -48,7 +50,7 @@ local function onNpcUpdate(_, npc)
             local creep = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CREEP_RED, npc.Position, Vector.Zero, npc, 0, npc.InitSeed)
             creep.Color = CREEP_COLOR
             creep:Update()
-            creep:GetData().Petrify = true
+            creep:GetData().Resouled_Petrify = true
         end
     end
 end
@@ -57,7 +59,25 @@ Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onNpcUpdate, HOLY_BRAIN_TYPE)
 ---@param effect EntityEffect
 local function postEffectUpdate(_, effect)
     local data = effect:GetData()
-    if data.Petrify then
+    if data.Resouled_Petrify then
+
+        local frameCount = Game():GetFrameCount()
+
+        local maxAnimTime = BLINK_SPEED
+        local maxAnimTime2 = BLINK_SPEED * 2
+        local animTime = frameCount % maxAnimTime / maxAnimTime
+        local animTime2 = frameCount % maxAnimTime2 / maxAnimTime2
+
+        animTime = (math.abs(animTime - animTime2) * 2) * COLOR_MAX_GAIN
+
+        local newColor = Color(CREEP_COLOR.R, CREEP_COLOR.G, CREEP_COLOR.B, CREEP_COLOR.A,
+        CREEP_COLOR.RO, CREEP_COLOR.GO, CREEP_COLOR.BO)
+
+        newColor.RO = newColor.RO + animTime
+        newColor.GO = newColor.GO + animTime
+        newColor.BO = newColor.BO + animTime
+        effect.Color = newColor
+
         ---@param player EntityPlayer
         Resouled.Iterators:IterateOverPlayers(function(player)
             if player.Position:Distance(effect.Position) < CREEP_PETRIFY_DISTANCE and player.ControlsCooldown == 0 then

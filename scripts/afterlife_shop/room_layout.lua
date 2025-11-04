@@ -60,16 +60,8 @@ local buffPos = {
 }
 
 local function mainShopLayout()
-    local room = Game():GetRoom()
-    local topLeft = room:GetTopLeftPos()
-    local bottomRight = room:GetBottomRightPos()
+    local room = game:GetRoom()
     local centerPos = room:GetCenterPos()
-
-    local statuePos = Vector(
-        (topLeft.X + bottomRight.X)/2,
-        (topLeft.Y + bottomRight.Y)/3
-    )
-    Isaac.Spawn(EntityType.ENTITY_EFFECT, DeathStatue.Variant, DeathStatue.SubType, statuePos, Vector.Zero, nil)
 
     Resouled.AfterlifeShop:SetShopLevel(Resouled.AfterlifeShop.ShopLevels.Level5)
     local shopLevel = Resouled.AfterlifeShop:GetShopLevel()
@@ -107,7 +99,7 @@ local function specialBuffsLayout()
 
     for j = 1, #specialBuffPos do
         if buffs[j] then
-            local room = Game():GetRoom()
+            local room = game:GetRoom()
             local centerPos = room:GetCenterPos()
             Resouled:SpawnSetBuffPedestal(buffs[j], centerPos + specialBuffPos[j])
         end
@@ -117,7 +109,7 @@ end
 local Casket = Resouled.Stats.Casket
 
 local function graveyardLayout()
-    local room = Game():GetRoom()
+    local room = game:GetRoom()
 
     Isaac.Spawn(Casket.Type, Casket.Variant, Casket.SubType, room:GetCenterPos(), Vector.Zero, nil)
 end
@@ -126,10 +118,10 @@ local function bossfightLayout()
     local FileSave = SAVE_MANAGER.GetPersistentSave()
     if not FileSave then FileSave = {} end
     if not FileSave.WiseSkullKilled then FileSave.WiseSkullKilled = false end
-    local room = Game():GetRoom()
+    local room = game:GetRoom()
 
     if FileSave.WiseSkullKilled == false then
-        Isaac.Spawn(WiseSkull.Type, WiseSkull.Variant, WiseSkull.SubType, room:GetCenterPos(), Vector.Zero, nil)
+        game:Spawn(WiseSkull.Type, WiseSkull.Variant, room:GetCenterPos(), Vector.Zero, nil, WiseSkull.SubType, Random() + 1)
     end
 end
 
@@ -138,6 +130,22 @@ local layouts = {
     [Resouled.AfterlifeShop.RoomTypes.SpecialBuffsRoom] = specialBuffsLayout,
     [Resouled.AfterlifeShop.RoomTypes.Graveyard] = graveyardLayout,
     [Resouled.AfterlifeShop.RoomTypes.SecretFight] = bossfightLayout,
+}
+
+local function mainShopAlwaysLayout()
+    local room = game:GetRoom()
+    local topLeft = room:GetTopLeftPos()
+    local bottomRight = room:GetBottomRightPos()
+
+    local statuePos = Vector(
+        (topLeft.X + bottomRight.X)/2,
+        (topLeft.Y + bottomRight.Y)/3
+    )
+    game:Spawn(EntityType.ENTITY_EFFECT, DeathStatue.Variant, statuePos, Vector.Zero, nil, DeathStatue.SubType, Random() + 1)
+end
+
+local layoutAlwaysOnEnter = {
+    [Resouled.AfterlifeShop.RoomTypes.MainShop] = mainShopAlwaysLayout,
 }
 
 ---@param seed integer
@@ -204,8 +212,9 @@ end
 local function postNewRoom()
     if Resouled.AfterlifeShop:IsAfterlifeShop() then
         
-        local level = Game():GetLevel()
+        local level = game:GetLevel()
         local room = level:GetCurrentRoom()
+        local roomType = Resouled.AfterlifeShop:getRoomTypeFromIdx(level:GetCurrentRoomIndex())
 
         if room:IsFirstVisit() then
             if room:IsFirstVisit() then
@@ -215,10 +224,12 @@ local function postNewRoom()
                 end)
             end
 
-            local roomType = Resouled.AfterlifeShop:getRoomTypeFromIdx(level:GetCurrentRoomIndex())
             if roomType and layouts[roomType] then
                 layouts[roomType]()
             end
+        end
+        if roomType and layoutAlwaysOnEnter[roomType] then
+            layoutAlwaysOnEnter[roomType]()
         end
 
         replaceBackdropDetails(room)

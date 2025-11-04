@@ -60,56 +60,56 @@ local EID_ITEMS = {
 }
 
 local EID_BUFFS = {
-    --    [Resouled.Enums.Buffs.AGILITY] = e:AutoIcons("Grants +0.3 speed"),
-    --    [Resouled.Enums.Buffs.BLUE_KING_CROWN] = e:AutoIcons(
-    --        "Enemies have a 15% chance to turn into champions, rare pickup and chests appear 2.5% more often"),
-    --    [Resouled.Enums.Buffs.BROKEN_MEMORY] = "All " ..
-    --        e:Chest("Golden") ..
-    --        " locked chests chest chest chest chest have 50% chance to be replaced with " ..
-    --        e:Chest("Dirty") .. " old chests for the whole run",
-    --    [Resouled.Enums.Buffs.CONSTELLATION] = e:AutoIcons("Treasure room is replaced by planetarium"),
-    --    [Resouled.Enums.Buffs.CROSS] = e:AutoIcons("You spawn with an eternal heart#" ..
-    --        e:FadePurple("Holy card for lost and tainted lost")),
-    --    [Resouled.Enums.Buffs.CRUCIFIX] = e:AutoIcons(
-    --        "The boss item is replaced with a q4 angel deal item, #it costs one heart container. #If you dont have containers, the item is free."),
-    --    [Resouled.Enums.Buffs.CURSED_SKULL] = e:AutoIcons(
-    --        "You're guaranteed to get a curse first floor, but you will gain one of each pickup and a random trinket spawns"),
-    --    [Resouled.Enums.Buffs.DEATH] = e:AutoIcons("Kills all enemies in the room the first time you take damage"),
-    --    [Resouled.Enums.Buffs.DEMON] = e:AutoIcons(
-    --        "Enemies on death have a 5% chance to explode. Bosses have a 1% chance to mini-bomb explode on hit. lasts the whole run"),
-    --    [Resouled.Enums.Buffs.DEVILS_HEAD] = e:AutoIcons(
-    --        "The first floor has a guaranteed devil deal. You get a curse of unknown"),
-    --    [Resouled.Enums.Buffs.FAMINE] = e:AutoIcons("Food items can not appear the whole run"),
-    --    [Resouled.Enums.Buffs.FIEND] = e:AutoIcons(
-    --        "Has a chance for a small bomb to spawn near a random enemy, lasts the whole run"),
-    --    [Resouled.Enums.Buffs.FORBIDDEN_CRANIUM] = e:AutoIcons(
-    --        "You get curse of the lost, unknown, maze, darkness, pain, greed but the first boss item has a q4 devil deal item cycle"),
-    --    [Resouled.Enums.Buffs.FORGOTTEN_POLAROID] = e:AutoIcons("Spawns a dire chest at the start"),
-    --    [Resouled.Enums.Buffs.FORTUNE] = e:AutoIcons("Grants +2 Luck"),
-    --    [Resouled.Enums.Buffs.FRIGHTENING_VISAGE] = e:AutoIcons("Reduces enemy health by 10%"),
-    --    [Resouled.Enums.Buffs.HEAVENS_CALL] = e:AutoIcons(
-    --        "First floor has a planetarium. +20% planetarium chance until a planetarium spawns"),
-    --    [Resouled.Enums.Buffs.IMP] = e:AutoIcons("First treasure room item is a bomb related item"),
-    --    [Resouled.Enums.Buffs.KIDS_DRAWING] = e:AutoIcons("You start with gulped Kid's Drawing"),
-    --    [Resouled.Enums.Buffs.KING_CROWN] = e:AutoIcons(
-    --        "Enemies have a 10% chance to turn into champions, rare pickup and chests appear 5% more often"),
-    --    [Resouled.Enums.Buffs.PESTILENCE] = e:AutoIcons("All maggot enemies have 50% chance to become charmed"),
-    --    [Resouled.Enums.Buffs.PIRACY] = e:AutoIcons(
-    --        "You can steal from the shops if you dont have enough money. #You will get a broken heart for each robbed thing"),
-    --    [Resouled.Enums.Buffs.RELIC] = e:AutoIcons("The first floor has a guaranteed angel deal."),
-    --    [Resouled.Enums.Buffs.ROYAL_CROWN] = e:AutoIcons(
-    --        "Enemies have a 5% chance to turn into champions, rare pickup and chests appear 7.5% more often, keys spawn 5% more"),
-    --    [Resouled.Enums.Buffs.SADNESS] = e:AutoIcons("Grants +0.7 Tear rate"),
-    --    [Resouled.Enums.Buffs.SCARY_FACE] = e:AutoIcons("Reduces enemy health by 5%"),
-    --    [Resouled.Enums.Buffs.SIGHT] = e:AutoIcons("Grants +3 Range"),
-    --    [Resouled.Enums.Buffs.SOUL_CATCHER] = e:AutoIcons(
-    --        "15% chance to spawn another soul on spawn (obtained by ending the run with 30+ souls)"),
-    --    [Resouled.Enums.Buffs.STEAM_GIVEAWAY] = e:AutoIcons("First floor shop is free"),
-    --    [Resouled.Enums.Buffs.STEAM_SALE] = e:AutoIcons("First floor shop has a steam sale effect"),
-    --    [Resouled.Enums.Buffs.STRENGTH] = e:AutoIcons("Grants +1 Damage"),
-    --    [Resouled.Enums.Buffs.TERRIFYING_PHYSIOGNOMY] = e:AutoIcons("Reduces enemy health by 15%"),
-    --    [Resouled.Enums.Buffs.WAR] = e:AutoIcons("First bomb used in a run has a mama mega explosion"),
-    --    [Resouled.Enums.Buffs.ZODIAC_SIGN] = e:AutoIcons("First treasure room item is a zodiac sign"),
+        [Resouled.Enums.Buffs.AGILITY] = "Grants +0.3 speed",
+        [Resouled.Enums.Buffs.BLUE_KING_CROWN] = 
+            "Enemies have a 15% chance to turn into champions, rare pickup and chests appear 2.5% more often",
+        [Resouled.Enums.Buffs.BROKEN_MEMORY] = "All " ..
+            "Golden" ..
+            " locked chests chest chest chest chest have 50% chance to be replaced with " ..
+            "Dirty" .. " old chests for the whole run",
+        [Resouled.Enums.Buffs.CONSTELLATION] = "Treasure room is replaced by planetarium",
+        [Resouled.Enums.Buffs.CROSS] = "You spawn with an eternal heart#" ..
+            "Holy card for lost and tainted lost",
+        [Resouled.Enums.Buffs.CRUCIFIX] = 
+            "The boss item is replaced with a q4 angel deal item, #it costs one heart container. #If you dont have containers, the item is free.",
+        [Resouled.Enums.Buffs.CURSED_SKULL] = 
+            "You're guaranteed to get a curse first floor, but you will gain one of each pickup and a random trinket spawns",
+        [Resouled.Enums.Buffs.DEATH] = "Kills all enemies in the room the first time you take damage",
+        [Resouled.Enums.Buffs.DEMON] = 
+            "Enemies on death have a 5% chance to explode. Bosses have a 1% chance to mini-bomb explode on hit. lasts the whole run",
+        [Resouled.Enums.Buffs.DEVILS_HEAD] = 
+            "The first floor has a guaranteed devil deal. You get a curse of unknown",
+        [Resouled.Enums.Buffs.FAMINE] = "Food items can not appear the whole run",
+        [Resouled.Enums.Buffs.FIEND] = 
+            "Has a chance for a small bomb to spawn near a random enemy, lasts the whole run",
+        [Resouled.Enums.Buffs.FORBIDDEN_CRANIUM] = 
+            "You get curse of the lost, unknown, maze, darkness, pain, greed but the first boss item has a q4 devil deal item cycle",
+        [Resouled.Enums.Buffs.FORGOTTEN_POLAROID] = "Spawns a dire chest at the start",
+        [Resouled.Enums.Buffs.FORTUNE] = "Grants +2 Luck",
+        [Resouled.Enums.Buffs.FRIGHTENING_VISAGE] = "Reduces enemy health by 10%",
+        [Resouled.Enums.Buffs.HEAVENS_CALL] = 
+            "First floor has a planetarium. +20% planetarium chance until a planetarium spawns",
+        [Resouled.Enums.Buffs.IMP] = "First treasure room item is a bomb related item",
+        [Resouled.Enums.Buffs.KIDS_DRAWING] = "You start with gulped Kid's Drawing",
+        [Resouled.Enums.Buffs.KING_CROWN] = 
+            "Enemies have a 10% chance to turn into champions, rare pickup and chests appear 5% more often",
+        [Resouled.Enums.Buffs.PESTILENCE] = "All maggot enemies have 50% chance to become charmed",
+        [Resouled.Enums.Buffs.PIRACY] = 
+            "You can steal from the shops if you dont have enough money. #You will get a broken heart for each robbed thing",
+        [Resouled.Enums.Buffs.RELIC] = "The first floor has a guaranteed angel deal.",
+        [Resouled.Enums.Buffs.ROYAL_CROWN] = 
+            "Enemies have a 5% chance to turn into champions, rare pickup and chests appear 7.5% more often, keys spawn 5% more",
+        [Resouled.Enums.Buffs.SADNESS] = "Grants +0.7 Tear rate",
+        [Resouled.Enums.Buffs.SCARY_FACE] = "Reduces enemy health by 5%",
+        [Resouled.Enums.Buffs.SIGHT] = "Grants +3 Range",
+        [Resouled.Enums.Buffs.SOUL_CATCHER] = 
+            "15% chance to spawn another soul on spawn (obtained by ending the run with 30+ souls)",
+        [Resouled.Enums.Buffs.STEAM_GIVEAWAY] = "First floor shop is free",
+        [Resouled.Enums.Buffs.STEAM_SALE] = "First floor shop has a steam sale effect",
+        [Resouled.Enums.Buffs.STRENGTH] = "Grants +1 Damage",
+        [Resouled.Enums.Buffs.TERRIFYING_PHYSIOGNOMY] = "Reduces enemy health by 15%",
+        [Resouled.Enums.Buffs.WAR] = "First bomb used in a run has a mama mega explosion",
+        [Resouled.Enums.Buffs.ZODIAC_SIGN] = "First treasure room item is a zodiac sign",
 }
 
 for item, description in pairs(EID_ITEMS) do

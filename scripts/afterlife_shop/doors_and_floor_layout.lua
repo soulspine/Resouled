@@ -154,6 +154,8 @@ function Resouled.AfterlifeShop:AreRoomsConnected(roomIdx1, roomIdx2)
     return false
 end
 
+local DOOR_OFFSET = Vector(0, 4)
+
 ---@param doorSlot DoorSlot
 ---@param position Vector
 local function trySpawnDoor(doorSlot, position)
@@ -186,6 +188,7 @@ local function trySpawnDoor(doorSlot, position)
 
         door.SizeMulti = Vector(1, 0.001)
         door.SpriteRotation = -90 + (90 * doorSlot)
+        door.SpriteOffset = door.SpriteOffset + DOOR_OFFSET:Rotated(door.SpriteRotation)
     end
 end
 

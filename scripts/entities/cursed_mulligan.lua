@@ -253,8 +253,24 @@ local function onNpcUpdate(_, npc)
             npc:Die()
         end
     elseif npc.Type == ID and npc.Variant == VARIANT and npc.SubType == SUBTYPE then
+        local sprite = npc:GetSprite()
+
         if npc.FrameCount % 100 == 0 then
+            sprite:PlayOverlay("ResouledSpewFly", true)
+            npc.State = NpcState.STATE_ATTACK
+        end
+
+        if sprite:IsOverlayEventTriggered("ResouledShoot") then
             CurseFlyConfig.spawn(npc)
+
+            local color = npc:GetColor()
+            color.RO = color.RO + 0.5
+            color.BO = color.BO + 1
+            npc:SetColor(color, 10, 1, true, true)
+        end
+
+        if sprite:IsOverlayFinished("ResouledSpewFly") then
+            npc.State = NpcState.STATE_MOVE
         end
     end
 end

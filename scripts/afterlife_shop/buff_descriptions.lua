@@ -1,47 +1,48 @@
-local PaperSprite = Sprite()
-PaperSprite:Load("gfx/misc/buff_description_paper.anm2", true)
-
-local NameFont = Font()
-NameFont:Load("font/upheaval.fnt")
-local AVEARGE_LETTER_NAME_SIZE = 12
-
-local DescFont = Font()
-DescFont:Load("font/upheavalmini.fnt")
-local AVEARGE_LETTER_DESC_SIZE = 7
-
-local TILE_SIZE = 16
-
-local BuffPedestal = Resouled.Stats.BuffPedestal
-
 local EID_BUFFS = {
         [Resouled.Buffs.AGILITY] = "Grants +0.3 speed",
-        [Resouled.Buffs.BLUE_KING_CROWN] = "Enemies have a 15% chance to turn into champions, rare pickup and chests appear 2.5% more often",
-        [Resouled.Buffs.BROKEN_MEMORY] = "All Golden locked chests chest chest chest chest have 50% chance to be replaced with Dirty old chests for the whole run",
+        [Resouled.Buffs.BLUE_KING_CROWN] = 
+            "Enemies have a 15% chance to turn into champions, rare pickup and chests appear 2.5% more often",
+        [Resouled.Buffs.BROKEN_MEMORY] = "All " ..
+            "Golden" ..
+            " locked chests chest chest chest chest have 50% chance to be replaced with " ..
+            "Dirty" .. " old chests for the whole run",
         [Resouled.Buffs.CONSTELLATION] = "Treasure room is replaced by planetarium",
-        [Resouled.Buffs.CROSS] = "You spawn with an eternal heart # Holy card for lost and tainted lost",
-        [Resouled.Buffs.CRUCIFIX] = "The boss item is replaced with a q4 angel deal item, # it costs one heart container. # If you dont have containers, the item is free.",
-        [Resouled.Buffs.CURSED_SKULL] = "You're guaranteed to get a curse first floor, but you will gain one of each pickup and a random trinket spawns",
+        [Resouled.Buffs.CROSS] = "You spawn with an eternal heart //endl// " ..
+            "Holy card for lost and tainted lost",
+        [Resouled.Buffs.CRUCIFIX] = 
+            "The boss item is replaced with a q4 angel deal item,  //endl// it costs one heart container.  //endl// If you dont have containers, the item is free.",
+        [Resouled.Buffs.CURSED_SKULL] = 
+            "You're guaranteed to get a curse first floor, but you will gain one of each pickup and a random trinket spawns",
         [Resouled.Buffs.DEATH] = "Kills all enemies in the room the first time you take damage",
-        [Resouled.Buffs.DEMON] = "Enemies on death have a 5% chance to explode. Bosses have a 1% chance to mini-bomb explode on hit. lasts the whole run",
-        [Resouled.Buffs.DEVILS_HEAD] = "The first floor has a guaranteed devil deal. You get a curse of unknown",
+        [Resouled.Buffs.DEMON] = 
+            "Enemies on death have a 5% chance to explode. Bosses have a 1% chance to mini-bomb explode on hit. lasts the whole run",
+        [Resouled.Buffs.DEVILS_HEAD] = 
+            "The first floor has a guaranteed devil deal. You get a curse of unknown",
         [Resouled.Buffs.FAMINE] = "Food items can not appear the whole run",
-        [Resouled.Buffs.FIEND] = "Has a chance for a small bomb to spawn near a random enemy, lasts the whole run",
-        [Resouled.Buffs.FORBIDDEN_CRANIUM] = "You get curse of the lost, unknown, maze, darkness, pain, greed but the first boss item has a q4 devil deal item cycle",
+        [Resouled.Buffs.FIEND] = 
+            "Has a chance for a small bomb to spawn near a random enemy, lasts the whole run",
+        [Resouled.Buffs.FORBIDDEN_CRANIUM] = 
+            "You get curse of the lost, unknown, maze, darkness, pain, greed but the first boss item has a q4 devil deal item cycle",
         [Resouled.Buffs.FORGOTTEN_POLAROID] = "Spawns a dire chest at the start",
         [Resouled.Buffs.FORTUNE] = "Grants +2 Luck",
         [Resouled.Buffs.FRIGHTENING_VISAGE] = "Reduces enemy health by 10%",
-        [Resouled.Buffs.HEAVENS_CALL] = "First floor has a planetarium. +20% planetarium chance until a planetarium spawns",
+        [Resouled.Buffs.HEAVENS_CALL] = 
+            "First floor has a planetarium. +20% planetarium chance until a planetarium spawns",
         [Resouled.Buffs.IMP] = "First treasure room item is a bomb related item",
         [Resouled.Buffs.KIDS_DRAWING] = "You start with gulped Kid's Drawing",
-        [Resouled.Buffs.KING_CROWN] = "Enemies have a 10% chance to turn into champions, rare pickup and chests appear 5% more often",
+        [Resouled.Buffs.KING_CROWN] = 
+            "Enemies have a 10% chance to turn into champions, rare pickup and chests appear 5% more often",
         [Resouled.Buffs.PESTILENCE] = "All maggot enemies have 50% chance to become charmed",
-        [Resouled.Buffs.PIRACY] = "You can steal from the shops if you dont have enough money. # You will get a broken heart for each robbed thing",
+        [Resouled.Buffs.PIRACY] = 
+            "You can steal from the shops if you dont have enough money.  //endl// You will get a broken heart for each robbed thing",
         [Resouled.Buffs.RELIC] = "The first floor has a guaranteed angel deal.",
-        [Resouled.Buffs.ROYAL_CROWN] = "Enemies have a 5% chance to turn into champions, rare pickup and chests appear 7.5% more often, keys spawn 5% more",
+        [Resouled.Buffs.ROYAL_CROWN] = 
+            "Enemies have a 5% chance to turn into champions, rare pickup and chests appear 7.5% more often, keys spawn 5% more",
         [Resouled.Buffs.SADNESS] = "Grants +0.7 Tear rate",
         [Resouled.Buffs.SCARY_FACE] = "Reduces enemy health by 5%",
         [Resouled.Buffs.SIGHT] = "Grants +3 Range",
-        [Resouled.Buffs.SOUL_CATCHER] = "15% chance to spawn another soul on spawn",
+        [Resouled.Buffs.SOUL_CATCHER] = 
+            "15% chance to spawn another soul on spawn (obtained by ending the run with 30+ souls)",
         [Resouled.Buffs.STEAM_GIVEAWAY] = "First floor shop is free",
         [Resouled.Buffs.STEAM_SALE] = "First floor shop has a steam sale effect",
         [Resouled.Buffs.STRENGTH] = "Grants +1 Damage",
@@ -54,238 +55,296 @@ for buff, description in pairs(EID_BUFFS) do
     Resouled:AddBuffDescription(buff, description)
 end
 
-local Animations = {
-    Left = {
-        L1 = "Left",
-    },
-    Right = {
-        R1 = "Right",
-    },
-    Bottom = {
-        Start = "BottomStart",
-        [1] = "BottomLoop1",
-        [2] = "BottomLoop2",
-        [3] = "BottomLoop3",
-        [4] = "BottomLoop4",
-        End = "BottomEnd"
-    },
-    Middle = {
-        M1 = "Filling"
-    },
-    Scroll = {
-        Start = "ScrollStart",
-        Middle = "ScrollMiddle",
-        End = "ScrollEnd"
-    }
-}
 
-Resouled.BuffRarityColors = {
-    [Resouled.BuffRarity.COMMON] = KColor(49.9/100, 59.6/100, 63.1/100, 0.75),
-    [Resouled.BuffRarity.RARE] = KColor(60.4/100, 44.3/100, 69/100, 0.75),
-    [Resouled.BuffRarity.LEGENDARY] = KColor(72.5/100, 66.7/100, 13.7/100, 0.75),
+
+
+Resouled.BuffRarityDescriptionColors = {
+    [Resouled.BuffRarity.COMMON] = KColor(117/255, 152/255, 161/255, 1),
+    [Resouled.BuffRarity.RARE] = KColor(154/255, 113/255, 176/255, 1),
+    [Resouled.BuffRarity.LEGENDARY] = KColor(185/255, 170/255, 35/255, 1),
     [Resouled.BuffRarity.SPECIAL] = KColor(1, 1, 1, 1)
 }
 
----@param rarity ResouledBuffRarityDesc
----@param color KColor
-function Resouled:AddBuffRarityColor(rarity, color)
-    Resouled.BuffRarityColors[rarity.Id] = color
-end
+local buffDescriptionConfigs = {}
 
-local Config = {
-    Name = "",
-    ---@type string
-    Description = "",
-    DescriptionAligned = {},
-    LastBuffID = 0,
-    Family = "",
+local buffPedestal = Resouled.Stats.BuffPedestal
 
-    Color = KColor(1, 1, 1, 1),
+local Background = Sprite()
+Background:Load("gfx/ui/buff_desc_background.anm2", true)
+Background:Play("Idle", true)
+Background.Color.A = 0.75
 
+local NameFont = Font()
+NameFont:Load("font/upheaval.fnt")
 
-    Length = 0,
+local DescFont = Font()
+DescFont:Load("font/luamini.fnt")
 
-    Width = 0,
-    Height = 0,
+local DESC_LETTER_SEPERATION = 10
 
-    MinWidth = 6,
-    MinHeight = 0,
+local ENDL = "//endl//"
 
-    StartPos = Vector(20, 30)
-}
+local startPos = Vector(12, 12)
+local MAX_WIDTH = 125
+local NEW_LINE = ">> "
 
----@param buffID integer
-local function adjustConfigToBuff(buffID)
-    local buff = Resouled:GetBuffById(buffID)
-    if buff then
-        Config.Name = buff.Name
-        Config.Description = Resouled.Stats.BuffDescriptions[buffID]
-        Config.Family = buff.FamilyName
-        Config.Color = Resouled.BuffRarityColors[buff.Rarity]
-        Config.LastBuffID = buffID
-    end
-end
+---@param Name string
+---@return table
+local function alignName(Name)
+    local alignedDesc = {}
+    
+    local lastSpace = 1
 
-local function alignDescription()
-    local newDesc = {}
+    ::Start::
 
-    local lastCutText = 0
-    local lastY = 0
+    local length = 0
 
-    local desc = Config.Description
+    for i = 1, Name:len() do
+        local char = Name:sub(i, i)
 
-    local width = (math.max(Config.Width, Config.MinWidth) * TILE_SIZE) - AVEARGE_LETTER_DESC_SIZE
-
-    for i = 1, desc:len() do
-        local char = desc:sub(i, i)
         if char == " " then
-            lastY = i
+            lastSpace = i
         end
+        length = length + NameFont:GetStringWidth(char)
 
-        if char == "#" then
-            newDesc[#newDesc + 1] = desc:sub(lastCutText + 1, lastY)
-            lastCutText = lastY + 2
-            lastY = lastCutText
-        end
-
-        if (i - lastCutText) * AVEARGE_LETTER_DESC_SIZE > width then
-            newDesc[#newDesc + 1] = desc:sub(lastCutText + 1, lastY)
-            lastCutText = lastY
+        if length > MAX_WIDTH then
+            alignedDesc[#alignedDesc+1] = Name:sub(1, lastSpace)
+            Name = Name:sub(lastSpace + 1, Name:len())
+            goto Start
         end
     end
 
-    Config.DescriptionAligned = newDesc
+    if Name ~= "" then
+        alignedDesc[#alignedDesc+1] = Name
+    end
+
+    return alignedDesc
 end
 
-if Config.Description then
-    alignDescription()
-end
+---@param Family string
+---@return table
+local function alignFamily(Family)
+    local alignedDesc = {}
+    
+    local lastSpace = 1
 
----@param x integer
----@param y integer
----@param lastX integer
----@param lastY integer
----@return string
-local function getAnimation(x, y, lastX, lastY)
-    if y < lastY then
-        if x == 0 then
-            return Animations.Left.L1
-        elseif x > 0 and x < lastX then
-            return Animations.Middle.M1
-        elseif x == lastX then
-            return Animations.Right.R1
+    ::Start::
+
+    local length = 0
+
+    for i = 1, Family:len() do
+        local char = Family:sub(i, i)
+
+        if char == " " then
+            lastSpace = i
         end
-    else
-        if x == 0 then
-            return Animations.Bottom.Start
-        elseif x > 0 and x < lastX then
-            return Animations.Bottom[(x % 4) + 1]
-        elseif x == lastX then
-            return Animations.Bottom.End
+        length = length + DescFont:GetStringWidth(char)
+
+        if length > MAX_WIDTH then
+            alignedDesc[#alignedDesc+1] = Family:sub(1, lastSpace)
+            Family = Family:sub(lastSpace + 1, Family:len())
+            goto Start
         end
     end
-    return Animations.Middle.M1
-end
 
----@param startPos Vector
-local function renderScroll(startPos)
-    PaperSprite:Play(Animations.Scroll.Start, true)
-
-    PaperSprite:Render(startPos)
-
-    PaperSprite:Play(Animations.Scroll.Middle, true)
-
-    local length = math.max(Config.Width, Config.MinWidth) * TILE_SIZE
-
-    PaperSprite.Scale.X = length
-
-    PaperSprite:Render(startPos)
-
-    PaperSprite.Scale.X = 1
-
-    PaperSprite:Play(Animations.Scroll.End, true)
-
-    PaperSprite:Render(startPos + Vector(length, 0))
-
-    NameFont:DrawString(Config.Name, startPos.X, startPos.Y - 9, Config.Color)
-end
-
----@param startPos Vector
-local function renderDescription(startPos)
-    alignDescription()
-    for i = 1, #Config.DescriptionAligned do
-        DescFont:DrawString(Config.DescriptionAligned[i], startPos.X + 3, 11 + startPos.Y + 7 * i, KColor(1, 1, 1, 0.75))
+    if Family ~= "" then
+        alignedDesc[#alignedDesc+1] = Family
     end
+
+    return alignedDesc
 end
 
-local function findNearestBuff()
-    local player = Isaac.GetPlayer()
-    local closestPickupVarData = nil
-    local closest = nil
+---@param description string
+---@return table
+local function alignDesc(description)
+    local alignedDesc = {}
+    
+    description = NEW_LINE..description
+    
+    local lastSpace = 1
 
-    ---@param pickup EntityPickup
-    Resouled.Iterators:IterateOverRoomPickups(function(pickup)
-        if pickup.Variant == BuffPedestal.Variant and pickup.SubType == BuffPedestal.SubType then
-            local varData = pickup:GetVarData()
-            if varData then
-                local distance = pickup.Position:Distance(player.Position)
-                if closest then
-                    if closest > distance then
-                        closest = distance
-                        closestPickupVarData = varData
-                    end
-                else
-                    closest = distance
-                end
+    ::Start::
+
+    local length = 0
+
+    for i = 1, description:len() do
+        local char = description:sub(i, i)
+
+        if char == " " then
+            lastSpace = i
+        end
+        length = length + DescFont:GetStringWidth(char)
+        
+        local endline = description:find(ENDL)
+        if endline then
+            if i == endline then
+                alignedDesc[#alignedDesc+1] = description:sub(1, i - 1)
+                description = NEW_LINE..description:sub(i + 1 + ENDL:len(), description:len())
+                goto Start
             end
         end
-    end)
 
-    if closestPickupVarData and closestPickupVarData ~= Config.LastBuffID then
-        adjustConfigToBuff(closestPickupVarData)
+        if length > MAX_WIDTH then
+            alignedDesc[#alignedDesc+1] = description:sub(1, lastSpace)
+            description = description:sub(lastSpace + 1, description:len())
+            goto Start
+        end
+    end
+
+    if description ~= "" then
+        alignedDesc[#alignedDesc+1] = description
+    end
+
+    return alignedDesc
+end
+
+local outline = 10
+
+---@param config table
+---@return number
+local function getBoxHeightFromConfig(config)
+    local length = 0
+    local offset = 0
+    
+    local i = 0
+    
+    local lineHeightName = NameFont:GetLineHeight() - 2
+    
+    for _, _ in pairs(config.Name) do
+        i = i + 1
+        
+        offset = offset + lineHeightName
+    end
+    
+    i = 0
+    
+    offset = offset + 3
+    
+    local lineHeightFamily = DescFont:GetLineHeight()
+    
+    for _, _ in pairs(config.Family) do
+        i = i + 1
+        
+        offset = offset + lineHeightFamily/2
+    end
+    
+    offset = offset + 3
+    
+    for _, _ in pairs(config.Description) do
+        i = i + 1
+        
+        length = math.max(length, DESC_LETTER_SEPERATION * i - 8 + offset)
+    end
+
+    return length
+end
+
+local function renderDescription(buffId)
+    local config = buffDescriptionConfigs[buffId]
+    if config then
+
+        if not config.BoxLength then
+            config.BoxLength = getBoxHeightFromConfig(config)
+        end
+
+        Background.Scale = Vector(MAX_WIDTH + outline, config.BoxLength + outline)
+
+        Background:Render(Vector(startPos.X - outline/2, startPos.Y - outline/2))
+
+        local offset = 0
+        
+        local i = 0
+        
+        local lineHeightName = NameFont:GetLineHeight() - 2
+        
+        for _, string in pairs(config.Name) do
+            NameFont:DrawString(string, startPos.X, startPos.Y + lineHeightName * (i - 1) + lineHeightName/2, config.Color, MAX_WIDTH, true)
+            i = i + 1
+            
+            offset = offset + lineHeightName
+        end
+        
+        local dotString = ""
+        local dotLength = DescFont:GetStringWidth("-")
+        local dotStringLength = 0
+        while dotStringLength <= MAX_WIDTH do
+            dotStringLength = dotStringLength + dotLength
+            if dotStringLength <= MAX_WIDTH then
+                dotString = dotString.."-"
+            end
+        end
+        
+        i = 0
+        
+        DescFont:DrawString(dotString, startPos.X, startPos.Y + DESC_LETTER_SEPERATION * i - 12 + offset, config.Color, MAX_WIDTH, true)
+        
+        offset = offset + 3
+        
+        local lineHeightFamily = DescFont:GetLineHeight()
+        
+        for _, string in pairs(config.Family) do
+            DescFont:DrawString(string, startPos.X, startPos.Y + lineHeightFamily * (i - 1) + lineHeightFamily/2 + offset, config.Color, MAX_WIDTH, true)
+            i = i + 1
+            
+            offset = offset + lineHeightFamily/2
+        end
+        
+        DescFont:DrawString(dotString, startPos.X, startPos.Y + DESC_LETTER_SEPERATION * i - 12 + offset, config.Color, MAX_WIDTH, true)
+        
+        offset = offset + 3
+        
+        for _, string in pairs(config.Description) do
+            DescFont:DrawString(string, startPos.X, startPos.Y + DESC_LETTER_SEPERATION * i - 8 + offset, config.Color)
+            i = i + 1
+            
+        end
+
+        Isaac.DrawQuad(
+            Vector(startPos.X - outline/2, startPos.Y - outline/2),
+            Vector(startPos.X + MAX_WIDTH + outline/2, startPos.Y - outline/2),
+            Vector(startPos.X - outline/2, startPos.Y + config.BoxLength + outline/2),
+            Vector(startPos.X + MAX_WIDTH + outline/2, startPos.Y + config.BoxLength + outline/2),
+            config.Color,
+            1
+        )
     end
 end
 
 local function onRender()
-    
-    if Isaac.GetFrameCount() % 3 == 0 then
-        findNearestBuff()
-    end
 
-    local startPos = Config.StartPos
+    local player = Isaac.GetPlayer()
+    local closest = nil
+    local buffId = nil
 
-    local lastY = math.max(Config.Height, Config.MinHeight)
-    local lastX = math.max(Config.Width, Config.MinWidth) - 1
-
-    Config.Width = (Config.Name:len() * AVEARGE_LETTER_NAME_SIZE)//TILE_SIZE + 1
-
-    if Config.Description then
-        Config.Height = Config.Length//TILE_SIZE + math.floor((Config.Description:len() * AVEARGE_LETTER_DESC_SIZE)/(Config.Width * TILE_SIZE)/2 + 0.5)
-    else
-        Config.Height = Config.Length//TILE_SIZE
-    end
-
-    
-    local z = Config.Length%TILE_SIZE
-    if z == 0 then
-        z = TILE_SIZE + 1
-    end
-
-    local offset = Vector(0, z - 1)
-    
-    for y = 0, lastY do
-        for x = 0, lastX do
-            local pos = startPos + Vector(TILE_SIZE * x, TILE_SIZE * y)
-            
-            PaperSprite:Play(getAnimation(x, y, lastX, lastY), true)
-            
-            PaperSprite:Render(pos + offset)
-            
+    ---@param pickup EntityPickup
+    Resouled.Iterators:IterateOverRoomPickups(function(pickup)
+        local varData = pickup:GetVarData()
+        if pickup.Variant == buffPedestal.Variant and pickup.SubType == buffPedestal.SubType and varData > 0 then
+            local distance = pickup.Position:Distance(player.Position)
+            if not closest then
+                closest = distance
+                buffId = varData
+            elseif closest > distance then
+                closest = distance
+                buffId = varData
+            end
         end
-    end
-    renderScroll(startPos)
-    if Config.Description then
-        renderDescription(startPos)
+    end)
+
+    if buffId then
+        renderDescription(buffId)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, onRender)
+
+Resouled:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, function()
+    for _, buffDesc in pairs(Resouled:GetBuffs()) do
+        local config = {
+            Name = alignName(buffDesc.Name),
+            Family = alignFamily("Family: "..buffDesc.FamilyName),
+            Description = alignDesc(Resouled.Stats.BuffDescriptions[buffDesc.Id] or ""),
+            Color = Resouled.BuffRarityDescriptionColors[buffDesc.Rarity]
+        }
+        buffDescriptionConfigs[buffDesc.Id] = config
+    end
+end)

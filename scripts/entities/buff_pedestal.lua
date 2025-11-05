@@ -33,61 +33,6 @@ local function loadProperSprite(sprite, buffId)
     end
 end
 
-local eid = {
-    Rarities = {},
-    RaritiyColors = {},
-}
-
-if EID then
-    ---@param rarityID ResouledBuffRarity
-    ---@param color KColor
-    function Resouled:AddEIDBuffRarityColor(rarityID, color)
-        local rarity = Resouled:GetBuffRarityById(rarityID)
-        if rarity then
-            if eid.Rarities[rarityID] then
-                Resouled:LogError("Trying to override EID buff rarity color with the id: "..tostring(rarityID))
-                return
-            end
-            local colorName = "Resouled"..tostring(rarity.Name)
-            
-            EID:addColor(colorName, color)
-            
-            eid.RaritiyColors[rarityID] = color
-        else
-            Resouled:LogError("Provided an unregistered rarity with the id: "..tostring(rarityID).." while trying to add a buff rarity color")
-        end
-    end
-    
-    Resouled:AddEIDBuffRarityColor(Resouled.BuffRarity.COMMON, KColor(117/255*2, 152/255*2, 161/255*2, 255/255))
-    Resouled:AddEIDBuffRarityColor(Resouled.BuffRarity.RARE, KColor(154/255*2, 113/255*2, 176/255*2, 255/255))
-    Resouled:AddEIDBuffRarityColor(Resouled.BuffRarity.LEGENDARY, KColor(182/255*2, 170/255*2, 35/255*2, 255/255))
-    Resouled:AddEIDBuffRarityColor(Resouled.BuffRarity.SPECIAL, KColor(255/255*2, 255/255*2, 255/255*2, 255/255))
-end
-
-for _, rarityID in pairs(Resouled.BuffRarity) do
-    local rarity = Resouled:GetBuffRarityById(rarityID)
-    if rarity then
-        eid.Rarities[rarityID] = "{{Resouled"..tostring(rarity.Name).."}}"
-    end
-end
-
----@param pickup EntityPickup
-local function setProperEIDDesc(pickup)
-    local data = pickup:GetData()
-    local buff = Resouled:GetBuffById(pickup:GetVarData())
-    if buff then
-
-        local description = {
-            ["Name"] = Resouled:GetBuffEIDIcon(buff.Id)..eid.Rarities[buff.Rarity]..buff.Name.."{{ColorFade}}".." < "..Resouled:GetBuffRarityById(buff.Rarity).Name.." >",
-            ["Description"] = Resouled.Stats.BuffDescriptions[buff.Id] or "No Description"
-        }
-        
-        data["EID_Description"] = description
-    else
-        data["EID_Description"] = nil
-    end
-end
-
 ---@param player EntityPlayer
 ---@param pedestalSprite Sprite
 local function playBuffPickupAnimation(player, pedestalSprite)
@@ -112,8 +57,6 @@ local function onInit(_, pickup)
         pickup:GetData().Resouled_BuffPedestalInitPosition = pickup.Position
         
         pickup.SizeMulti = SIZE_MULTI
-
-        setProperEIDDesc(pickup)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onInit, BUFF_PEDESTAL_VARIANT)
@@ -121,9 +64,6 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onInit, BUFF_PEDESTAL_VAR
 ---@param pickup EntityPickup
 local function postPickupUpdate(_, pickup)
     if pickup.SubType == BUFF_PEDESTAL_SUBTYPE then
-        if pickup.FrameCount == 0 then
-            setProperEIDDesc(pickup)
-        end
 
         local varData = pickup:GetVarData()
         local sprite = pickup:GetSprite()
@@ -137,7 +77,6 @@ local function postPickupUpdate(_, pickup)
                     goto BuffWasPresent
                 end
                 pickup:SetVarData(chosenBuff)
-                setProperEIDDesc(pickup)
             end
         end
         
@@ -194,8 +133,6 @@ local function postPickupCollision(_, pickup, collider)
             for i = 1, price do
                 Game():Spawn(EntityType.ENTITY_PICKUP, Soul.Variant, player.Position, Vector.Zero, nil, Soul.SubTypeStatue, player.InitSeed + i)
             end
-
-            setProperEIDDesc(pickup)
         end
     end
 end

@@ -80,8 +80,6 @@ NameFont:Load("font/upheaval.fnt")
 local DescFont = Font()
 DescFont:Load("font/luamini.fnt")
 
-local DESC_LETTER_SEPERATION = 10
-
 local ENDL = "//endl//"
 
 local startPos = Vector(12, 12)
@@ -222,29 +220,46 @@ local function getBoxHeightFromConfig(config)
     i = 0
 
     local lineHeightDesc = DescFont:GetLineHeight()
-    for _, _ in pairs(config.Description) do
+    for _, _ in pairs(config.Family) do
         i = i + 1
     end
-
+        
     offset = offset + lineHeightDesc * i
         
     i = 0
-        
-    offset = offset + LINE_OFFSET
-        
-    for _, _ in pairs(config.Family) do
-        i = i + 1
 
-        length = math.max(length, offset + LINE_OFFSET * (i - 1))
+    offset = offset + LINE_OFFSET
+
+    for _, _ in pairs(config.Description) do
+        i = i + 1
+        length = math.max(length, lineHeightDesc * (i - 1) + offset)
     end
 
     return length
+end
+
+
+---@param font Font
+---@param string string
+---@param posX number
+---@param posY number
+---@param color KColor
+---@param color2 KColor
+---@param maxWidth? integer
+---@param center? boolean
+local function drawString(font, string, posX, posY, color, color2, maxWidth, center)
+    font:DrawString(string, posX + 1, posY + 1, color2, maxWidth, center)
+    font:DrawString(string, posX, posY, color, maxWidth, center)
 end
 
 local function renderDescription(buffId)
     local config = buffDescriptionConfigs[buffId]
     if config then
         local maxWidth = config.BoxWidth
+
+        ---@type KColor
+        local color = config.Color
+        local colorShadow = KColor(color.Red/2, color.Green/2, color.Blue/2, color.Alpha/2)
 
         if not config.BoxLength then
             config.BoxLength = getBoxHeightFromConfig(config)
@@ -261,7 +276,7 @@ local function renderDescription(buffId)
         local lineHeightName = NameFont:GetLineHeight() - 2
         
         for _, string in pairs(config.Name) do
-            NameFont:DrawString(string, startPos.X, startPos.Y + lineHeightName * (i - 1) + lineHeightName/2, config.Color, maxWidth, true)
+            drawString(NameFont, string, startPos.X, startPos.Y + lineHeightName * (i - 1) + lineHeightName/2, color, colorShadow, maxWidth, true)
             i = i + 1
             
         end
@@ -277,32 +292,29 @@ local function renderDescription(buffId)
             end
         end
         
-        DescFont:DrawString(dotString, startPos.X, startPos.Y + offset - LINE_OFFSET/2, config.Color, maxWidth, true)
+        drawString(DescFont, dotString, startPos.X, startPos.Y + offset - LINE_OFFSET/2, color, colorShadow, maxWidth, true)
         
         i = 0
 
         local lineHeightDesc = DescFont:GetLineHeight()
-        for _, string in pairs(config.Description) do
-            DescFont:DrawString(string, startPos.X, startPos.Y + LINE_OFFSET * i + offset, config.Color)
-    
+        for _, string in pairs(config.Family) do
+            drawString(DescFont, string, startPos.X, startPos.Y + LINE_OFFSET * i + offset, color, colorShadow, maxWidth, true)
             i = i + 1
-            
         end
-
+        
         offset = offset + lineHeightDesc * i
         
         i = 0
-
-        offset = offset
         
-        DescFont:DrawString(dotString, startPos.X, startPos.Y + LINE_OFFSET * i + offset - LINE_OFFSET/2, config.Color, maxWidth, true)
+        drawString(DescFont, dotString, startPos.X, startPos.Y + LINE_OFFSET * i + offset - LINE_OFFSET/2, color, colorShadow, maxWidth, true)
 
         offset = offset + LINE_OFFSET
-        
-        for _, string in pairs(config.Family) do
-            DescFont:DrawString(string, startPos.X, startPos.Y + lineHeightDesc * (i - 1) + offset, config.Color, maxWidth, true)
-            i = i + 1
 
+        for _, string in pairs(config.Description) do
+            drawString(DescFont, string, startPos.X, startPos.Y + lineHeightDesc * (i - 1) + offset, color, colorShadow)
+    
+            i = i + 1
+            
         end
 
         Isaac.DrawQuad(
@@ -317,40 +329,48 @@ local function renderDescription(buffId)
 end
 
 local function onRender()
-
-    local player = Isaac.GetPlayer()
-    local closest = nil
-    local buffId = nil
-
-    ---@param pickup EntityPickup
-    Resouled.Iterators:IterateOverRoomPickups(function(pickup)
-        local varData = pickup:GetVarData()
-        if pickup.Variant == buffPedestal.Variant and pickup.SubType == buffPedestal.SubType and varData > 0 then
-            local distance = pickup.Position:Distance(player.Position)
-            if not closest then
-                closest = distance
-                buffId = varData
-            elseif closest > distance then
-                closest = distance
-                buffId = varData
+    if Resouled.AfterlifeShop:IsAfterlifeShop() then
+        local player = Isaac.GetPlayer()
+        local closest = nil
+        local buffId = nil
+        
+        ---@param pickup EntityPickup
+        Resouled.Iterators:IterateOverRoomPickups(function(pickup)
+            local varData = pickup:GetVarData()
+            if pickup.Variant == buffPedestal.Variant and pickup.SubType == buffPedestal.SubType and varData > 0 then
+                local distance = pickup.Position:Distance(player.Position)
+                if not closest then
+                    closest = distance
+                    buffId = varData
+                elseif closest > distance then
+                    closest = distance
+                    buffId = varData
+                end
             end
+        end)
+        
+        if buffId then
+            renderDescription(buffId)
         end
-    end)
-
-    if buffId then
-        renderDescription(buffId)
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, onRender)
+Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, onRender)
 
 Resouled:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, function() --comment the addcallback to be able to luamod
     for _, buffDesc in pairs(Resouled:GetBuffs()) do
+
         local config = {
             Name = alignName(buffDesc.Name),
             Family = alignFamily("''"..buffDesc.FamilyName.."''"),
             Description = alignDesc(Resouled.Stats.BuffDescriptions[buffDesc.Id] or "No Description"),
             Color = Resouled.BuffRarityDescriptionColors[buffDesc.Rarity],
         }
+
+        local function redoConfig()
+            config.Name = alignName(buffDesc.Name, config.BoxWidth)
+            config.Family = alignFamily("''"..buffDesc.FamilyName.."''", config.BoxWidth)
+            config.Description = alignDesc(Resouled.Stats.BuffDescriptions[buffDesc.Id] or "No Description", config.BoxWidth)
+        end
 
         local length = 0
         ---@param string string
@@ -364,9 +384,13 @@ Resouled:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, function() --comment the 
         if not buffDesc.Name:find(" ") and nameLength > MAX_WIDTH then
             config.BoxWidth = math.max(MAX_WIDTH, nameLength)
 
-            config.Name = alignName(buffDesc.Name, config.BoxWidth)
-            config.Family = alignFamily("''"..buffDesc.FamilyName.."''", config.BoxWidth)
-            config.Description = alignDesc(Resouled.Stats.BuffDescriptions[buffDesc.Id] or "No Description", config.BoxWidth)
+            redoConfig()
+        end
+
+        if config.Name[1]:len() == 1 then
+            config.BoxWidth = config.BoxWidth + NameFont:GetCharacterWidth(config.Name[1])
+
+            redoConfig()
         end
 
         buffDescriptionConfigs[buffDesc.Id] = config

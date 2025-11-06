@@ -86,6 +86,8 @@ local function postGameStarted()
         Resouled.AfterlifeShop.Goto.PlayTime = nil
 
         Resouled.AfterlifeShop.Goto.Activate = false
+
+        Game():GetHUD():SetVisible(false)
     else
         Resouled.AfterlifeShop.Goto.SpecialBuffs = {}
     end

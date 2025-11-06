@@ -160,14 +160,50 @@ end
 
 ---@param action ButtonAction
 function Resouled:IsAnyonePressingAction(action)
-    local isPressed = false
-    ---@param player EntityPlayer
-    Resouled.Iterators:IterateOverPlayers(function(player)
-        if Input.IsActionPressed(action, player.ControllerIndex) then
-            isPressed = true
+    local id = 0
+    while Input.GetDeviceNameByIdx(id) do
+        if Input.IsActionPressed(action, id) then
+            return true
         end
-    end)
-    return isPressed
+        id = id + 1
+    end
+    return false
+end
+
+---@param button Keyboard
+function Resouled:IsAnyonePressingButton(button)
+    local id = 0
+    while Input.GetDeviceNameByIdx(id) do
+        if Input.IsButtonPressed(button, id) then
+            return true
+        end
+        id = id + 1
+    end
+    return false
+end
+
+---@param action ButtonAction
+function Resouled:HasAnyoneTriggeredAction(action)
+    local id = 0
+    while Input.GetDeviceNameByIdx(id) do
+        if Input.IsActionTriggered(action, id) then
+            return true
+        end
+        id = id + 1
+    end
+    return false
+end
+
+---@param button Keyboard
+function Resouled:HasAnyonePressedButton(button)
+    local id = 0
+    while Input.GetDeviceNameByIdx(id) do
+        if Input.IsActionTriggered(button, id) then
+            return true
+        end
+        id = id + 1
+    end
+    return false
 end
 
 ---@param player EntityPlayer

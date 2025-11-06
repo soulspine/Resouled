@@ -140,3 +140,8 @@ Resouled.Stats.BuffDescriptions = {}
 function Resouled:AddBuffDescription(buffId, description)
     Resouled.Stats.BuffDescriptions[buffId] = description
 end
+
+Resouled.Stats.AfterlifeBackdropFix = {
+    Variant = Isaac.GetEntityVariantByName("Afterlife Backdrop Fix"),
+    SubType = Isaac.GetEntitySubTypeByName("Afterlife Backdrop Fix")
+}

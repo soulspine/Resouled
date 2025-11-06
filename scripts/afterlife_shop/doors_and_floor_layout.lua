@@ -114,7 +114,7 @@ local function postNpcInit(_, npc)
         npc:AddEntityFlags(EntityFlag.FLAG_HIDE_HP_BAR)
         npc:AddEntityFlags(EntityFlag.FLAG_BACKDROP_DETAIL)
         npc:AddEntityFlags(EntityFlag.FLAG_NO_STATUS_EFFECTS)
-        npc.DepthOffset = -1000
+        npc.DepthOffset = -100
         --npc:GetSprite():Play("Idle", true)
         npc.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
         npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY

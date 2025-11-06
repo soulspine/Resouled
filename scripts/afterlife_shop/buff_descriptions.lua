@@ -333,30 +333,33 @@ local function onRender()
         local player = Isaac.GetPlayer()
         local closest = nil
         local buffId = nil
+        ---@type nil | EntityPickup
+        local entity = nil
         
         ---@param pickup EntityPickup
         Resouled.Iterators:IterateOverRoomPickups(function(pickup)
             local varData = pickup:GetVarData()
             if pickup.Variant == buffPedestal.Variant and pickup.SubType == buffPedestal.SubType and varData > 0 then
                 local distance = pickup.Position:Distance(player.Position)
-                if not closest then
+                if not closest or closest > distance then
                     closest = distance
                     buffId = varData
-                elseif closest > distance then
-                    closest = distance
-                    buffId = varData
+                    entity = pickup
                 end
             end
         end)
         
-        if buffId then
+        if buffId and entity then
             renderDescription(buffId)
+
+            local sprite = entity:GetSprite()
+            --sprite:SetOverlayFrame("", sprite:GetOverlayFrame())
         end
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, onRender)
+Resouled:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, onRender)
 
-Resouled:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, function() --comment the addcallback to be able to luamod
+--Resouled:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, function() --comment the addcallback to be able to luamod
     for _, buffDesc in pairs(Resouled:GetBuffs()) do
 
         local config = {
@@ -395,4 +398,4 @@ Resouled:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, function() --comment the 
 
         buffDescriptionConfigs[buffDesc.Id] = config
     end
-end)
+--end)

@@ -88,6 +88,7 @@ if REPENTOGON and MinimapAPI then
     include("scripts.entities")
     include("scripts.afterlife_shop")
     include("scripts.other")
+    include("scripts.menu")
 
     for _, func in ipairs(thingsToRunAfterImports) do
         func()

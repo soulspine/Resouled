@@ -27,6 +27,8 @@ local function setPitchBlack(state)
     end
 end
 
+local SIZE = Vector(15, 20)
+
 ---@param pickup EntityPickup
 local function onInit(_, pickup)
     if pickup.SubType == ENTITY_SUBTYPE then
@@ -35,6 +37,7 @@ local function onInit(_, pickup)
         sprite:Play(targetAnimation, true)
         pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
         pickup.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_WALLS
+        pickup.SizeMulti = SIZE
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onInit, ENTITY_VARIANT)

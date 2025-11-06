@@ -209,6 +209,8 @@ local function replaceBackdropDetails(room)
     end
 end
 
+local fixConfig = Resouled.Stats.AfterlifeBackdropFix
+
 local function postNewRoom()
     if Resouled.AfterlifeShop:IsAfterlifeShop() then
         
@@ -234,6 +236,7 @@ local function postNewRoom()
 
         replaceBackdropDetails(room)
         
+        game:Spawn(EntityType.ENTITY_EFFECT, fixConfig.Variant, game:GetRoom():GetCenterPos(), Vector.Zero, nil, fixConfig.SubType, math.max(Random(), 1))
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)

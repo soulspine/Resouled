@@ -109,14 +109,36 @@ Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, function()
     end
 end)
 
+local pillarSize = 30
+
 ---@param player EntityPlayer
 Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, function(_, player) -- Players are ghosts
-    --if Resouled.AfterlifeShop:IsAfterlifeShop() then
+    if Resouled.AfterlifeShop:IsAfterlifeShop() then
     --    local effect = player:GetEffects()
     --    if not effect:HasNullEffect(NullItemID.ID_LOST_CURSE) then
     --        effect:AddNullEffect(NullItemID.ID_LOST_CURSE)
     --    end
-    --end
+
+        local room = Game():GetRoom()
+
+        local topLeft = room:GetTopLeftPos()
+        local bottomRight = room:GetBottomRightPos()
+        local topRight = Vector(bottomRight.X, topLeft.Y)
+        local bottomLeft = Vector(topLeft.X, bottomRight.Y)
+
+        local pillarPosTable = {
+            topLeft,
+            bottomRight,
+            topRight,
+            bottomLeft,
+        }
+
+        for _, pos in ipairs(pillarPosTable) do
+            if player.Position:Distance(pos) <= pillarSize then
+                player.Velocity = player.Velocity/5 + (player.Position - pos):Normalized()
+            end
+        end
+    end
 end)
 
 include("scripts.afterlife_shop.backdrop")

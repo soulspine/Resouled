@@ -89,8 +89,9 @@ local MAX_WIDTH = 125
 local NEW_LINE = ">> "
 
 ---@param Name string
+---@param maxWidth? number
 ---@return table
-local function alignName(Name)
+local function alignName(Name, maxWidth)
     local alignedDesc = {}
     
     local lastSpace = 1
@@ -107,7 +108,7 @@ local function alignName(Name)
         end
         length = length + NameFont:GetStringWidth(char)
 
-        if length > MAX_WIDTH then
+        if length > (maxWidth or MAX_WIDTH) then
             alignedDesc[#alignedDesc+1] = Name:sub(1, lastSpace)
             Name = Name:sub(lastSpace + 1, Name:len())
             goto Start
@@ -122,8 +123,9 @@ local function alignName(Name)
 end
 
 ---@param Family string
+---@param maxWidth? number
 ---@return table
-local function alignFamily(Family)
+local function alignFamily(Family, maxWidth)
     local alignedDesc = {}
     
     local lastSpace = 1
@@ -140,7 +142,7 @@ local function alignFamily(Family)
         end
         length = length + DescFont:GetStringWidth(char)
 
-        if length > MAX_WIDTH then
+        if length > (maxWidth or MAX_WIDTH) then
             alignedDesc[#alignedDesc+1] = Family:sub(1, lastSpace)
             Family = Family:sub(lastSpace + 1, Family:len())
             goto Start
@@ -155,8 +157,9 @@ local function alignFamily(Family)
 end
 
 ---@param description string
+---@param maxWidth? number
 ---@return table
-local function alignDesc(description)
+local function alignDesc(description, maxWidth)
     local alignedDesc = {}
     
     description = NEW_LINE..description
@@ -184,7 +187,7 @@ local function alignDesc(description)
             end
         end
 
-        if length > MAX_WIDTH then
+        if length > (maxWidth or MAX_WIDTH) then
             alignedDesc[#alignedDesc+1] = description:sub(1, lastSpace)
             description = description:sub(lastSpace + 1, description:len())
             goto Start
@@ -199,41 +202,40 @@ local function alignDesc(description)
 end
 
 local outline = 10
+local LINE_OFFSET = 12
 
 ---@param config table
 ---@return number
 local function getBoxHeightFromConfig(config)
     local length = 0
     local offset = 0
-    
+        
     local i = 0
-    
+        
     local lineHeightName = NameFont:GetLineHeight() - 2
-    
+        
     for _, _ in pairs(config.Name) do
         i = i + 1
-        
-        offset = offset + lineHeightName
     end
-    
+    offset = offset + lineHeightName * (i - 1) + lineHeightName/2
+        
     i = 0
-    
-    offset = offset + 3
-    
-    local lineHeightFamily = DescFont:GetLineHeight()
-    
-    for _, _ in pairs(config.Family) do
-        i = i + 1
-        
-        offset = offset + lineHeightFamily/2
-    end
-    
-    offset = offset + 3
-    
+
+    local lineHeightDesc = DescFont:GetLineHeight()
     for _, _ in pairs(config.Description) do
         i = i + 1
+    end
+
+    offset = offset + lineHeightDesc * i
         
-        length = math.max(length, DESC_LETTER_SEPERATION * i - 8 + offset)
+    i = 0
+        
+    offset = offset + LINE_OFFSET
+        
+    for _, _ in pairs(config.Family) do
+        i = i + 1
+
+        length = math.max(length, offset + LINE_OFFSET * (i - 1))
     end
 
     return length
@@ -242,12 +244,13 @@ end
 local function renderDescription(buffId)
     local config = buffDescriptionConfigs[buffId]
     if config then
+        local maxWidth = config.BoxWidth
 
         if not config.BoxLength then
             config.BoxLength = getBoxHeightFromConfig(config)
         end
 
-        Background.Scale = Vector(MAX_WIDTH + outline, config.BoxLength + outline)
+        Background.Scale = Vector(maxWidth + outline, config.BoxLength + outline)
 
         Background:Render(Vector(startPos.X - outline/2, startPos.Y - outline/2))
 
@@ -258,52 +261,55 @@ local function renderDescription(buffId)
         local lineHeightName = NameFont:GetLineHeight() - 2
         
         for _, string in pairs(config.Name) do
-            NameFont:DrawString(string, startPos.X, startPos.Y + lineHeightName * (i - 1) + lineHeightName/2, config.Color, MAX_WIDTH, true)
+            NameFont:DrawString(string, startPos.X, startPos.Y + lineHeightName * (i - 1) + lineHeightName/2, config.Color, maxWidth, true)
             i = i + 1
             
-            offset = offset + lineHeightName
         end
+        offset = offset + lineHeightName * (i - 1) + lineHeightName/2
         
         local dotString = ""
         local dotLength = DescFont:GetStringWidth("-")
         local dotStringLength = 0
-        while dotStringLength <= MAX_WIDTH do
+        while dotStringLength <= maxWidth do
             dotStringLength = dotStringLength + dotLength
-            if dotStringLength <= MAX_WIDTH then
+            if dotStringLength <= maxWidth then
                 dotString = dotString.."-"
             end
         end
         
+        DescFont:DrawString(dotString, startPos.X, startPos.Y + offset - LINE_OFFSET/2, config.Color, maxWidth, true)
+        
         i = 0
-        
-        DescFont:DrawString(dotString, startPos.X, startPos.Y + DESC_LETTER_SEPERATION * i - 12 + offset, config.Color, MAX_WIDTH, true)
-        
-        offset = offset + 3
-        
-        local lineHeightFamily = DescFont:GetLineHeight()
-        
-        for _, string in pairs(config.Family) do
-            DescFont:DrawString(string, startPos.X, startPos.Y + lineHeightFamily * (i - 1) + lineHeightFamily/2 + offset, config.Color, MAX_WIDTH, true)
-            i = i + 1
-            
-            offset = offset + lineHeightFamily/2
-        end
-        
-        DescFont:DrawString(dotString, startPos.X, startPos.Y + DESC_LETTER_SEPERATION * i - 12 + offset, config.Color, MAX_WIDTH, true)
-        
-        offset = offset + 3
-        
+
+        local lineHeightDesc = DescFont:GetLineHeight()
         for _, string in pairs(config.Description) do
-            DescFont:DrawString(string, startPos.X, startPos.Y + DESC_LETTER_SEPERATION * i - 8 + offset, config.Color)
+            DescFont:DrawString(string, startPos.X, startPos.Y + LINE_OFFSET * i + offset, config.Color)
+    
             i = i + 1
             
         end
 
+        offset = offset + lineHeightDesc * i
+        
+        i = 0
+
+        offset = offset
+        
+        DescFont:DrawString(dotString, startPos.X, startPos.Y + LINE_OFFSET * i + offset - LINE_OFFSET/2, config.Color, maxWidth, true)
+
+        offset = offset + LINE_OFFSET
+        
+        for _, string in pairs(config.Family) do
+            DescFont:DrawString(string, startPos.X, startPos.Y + lineHeightDesc * (i - 1) + offset, config.Color, maxWidth, true)
+            i = i + 1
+
+        end
+
         Isaac.DrawQuad(
             Vector(startPos.X - outline/2, startPos.Y - outline/2),
-            Vector(startPos.X + MAX_WIDTH + outline/2, startPos.Y - outline/2),
+            Vector(startPos.X + maxWidth + outline/2, startPos.Y - outline/2),
             Vector(startPos.X - outline/2, startPos.Y + config.BoxLength + outline/2),
-            Vector(startPos.X + MAX_WIDTH + outline/2, startPos.Y + config.BoxLength + outline/2),
+            Vector(startPos.X + maxWidth + outline/2, startPos.Y + config.BoxLength + outline/2),
             config.Color,
             1
         )
@@ -337,14 +343,32 @@ local function onRender()
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, onRender)
 
-Resouled:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, function()
+Resouled:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, function() --comment the addcallback to be able to luamod
     for _, buffDesc in pairs(Resouled:GetBuffs()) do
         local config = {
             Name = alignName(buffDesc.Name),
-            Family = alignFamily("Family: "..buffDesc.FamilyName),
-            Description = alignDesc(Resouled.Stats.BuffDescriptions[buffDesc.Id] or ""),
-            Color = Resouled.BuffRarityDescriptionColors[buffDesc.Rarity]
+            Family = alignFamily("''"..buffDesc.FamilyName.."''"),
+            Description = alignDesc(Resouled.Stats.BuffDescriptions[buffDesc.Id] or "No Description"),
+            Color = Resouled.BuffRarityDescriptionColors[buffDesc.Rarity],
         }
+
+        local length = 0
+        ---@param string string
+        for _, string in pairs(config.Name) do
+            length = math.max(length, NameFont:GetStringWidth(string))
+        end
+
+        config.BoxWidth = math.max(MAX_WIDTH, length)
+
+        local nameLength = NameFont:GetStringWidth(buffDesc.Name)
+        if not buffDesc.Name:find(" ") and nameLength > MAX_WIDTH then
+            config.BoxWidth = math.max(MAX_WIDTH, nameLength)
+
+            config.Name = alignName(buffDesc.Name, config.BoxWidth)
+            config.Family = alignFamily("''"..buffDesc.FamilyName.."''", config.BoxWidth)
+            config.Description = alignDesc(Resouled.Stats.BuffDescriptions[buffDesc.Id] or "No Description", config.BoxWidth)
+        end
+
         buffDescriptionConfigs[buffDesc.Id] = config
     end
 end)

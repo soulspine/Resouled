@@ -69,6 +69,8 @@ if REPENTOGON and MinimapAPI then
     include("scripts.utility.resouled.tear_effects")
     include("scripts.utility.resouled.curses")
     include("scripts.utility.resouled.room_events")
+    include("scripts.utility.resouled.stat_tracker")
+
 
     ---@type ResouledEnums
     Resouled.Enums = include("scripts.utility.resouled.enums")

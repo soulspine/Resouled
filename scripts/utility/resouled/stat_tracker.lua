@@ -24,12 +24,12 @@ Resouled.StatTracker.Fields = {
 ---@param variant integer
 ---@param subType integer
 function Resouled.StatTracker:RegisterCursedEnemy(id, variant, subType)
-    Resouled.StatTracker.CursedEnemies[tostring(id).." "..tostring(variant).." "..tostring(subType)] = true
+    Resouled.StatTracker.CursedEnemies[tostring(id) .. " " .. tostring(variant) .. " " .. tostring(subType)] = true
 end
 
 ---@param npc EntityNPC
 local function postNpcDeath(_, npc)
-    local key = tostring(npc.Type).." "..tostring(npc.Variant).." "..tostring(npc.SubType)
+    local key = tostring(npc.Type) .. " " .. tostring(npc.Variant) .. " " .. tostring(npc.SubType)
     if Resouled.StatTracker.CursedEnemies[key] then
         local save = Resouled.StatTracker:GetSave()
         if not save[Resouled.StatTracker.Fields.CursedEnemiesKilled] then save[Resouled.StatTracker.Fields.CursedEnemiesKilled] = 0 end

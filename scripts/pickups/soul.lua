@@ -106,10 +106,6 @@ local function onPickupUpdate(_, pickup)
                 pickup.Velocity = (pickup.Velocity + (statue.Position - pickup.Position):Normalized()) * distance
 
                 if pickup.Position:Distance(statue.Position) - (pickup.Size + DeathStatue.Size) <= 0 then
-                    local save = Resouled.StatTracker:GetSaveField(Resouled.StatTracker.Fields.SoulsCollected)
-                    if not save then save = 0 end
-                    save = save + 1
-                    
                     pickup:Remove()
                     Soul:PlayPickupSound()
                     statue:GetSprite():PlayOverlay("Flash", true)

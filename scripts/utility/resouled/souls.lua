@@ -188,6 +188,10 @@ local function onSoulPickupCollision(_, pickup, collider, low)
 
             Resouled:DisplaySoulsHud(HUD_COLLECT_DISPLAY_TIME)
 
+            local save = Resouled.StatTracker:GetSave()
+            if not save[Resouled.StatTracker.Fields.SoulsCollected] then save[Resouled.StatTracker.Fields.SoulsCollected] = 0 end
+            save[Resouled.StatTracker.Fields.SoulsCollected] = save[Resouled.StatTracker.Fields.SoulsCollected] + 1
+
             pickup:Remove()
         end
     end

@@ -225,9 +225,9 @@ local function postNewRoom()
         Resouled:ShowRoomEventName(ROOM_SAVE.RoomEvent)
 
         if Game():GetRoom():IsFirstVisit() then
-            local save = Resouled.StatTracker:GetSaveField(Resouled.StatTracker.Fields.RoomEventsEncountered)
-            if not save then save = 0 end
-            save = save + 1
+            local save = Resouled.StatTracker:GetSave()
+            if not save[Resouled.StatTracker.Fields.RoomEventsEncountered] then save[Resouled.StatTracker.Fields.RoomEventsEncountered] = 0 end
+            save[Resouled.StatTracker.Fields.RoomEventsEncountered] = save[Resouled.StatTracker.Fields.RoomEventsEncountered] + 1
         end
     end
 end

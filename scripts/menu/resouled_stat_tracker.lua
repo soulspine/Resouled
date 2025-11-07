@@ -9,18 +9,12 @@ function Resouled.StatTracker:GetSave()
     return save["ResouledStatTracker"]
 end
 
----@param field ResouledStatTrackerFields
----@return any
-function Resouled.StatTracker:GetSaveField(field)
-    return Resouled.StatTracker:GetSave()[field]
-end
-
 ---@enum ResouledStatTrackerFields
 Resouled.StatTracker.Fields = {
-    CursedEnemiesKilled = "CursedEnemiesKilled",
-    SoulsCollected = "SoulsCollected",
-    BuffsPickedUp = "BuffsPickedUp",
-    RoomEventsEncountered = "RoomEventsEncountered",
+    CursedEnemiesKilled = "Cursed Enemies Killed",
+    SoulsCollected = "Souls Collected",
+    BuffsPickedUp = "Buffs Picked Up",
+    RoomEventsEncountered = "Room Events Encountered",
 }
 
 ---@param id integer
@@ -32,10 +26,11 @@ end
 
 ---@param npc EntityNPC
 local function postNpcDeath(_, npc)
-    if Resouled.StatTracker.CursedEnemies[tostring(npc.Type)..tostring(npc.Variant)..tostring(npc.SubType)] then
-        local save = Resouled.StatTracker:GetSaveField(Resouled.StatTracker.Fields.CursedEnemiesKilled)
-        if not save then save = 0 end
-        save = save + 1
+    local key = tostring(npc.Type).." "..tostring(npc.Variant).." "..tostring(npc.SubType)
+    if Resouled.StatTracker.CursedEnemies[key] then
+        local save = Resouled.StatTracker:GetSave()
+        if not save[Resouled.StatTracker.Fields.CursedEnemiesKilled] then save[Resouled.StatTracker.Fields.CursedEnemiesKilled] = 0 end
+        save[Resouled.StatTracker.Fields.CursedEnemiesKilled] = save[Resouled.StatTracker.Fields.CursedEnemiesKilled] + 1
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath)

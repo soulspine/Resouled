@@ -128,9 +128,9 @@ local function postPickupCollision(_, pickup, collider)
             
             pickup:SetVarData(0)
 
-            local save = Resouled.StatTracker:GetSaveField(Resouled.StatTracker.Fields.BuffsPickedUp)
-            if not save then save = 0 end
-            save = save + 1
+            local save = Resouled.StatTracker:GetSave()
+            if not save[Resouled.StatTracker.Fields.BuffsPickedUp] then save[Resouled.StatTracker.Fields.BuffsPickedUp] = 0 end
+            save[Resouled.StatTracker.Fields.BuffsPickedUp] = save[Resouled.StatTracker.Fields.BuffsPickedUp] + 1
 
             data.Resouled_PickedUpBuff = BUFF_REFRESH_COOLDOWN
             

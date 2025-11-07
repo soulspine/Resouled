@@ -3,10 +3,13 @@ Resouled.StatTracker.CursedEnemies = {}
 
 ---@return table
 function Resouled.StatTracker:GetSave()
-    local save = SAVE_MANAGER.GetPersistentSave()
-    if not save then save = {} end
-    if not save["ResouledStatTracker"] then save["ResouledStatTracker"] = {} end
-    return save["ResouledStatTracker"]
+    if SAVE_MANAGER.IsLoaded() then
+        local save = SAVE_MANAGER.GetPersistentSave()
+        if not save then save = {} end
+        if not save["ResouledStatTracker"] then save["ResouledStatTracker"] = {} end
+        return save["ResouledStatTracker"]
+    end
+    return table
 end
 
 ---@enum ResouledStatTrackerFields

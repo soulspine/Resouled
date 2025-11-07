@@ -47,3 +47,5 @@ local function preNpcUpdate(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, preNpcUpdate, CURSED_KEEPER_HEAD_TYPE)
+
+Resouled.StatTracker:RegisterCursedEnemy(CURSED_KEEPER_HEAD_TYPE, CURSED_KEEPER_HEAD_VARIANT, CURSED_KEEPER_HEAD_SUBTYPE)

@@ -223,6 +223,12 @@ local function postNewRoom()
 
     if ROOM_SAVE.RoomEvent then
         Resouled:ShowRoomEventName(ROOM_SAVE.RoomEvent)
+
+        if Game():GetRoom():IsFirstVisit() then
+            local save = Resouled.StatTracker:GetSaveField(Resouled.StatTracker.Fields.RoomEventsEncountered)
+            if not save then save = 0 end
+            save = save + 1
+        end
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)

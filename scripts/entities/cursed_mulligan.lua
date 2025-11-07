@@ -275,3 +275,5 @@ local function onNpcUpdate(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onNpcUpdate)
+
+Resouled.StatTracker:RegisterCursedEnemy(ID, VARIANT, SUBTYPE)

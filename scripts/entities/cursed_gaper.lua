@@ -52,3 +52,5 @@ local function postNpcCollision(_, npc, collider)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_COLLISION, postNpcCollision, EntityType.ENTITY_GAPER)
+
+Resouled.StatTracker:RegisterCursedEnemy(CURSED_GAPER_TYPE, CURSED_GAPER_VARIANT, CURSED_GAPER_SUBTYPE)

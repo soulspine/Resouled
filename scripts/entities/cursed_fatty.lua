@@ -116,3 +116,5 @@ local function npcTakeDamage(_, entity, damage)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, npcTakeDamage)
+
+Resouled.StatTracker:RegisterCursedEnemy(CURSED_FATTY_TYPE, CURSED_FATTY_VARIANT, CURSED_FATTY_SUBTYPE)

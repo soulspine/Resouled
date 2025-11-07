@@ -17,3 +17,5 @@ local function npcDeath(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, npcDeath, ID)
+
+Resouled.StatTracker:RegisterCursedEnemy(ID, VARIANT, SUBTYPE)

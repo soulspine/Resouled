@@ -325,8 +325,30 @@ local function renderDescription(buffId)
             config.Color,
             1
         )
+
+        Isaac.DrawQuad(
+            Vector(startPos.X - outline/2, startPos.Y - outline/2),
+            Vector(startPos.X + maxWidth + outline/2, startPos.Y - outline/2),
+            Vector(startPos.X - outline/2, startPos.Y + config.BoxLength + outline/2),
+            Vector(startPos.X + maxWidth + outline/2, startPos.Y + config.BoxLength + outline/2),
+            KColor(color.Red * 1.5, color.Green * 1.5, color.Blue * 1.5, color.Alpha),
+            0.5
+        )
     end
 end
+
+local glowColors = {
+    [Resouled.BuffRarity.COMMON] = Color(117/255 * 2, 152/255 * 2, 161/255 * 2, 1),
+    [Resouled.BuffRarity.RARE] = Color(154/255 * 2, 113/255 * 2, 176/255 * 2, 1),
+    [Resouled.BuffRarity.LEGENDARY] = Color(185/255 * 2, 170/255 * 2, 35/255 * 2, 1),
+    [Resouled.BuffRarity.SPECIAL] = Color(1, 1, 1, 1)
+}
+local glowColorsPedestal = {
+    [Resouled.BuffRarity.COMMON] = Color(1 + 117/255/2, 1 + 152/255/2, 1 + 161/255/2),
+    [Resouled.BuffRarity.RARE] = Color(1 + 154/255/2, 1 + 113/255/2, 1 + 176/255/2),
+    [Resouled.BuffRarity.LEGENDARY] = Color(1 + 185/255/2, 1 + 170/255/2, 1 + 35/255/2),
+    [Resouled.BuffRarity.SPECIAL] = Color(1 + 1/4, 1 + 1/4, 1 + 1/4)
+}
 
 local function onRender()
     if Resouled.AfterlifeShop:IsAfterlifeShop() then
@@ -352,8 +374,17 @@ local function onRender()
         if buffId and entity then
             renderDescription(buffId)
 
-            local sprite = entity:GetSprite()
-            --sprite:SetOverlayFrame("", sprite:GetOverlayFrame())
+            local buff = Resouled:GetBuffById(buffId)
+            if buff then
+                local sprite = entity:GetSprite()
+
+                if not Game():IsPauseMenuOpen() then
+                    EntityEffect.CreateLight(entity.Position + Vector(0, -43), 0.4, 5, 6, glowColors[buff.Rarity])
+                    entity:SetColor(glowColorsPedestal[buff.Rarity], 2, 1, true, true)
+                end
+
+                --sprite:SetOverlayFrame("", sprite:GetOverlayFrame())
+            end
         end
     end
 end

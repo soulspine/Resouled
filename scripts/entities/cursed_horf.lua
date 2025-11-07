@@ -26,3 +26,5 @@ local function onEnemyHit(_, entity, amount, flags, source, frames, type)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, onEnemyHit, CURSED_HORF_TYPE)
+
+Resouled.StatTracker:RegisterCursedEnemy(CURSED_HORF_TYPE, CURSED_HORF_VARIANT, CURSED_HORF_SUBTYPE)

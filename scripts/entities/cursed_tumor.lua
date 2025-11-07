@@ -88,3 +88,5 @@ local function postNpcTakeDMG(_, entity)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, postNpcTakeDMG, ID)
+
+Resouled.StatTracker:RegisterCursedEnemy(ID, VARIANT, SUBTYPE)

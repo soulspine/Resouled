@@ -17,7 +17,8 @@ local function onPickupInit(_, pickup)
         trail.Color = Soul.TrailColor
         trail.MinRadius = Soul.TrailLength
         trail.SpriteScale = Vector.One
-
+        trail.DepthOffset = 100
+        trail.RenderZOffset = 100
         trail.ParentOffset = Soul.SpriteOffset * 1.5
 
         local data = pickup:GetData()
@@ -105,6 +106,10 @@ local function onPickupUpdate(_, pickup)
                 pickup.Velocity = (pickup.Velocity + (statue.Position - pickup.Position):Normalized()) * distance
 
                 if pickup.Position:Distance(statue.Position) - (pickup.Size + DeathStatue.Size) <= 0 then
+                    local save = Resouled.StatTracker:GetSaveField(Resouled.StatTracker.Fields.SoulsCollected)
+                    if not save then save = 0 end
+                    save = save + 1
+                    
                     pickup:Remove()
                     Soul:PlayPickupSound()
                     statue:GetSprite():PlayOverlay("Flash", true)
@@ -132,7 +137,8 @@ local function onPickupUpdate(_, pickup)
             trail.Color = Soul.TrailColor
             trail.MinRadius = Soul.TrailLength
             trail.SpriteScale = Vector.One
-
+            trail.DepthOffset = 100
+            trail.RenderZOffset = 100
             trail.ParentOffset = Soul.SpriteOffset * 1.5
 
             pickup:GetData().Resouled_SoulTrail = EntityRef(trail)

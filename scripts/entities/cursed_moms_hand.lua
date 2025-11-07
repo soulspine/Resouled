@@ -118,3 +118,5 @@ local function onNpcCollision(_, npc, collider, low)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_COLLISION, onNpcCollision, CURSED_MOMS_HAND_TYPE)
+
+Resouled.StatTracker:RegisterCursedEnemy(CURSED_MOMS_HAND_TYPE, CURSED_MOMS_HAND_VARIANT, CURSED_MOMS_HAND_SUBTYPE)

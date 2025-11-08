@@ -365,6 +365,13 @@ function Resouled:AddPendingBuff(buffID)
     
     if buff then
         local key = tostring(buff.Id)
+
+        local statSave = Resouled.StatTracker:GetSave()
+        if not statSave["Buffs Collected"] then statSave["Buffs Collected"] = {} end
+        statSave = statSave["Buffs Collected"]
+        if not statSave[key] then statSave[key] = false end
+        statSave[key] = true
+
         if buff.Stackable then
             FILE_SAVE.Resouled_PendingBuffs[key] = (FILE_SAVE.Resouled_PendingBuffs[key] or 0) + 1
         else

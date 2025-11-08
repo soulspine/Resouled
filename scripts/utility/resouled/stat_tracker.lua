@@ -20,6 +20,13 @@ Resouled.StatTracker.Fields = {
     RoomEventsEncountered = "Room Events Encountered",
 }
 
+Resouled.StatTracker.FiledsSorted = {
+    [1] = Resouled.StatTracker.Fields.CursedEnemiesKilled,
+    [2] = Resouled.StatTracker.Fields.SoulsCollected,
+    [3] = Resouled.StatTracker.Fields.BuffsPickedUp,
+    [4] = Resouled.StatTracker.Fields.RoomEventsEncountered
+}
+
 ---@param id integer
 ---@param variant integer
 ---@param subType integer

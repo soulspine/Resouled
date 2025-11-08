@@ -376,14 +376,10 @@ local function onRender()
 
             local buff = Resouled:GetBuffById(buffId)
             if buff then
-                local sprite = entity:GetSprite()
-
                 if not Game():IsPauseMenuOpen() then
                     EntityEffect.CreateLight(entity.Position + Vector(0, -43), 0.4, 5, 6, glowColors[buff.Rarity])
                     entity:SetColor(glowColorsPedestal[buff.Rarity], 2, 1, true, true)
                 end
-
-                --sprite:SetOverlayFrame("", sprite:GetOverlayFrame())
             end
         end
     end

@@ -4,9 +4,9 @@ local EID_BUFFS = {
             "Enemies have a 15% chance to turn into champions, rare pickup and chests appear 2.5% more often",
         [Resouled.Buffs.BROKEN_MEMORY] = "All " ..
             "Golden" ..
-            " locked chests chest chest chest chest have 50% chance to be replaced with " ..
+            " locked chests have 50% chance to be replaced with " ..
             "Dirty" .. " old chests for the whole run",
-        [Resouled.Buffs.CONSTELLATION] = "Treasure room is replaced by planetarium",
+        [Resouled.Buffs.CONSTELLATION] = "First treasure room is replaced by planetarium",
         [Resouled.Buffs.CROSS] = "You spawn with an eternal heart //endl// " ..
             "Holy card for lost and tainted lost",
         [Resouled.Buffs.CRUCIFIX] = 
@@ -27,7 +27,7 @@ local EID_BUFFS = {
         [Resouled.Buffs.FORTUNE] = "Grants +2 Luck",
         [Resouled.Buffs.FRIGHTENING_VISAGE] = "Reduces enemy health by 10%",
         [Resouled.Buffs.HEAVENS_CALL] = 
-            "First floor has a planetarium. +20% planetarium chance until a planetarium spawns",
+            "First floor has a planetarium. +20% planetarium chance until a planetarium is entered",
         [Resouled.Buffs.IMP] = "First treasure room item is a bomb related item",
         [Resouled.Buffs.KIDS_DRAWING] = "You start with gulped Kid's Drawing",
         [Resouled.Buffs.KING_CROWN] = 

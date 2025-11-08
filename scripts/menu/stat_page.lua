@@ -1,7 +1,7 @@
 ---@diagnostic disable: param-type-mismatch
 local CONFIG = {
     TopString = "Resouled Stats",
-    TextColor = KColor(1, 1, 1, 1),
+    TextColor = KColor(55/255, 43/255, 45/255, 1),
     HighlightColor = KColor(1, 0, 0, 1),
     ButtonActions = {
         Keyboard = {
@@ -218,8 +218,8 @@ local PAGES = {
                                 Isaac.DrawLine(
                                     newRenderPos - Vector(SPACE_BETWEEN_BUFFS/2, 0),
                                     newRenderPos + Vector(SPACE_BETWEEN_BUFFS/2, 0),
-                                    KColor(1, 1, 1, 0.75),
-                                    KColor(1, 1, 1, 0.75),
+                                    CONFIG.TextColor,
+                                    CONFIG.TextColor,
                                     SPACE_BETWEEN_BUFFS
                                 )
 

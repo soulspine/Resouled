@@ -20,7 +20,7 @@ local text = {
 
 local function postRender()
     local save = Resouled:GetOptionsSave()
-    if save and save[tostring(1)] == "True" then
+    if save and save[tostring(1)] == "Enabled" then
         local pos = Vector(Isaac.GetScreenWidth()/2, 25)
         local separation = font:GetBaselineHeight() + 5
         for _, string in ipairs(text) do

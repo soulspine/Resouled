@@ -24,8 +24,15 @@ local CONFIG = {
     PageOffset = Vector(510, 215),
     ViewportOffset = Vector(-39.5, -169.5),
     StatVerticalSpacing = 3,
-    LineOffset = 25
-
+    HeaderLineOffset = 25,
+    BuffPage = {
+        BigSpriteScale = Vector(1.5, 1.5),
+        VerticalSpacing = 46,
+        StartBuffPos = Vector(-156, -55.5),
+        BuffsPerLine = 9,
+        BuffsPerPage = 18,
+        BuffDescOffset = 5,
+    }
 }
 
 local FONTS = {
@@ -40,72 +47,15 @@ FONTS.Size12:Load("font/teammeatfont12.fnt")
 FONTS.Size16:Load("font/teammeatfont16.fnt")
 FONTS.Size20:Load("font/teammeatfont20bold.fnt")
 
-local BUFFS = {}
-Resouled:RunAfterImports(function()
-    local i = 0
-    while Resouled:GetBuffFamilyById(i) do
-        local family = Resouled:GetBuffFamilyById(i)
-
-        local specialFamily = false
-
-        for _, childBuffId in pairs(family.ChildBuffs) do
-            local buff = Resouled:GetBuffById(childBuffId)
-            if buff.Rarity == Resouled.BuffRarity.SPECIAL then
-                specialFamily = true
-            end
-        end
-
-        if not specialFamily then
-            BUFFS[#BUFFS+1] = family
-        end
-
-        i = i + 1
-    end
-
-    i = 0
-
-    while Resouled:GetBuffFamilyById(i) do
-        local family = Resouled:GetBuffFamilyById(i)
-
-        local specialFamily = false
-
-        for _, childBuffId in pairs(family.ChildBuffs) do
-            local buff = Resouled:GetBuffById(childBuffId)
-            if buff.Rarity == Resouled.BuffRarity.SPECIAL then
-                specialFamily = true
-            end
-        end
-
-        if specialFamily then
-            BUFFS[#BUFFS+1] = family
-        end
-
-        i = i + 1
-    end
-end)
-
-local BUFF_SPRITE = Sprite()
-local SELECTED_BUFF_SPRITE = Sprite()
-BUFF_SPRITE:Load("gfx/buffs/buffEID.anm2", true)
-SELECTED_BUFF_SPRITE:Load("gfx/buffs/buffEID.anm2", true)
-SELECTED_BUFF_SPRITE.Scale = Vector(1.5, 1.5)
-local SPACE_BETWEEN_BUFFS = 46
-local START_BUFF_POS = Vector(-156, -55.5)
-local BUFFS_PER_LINE = 9
-local SELECTED_BUFF = 0
-local BUFF_DESCS = {}
-local BUFF_DESC_OFFSET = 5
-local BUFF_PAGE = 1
-local BUFFS_PER_PAGE = 18
-
 local NEW_LINE = ">> "
 local ENDL = "//endl//"
 local MAX_WIDTH = 0
 
+---@param font Font
 ---@param description string
 ---@param maxWidth? number
 ---@return table
-local function alignDesc(description, maxWidth)
+local function alignDesc(font, description, maxWidth)
     local alignedDesc = {}
     
     description = NEW_LINE..description
@@ -122,7 +72,7 @@ local function alignDesc(description, maxWidth)
         if char == " " then
             lastSpace = i
         end
-        length = length + FONTS.Size10:GetStringWidth(char)
+        length = length + font:GetStringWidth(char)
         
         local endline = description:find(ENDL)
         if endline then
@@ -147,24 +97,103 @@ local function alignDesc(description, maxWidth)
     return alignedDesc
 end
 
+-- ALL OF THIS IS DYNAMIC
+
+---@type ResouledBuffFamilyDesc[]
+local sortedBuffFamilies = {}
+local currentSelectedBuff = 0
+local currentBuffPage = 1
+local buffDescs = {}
+
+local currentSelectedOption = 1
+
+local currentRoomEventPage = 1
+---@type ResouledRoomEventDesc[]
+local roomEvents = {}
+
+local roomEventDescriptionsAligned = {}
+
+-- END DYNAMIC
+
 Resouled:RunAfterImports(function()
+    local i = 0
+    while Resouled:GetBuffFamilyById(i) do
+        local family = Resouled:GetBuffFamilyById(i)
+
+        if not family then return end
+
+        local specialFamily = false
+
+        for _, childBuffId in pairs(family.ChildBuffs) do
+            local buff = Resouled:GetBuffById(childBuffId)
+            if not buff then return end
+            if buff.Rarity == Resouled.BuffRarity.SPECIAL then
+                specialFamily = true
+            end
+        end
+
+        if not specialFamily then
+            table.insert(sortedBuffFamilies, family)
+        end
+
+        i = i + 1
+    end
+
+    i = 0
+
+    while Resouled:GetBuffFamilyById(i) do
+        local family = Resouled:GetBuffFamilyById(i)
+
+        if not family then return end
+
+        local specialFamily = false
+
+        for _, childBuffId in pairs(family.ChildBuffs) do
+            local buff = Resouled:GetBuffById(childBuffId)
+            if not family then return end
+            
+            if not buff then return end
+
+            if buff.Rarity == Resouled.BuffRarity.SPECIAL then
+                specialFamily = true
+            end
+        end
+
+        if specialFamily then
+            sortedBuffFamilies[#sortedBuffFamilies+1] = family
+        end
+
+        i = i + 1
+    end
+
     for _, buffDesc in pairs(Resouled:GetBuffs()) do
-        BUFF_DESCS[buffDesc.Id] = alignDesc(Resouled.Stats.BuffDescriptions[buffDesc.Id] or "No Description", CONFIG.BackgroundSpriteSize.X - BUFF_DESC_OFFSET*2)
+        buffDescs[buffDesc.Id] = alignDesc(FONTS.Size10, Resouled.Stats.BuffDescriptions[buffDesc.Id] or "No Description", CONFIG.BackgroundSpriteSize.X - CONFIG.BuffPage.BuffDescOffset*2)
+    end
+    
+    -- room events
+    roomEvents = Resouled:GetRoomEvents()
+    for _, roomEventDesc in ipairs(roomEvents) do
+        roomEventDescriptionsAligned[roomEventDesc.Id] = alignDesc(FONTS.Size12, Resouled.RoomEventDescriptions[roomEventDesc.Id] or "No Desc", CONFIG.BackgroundSpriteSize.X - 10)
     end
 end)
 
-Resouled:AddCallback(Resouled.Callbacks.StatsReset, function()
-    for _, buffDesc in pairs(Resouled:GetBuffs()) do
-        BUFF_DESCS[buffDesc.Id] = alignDesc(Resouled.Stats.BuffDescriptions[buffDesc.Id] or "No Description", CONFIG.BackgroundSpriteSize.X - BUFF_DESC_OFFSET*2)
-    end
-end)
-
-local SELECTED_OPTION = 1
+local BUFF_SPRITE = Sprite()
+local SELECTED_BUFF_BIG_SPRITE = Sprite()
+BUFF_SPRITE:Load("gfx/buffs/buffEID.anm2", true)
+SELECTED_BUFF_BIG_SPRITE:Load("gfx/buffs/buffEID.anm2", true)
+SELECTED_BUFF_BIG_SPRITE.Scale = CONFIG.BuffPage.BigSpriteScale
 
 local optionsSave
 Resouled:AddCallback(Resouled.Callbacks.OptionsLoaded, function()
     optionsSave = Resouled:GetOptionsSave()
 end)
+
+local leftAndRightSwitchOptions = {
+    ["Disabled"] = true,
+    ["Enabled"] = true,
+    ["True"] = true,
+    ["False"] = true,
+}
 
 local PAGES = {
     {
@@ -207,11 +236,11 @@ local PAGES = {
             save = save["Buffs Collected"]
             local selectedBuffId = 0
             local i = 0
-            local pos = Vector(START_BUFF_POS.X, START_BUFF_POS.Y - SPACE_BETWEEN_BUFFS * 2 * (BUFF_PAGE - 1))
-            local lineY = (renderPos.Y - CONFIG.BackgroundSpriteSize.Y/2) + CONFIG.LineOffset + (CONFIG.BackgroundSpriteSize.Y - CONFIG.LineOffset)/2
+            local pos = Vector(CONFIG.BuffPage.StartBuffPos.X, CONFIG.BuffPage.StartBuffPos.Y - CONFIG.BuffPage.VerticalSpacing * 2 * (currentBuffPage - 1))
+            local lineY = (renderPos.Y - CONFIG.BackgroundSpriteSize.Y/2) + CONFIG.HeaderLineOffset + (CONFIG.BackgroundSpriteSize.Y - CONFIG.HeaderLineOffset)/2
 
             ---@param family ResouledBuffFamilyDesc
-            for _, family in ipairs(BUFFS) do
+            for _, family in ipairs(sortedBuffFamilies) do
                 for _, buffId in ipairs(family.ChildBuffs) do
                     local buff = Resouled:GetBuffById(buffId)
                     if buff then
@@ -230,7 +259,7 @@ local PAGES = {
                             
                             local newRenderPos = renderPos + pos
                             
-                            if i == SELECTED_BUFF then
+                            if i == currentSelectedBuff then
                                 Isaac.DrawLine(
                                     newRenderPos - Vector(32/2, 0),
                                     newRenderPos + Vector(32/2, 0),
@@ -241,23 +270,23 @@ local PAGES = {
 
                                 selectedBuffId = buff.Id
                                 if not save[key] then
-                                    SELECTED_BUFF_SPRITE:Play("NotUnlocked", true)
+                                    SELECTED_BUFF_BIG_SPRITE:Play("NotUnlocked", true)
                                 else
-                                    SELECTED_BUFF_SPRITE:ReplaceSpritesheet(0, family.Spritesheet, true)
-                                    SELECTED_BUFF_SPRITE:Play(rarity.Name, true)
+                                    SELECTED_BUFF_BIG_SPRITE:ReplaceSpritesheet(0, family.Spritesheet, true)
+                                    SELECTED_BUFF_BIG_SPRITE:Play(rarity.Name, true)
                                 end
                             end
                             
-                            local topClampY = math.max(math.min(renderPos.Y - CONFIG.BackgroundSpriteSize.Y/2 + CONFIG.LineOffset - newRenderPos.Y + 16, 32), 0)
+                            local topClampY = math.max(math.min(renderPos.Y - CONFIG.BackgroundSpriteSize.Y/2 + CONFIG.HeaderLineOffset - newRenderPos.Y + 16, 32), 0)
                             local bottomClampY = math.max(math.min(newRenderPos.Y - lineY + 16, 32), 0)
                             if bottomClampY >= 0 and topClampY >= 0 then
                                 BUFF_SPRITE:Render(newRenderPos, Vector(0, topClampY), Vector(0, bottomClampY))
                             end
                             
-                            pos.X = pos.X + CONFIG.BackgroundSpriteSize.X/BUFFS_PER_LINE
+                            pos.X = pos.X + CONFIG.BackgroundSpriteSize.X/CONFIG.BuffPage.BuffsPerLine
                             if pos.X > CONFIG.BackgroundSpriteSize.X/2 then
-                                pos.X = START_BUFF_POS.X
-                                pos.Y = pos.Y + SPACE_BETWEEN_BUFFS
+                                pos.X = CONFIG.BuffPage.StartBuffPos.X
+                                pos.Y = pos.Y + CONFIG.BuffPage.VerticalSpacing
                             end
                             
                             i = i + 1
@@ -278,7 +307,7 @@ local PAGES = {
             if buff then
                 local key = tostring(selectedBuffId)
                 local iconPos = Vector(renderPos.X - CONFIG.BackgroundSpriteSize.X/2 + 25, lineY + 25 + 1)
-                SELECTED_BUFF_SPRITE:Render(iconPos)
+                SELECTED_BUFF_BIG_SPRITE:Render(iconPos)
 
                 local namePos = Vector(iconPos.X + 25, iconPos.Y - 25/1.5)
                 local nameString = buff.Name
@@ -294,92 +323,134 @@ local PAGES = {
 
                 familyString = "''"..familyString.."''"
 
-                FONTS.Size10:DrawStringScaled(familyString, renderPos.X + CONFIG.BackgroundSpriteSize.X/2 - FONTS.Size10:GetStringWidth(familyString) - BUFF_DESC_OFFSET, namePos.Y + 3, 1, 1, CONFIG.TextColor)
+                FONTS.Size10:DrawStringScaled(familyString, renderPos.X + CONFIG.BackgroundSpriteSize.X/2 - FONTS.Size10:GetStringWidth(familyString) - CONFIG.BuffPage.BuffDescOffset, namePos.Y + 3, 1, 1, CONFIG.TextColor)
 
-                local descPos = iconPos + Vector(-25 + BUFF_DESC_OFFSET, 20)
+                local descPos = iconPos + Vector(-25 + CONFIG.BuffPage.BuffDescOffset, 20)
 
                 if not save[key] then
                     FONTS.Size10:DrawStringScaled("???", descPos.X, descPos.Y, 1, 1, CONFIG.TextColor)
                 else
                     local spaceBetweenDesc = FONTS.Size10:GetBaselineHeight() - 2
-                    for _, string in pairs(BUFF_DESCS[buff.Id]) do
+                    for _, string in pairs(buffDescs[buff.Id]) do
                         FONTS.Size10:DrawStringScaled(string, descPos.X, descPos.Y, 1, 1, CONFIG.TextColor)
                         descPos.Y = descPos.Y + spaceBetweenDesc
                     end
                 end
             end
 
-            local pageString = "Page: "..tostring(BUFF_PAGE).."/"..tostring(i//BUFFS_PER_PAGE + 1)
+            local pageString = "Page: "..tostring(currentBuffPage).."/"..tostring(i//CONFIG.BuffPage.BuffsPerPage + 1)
 
             FONTS.Size10:DrawStringScaled(pageString, renderPos.X, lineY - 7.5, 0.5, 0.5, CONFIG.TextColor, math.floor(FONTS.Size10:GetStringWidth(pageString)/4 + 0.5), true)
 
             if enableInput then
                 if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENULEFT) then
-                    SELECTED_BUFF = SELECTED_BUFF - 1
+                    currentSelectedBuff = currentSelectedBuff - 1
                     SFXManager():Play(SoundEffect.SOUND_MENU_SCROLL)
                 end
                 if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENURIGHT) then
-                    SELECTED_BUFF = SELECTED_BUFF + 1
+                    currentSelectedBuff = currentSelectedBuff + 1
                     SFXManager():Play(SoundEffect.SOUND_MENU_SCROLL)
                 end
                 if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENUUP) then
-                    SELECTED_BUFF = SELECTED_BUFF - BUFFS_PER_LINE
+                    currentSelectedBuff = currentSelectedBuff - CONFIG.BuffPage.BuffsPerLine
                     SFXManager():Play(SoundEffect.SOUND_MENU_SCROLL)
                 end
                 if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENUDOWN) then
-                    SELECTED_BUFF = SELECTED_BUFF + BUFFS_PER_LINE
+                    currentSelectedBuff = currentSelectedBuff + CONFIG.BuffPage.BuffsPerLine
                     SFXManager():Play(SoundEffect.SOUND_MENU_SCROLL)
                 end
             end
 
-            SELECTED_BUFF = math.min(math.max(0, SELECTED_BUFF), i - 1)
+            currentSelectedBuff = math.min(math.max(0, currentSelectedBuff), i - 1)
 
-            BUFF_PAGE = SELECTED_BUFF//BUFFS_PER_PAGE + 1
+            currentBuffPage = currentSelectedBuff//CONFIG.BuffPage.BuffsPerPage + 1
         end
     },
     {
         Name = "Room Events",
         Renderer = function(renderPos, save, enableInput)
-            FONTS.Size12:DrawStringScaled(
-                "Room Events",
-                renderPos.X,
-                renderPos.Y,
-                1, 1, CONFIG.TextColor
-            )
+            local pos = renderPos + Vector(0, -CONFIG.BackgroundSpriteSize.Y/2) + Vector(0, CONFIG.HeaderLineOffset)
+
+            local pageString = "<< "..tostring(currentRoomEventPage).."/"..tostring(#roomEvents).." >>"
+
+            local lineHeight = FONTS.Size10:GetBaselineHeight()
+
+            FONTS.Size10:DrawStringScaled(pageString, pos.X, pos.Y, 1, 1, CONFIG.TextColor, math.floor(FONTS.Size10:GetStringWidth(pageString)/2 + 0.5))
+
+            Isaac.DrawLine(pos + Vector(-CONFIG.BackgroundSpriteSize.X/2, lineHeight), pos + Vector(CONFIG.BackgroundSpriteSize.X/2, lineHeight), CONFIG.TextColor, CONFIG.TextColor, 1)
+
+            pos.Y = pos.Y + lineHeight
+
+            local roomEvent = Resouled:GetRoomEvent(currentRoomEventPage)
+            if roomEvent then
+                local name = roomEvent.Name
+
+                FONTS.Size16:DrawStringScaled(name, pos.X, pos.Y, 1, 1, CONFIG.TextColor, math.floor(FONTS.Size16:GetStringWidth(name)/2 + 0.5))
+
+                local separation = FONTS.Size12:GetBaselineHeight()
+                for _, string in pairs(roomEventDescriptionsAligned[currentRoomEventPage]) do
+                    pos.Y = pos.Y + separation
+                    FONTS.Size12:DrawString(string, pos.X, pos.Y, CONFIG.TextColor, math.floor(FONTS.Size12:GetStringWidth(string)/2 + 0.5))
+                end
+            end
+
+            if enableInput then
+                if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENULEFT) then
+                    currentRoomEventPage = ((currentRoomEventPage - 2) % #roomEvents) + 1
+                    SFXManager():Play(SoundEffect.SOUND_MENU_SCROLL)
+                end
+                if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENURIGHT) then
+                    currentRoomEventPage = (currentRoomEventPage % #roomEvents) + 1
+                    SFXManager():Play(SoundEffect.SOUND_MENU_SCROLL)
+                end
+            end
         end
     },
     {
         Name = "Options",
         Renderer = function(renderPos, save, enableInput)
-            local startPos = renderPos - CONFIG.BackgroundSpriteSize/2 + Vector(5, CONFIG.LineOffset + 5)
+            local startPos = renderPos - CONFIG.BackgroundSpriteSize/2 + Vector(5, CONFIG.HeaderLineOffset + 5)
             local separation = FONTS.Size10:GetBaselineHeight()
             local maxOption = 0
-            for i, option in ipairs(Resouled.Options) do
+            local selectedOption
+
+            for i, optionConfig in ipairs(Resouled.Options) do
                 local y = startPos.Y + separation * (i - 1)
-                FONTS.Size10:DrawStringScaled(option, startPos.X, y, 1, 1, CONFIG.TextColor)
 
-                local optionString = tostring(optionsSave[tostring(i)])
+                FONTS.Size10:DrawStringScaled(optionConfig.Name, startPos.X, y, 1, 1, CONFIG.TextColor)
+                
+                local valueString = tostring(Resouled:GetOptionValue(optionConfig.Name))..(optionConfig.Suffix or "")
 
-                if i == SELECTED_OPTION then
-                    optionString = ">> "..optionString.." <<"
+                local color
+                
+                color = Resouled.OptionColors[valueString] or CONFIG.TextColor
+                
+                if i == currentSelectedOption then
+                    selectedOption = optionConfig.Name
+                    valueString = ">> "..valueString.." <<"
                 end
 
-                FONTS.Size10:DrawStringScaled(optionString, renderPos.X - FONTS.Size10:GetStringWidth(optionString) + CONFIG.BackgroundSpriteSize.X/2 - 5, y, 1, 1, CONFIG.TextColor)
+                FONTS.Size10:DrawStringScaled(valueString, renderPos.X - FONTS.Size10:GetStringWidth(valueString) + CONFIG.BackgroundSpriteSize.X/2 - 5, y, 1, 1, color)
 
                 maxOption = maxOption + 1
             end
 
             if enableInput then
                 if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENUDOWN) then
-                    SELECTED_OPTION = math.min(SELECTED_OPTION + 1, maxOption)
+                    currentSelectedOption = math.min(currentSelectedOption + 1, maxOption)
                     SFXManager():Play(SoundEffect.SOUND_MENU_SCROLL)
                 end
                 if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENUUP) then
-                    SELECTED_OPTION = math.max(SELECTED_OPTION - 1, 1)
+                    currentSelectedOption = math.max(currentSelectedOption - 1, 1)
                     SFXManager():Play(SoundEffect.SOUND_MENU_SCROLL)
                 end
-                if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_ITEM) then
-                    Resouled:TriggerOption(SELECTED_OPTION, optionsSave)
+
+                if (Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENULEFT)) then
+                    Resouled:StepOptionValue(selectedOption, false)
+                    SFXManager():Play(SoundEffect.SOUND_PLOP)
+                end
+                if (Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENURIGHT)) then
+                    Resouled:StepOptionValue(selectedOption, true)
                     SFXManager():Play(SoundEffect.SOUND_PLOP)
                 end
             end
@@ -425,18 +496,20 @@ local function menuRender()
     -- TODO CHECK FOR INPUT DEVICE
     -- FOR NOW ASSUME KEYBOARD
     local inputLookup = CONFIG.ButtonActions.Keyboard
-
+    
     if not IsaacReflourished or (IsaacReflourished and not IsaacReflourished.RunLogger.RecordsMenuOpen) then
         -- handling menu page changing
-        if menu == MainMenuType.STATS and Resouled:HasAnyoneTriggeredAction(inputLookup.Enter) then
+        if menu == MainMenuType.GAME and Resouled:HasAnyoneTriggeredAction(inputLookup.Enter) then
             MenuManager.SetActiveMenu(CONFIG.CustomMenuType)
             currentPageIdx = 1
-            SELECTED_BUFF = 0
-            BUFF_PAGE = 1
-            SELECTED_OPTION = 1
+            currentSelectedBuff = 0
+            currentBuffPage = 1
+            currentSelectedOption = 1
+            currentRoomEventPage = 1
+
             SFXManager():Play(SoundEffect.SOUND_BOOK_PAGE_TURN_12)
         elseif menu == CONFIG.CustomMenuType and Resouled:HasAnyoneTriggeredAction(inputLookup.Leave) then
-            MenuManager.SetActiveMenu(MainMenuType.STATS)
+            MenuManager.SetActiveMenu(MainMenuType.GAME)
             SFXManager():Play(SoundEffect.SOUND_BOOK_PAGE_TURN_12)
         end
     end
@@ -478,8 +551,8 @@ local function menuRender()
         1.5
     )
 
-    Isaac.DrawLine(Vector(renderPos.X - CONFIG.BackgroundSpriteSize.X / 2, renderPos.Y - CONFIG.BackgroundSpriteSize.Y/2 + CONFIG.LineOffset),
-        Vector(renderPos.X + CONFIG.BackgroundSpriteSize.X / 2, renderPos.Y - CONFIG.BackgroundSpriteSize.Y/2 + CONFIG.LineOffset), CONFIG.TextColor, CONFIG.TextColor, 1)
+    Isaac.DrawLine(Vector(renderPos.X - CONFIG.BackgroundSpriteSize.X / 2, renderPos.Y - CONFIG.BackgroundSpriteSize.Y/2 + CONFIG.HeaderLineOffset),
+        Vector(renderPos.X + CONFIG.BackgroundSpriteSize.X / 2, renderPos.Y - CONFIG.BackgroundSpriteSize.Y/2 + CONFIG.HeaderLineOffset), CONFIG.TextColor, CONFIG.TextColor, 1)
 
     renderPagesSidebar(renderPos)
 end

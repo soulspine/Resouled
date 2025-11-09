@@ -2,8 +2,6 @@ local CURSED_HORF_VARIANT = Isaac.GetEntityVariantByName("Cursed Horf")
 local CURSED_HORF_TYPE = Isaac.GetEntityTypeByName("Cursed Horf")
 local CURSED_HORF_SUBTYPE = Isaac.GetEntitySubTypeByName("Cursed Horf")
 
-local CURSED_ENEMY_MORPH_CHANCE = Resouled.Stats.CursedEnemyMorphChance
-
 local PROJECTILE_PARAMS = Resouled.Stats:GetCursedProjectileParams()
 local REFLECTED_BULLET_SPEED = 2
 
@@ -11,7 +9,7 @@ local REFLECTED_BULLET_SPEED = 2
 local function onNpcInit(_, npc)
     --Try to turn enemy into a cursed enemy
     if Game():GetLevel():GetCurses() > 0 then
-        Resouled:TryEnemyMorph(npc, CURSED_ENEMY_MORPH_CHANCE, CURSED_HORF_TYPE, CURSED_HORF_VARIANT, CURSED_HORF_SUBTYPE)
+        Resouled:TryEnemyMorph(npc, Resouled.Stats.CursedEnemyMorphChance(), CURSED_HORF_TYPE, CURSED_HORF_VARIANT, CURSED_HORF_SUBTYPE)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CURSED_HORF_TYPE)

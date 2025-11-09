@@ -2,8 +2,6 @@ local CURSED_KEEPER_HEAD_VARIANT = Isaac.GetEntityVariantByName("Cursed Keeper H
 local CURSED_KEEPER_HEAD_TYPE = Isaac.GetEntityTypeByName("Cursed Keeper Head")
 local CURSED_KEEPER_HEAD_SUBTYPE = Isaac.GetEntitySubTypeByName("Cursed Keeper Head")
 
-local CURSED_ENEMY_MORPH_CHANCE = Resouled.Stats.CursedEnemyMorphChance
-
 local ATTACK1 = {
     [1] = -20,
     [2] = 20
@@ -21,7 +19,7 @@ local PROJECTILE_SPEED = 7
 local function onNpcInit(_, npc)
     --Try to turn enemy into a cursed enemy
     if Game():GetLevel():GetCurses() > 0 then
-        Resouled:TryEnemyMorph(npc, CURSED_ENEMY_MORPH_CHANCE, CURSED_KEEPER_HEAD_TYPE, CURSED_KEEPER_HEAD_VARIANT, CURSED_KEEPER_HEAD_SUBTYPE)
+        Resouled:TryEnemyMorph(npc, Resouled.Stats.CursedEnemyMorphChance(), CURSED_KEEPER_HEAD_TYPE, CURSED_KEEPER_HEAD_VARIANT, CURSED_KEEPER_HEAD_SUBTYPE)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CURSED_KEEPER_HEAD_TYPE)

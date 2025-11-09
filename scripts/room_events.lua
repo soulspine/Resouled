@@ -194,3 +194,41 @@ include("scripts.room_events.pity_for_the_poor")
 include("scripts.room_events.guppys_pieces")
 include("scripts.room_events.the_isaac_of_isaac_isaac")
 include("scripts.room_events.spider_webs")
+
+Resouled.RoomEventDescriptions = {
+    [Resouled.RoomEvents.ALL_HALLOWS_EVE] = "All enemies in the room become white champions when entering the room",
+    [Resouled.RoomEvents.ANGELIC_INTERVENTION] = "Grants holy mantle effect for the current room",
+    [Resouled.RoomEvents.BLACK_CHAMPIONS] = "All enemies in the room become black explosive champions when entering the room",
+    [Resouled.RoomEvents.BLESSING_OF_GLUTTONY] = "On room clear guarantees the room reward //endl// The room reward will be upgraded",
+    [Resouled.RoomEvents.BLESSING_OF_GREED] = "When an enemy is killed, it drops a fading tainted keeper coin on death",
+    [Resouled.RoomEvents.BLESSING_OF_THE_SACK] = "When entering the room, every pickup becomes a sack",
+    [Resouled.RoomEvents.BLOOD_LUST] = "After clearing the room for the first time, triggers the D7 effect",
+    [Resouled.RoomEvents.BUTTER_FINGERS] = "All pickups try to run away from Isaac like scared hearts",
+    [Resouled.RoomEvents.RED_CHAMPIONS] = "All enemies in the room become red meat pile champions",
+    [Resouled.RoomEvents.SHADOW_OF_WAR] = "Coming in contact with pickups makes them explode",
+    [Resouled.RoomEvents.STATIC_SHOCK] = "Using an active item has a chance to deal damage to Isaac //endl// The higher charge, the higher chance of this occuring",
+    [Resouled.RoomEvents.SPOILS_OF_WAR] = "Can only appear in Boss rooms //endl// Clearing that room grants an additional item as a reward",
+    [Resouled.RoomEvents.MAGGYS_BLESSING] = "Grants a temporary heart container for the room",
+    [Resouled.RoomEvents.SAMSONS_BLESSING] = "Grants one stack of lusty blood item effect for the room",
+    [Resouled.RoomEvents.RED_VISE] = "If you leave the room without picking up any pickups you will take damage",
+    [Resouled.RoomEvents.SPLASH_DAMAGE] = "Isaac's tears deal AoE damage in a small radius",
+    [Resouled.RoomEvents.EDENS_BLESSING] = "Appears only in rooms that contain items //endl// Spawns a one time use D6 forr th",
+    [Resouled.RoomEvents.GREED_LOOMS] = "Appears only in shops //endl// If you exit the shop without buying anything the prices will be raised by 25%",
+    [Resouled.RoomEvents.TAX_FOR_THE_MIGHTY] = "Appears only in shops //endl// Increased prices for each Q3+ item you own",
+    [Resouled.RoomEvents.SHADOW_OF_FAMINE] = "Makes you unable to use your active item //endl// All spawned pickups are despawned",
+    [Resouled.RoomEvents.BLESSING_OF_STEAM] = "Appears only in shops //endl// Everything in the shop becomes discounted by 25%",
+    [Resouled.RoomEvents.BLESSING_OF_INNER_EYE] = "Reveals the nearest rooms in a 3x3 area",
+    [Resouled.RoomEvents.CONJOINED_TWIN] = "After killing an enemy, you gain a small boost of velocity in a random direction",
+    [Resouled.RoomEvents.BLOOD_MONEY] = "When you get hit, you drop 1 to 2 of your coins as fading tainted keeper coins",
+    [Resouled.RoomEvents.HEAVY_IS_THE_HEAD] = "When entering a room you lose 0.01 speed for each item you own",
+    [Resouled.RoomEvents.BLIND_RAGE] = "After you clear the room, you are teleported to the nearest uncleared room",
+    [Resouled.RoomEvents.EQUALITY] = "When picking up a coin/bomb/key, you gain one of the other pickups too",
+    [Resouled.RoomEvents.ISAACS_BLESSING] = "Appears only in rooms that contain items //endl// Items in the room cycle between two random items from current item pool",
+    [Resouled.RoomEvents.BUM_BO_IS_LOOSE] = "When entering a room, spawns an angry bumbo enemy that steals your money from the ground",
+    [Resouled.RoomEvents.MIGHT_FOR_THE_MEEK] = "Grants a damage multiplier that's bigger when you have less souls",
+    [Resouled.RoomEvents.PITY_FOR_THE_POOR] = "Discounts all items in the shop based on the amount of souls possessed when first entering it //endl// The less souls you have, the bigger the discount",
+    [Resouled.RoomEvents.GUPPYS_PIECES] = "Replaces all items in the room with Guppy Pieces //endl// Only applicable to Treasure Rooms",
+    [Resouled.RoomEvents.THE_ISAAC_OF_ISAAC_ISAAC] = "All enemies are replaced by Isaacs //endl// Isaacs behave like Isaac - shoots, dodges and moves around",
+    [Resouled.RoomEvents.SPIDER_WEBS] = "Screen gets covered in a gigantic spider web //endl// Replaces free tiles with small spider webs that slow Isaac down",
+    
+}

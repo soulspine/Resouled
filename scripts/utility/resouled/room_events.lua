@@ -1,7 +1,11 @@
 local game = Game()
 
-local BASE_ROOM_EVENT_NUM_PER_FLOOR = 2
-local ROOM_EVENTS_TO_ADD_PER_CHAPTER = 1
+local BASE_ROOM_EVENT_NUM_PER_FLOOR = function()
+    return Resouled:GetOptionValue("Base Room Event Num")
+end
+local ROOM_EVENTS_TO_ADD_PER_CHAPTER = function()
+    return Resouled:GetOptionValue("Room Events Per Chapter")
+end
 
 local STAGES_BLACKLIST = {
     [1] = true,  -- BASEMENT
@@ -98,11 +102,6 @@ local function checkRoomEventFilters(roomEventID)
     return true
 end
 
----@return boolean
-local function roomEventsEnabled()
-    return Resouled:GetOptionsSave()[tostring(2)] == "True"
-end
-
 local popupFont = Font()
 popupFont:Load("font/upheaval.fnt")
 
@@ -190,8 +189,6 @@ local function forceRoomEvent(roomEventID, roomListIndex)
 end
 
 local function postNewFloor()
-    if not roomEventsEnabled() then return end
-
     local stage = game:GetLevel():GetStage()
     if STAGES_BLACKLIST[stage] then -- blacklisted
         return
@@ -204,8 +201,8 @@ local function postNewFloor()
     if not RUN_SAVE.RoomEvents or (RUN_SAVE.RoomEvents and RUN_SAVE.RoomEvents.CurrentChapter ~= Resouled.AccurateStats:GetCurrentChapter()) then -- we moved onto different chapter and refresh amount of room events to distribute
         RUN_SAVE.RoomEvents = {
             CurrentChapter = Resouled.AccurateStats:GetCurrentChapter(),
-            EventsToDistribute = BASE_ROOM_EVENT_NUM_PER_FLOOR +
-            Resouled.AccurateStats:GetCurrentChapter() * ROOM_EVENTS_TO_ADD_PER_CHAPTER,
+            EventsToDistribute = BASE_ROOM_EVENT_NUM_PER_FLOOR() +
+            Resouled.AccurateStats:GetCurrentChapter() * ROOM_EVENTS_TO_ADD_PER_CHAPTER(),
             LastFloor = Resouled.AccurateStats:IsCurrentFloorLastFloorOfChapter(),
         }
     end
@@ -248,8 +245,6 @@ end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
 
 local function postNewRoom()
-    if not roomEventsEnabled() then return end
-
     local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
 
     if ROOM_SAVE.RoomEvent then
@@ -264,8 +259,6 @@ end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)
 
 local function preRoomExit()
-    if not roomEventsEnabled() then return end
-
     local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
     if ROOM_SAVE.RoomEvent then
         if not Resouled:GetRoomEventByID(ROOM_SAVE.RoomEvent).NoDespawn then

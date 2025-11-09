@@ -1,6 +1,8 @@
 Resouled.Stats = {}
 
-Resouled.Stats.CursedEnemyMorphChance = 0.1
+Resouled.Stats.CursedEnemyMorphChance = function()
+    return Resouled:GetOptionValue("Cursed Enemy Morph Chance")/100
+end
 
 Resouled.Stats.CursedProjectileColor = Color(0.5, 0, 0.75, 1, 0.5 * 0.45, 0, 0.75 * 0.45)
 Resouled.Stats.CursedProjectileVariant = ProjectileVariant.PROJECTILE_TEAR
@@ -102,20 +104,6 @@ Resouled.Stats.BuffPedestal = {
     Type = Isaac.GetEntityTypeByName("Buff Pedestal"),
     Variant = Isaac.GetEntityVariantByName("Buff Pedestal"),
     SubType = Isaac.GetEntitySubTypeByName("Buff Pedestal")
-}
-
-Resouled.Stats.Achievements = {
-    Afterlife = {
-        CursedEnemies = Isaac.GetAchievementIdByName("Everything is cursed!"),
-        ForeverAlone = Isaac.GetAchievementIdByName("??? now holds forever alone!"),
-        SleightOfHand = Isaac.GetAchievementIdByName("Cain now holds sleight of hand!"),
-        Soulbond = Isaac.GetAchievementIdByName("The Baleful now holds soulbond!"),
-        SpindownDice = Isaac.GetAchievementIdByName("The Broken now holds spindown dice!"),
-    },
-
-    Normal = {
-
-    }
 }
 
 Resouled.Stats.Casket = {

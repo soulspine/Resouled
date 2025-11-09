@@ -25,12 +25,10 @@ local GRAB_TELEPORT_ROOM_TYPE_WHITELIST = {
     [RoomType.ROOM_SACRIFICE] = true,
 }
 
-local CURSED_ENEMY_MORPH_CHANCE = Resouled.Stats.CursedEnemyMorphChance
-
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
     if Game():GetLevel():GetCurses() > 0 then
-        Resouled:TryEnemyMorph(npc, CURSED_ENEMY_MORPH_CHANCE, CURSED_MOMS_HAND_TYPE, CURSED_MOMS_HAND_VARIANT, CURSED_MOMS_HAND_SUBTYPE)
+        Resouled:TryEnemyMorph(npc, Resouled.Stats.CursedEnemyMorphChance(), CURSED_MOMS_HAND_TYPE, CURSED_MOMS_HAND_VARIANT, CURSED_MOMS_HAND_SUBTYPE)
     end
     if npc.Variant == CURSED_MOMS_HAND_VARIANT then
         npc.Mass = math.huge

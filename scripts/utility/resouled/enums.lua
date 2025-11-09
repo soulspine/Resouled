@@ -1,6 +1,14 @@
 ---@class ResouledEnums
 local enums = {}
 
+enums.Achievements = {
+    CursedEnemies = Isaac.GetAchievementIdByName("Everything is cursed!"),
+    ForeverAlone = Isaac.GetAchievementIdByName("??? now holds forever alone!"),
+    SleightOfHand = Isaac.GetAchievementIdByName("Cain now holds sleight of hand!"),
+    Soulbond = Isaac.GetAchievementIdByName("The Baleful now holds soulbond!"),
+    SpindownDice = Isaac.GetAchievementIdByName("The Broken now holds spindown dice!"),
+}
+
 enums.Items = {
     A_FRIEND = Isaac.GetItemIdByName("A Friend"),
     AUCTION_GAVEL = Isaac.GetItemIdByName("Auction Gavel"),

@@ -1,48 +1,57 @@
+-- room event per floor
+-- cursed enemies morph chance
+
+local types = {
+    Float = "number",
+    OneClick = "oneclick",
+    Integer = "integer",
+    Bool = "boolean",
+    String = "string"
+}
+
 Resouled.Options = {
-    [1] = "Start Notification",
-    [2] = "Enable Room Events",
-    [3] = "Unlock Whole Mod Content",
-    [4] = "Reset Mod Progress"
+    {
+        Achievement = Resouled.Enums.Achievements.CursedEnemies,
+        Name = "Cursed Enemy Morph Chance",
+        DefaultValue = 10,
+        Type = types.Float,
+        Suffix = "%",
+        Step = 1,
+        Min = 0,
+        Max = 100,
+    },
+    {
+        Achievement = nil,
+        Name = "Room Events Per Chapter",
+        DefaultValue = 1,
+        Type = types.Integer,
+        Step = 1,
+        Min = 0,
+        Max = nil,
+    },
+    {
+        Achievement = nil,
+        Name = "Base Room Event Num",
+        DefaultValue = 2,
+        Type = types.Integer,
+        Step = 1,
+        Min = 0,
+        Max = nil
+    },
+    {
+        Achievement = nil,
+        Name = "Reset Mod Progress",
+        DefaultValue = "Confirm",
+        StringOptions = {"Confirm"},
+        Type = types.OneClick,
+    }
 }
 
-local defaultValues = {
-    [1] = "True",
-    [2] = "True",
-    [3] = "Confirm",
-    [4] = "Confirm"
+Resouled.OptionColors = {
+    Positive = KColor(0.3, 0.5, 0.3, 1),
+    Negative = KColor(0.5, 0.3, 0.3, 1)
 }
 
-local optionsEffects = {
-    [1] = function(save)
-        local key = tostring(1)
-        if save[key] == "True" then
-            save[key] = "False"
-        else
-            save[key] = "True"
-        end
-    end,
-
-    [2] = function(save)
-        local key = tostring(2)
-        if save[key] == "True" then
-            save[key] = "False"
-        else
-            save[key] = "True"
-        end
-    end,
-
-    [3] = function(save)
-
-    end,
-
-    [4] = function(save)
-        local save1 = Resouled.StatTracker:GetSave()
-        for key, _ in pairs(save1) do
-            save1[key] = nil
-        end
-        Isaac.RunCallback(Resouled.Callbacks.StatsReset)
-    end
-}
 
 local loadedSave = false
 local optionsSave
@@ -52,29 +61,87 @@ local function loadOptions()
         
         local save = SAVE_MANAGER.GetPersistentSave()["ResouledOptions"]
         
-        for i, _ in ipairs(Resouled.Options) do
-            local key = tostring(i)
-            save[key] = save[key] or defaultValues[key]
+        for _, config in ipairs(Resouled.Options) do
+            save[config.Name] = save[config.Name] or config.DefaultValue
         end
-
+        
         optionsSave = save
         loadedSave = true
         Isaac.RunCallback(Resouled.Callbacks.OptionsLoaded)
+        SAVE_MANAGER.Save()
     end
 end
 Resouled:AddPriorityCallback(ModCallbacks.MC_MAIN_MENU_RENDER, CallbackPriority.IMPORTANT, loadOptions)
 Resouled:AddPriorityCallback(ModCallbacks.MC_POST_RENDER, CallbackPriority.IMPORTANT, loadOptions)
 
+
+--- Modifies the value of given option. Increment `true` will make it go up by value specified in StepValue while increment `false` will make it go down by the same amount
+--- If modyfing a boolean value, inverts it. Ignores increment parameter
+---@param optionName string
+---@param increment? boolean default: true
+---@return boolean
+function Resouled:StepOptionValue(optionName, increment)
+    increment = (increment == nil) and true or increment
+    local stepMod = increment and 1 or -1
+
+    local optionContainer = nil
+
+    for i, container in ipairs(Resouled.Options) do
+        if optionName == container.Name then
+            optionContainer = Resouled.Options[i]
+            break
+        end
+    end
+
+    if not optionContainer then return false end
+    
+
+    local value = Resouled:GetOptionValue(optionName)
+    local valType = type(value)
+
+    if valType == types.Float or valType == types.Integer then
+        value = value + (optionContainer.Step or 0) * stepMod
+        if optionContainer.Max then
+            value = math.min(optionContainer.Max, value)
+        end
+
+        if optionContainer.Min then
+            value = math.max(optionContainer.Min, value)
+        end
+    elseif valType == types.Bool then
+        value = not value
+    elseif valType == types.String then
+        if optionContainer.StringOptions then
+            for i, stringValue in ipairs(optionContainer.StringOptions) do
+                if stringValue == value then
+                    value = optionContainer.StringOptions[((i - 1 + stepMod) % #optionContainer.StringOptions) + 1]
+                    break
+                end
+            end
+        end
+    end
+
+    optionsSave[optionName] = value
+    SAVE_MANAGER.Save()
+    return true
+end
+
+---@param optionName string
+---@return any
+function Resouled:GetOptionValue(optionName)
+    if not optionsSave[optionName] then
+        for _, container in ipairs(Resouled.Options) do
+            if optionName == container.Name then
+                optionsSave[optionName] = container.DefaultValue
+                SAVE_MANAGER.Save()
+                break
+            end
+        end
+    end
+    return optionsSave[optionName]
+end
+
 ---@return table
 function Resouled:GetOptionsSave()
     return optionsSave
-end
-
----@param option integer
-function Resouled:TriggerOption(option, save)
-    if optionsEffects[option] then
-        optionsEffects[option](save)
-        SAVE_MANAGER.GetPersistentSave()["ResouledOptions"] = save
-        SAVE_MANAGER.Save()
-    end
 end

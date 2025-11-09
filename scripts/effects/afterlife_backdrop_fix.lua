@@ -5,6 +5,7 @@ local function postEffectInit(_, effect)
     if effect.SubType == config.SubType then
         effect:GetSprite():Play("Idle", true)
         effect:AddEntityFlags(EntityFlag.FLAG_BACKDROP_DETAIL)
+        effect:AddEntityFlags(EntityFlag.FLAG_DONT_OVERWRITE)
         effect.DepthOffset = -100000000
         effect.RenderZOffset = -100000000000
     end

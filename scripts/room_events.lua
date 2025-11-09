@@ -153,7 +153,7 @@ Resouled:RegisterRoomEvent(Resouled.RoomEvents.BUM_BO_IS_LOOSE, "Bum-Bo is loose
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.MIGHT_FOR_THE_MEEK, "Might for the Meek!", { filters.ENEMIES_PRESENT })
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.PITY_FOR_THE_POOR, "Pity for the Poor", { filters.SHOP_ONLY }, true)
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.GUPPYS_PIECES, "Guppy's Pieces", { filters.TREASURE_ONLY })
-Resouled:RegisterRoomEvent(Resouled.RoomEvents.THE_ISAAC_OF_ISAAC_ISAAC, "The Isaac Of Isaac: Isaac",
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.THE_ISAAC_OF_ISAAC_ISAAC, "The Isaac Of Isaac: Reisaac",
     { filters.ENEMIES_PRESENT, filters.NO_BOSS_ROOM })
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.SPIDER_WEBS, "Spider Webs", {}, true)
 

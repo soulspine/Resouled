@@ -541,16 +541,22 @@ local function postPlayerInit() --Appearently this is THE first callback when st
 end
 Resouled:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.IMPORTANT, postPlayerInit)
 
-local COMMAND = {
+local COMMAND_ADDBUFF = {
     Name = "addbuff",
     Description = "Adds a buff to pending pool, will be activated on next run's start",
     HelpText = "Usage: addbuff <buff_id>"
 }
+local COMMAND_CLEAR_BUFFS = {
+    Name = "clearbuffs",
+    Description = "Clears your pending and active buff saves",
+    HelpText = ""
+}
 
-Console.RegisterCommand(COMMAND.Name, COMMAND.Description, COMMAND.HelpText, false, AutocompleteType.CUSTOM)
+Console.RegisterCommand(COMMAND_ADDBUFF.Name, COMMAND_ADDBUFF.Description, COMMAND_ADDBUFF.HelpText, false, AutocompleteType.CUSTOM)
+Console.RegisterCommand(COMMAND_CLEAR_BUFFS.Name, COMMAND_CLEAR_BUFFS.Description, COMMAND_CLEAR_BUFFS.HelpText, true, AutocompleteType.NONE)
 
 local function executeBuffAddCommand(_, command, paramsRaw)
-    if command == COMMAND.Name then
+    if command == COMMAND_ADDBUFF.Name then
         local params = {}
         for word in string.gmatch(paramsRaw, "%S+") do
             table.insert(params, word)
@@ -568,6 +574,8 @@ local function executeBuffAddCommand(_, command, paramsRaw)
         end
 
         Resouled:AddPendingBuff(buff.Id)
+    elseif command == COMMAND_CLEAR_BUFFS.Name then
+        Resouled:ClearBuffSave()
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_EXECUTE_CMD, executeBuffAddCommand)
@@ -584,31 +592,4 @@ local function buffAddCommandAutocomplete()
     return autocompleteTable
 end
 ---@diagnostic disable-next-line: param-type-mismatch
-Resouled:AddCallback(ModCallbacks.MC_CONSOLE_AUTOCOMPLETE, buffAddCommandAutocomplete, COMMAND.Name)
-
----@param buffId integer
----@return string | nil
-function Resouled:GetBuffEIDIcon(buffId)
-    local buff = Resouled:GetBuffById(buffId)
-    if buff then
-        return "{{"..buff.Name..buff.FamilyName.."}}"
-    end
-    return nil
-end
-
-Resouled:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, function() --Create EID icons
-    if EID then
-        local buffs = Resouled:GetBuffs()
-        ---@param buff ResouledBuffDesc
-        for _, buff in pairs(buffs) do
-            local family = Resouled:GetBuffFamilyById(buff.Family)
-            if family then
-                local IconSprite = Sprite()
-                IconSprite:Load("gfx/buffs/buffEID.anm2", false)
-                IconSprite:ReplaceSpritesheet(0, family.Spritesheet, true)
-                
-                EID:addIcon(buff.Name..buff.FamilyName, Resouled:GetBuffRarityById(buff.Rarity).Name, -1, 12, 9, 3, 6, IconSprite)
-            end
-        end
-    end
-end)
+Resouled:AddCallback(ModCallbacks.MC_CONSOLE_AUTOCOMPLETE, buffAddCommandAutocomplete, COMMAND_ADDBUFF.Name)

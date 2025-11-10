@@ -109,7 +109,7 @@ local popupSprite = Sprite()
 popupSprite:Load("gfx/ui/room_event_popup.anm2", true)
 local MAX_POPUP_ALPHA = 0.75
 
-local x = 0
+local X = 0
 local gain = 1
 local maxDisplayTime = 150
 local event = Resouled:GetRoomEvent(1)
@@ -117,11 +117,11 @@ local event = Resouled:GetRoomEvent(1)
 local function onRoomEventSignRender()
     if RoomTransition.GetTransitionMode() == 4 or not event then return end
 
-    if x >= 0 then
+    if X >= 0 then
         local len = popupFont:GetStringWidth(event.Name)
-        local iconAlpha = math.max(math.min(math.log(math.max(x - 21, 0), x), 1), 0)
-        local scale = math.max(math.min(math.log(math.max(x - 20, 0), x/1.5), 1), 0)
-        local textAlpha1 = math.log(math.max(x - 60, 0), x/1.5)
+        local iconAlpha = math.max(math.min(math.log(math.max(X - 21, 0), X), 1), 0)
+        local scale = math.max(math.min(math.log(math.max(X - 20, 0), X/1.5), 1), 0)
+        local textAlpha1 = math.log(math.max(X - 60, 0), X/1.5)
         if textAlpha1 == math.huge then
             textAlpha1 = 0
         end
@@ -146,9 +146,9 @@ local function onRoomEventSignRender()
         popupFont:DrawString(event.Name, pos.X, pos.Y - popupFont:GetBaselineHeight()/1.5, KColor(1, 1, 1, textAlpha))
     end
 
-    x = math.min(x + gain, maxDisplayTime)
+    X = math.min(X + gain, maxDisplayTime)
 
-    if x == maxDisplayTime then
+    if X == maxDisplayTime then
         gain = -gain
     end
 end
@@ -162,17 +162,20 @@ end)
 local function showRoomEventPopup(roomEventId)
     event = Resouled:GetRoomEvent(roomEventId)
     gain = 1
-    x = 0
+    X = 0
 end
 
----@param roomIndex? integer
+---@param roomIndex integer
 ---@return ResouledRoomEvent
 local function chooseRandomRoomEvent(roomIndex)
-    local rng = RNG(game:GetRoom():GetAwardSeed())
+    local roomEvents = Resouled:GetRoomEvents()
+    local seed = game:GetSeeds():GetStartSeed() + ((13 * 13 * Resouled.AccurateStats:GetCurrentChapter()) + roomIndex) * roomIndex
+    if seed == 0 then seed = Resouled:NewSeed() end
+    local rng = RNG(seed)
     ::RollRoomEvent::
 
-    Resouled:NewSeed()
-    local randomNum = rng:RandomInt(#Resouled:GetRoomEvents()) + 1
+    seed = Resouled:NewSeed()
+    local randomNum = rng:RandomInt(#roomEvents) + 1
 
     if checkRoomEventFilters(randomNum) == false then
         goto RollRoomEvent
@@ -189,13 +192,13 @@ local function forceRoomEvent(roomEventID, roomListIndex)
 end
 
 local function postNewFloor()
-    local stage = game:GetLevel():GetStage()
+    local level = game:GetLevel()
+    local stage = level:GetStage()
     if STAGES_BLACKLIST[stage] then -- blacklisted
         return
     end
 
     local RUN_SAVE = SAVE_MANAGER.GetRunSave()
-    local rooms = game:GetLevel():GetRooms()
 
 
     if not RUN_SAVE.RoomEvents or (RUN_SAVE.RoomEvents and RUN_SAVE.RoomEvents.CurrentChapter ~= Resouled.AccurateStats:GetCurrentChapter()) then -- we moved onto different chapter and refresh amount of room events to distribute
@@ -208,48 +211,78 @@ local function postNewFloor()
     end
 
     local rng = RNG()
-    rng:SetSeed(game:GetLevel():GetDevilAngelRoomRNG():GetSeed(), 7)
-
+    rng:SetSeed(level:GetDevilAngelRoomRNG():GetSeed(), 7)
+    
     local roomEventsThisFloor = RUN_SAVE.RoomEvents.LastFloor and RUN_SAVE.RoomEvents.EventsToDistribute or
     rng:RandomInt(RUN_SAVE.RoomEvents.EventsToDistribute)
-
+    
     RUN_SAVE.RoomEvents.EventsToDistribute = RUN_SAVE.RoomEvents.EventsToDistribute - roomEventsThisFloor
-
+    
     local correctRooms = {}
-
-    for i = 0, rooms.Size - 1 do --GET VALID ROOMS
-        local room = rooms:Get(i)
-        table.insert(correctRooms, room.ListIndex)
+    
+    for y = 0, 13 do
+        for x = 0, 13 do
+            local room = level:GetRoomByIdx(13 * y + x)
+            if room.Data then
+                table.insert(correctRooms, room.ListIndex)
+            end
+        end
     end
-
-    for _ = 1, roomEventsThisFloor do
+    
+    for i = 1, roomEventsThisFloor do
+        
         local seed = Resouled:NewSeed()
+        
+        if i > 169 then
+            break
+        end
 
-        ::RollRoom::
+        if #correctRooms <= 0 then
+            break
+        end
+
         rng:SetSeed(seed)
         seed = Resouled:NewSeed()
 
-        local randomRoomIndex = rng:RandomInt(#correctRooms)
+        local randomRoomIndex = rng:RandomInt(#correctRooms) + 1
         local roomListIndex = correctRooms[randomRoomIndex]
 
-        if correctRooms[randomRoomIndex] == nil then
-            goto RollRoom
-        end
-
         local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(nil, false, roomListIndex)
-        ROOM_SAVE.RoomEvent = chooseRandomRoomEvent()
+        ROOM_SAVE.RoomEvent = true
 
         table.remove(correctRooms, randomRoomIndex)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
 
-local function postNewRoom()
+local SAVE_ENTRY = "Room Events Seen"
+
+local function initializeRoomEventifNotInitialized()
     local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
+    if ROOM_SAVE.RoomEvent == true then
+        ROOM_SAVE.RoomEvent = chooseRandomRoomEvent(game:GetLevel():GetCurrentRoomDesc().SafeGridIndex)
+        SAVE_MANAGER.Save()
+    end
+end
+
+local function postNewRoom()
+    initializeRoomEventifNotInitialized()
+
+    local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
+    local room = game:GetRoom()
 
     if ROOM_SAVE.RoomEvent then
         showRoomEventPopup(ROOM_SAVE.RoomEvent)
-        if Game():GetRoom():IsFirstVisit() then
+
+        local key = tostring(ROOM_SAVE.RoomEvent)
+
+        local statSave = Resouled.StatTracker:GetSave()
+        if not statSave[SAVE_ENTRY] then statSave[SAVE_ENTRY] = {} end
+        statSave = statSave[SAVE_ENTRY]
+        if not statSave[key] then statSave[key] = false end
+        statSave[key] = true
+
+        if room:IsFirstVisit() then
             local save = Resouled.StatTracker:GetSave()
             if not save[Resouled.StatTracker.Fields.RoomEventsEncountered] then save[Resouled.StatTracker.Fields.RoomEventsEncountered] = 0 end
             save[Resouled.StatTracker.Fields.RoomEventsEncountered] = save[Resouled.StatTracker.Fields.RoomEventsEncountered] + 1
@@ -259,7 +292,10 @@ end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)
 
 local function preRoomExit()
+    initializeRoomEventifNotInitialized()
+
     local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
+
     if ROOM_SAVE.RoomEvent then
         if not Resouled:GetRoomEventByID(ROOM_SAVE.RoomEvent).NoDespawn then
             ROOM_SAVE.RoomEvent = nil

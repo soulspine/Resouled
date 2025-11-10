@@ -353,6 +353,8 @@ function Resouled:GetRandomWeightedBuff(rng, blacklist)
     return #possibleBuffs > 0 and possibleBuffs[rng:RandomInt(#possibleBuffs) + 1] or nil
 end
 
+local SAVE_ENTRY = "Buffs Collected"
+
 ---@param buffID ResouledBuff
 function Resouled:AddPendingBuff(buffID)
     local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
@@ -367,8 +369,8 @@ function Resouled:AddPendingBuff(buffID)
         local key = tostring(buff.Id)
 
         local statSave = Resouled.StatTracker:GetSave()
-        if not statSave["Buffs Collected"] then statSave["Buffs Collected"] = {} end
-        statSave = statSave["Buffs Collected"]
+        if not statSave[SAVE_ENTRY] then statSave[SAVE_ENTRY] = {} end
+        statSave = statSave[SAVE_ENTRY]
         if not statSave[key] then statSave[key] = false end
         statSave[key] = true
 

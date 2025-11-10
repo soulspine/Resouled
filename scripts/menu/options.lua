@@ -1,6 +1,11 @@
 -- room event per floor
 -- cursed enemies morph chance
 
+Resouled.OptionColors = {
+    Positive = KColor(0.3, 0.5, 0.3, 1),
+    Negative = KColor(0.5, 0.3, 0.3, 1)
+}
+
 local types = {
     Float = "number",
     OneClick = "oneclick",
@@ -16,8 +21,8 @@ Resouled.Options = {
         DefaultValue = 10,
         Type = types.Float,
         Suffix = "%",
-        Step = 1,
-        Min = 0,
+        Step = 5,
+        Min = 5,
         Max = 100,
     },
     {
@@ -27,7 +32,7 @@ Resouled.Options = {
         Type = types.Integer,
         Step = 1,
         Min = 0,
-        Max = nil,
+        Max = 169, --13 x 13 max grid
     },
     {
         Achievement = nil,
@@ -36,25 +41,41 @@ Resouled.Options = {
         Type = types.Integer,
         Step = 1,
         Min = 0,
-        Max = nil
+        Max = 169 --13 x 13 map grid
     },
     {
         Achievement = nil,
         Name = "Reset Mod Progress",
         DefaultValue = "Confirm",
-        StringOptions = {"Confirm"},
+        StringOptions = {"Confirm", "Are you sure?"},
         Type = types.OneClick,
+        Color = Resouled.OptionColors.Negative,
+        NotSelectedValue = "Confirm"
+    },
+    {
+        Achievement = nil,
+        Name = "Reset Settings To Default",
+        DefaultValue = "Confirm",
+        StringOptions = {"Confirm", "Are you sure?"},
+        Type = types.OneClick,
+        Color = Resouled.OptionColors.Negative,
+        NotSelectedValue = "Confirm"
     }
 }
 
-Resouled.OptionColors = {
-    Positive = KColor(0.3, 0.5, 0.3, 1),
-    Negative = KColor(0.5, 0.3, 0.3, 1)
-}
-
-
 local loadedSave = false
 local optionsSave
+
+local OPTION_EFFECTS = {
+    [Resouled.Options[5].Name.." "..Resouled.Options[5].StringOptions[2]] = function()
+        if loadedSave then
+            for _, config in ipairs(Resouled.Options) do
+                optionsSave[config.Name] = config.DefaultValue
+                SAVE_MANAGER.Save()
+            end
+        end
+    end
+}
 
 local function loadOptions()
     if SAVE_MANAGER.IsLoaded() and not loadedSave then
@@ -111,9 +132,17 @@ function Resouled:StepOptionValue(optionName, increment)
     elseif valType == types.Bool then
         value = not value
     elseif valType == types.String then
+
+        if OPTION_EFFECTS[optionContainer.Name] then
+            OPTION_EFFECTS[optionContainer.Name]()
+        end
+
         if optionContainer.StringOptions then
             for i, stringValue in ipairs(optionContainer.StringOptions) do
                 if stringValue == value then
+                    if OPTION_EFFECTS[optionContainer.Name.." "..value] then
+                        OPTION_EFFECTS[optionContainer.Name.." "..value]()
+                    end
                     value = optionContainer.StringOptions[((i - 1 + stepMod) % #optionContainer.StringOptions) + 1]
                     break
                 end
@@ -124,6 +153,13 @@ function Resouled:StepOptionValue(optionName, increment)
     optionsSave[optionName] = value
     SAVE_MANAGER.Save()
     return true
+end
+
+---@param optionName string
+---@param value any
+function Resouled:SetOptionValue(optionName, value)
+    optionsSave[optionName] = value
+    SAVE_MANAGER.Save()
 end
 
 ---@param optionName string

@@ -369,6 +369,10 @@ local PAGES = {
     {
         Name = "Room Events",
         Renderer = function(renderPos, save, enableInput)
+
+            if not save["Room Events Seen"] then save["Room Events Seen"] = {} end
+            save = save["Room Events Seen"]
+
             local pos = renderPos + Vector(0, -CONFIG.BackgroundSpriteSize.Y/2) + Vector(0, CONFIG.HeaderLineOffset)
 
             local pageString = "<< "..tostring(currentRoomEventPage).."/"..tostring(#roomEvents).." >>"
@@ -383,14 +387,26 @@ local PAGES = {
 
             local roomEvent = Resouled:GetRoomEvent(currentRoomEventPage)
             if roomEvent then
+
+                local key = tostring(roomEvent.Id)
+
                 local name = roomEvent.Name
+
+                if not save[key] then
+                    name = "???"
+                end
 
                 FONTS.Size16:DrawStringScaled(name, pos.X, pos.Y, 1, 1, CONFIG.TextColor, math.floor(FONTS.Size16:GetStringWidth(name)/2 + 0.5))
 
                 local separation = FONTS.Size12:GetBaselineHeight()
-                for _, string in pairs(roomEventDescriptionsAligned[currentRoomEventPage]) do
-                    pos.Y = pos.Y + separation
-                    FONTS.Size12:DrawString(string, pos.X, pos.Y, CONFIG.TextColor, math.floor(FONTS.Size12:GetStringWidth(string)/2 + 0.5))
+                if save[key] then
+                    for _, string in pairs(roomEventDescriptionsAligned[currentRoomEventPage]) do
+                        pos.Y = pos.Y + separation
+                        FONTS.Size12:DrawString(string, pos.X, pos.Y, CONFIG.TextColor, math.floor(FONTS.Size12:GetStringWidth(string)/2 + 0.5))
+                    end
+                else
+                    local string = "???"
+                    FONTS.Size12:DrawString(string, pos.X, pos.Y + separation * 2, CONFIG.TextColor, math.floor(FONTS.Size12:GetStringWidth(string)/2 + 0.5))
                 end
             end
 
@@ -419,11 +435,16 @@ local PAGES = {
 
                 FONTS.Size10:DrawStringScaled(optionConfig.Name, startPos.X, y, 1, 1, CONFIG.TextColor)
                 
-                local valueString = tostring(Resouled:GetOptionValue(optionConfig.Name))..(optionConfig.Suffix or "")
+                local value = Resouled:GetOptionValue(optionConfig.Name)
+                if i ~= currentSelectedOption and optionConfig.NotSelectedValue and value ~= optionConfig.NotSelectedValue then
+                    Resouled:SetOptionValue(optionConfig.Name, optionConfig.NotSelectedValue)
+                    value = optionConfig.NotSelectedValue
+                end
+                local valueString = tostring(value)..(optionConfig.Suffix or "")
 
                 local color
                 
-                color = Resouled.OptionColors[valueString] or CONFIG.TextColor
+                color = optionConfig.Color or CONFIG.TextColor
                 
                 if i == currentSelectedOption then
                     selectedOption = optionConfig.Name

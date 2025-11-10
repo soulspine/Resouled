@@ -1,7 +1,9 @@
 ---@diagnostic disable: param-type-mismatch
 local CONFIG = {
     TopString = "Resouled Menu",
-    TextColor = KColor(55/255, 43/255, 45/255, 1),
+    TextColor = KColor(47/255, 27/255, 33/255, 1),
+    LineThickness = 1.5,
+    LineColor = KColor(143/255, 110/255, 110/255, 1),
     HighlightColor = KColor(1, 0, 0, 1),
     ButtonActions = {
         Keyboard = {
@@ -263,8 +265,8 @@ local PAGES = {
                                 Isaac.DrawLine(
                                     newRenderPos - Vector(32/2, 0),
                                     newRenderPos + Vector(32/2, 0),
-                                    CONFIG.TextColor,
-                                    CONFIG.TextColor,
+                                    CONFIG.LineColor,
+                                    CONFIG.LineColor,
                                     32
                                 )
 
@@ -298,9 +300,9 @@ local PAGES = {
             Isaac.DrawLine(
                 Vector(renderPos.X - CONFIG.BackgroundSpriteSize.X/2, lineY),
                 Vector(renderPos.X + CONFIG.BackgroundSpriteSize.X/2, lineY),
-                CONFIG.TextColor,
-                CONFIG.TextColor,
-                1
+                CONFIG.LineColor,
+                CONFIG.LineColor,
+                CONFIG.LineThickness
             )
 
             local buff = Resouled:GetBuffById(selectedBuffId)
@@ -381,7 +383,7 @@ local PAGES = {
 
             FONTS.Size10:DrawStringScaled(pageString, pos.X, pos.Y, 1, 1, CONFIG.TextColor, math.floor(FONTS.Size10:GetStringWidth(pageString)/2 + 0.5))
 
-            Isaac.DrawLine(pos + Vector(-CONFIG.BackgroundSpriteSize.X/2, lineHeight), pos + Vector(CONFIG.BackgroundSpriteSize.X/2, lineHeight), CONFIG.TextColor, CONFIG.TextColor, 1)
+            Isaac.DrawLine(pos + Vector(-CONFIG.BackgroundSpriteSize.X/2, lineHeight), pos + Vector(CONFIG.BackgroundSpriteSize.X/2, lineHeight), CONFIG.LineColor, CONFIG.LineColor, CONFIG.LineThickness)
 
             pos.Y = pos.Y + lineHeight
 
@@ -563,17 +565,8 @@ local function menuRender()
         renderPos.X - CONFIG.BackgroundSpriteSize.X/2 + 5, renderPos.Y - 98, 1, 1, CONFIG.TextColor
     )
 
-    Isaac.DrawQuad(
-        renderPos - CONFIG.BackgroundSpriteSize / 2,
-        renderPos - Vector(-CONFIG.BackgroundSpriteSize.X, CONFIG.BackgroundSpriteSize.Y) / 2,
-        renderPos + Vector(-CONFIG.BackgroundSpriteSize.X, CONFIG.BackgroundSpriteSize.Y) / 2,
-        renderPos + CONFIG.BackgroundSpriteSize / 2,
-        CONFIG.TextColor,
-        1.5
-    )
-
     Isaac.DrawLine(Vector(renderPos.X - CONFIG.BackgroundSpriteSize.X / 2, renderPos.Y - CONFIG.BackgroundSpriteSize.Y/2 + CONFIG.HeaderLineOffset),
-        Vector(renderPos.X + CONFIG.BackgroundSpriteSize.X / 2, renderPos.Y - CONFIG.BackgroundSpriteSize.Y/2 + CONFIG.HeaderLineOffset), CONFIG.TextColor, CONFIG.TextColor, 1)
+        Vector(renderPos.X + CONFIG.BackgroundSpriteSize.X / 2, renderPos.Y - CONFIG.BackgroundSpriteSize.Y/2 + CONFIG.HeaderLineOffset), CONFIG.LineColor, CONFIG.LineColor, CONFIG.LineThickness)
 
     renderPagesSidebar(renderPos)
 end

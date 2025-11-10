@@ -2,8 +2,8 @@
 -- cursed enemies morph chance
 
 Resouled.OptionColors = {
-    Positive = KColor(0.3, 0.5, 0.3, 1),
-    Negative = KColor(0.5, 0.3, 0.3, 1)
+    Positive = KColor(47/255/3, 27/255 * 3, 33/255/3, 1),
+    Negative = KColor(47/255 * 2, 27/255/2, 33/255/2, 1)
 }
 
 local types = {
@@ -60,6 +60,15 @@ Resouled.Options = {
         Type = types.OneClick,
         Color = Resouled.OptionColors.Negative,
         NotSelectedValue = "Confirm"
+    },
+    {
+        Achievement = nil,
+        Name = "Unlock All (Dev option, hide before uploading)",
+        DefaultValue = "Confirm",
+        StringOptions = {"Confirm", "Are you sure?"},
+        Type = types.OneClick,
+        Color = Resouled.OptionColors.Positive,
+        NotSelectedValue = "Confirm"
     }
 }
 
@@ -74,6 +83,7 @@ local OPTION_EFFECTS = {
         end
         Resouled:ClearBuffSave()
         Isaac.RunCallback(Resouled.Callbacks.StatsReset)
+        SAVE_MANAGER.Save()
     end,
     [Resouled.Options[5].Name.." "..Resouled.Options[5].StringOptions[2]] = function()
         if loadedSave then
@@ -81,6 +91,29 @@ local OPTION_EFFECTS = {
                 optionsSave[config.Name] = config.DefaultValue
                 SAVE_MANAGER.Save()
             end
+        end
+    end,
+    [Resouled.Options[6].Name.." "..Resouled.Options[5].StringOptions[2]] = function()
+        local save = Resouled.StatTracker:GetSave()
+
+        local buffs = Resouled:GetBuffs()
+        if not save["Buffs Collected"] then save["Buffs Collected"] = {} end
+        for _, buff in pairs(buffs) do
+            local key = tostring(buff.Id)
+            if not save["Buffs Collected"][key] then save["Buffs Collected"][key] = false end
+            save["Buffs Collected"][key] = true
+        end
+
+        local roomEvents = Resouled:GetRoomEvents()
+        if not save["Room Events Seen"] then save["Room Events Seen"] = {} end
+        for _, roomEvent in pairs(roomEvents) do
+            local key = tostring(roomEvent.Id)
+            if not save["Room Events Seen"][key] then save["Room Events Seen"][key] = false end
+            save["Room Events Seen"][key] = true
+        end
+
+        for _, stat in pairs(Resouled.StatTracker.Fields) do
+            if not save[stat] then save[stat] = 0 end
         end
     end
 }

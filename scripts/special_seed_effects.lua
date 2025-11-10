@@ -1,0 +1,1 @@
+include("scripts.special_seed_effects.isaacOS")

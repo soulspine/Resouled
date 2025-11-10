@@ -201,7 +201,7 @@ local function replaceBackdropDetails(room)
         table.insert(decorationPositions, pos)
 
         local detail = game:Spawn(EntityType.ENTITY_EFFECT, DecorationConfig.Variant, pos, Vector.Zero, nil, DecorationConfig.SubType, seed):ToEffect()
-        detail.DepthOffset = -1000
+        detail.DepthOffset = -100000
         detail:AddEntityFlags(EntityFlag.FLAG_BACKDROP_DETAIL)
         detail:GetSprite():Play(tostring(rng:RandomInt(DecorationConfig.AniamationNum + 1)), true)
 

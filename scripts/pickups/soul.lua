@@ -4,26 +4,58 @@ local Soul = Resouled.Stats.Soul
 local DeathStatue = Resouled.Stats.DeathStatue
 
 ---@param pickup EntityPickup
+---@param black? boolean
+local function spawnTrail(pickup, black)
+    local entityParent = pickup
+    local player = Isaac.GetPlayer()
+    local data = pickup:GetData()
+    if not black then
+        local trail = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.SPRITE_TRAIL, 0, entityParent.Position,
+        Vector.Zero, entityParent):ToEffect()
+        trail:FollowParent(entityParent)
+        trail.Color = Soul.TrailColor
+        trail.MinRadius = Soul.TrailLength
+        trail.SpriteScale = Soul.TrailScale
+        trail.ParentOffset = Soul.SpriteOffset * 1.5
+        trail.DepthOffset = player.DepthOffset + Soul.TrailDepthOffset
+        trail.RenderZOffset = player.RenderZOffset - 10
+        
+        data.Resouled_SoulTrail = EntityRef(trail)
+    else
+        local trail2 = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.SPRITE_TRAIL, 0, entityParent.Position,
+        Vector.Zero, entityParent):ToEffect()
+        trail2:FollowParent(entityParent)
+        trail2.Color = Soul.Trail2Color
+        trail2.MinRadius = Soul.Trail2Length
+        trail2.SpriteScale = Soul.Trail2Scale
+        trail2.ParentOffset = Soul.SpriteOffset * 1.5
+        trail2.DepthOffset = player.DepthOffset + Soul.TrailDepthOffset - 10
+        trail2.RenderZOffset = player.RenderZOffset - 20
+
+        local sprite = trail2:GetSprite()
+        for i = 0, sprite:GetLayerCount() - 1 do
+            local layer = sprite:GetLayer(i)
+            if layer then
+                local blend = layer:GetBlendMode()
+
+                blend.RGBSourceFactor = BlendFactor.ONE_MINUS_SRC_COLOR
+                blend.RGBDestinationFactor = BlendFactor.ONE_MINUS_SRC_COLOR
+            end
+        end
+        
+        data.Resouled_SoulTrail2 = EntityRef(trail2)
+    end
+end
+
+---@param pickup EntityPickup
 local function onPickupInit(_, pickup)
     if pickup.SubType == Soul.SubType or pickup.SubType == Soul.SubTypeStatue then
         local sprite = pickup:GetSprite()
         sprite:Play("Appear", true)
         sprite.Offset = Soul.SpriteOffset
 
-        local entityParent = pickup
-        local trail = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.SPRITE_TRAIL, 0, entityParent.Position,
-            Vector.Zero, entityParent):ToEffect()
-        trail:FollowParent(entityParent)
-        trail.Color = Soul.TrailColor
-        trail.MinRadius = Soul.TrailLength
-        trail.SpriteScale = Vector.One
-        trail.DepthOffset = 100
-        trail.RenderZOffset = 100
-        trail.ParentOffset = Soul.SpriteOffset * 1.5
-
-        local data = pickup:GetData()
-
-        data.Resouled_SoulTrail = EntityRef(trail)
+        spawnTrail(pickup, false)
+        spawnTrail(pickup, true)
 
         pickup.Velocity = Soul.StartVelocity:Rotated(math.random(360))
 
@@ -42,7 +74,7 @@ local function onPickupInit(_, pickup)
             if not statue then
                 pickup:Remove()
             else
-                data.Resouled_SoulStatueTarget = statue
+                pickup:GetData().Resouled_SoulStatueTarget = statue
             end
         end
     end
@@ -88,7 +120,9 @@ local function onPickupUpdate(_, pickup)
             end
         end
 
-        sprite.Rotation = pickup.Velocity:GetAngleDegrees()
+        if not sprite:IsPlaying("Appear") then
+            sprite:SetFrame("Idle", ((pickup.Velocity:GetAngleDegrees() - 67.5)%360)//45)
+        end
 
         local data = pickup:GetData()
 
@@ -126,22 +160,25 @@ local function onPickupUpdate(_, pickup)
                 data.Resouled_SoulTrail = nil
             end
         else
-            local entityParent = pickup
-            local trail = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.SPRITE_TRAIL, 0, entityParent.Position,
-                Vector.Zero, entityParent):ToEffect()
-            trail:FollowParent(entityParent)
-            trail.Color = Soul.TrailColor
-            trail.MinRadius = Soul.TrailLength
-            trail.SpriteScale = Vector.One
-            trail.DepthOffset = 100
-            trail.RenderZOffset = 100
-            trail.ParentOffset = Soul.SpriteOffset * 1.5
+            spawnTrail(pickup, false)
+        end
 
-            pickup:GetData().Resouled_SoulTrail = EntityRef(trail)
+        if data.Resouled_SoulTrail2 then
+            ---@type EntityEffect | nil
+            local trail = data.Resouled_SoulTrail2.Entity
+            if trail then
+                trail:Update()
+            end
+
+            if not trail:Exists() then
+                data.Resouled_SoulTrail2 = nil
+            end
+        else
+            spawnTrail(pickup, true)
         end
 
         if pickup.FrameCount % 2 == 0 then
-            Resouled:SpawnSparkleEffect(pickup.Position, -pickup.Velocity / 5, 180, pickup.SpriteOffset)
+            --Resouled:SpawnSparkleEffect(pickup.Position, -pickup.Velocity / 5, 180, pickup.SpriteOffset)
         end
     end
 end

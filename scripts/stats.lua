@@ -51,9 +51,14 @@ Resouled.Stats.Soul = {
     SubType = Isaac.GetEntitySubTypeByName("Soul"),
     SubTypeStatue = Isaac.GetEntitySubTypeByName("Soul Statue Target"),
     StartVelocity = Vector(10, 0),
-    TrailColor = Color(1, 1, 1, 0.75),
+    TrailColor = Color(1, 1, 1, 0.8),
+    Trail2Color = Color(1, 1, 1, 0.9),
     TrailLength = 0.025, --The lower the number the longer
+    Trail2Length = 0.020,
     SpriteOffset = Vector(0, -10),
+    TrailScale = Vector(0.8, 0.8),
+    Trail2Scale = Vector(1.7, 1.7),
+    TrailDepthOffset = -30,
 
     PlayPickupSound = function()
         SFXManager():Play(Isaac.GetSoundIdByName("Soul Pickup "..tostring(math.random(4))))

@@ -15,11 +15,11 @@ end
 Resouled:AddCallback(ModCallbacks.MC_PRE_USE_ITEM, preActiveUse)
 
 ---@param pickup EntityPickup
-local function prePickupUpdate(_, pickup)
+local function postPickupInit(_, pickup)
     if Resouled:RoomEventPresent(Resouled.RoomEvents.SHADOW_OF_FAMINE) then
         if not PICKUP_BLACKLIST[pickup.Variant] then
             pickup:Remove()
         end
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_UPDATE, prePickupUpdate)
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, postPickupInit)

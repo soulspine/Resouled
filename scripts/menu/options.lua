@@ -67,6 +67,14 @@ local loadedSave = false
 local optionsSave
 
 local OPTION_EFFECTS = {
+    [Resouled.Options[4].Name.." "..Resouled.Options[5].StringOptions[2]] = function()
+        local save = Resouled.StatTracker:GetSave()
+        for key, _ in pairs(save) do
+            save[key] = nil
+        end
+        Resouled:ClearBuffSave()
+        Isaac.RunCallback(Resouled.Callbacks.StatsReset)
+    end,
     [Resouled.Options[5].Name.." "..Resouled.Options[5].StringOptions[2]] = function()
         if loadedSave then
             for _, config in ipairs(Resouled.Options) do

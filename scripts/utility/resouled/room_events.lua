@@ -114,7 +114,11 @@ local gain = 1
 local maxDisplayTime = 150
 local event = Resouled:GetRoomEvent(1)
 
-local function onRoomEventSignRender()
+local function isRoomEventPopupVisible()
+    return X > 0
+end
+
+local function onRoomEventPopupRender()
     if RoomTransition.GetTransitionMode() == 4 or not event then return end
 
     if X >= 0 then
@@ -148,11 +152,11 @@ local function onRoomEventSignRender()
 
     X = math.min(X + gain, maxDisplayTime)
 
-    if X == maxDisplayTime then
+    if X == maxDisplayTime and not Resouled:IsAnyonePressingAction(ButtonAction.ACTION_MAP) then
         gain = -gain
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, onRoomEventSignRender)
+Resouled:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, onRoomEventPopupRender)
 
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, function()
     gain = -math.abs(gain)
@@ -310,6 +314,16 @@ local function preRoomExit()
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_ROOM_EXIT, preRoomExit)
+
+local function postUpdate()
+    if not isRoomEventPopupVisible() and Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MAP) then
+        local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
+        if ROOM_SAVE.RoomEvent then
+            showRoomEventPopup(ROOM_SAVE.RoomEvent)
+        end
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, postUpdate)
 
 local COMMAND = {
     Name = "roomevent",

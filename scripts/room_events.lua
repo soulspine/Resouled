@@ -159,6 +159,24 @@ Resouled:RegisterRoomEvent(Resouled.RoomEvents.SPIDER_WEBS, "Spider Webs", {}, t
 
 Resouled:Log("Loaded " .. tostring(#Resouled:GetRoomEvents()) .. " room events.")
 
+---@param npc EntityNPC
+---@param championType ChampionColor
+---@param balanceHealth? boolean
+function Resouled:TryMakeRoomEventChampion(npc, championType, balanceHealth)
+    if EntityConfig.GetEntity(npc.Type, npc.Variant, npc.SubType):CanBeChampion() then
+        local beforeHP = npc.HitPoints
+        local beforeMaxHP = npc.MaxHitPoints
+        npc:MakeChampion(npc.InitSeed, championType)
+        npc:AddEntityFlags(EntityFlag.FLAG_NO_REWARD)
+        if balanceHealth then
+        local afterHP = npc.HitPoints
+        local afterMaxHP = npc.MaxHitPoints
+            npc.MaxHitPoints = (afterMaxHP + beforeMaxHP)/2
+            npc.HitPoints = (afterHP + beforeHP)/2
+        end
+    end
+end
+
 -- IMPORTING ROOM EVENT SCRIPTS
 include("scripts.room_events.all_hallows_eve")
 include("scripts.room_events.angelic_intervention")

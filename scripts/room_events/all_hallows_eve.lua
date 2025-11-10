@@ -1,13 +1,8 @@
 local function postNewRoom()
     if Resouled:RoomEventPresent(Resouled.RoomEvents.ALL_HALLOWS_EVE) then
-        ---@param entity Entity
-        Resouled.Iterators:IterateOverRoomEntities(function(entity)
-            if entity:IsEnemy() and entity:IsActiveEnemy() and not entity:IsBoss() and entity:IsVulnerableEnemy() then
-                local npc = entity:ToNPC()
-                if npc then
-                    npc:MakeChampion(npc.InitSeed, ChampionColor.TRANSPARENT, false)
-                end
-            end
+        ---@param npc EntityNPC
+        Resouled.Iterators:IterateOverRoomNpcs(function(npc)
+            Resouled:TryMakeRoomEventChampion(npc, ChampionColor.TRANSPARENT, true)
         end)
     end
 end

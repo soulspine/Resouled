@@ -191,9 +191,22 @@ local function forceRoomEvent(roomEventID, roomListIndex)
     ROOM_SAVE.RoomEvent = roomEventID
 end
 
+local blacklistedRoomIndexes = {
+    [84] = true -- startingRoom
+}
+
+local function initializeRoomEventifNotInitialized()
+    local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
+    if ROOM_SAVE.RoomEvent and type(ROOM_SAVE.RoomEvent) ~= "number" then
+        ROOM_SAVE.RoomEvent = chooseRandomRoomEvent(game:GetLevel():GetCurrentRoomDesc().SafeGridIndex)
+        SAVE_MANAGER.Save()
+    end
+end
+
 local function postNewFloor()
     local level = game:GetLevel()
     local stage = level:GetStage()
+
     if STAGES_BLACKLIST[stage] then -- blacklisted
         return
     end
@@ -223,8 +236,8 @@ local function postNewFloor()
     for y = 0, 13 do
         for x = 0, 13 do
             local room = level:GetRoomByIdx(13 * y + x)
-            if room.Data then
-                table.insert(correctRooms, room.ListIndex)
+            if room.Data and not blacklistedRoomIndexes[room.SafeGridIndex] then
+                table.insert(correctRooms, room.SafeGridIndex)
             end
         end
     end
@@ -245,7 +258,9 @@ local function postNewFloor()
         seed = Resouled:NewSeed()
 
         local randomRoomIndex = rng:RandomInt(#correctRooms) + 1
-        local roomListIndex = correctRooms[randomRoomIndex]
+        local roomGridIndex = correctRooms[randomRoomIndex]
+
+        local roomListIndex = level:GetRoomByIdx(roomGridIndex).ListIndex
 
         local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(nil, false, roomListIndex)
         ROOM_SAVE.RoomEvent = true
@@ -256,14 +271,6 @@ end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
 
 local SAVE_ENTRY = "Room Events Seen"
-
-local function initializeRoomEventifNotInitialized()
-    local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
-    if ROOM_SAVE.RoomEvent == true then
-        ROOM_SAVE.RoomEvent = chooseRandomRoomEvent(game:GetLevel():GetCurrentRoomDesc().SafeGridIndex)
-        SAVE_MANAGER.Save()
-    end
-end
 
 local function postNewRoom()
     initializeRoomEventifNotInitialized()

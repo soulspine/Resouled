@@ -185,16 +185,66 @@ BUFF_SPRITE:Load("gfx/buffs/buffEID.anm2", true)
 SELECTED_BUFF_BIG_SPRITE:Load("gfx/buffs/buffEID.anm2", true)
 SELECTED_BUFF_BIG_SPRITE.Scale = CONFIG.BuffPage.BigSpriteScale
 
-local optionsSave
-Resouled:AddCallback(Resouled.Callbacks.OptionsLoaded, function()
-    optionsSave = Resouled:GetOptionsSave()
-end)
+
+
+local SHENANIGANS = {
+    {
+        Name = "Special Seed Effects",
+        Options = {
+            "RESO ULED",
+            "R3S0 VL3D",
+            "Isaac IOS",
+            "Souls Be Gone"
+        }
+    }
+}
+
+---@enum ResouledSpecialSeedEffects
+Resouled.SpecialSeedEffects = {
+    IsaacIOS = "Isaac IOS",
+    SoulsBeGone = "Souls Be Gone"
+}
+
+
+local shenaniganSave
+local shenaniganSaveLoaded = false
+
+---@param effect ResouledSpecialSeedEffects
+function Resouled:IsSpecialSeedEffectActive(effect)
+    return shenaniganSave and shenaniganSave[tostring(1)] and shenaniganSave[tostring(1)][effect] and shenaniganSave[tostring(1)][effect] == "Enabled"
+end
+
+local function loadShenaniganSave()
+    if not shenaniganSaveLoaded and SAVE_MANAGER.IsLoaded() then
+        
+        local save = SAVE_MANAGER.GetPersistentSave()
+        if not save then save = {} end
+        if not save["Resouled Shenanigans"] then save["Resouled Shenanigans"] = {} end
+
+        shenaniganSave = save["Resouled Shenanigans"]
+        shenaniganSaveLoaded = true
+
+        Resouled:RemoveCallback(ModCallbacks.MC_POST_RENDER, loadShenaniganSave)
+        Resouled:RemoveCallback(ModCallbacks.MC_MAIN_MENU_RENDER, loadShenaniganSave)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, loadShenaniganSave)
+Resouled:AddCallback(ModCallbacks.MC_MAIN_MENU_RENDER, loadShenaniganSave)
+
+local selectedShenaniganPage = 1
+local selectedShenanigan = 1
+local SHENANIGANS_OFFSET = Vector(5, 5)
 
 local leftAndRightSwitchOptions = {
     ["Disabled"] = true,
     ["Enabled"] = true,
     ["True"] = true,
     ["False"] = true,
+}
+
+local SHENANIGANS_COLORS = {
+    ["Enabled"] = KColor(47/255/3, 27/255 * 3, 33/255/3, 1),
+    ["Disabled"] = KColor(47/255 * 2, 27/255/2, 33/255/2, 1)
 }
 
 local PAGES = {
@@ -425,6 +475,66 @@ local PAGES = {
         end
     },
     {
+        Name = "Shenanigans",
+        Renderer = function(renderPos, _, enableInput)
+
+            local key1 = tostring(selectedShenaniganPage)
+            if not shenaniganSave[key1] then shenaniganSave[key1] = {} end
+
+            local startPos = renderPos - CONFIG.BackgroundSpriteSize/2 + Vector(0, CONFIG.HeaderLineOffset) + SHENANIGANS_OFFSET
+            local shenaniganX = renderPos.X + CONFIG.BackgroundSpriteSize.X/2 - SHENANIGANS_OFFSET.X
+
+            
+            local pageConfig = SHENANIGANS[selectedShenaniganPage]
+
+            FONTS.Size16:DrawStringScaled(pageConfig.Name, renderPos.X, startPos.Y, 1, 1, CONFIG.TextColor, FONTS.Size16:GetStringWidth(pageConfig.Name)/2)
+            startPos.Y = startPos.Y + FONTS.Size16:GetBaselineHeight()
+
+            local separation = FONTS.Size10:GetBaselineHeight()
+
+            
+            for i, option in pairs(pageConfig.Options) do
+                
+                if not shenaniganSave[key1][option] then
+                    shenaniganSave[key1][option] = "Disabled"
+                end
+
+                local optionString = option
+                local valueString = tostring(shenaniganSave[key1][option])
+                if i == selectedShenanigan then
+                    valueString = ">> "..valueString.." <<"
+                end
+
+                FONTS.Size10:DrawStringScaled(optionString, startPos.X, startPos.Y, 1, 1, CONFIG.TextColor)
+                FONTS.Size10:DrawStringScaled(valueString, shenaniganX - FONTS.Size10:GetStringWidth(valueString), startPos.Y, 1, 1, SHENANIGANS_COLORS[shenaniganSave[key1][option]])
+                startPos.Y = startPos.Y + separation
+            end
+
+            if enableInput then
+                if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENULEFT) or Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENURIGHT) then
+                    local newValue = tostring(shenaniganSave[key1][SHENANIGANS[selectedShenaniganPage].Options[selectedShenanigan]])
+
+                    if newValue == "Disabled" then newValue = "Enabled" else newValue = "Disabled" end
+
+                    shenaniganSave[key1][SHENANIGANS[selectedShenaniganPage].Options[selectedShenanigan]] = newValue
+                    SAVE_MANAGER.Save()
+
+                    SFXManager():Play(SoundEffect.SOUND_PLOP)
+                end
+
+                if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENUDOWN) then
+                    selectedShenanigan = selectedShenanigan + 1
+                    SFXManager():Play(SoundEffect.SOUND_MENU_SCROLL)
+                end
+                if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENUUP) then
+                    selectedShenanigan = selectedShenanigan - 1
+                    SFXManager():Play(SoundEffect.SOUND_MENU_SCROLL)
+                end
+                selectedShenanigan = math.max(math.min(#SHENANIGANS[selectedShenaniganPage].Options, selectedShenanigan), 1)
+            end
+        end
+    },
+    {
         Name = "Options",
         Renderer = function(renderPos, save, enableInput)
             local startPos = renderPos - CONFIG.BackgroundSpriteSize/2 + Vector(5, CONFIG.HeaderLineOffset + 5)
@@ -478,7 +588,7 @@ local PAGES = {
                 end
             end
         end
-    }
+    },
 }
 
 local BACKGROUND_SPRITE = Sprite()
@@ -510,6 +620,17 @@ local function renderPagesSidebar(renderPos)
     math.floor(width/2 + 0.5),
     true
     )
+
+    local pageIdxString = tostring(currentPageIdx).."/"..tostring(#PAGES)
+
+    FONTS.Size12:DrawStringScaled(
+        pageIdxString,
+        renderPos.X + CONFIG.BackgroundSpriteSize.X/2 - FONTS.Size12:GetStringWidth(pageIdxString),
+        renderPos.Y - 97,
+        1,
+        1,
+        CONFIG.TextColor
+    )
 end
 
 local function menuRender()
@@ -529,6 +650,7 @@ local function menuRender()
             currentBuffPage = 1
             currentSelectedOption = 1
             currentRoomEventPage = 1
+            selectedShenaniganPage = 1
 
             SFXManager():Play(SoundEffect.SOUND_BOOK_PAGE_TURN_12)
         elseif menu == CONFIG.CustomMenuType and Resouled:HasAnyoneTriggeredAction(inputLookup.Leave) then

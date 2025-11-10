@@ -177,8 +177,8 @@ local function onPickupUpdate(_, pickup)
             spawnTrail(pickup, true)
         end
 
-        if pickup.FrameCount % 2 == 0 then
-            --Resouled:SpawnSparkleEffect(pickup.Position, -pickup.Velocity / 5, 180, pickup.SpriteOffset)
+        if pickup.FrameCount % 3 == 0 then
+            Resouled:SpawnSparkleEffect(pickup.Position, -pickup.Velocity / 5, 60, pickup.SpriteOffset)
         end
     end
 end
@@ -193,3 +193,21 @@ local function preRoomExit()
     end)
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_ROOM_EXIT, preRoomExit)
+
+local regularRoomSize = Vector(320, 280) * 2
+
+local function postNewRoom()
+    local level = Game():GetLevel()
+    local currentIndex = Resouled:GetRoomColumnAndRowFromIdx(level:GetCurrentRoomDesc().SafeGridIndex)
+    local lastIndex = Resouled:GetRoomColumnAndRowFromIdx(level:GetLastRoomDesc().SafeGridIndex)
+
+    local posToAdd = Vector(lastIndex.X - currentIndex.X, lastIndex.Y - currentIndex.Y) * regularRoomSize
+
+    ---@param pickup EntityPickup
+    Resouled.Iterators:IterateOverRoomPickups(function(pickup)
+        if pickup.Variant == Soul.Variant and pickup.SubType == Soul.SubType then
+            pickup.Position = pickup.Position + posToAdd
+        end
+    end)
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)

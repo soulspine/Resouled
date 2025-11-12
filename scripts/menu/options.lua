@@ -122,6 +122,8 @@ local function loadOptions()
     if SAVE_MANAGER.IsLoaded() and not loadedSave then
         
         local save = SAVE_MANAGER.GetPersistentSave()["ResouledOptions"]
+        if not save then save = {} end
+        
         
         for _, config in ipairs(Resouled.Options) do
             save[config.Name] = save[config.Name] or config.DefaultValue

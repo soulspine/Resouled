@@ -14,24 +14,31 @@ local text = {
     "Have fun playing Resouled!"
 }
 
+local save
+local function loadSave()
+    local newSave = Resouled.SaveManager:GetEntireSave()["Popup Notification"]
+    if not newSave then newSave = 0 end
+    save = newSave
+
+    Resouled.Save:AddToAutoSave(Resouled.SaveTypes.EntireSave, "Popup Notification", function() return save end)
+end
+Resouled:AddCallback(Resouled.Callbacks.OptionsLoaded, loadSave)
+
 local function postRender()
-    local save = Resouled:GetOptionsSave()
     if not save then return end
-    if not save["Popup Notification"] then save["Popup Notification"] = 0 end
-    if save["Popup Notification"] < APPEAR_TIME then
+    if save < APPEAR_TIME then
         local pos = Vector(Isaac.GetScreenWidth()/2, 25) + START_OFFSET
         local separation = font:GetBaselineHeight() + 5
         for _, string in ipairs(text) do
             font:DrawStringScaled(string, pos.X, pos.Y, 1, 1, color, font:GetStringWidth(string)/2)
             pos.Y = pos.Y + separation
         end
-        save["Popup Notification"] = save["Popup Notification"] + 1
+        save = save + 1
 
-        local time = "This message will disappear in: "..tostring(((APPEAR_TIME - save["Popup Notification"])//60)+1).."s"
+        local time = "This message will disappear in: "..tostring(((APPEAR_TIME - save)//60)+1).."s"
 
         font:DrawString(time, pos.X, pos.Y + separation, color, font:GetStringWidth(time)/2)
     else
-        Resouled.SaveManager.Save()
         Resouled:RemoveCallback(ModCallbacks.MC_POST_RENDER, postRender)
     end
 end

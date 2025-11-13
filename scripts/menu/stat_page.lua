@@ -227,20 +227,13 @@ local function loadShenaniganSave()
     end
     
     shenaniganSave = save
-    Resouled.SaveManager.Save()
+    Resouled.Save:AddToAutoSave(Resouled.SaveTypes.EntireSave, "Resouled Shenanigans", function() return shenaniganSave end)
 end
 Resouled:AddCallback(Resouled.Callbacks.OptionsLoaded, loadShenaniganSave)
 
 local selectedShenaniganPage = 1
 local selectedShenanigan = 1
 local SHENANIGANS_OFFSET = Vector(5, 5)
-
-local leftAndRightSwitchOptions = {
-    ["Disabled"] = true,
-    ["Enabled"] = true,
-    ["True"] = true,
-    ["False"] = true,
-}
 
 local SHENANIGANS_COLORS = {
     ["Enabled"] = KColor(47/255/3, 27/255 * 3, 33/255/3, 1),
@@ -657,7 +650,7 @@ local function menuRender()
         elseif menu == CONFIG.CustomMenuType and Resouled:HasAnyoneTriggeredAction(inputLookup.Leave) then
             MenuManager.SetActiveMenu(MainMenuType.GAME)
             SFXManager():Play(SoundEffect.SOUND_BOOK_PAGE_TURN_12)
-            Resouled.SaveManager.Save()
+            Resouled.Save:ForceSave()
         end
     end
 

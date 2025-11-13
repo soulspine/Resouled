@@ -133,7 +133,7 @@ local function loadOptions()
         optionsSave = save
         loadedSave = true
         Isaac.RunCallback(Resouled.Callbacks.OptionsLoaded)
-        Resouled.SaveManager.Save()
+        Resouled.Save:AddToAutoSave(Resouled.SaveTypes.EntireSave, "ResouledOptions", function() return optionsSave end)
     end
 end
 Resouled:AddPriorityCallback(ModCallbacks.MC_MAIN_MENU_RENDER, CallbackPriority.IMPORTANT, loadOptions)

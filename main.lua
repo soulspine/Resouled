@@ -4,6 +4,8 @@ Resouled = RegisterMod("Resouled", 1)
 if REPENTOGON and MinimapAPI then
     local thingsToRunAfterImports = {}
 
+    include("scripts.callbacks")
+
     --- Does not pass any parameters
     ---@param func function
     function Resouled:RunAfterImports(func)
@@ -17,6 +19,9 @@ if REPENTOGON and MinimapAPI then
     Resouled.SaveManager.Init(Resouled)
 
     include("scripts.utility.status_effect_library")
+
+    ---@type ResouledSave
+    Resouled.Save = include("scripts.utility.resouled.save")
 
     ---@type AccurateStatsModule
     Resouled.AccurateStats = include("scripts.utility.accurate_stats")
@@ -61,7 +66,7 @@ if REPENTOGON and MinimapAPI then
     --    ---@type ResouledEID
     --    Resouled.EID = include("scripts.utility.resouled.eid_functions")
     --end
-    include("scripts.callbacks")
+    
     include("scripts.popup_notification")
     ---@type ResouledEID
     Resouled.EID = include("scripts.utility.resouled.eid")

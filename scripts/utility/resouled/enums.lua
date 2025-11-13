@@ -18,6 +18,7 @@ enums.Items = {
     CEREMONIAL_BLADE = Isaac.GetItemIdByName("Ceremonial Blade"),
     CHEESE_GRATER = Isaac.GetItemIdByName("Cheese Grater"),
     CLASSIC_ROLLER = Isaac.GetItemIdByName("Classic Roller"),
+    CLUB = Isaac.GetItemIdByName("Club"),
     CONJOINED_D6 = Isaac.GetItemIdByName("Conjoined D6"),
     COOP_BABY = Isaac.GetItemIdByName("Co-Op Baby"),
     CURSED_SOUL = Isaac.GetItemIdByName("Cursed Soul"),

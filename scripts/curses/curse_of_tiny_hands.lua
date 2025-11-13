@@ -35,7 +35,7 @@ local HEAVY_PICKUPS_PICKUP_LIMIT = 5 --trinkets, runes, cards, pills
 local PICKUP_LIMIT_TO_ADD_PER_PLAYER = 2
 
 local function postUpdate()
-    local floorSave = SAVE_MANAGER.GetFloorSave()
+    local floorSave = Resouled.SaveManager.GetFloorSave()
     if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_TINY_HANDS) and not floorSave.CurseOfTinyHands then
         local extraPlayersNum = #PlayerManager.GetPlayers() - 1
         floorSave.CurseOfTinyHands = {
@@ -51,7 +51,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, postUpdate)
 ---@param pickup EntityPickup
 ---@param collider Entity
 local function prePickupCollision(_, pickup, collider)
-    local floorSave = SAVE_MANAGER.GetFloorSave()
+    local floorSave = Resouled.SaveManager.GetFloorSave()
     if floorSave.CurseOfTinyHands then
         if LIGHT_PICKUPS[pickup.Variant] then
             if floorSave.CurseOfTinyHands.Light > 0 then

@@ -39,7 +39,7 @@ local TUMOR_LEVEL_4 = {
 
 ---@param player EntityPlayer
 local function onCacheEval(_, player)
-    local RUN_SAVE = SAVE_MANAGER.GetRunSave(player)
+    local RUN_SAVE = Resouled.SaveManager.GetRunSave(player)
     local extra = 0
     if RUN_SAVE.Resouled_ExtraTumors then
         extra = RUN_SAVE.Resouled_ExtraTumors
@@ -61,8 +61,8 @@ local function preFamiliarUpdate(_, familiar)
     if familiar.SubType == FAMILIAR_SUBTYPE then
         local player = Resouled:TryFindPlayerSpawner(familiar)
         if player then
-            local RUN_SAVE = SAVE_MANAGER.GetRunSave(familiar)
-            local PLAYER_RUN_SAVE = SAVE_MANAGER.GetRunSave(player)
+            local RUN_SAVE = Resouled.SaveManager.GetRunSave(familiar)
+            local PLAYER_RUN_SAVE = Resouled.SaveManager.GetRunSave(player)
             local sprite = familiar:GetSprite()
             local data = familiar:GetData()
             
@@ -121,7 +121,7 @@ local function preFamiliarUpdate(_, familiar)
                     local newTumor = Isaac.Spawn(EntityType.ENTITY_FAMILIAR, FAMILIAR_VARIANT, FAMILIAR_SUBTYPE, familiar.Position, TUMOR_SPLIT_VELOCITY:Rotated(math.floor((360/tumorCount)*i)), player)
 
                     newTumor:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
-                    local newTumorSaveManager = SAVE_MANAGER.GetRunSave(newTumor)
+                    local newTumorSaveManager = Resouled.SaveManager.GetRunSave(newTumor)
 
                     if not newTumorSaveManager.Resouled_HitCount then
                         newTumorSaveManager.Resouled_HitCount = TUMOR_LEVEL_1.HITS
@@ -183,7 +183,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)
 local function postNewFloor()
     ---@param player EntityPlayer
     Resouled.Iterators:IterateOverPlayers(function(player)
-        local RUN_SAVE = SAVE_MANAGER.GetRunSave(player)
+        local RUN_SAVE = Resouled.SaveManager.GetRunSave(player)
         if RUN_SAVE.Resouled_ExtraTumors then
             RUN_SAVE.Resouled_ExtraTumors = math.floor(RUN_SAVE.Resouled_ExtraTumors/TUMOR_LOSS_PER_FLOOR)
         end

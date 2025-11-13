@@ -1,6 +1,6 @@
 ---@param chance number
 local function postPlanetariumChance(_, chance)
-    local RUN_SAVE = SAVE_MANAGER.GetRunSave()
+    local RUN_SAVE = Resouled.SaveManager.GetRunSave()
     if not RUN_SAVE.Resouled_PlanetariumsVisited then
         RUN_SAVE.Resouled_PlanetariumsVisited = 0
     end
@@ -40,7 +40,7 @@ end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, onNewFloor)
     
 local function postNewRoom()
-    local RUN_SAVE = SAVE_MANAGER.GetRunSave()
+    local RUN_SAVE = Resouled.SaveManager.GetRunSave()
     if not RUN_SAVE.Resouled_PlanetariumsVisited then
         RUN_SAVE.Resouled_PlanetariumsVisited = 0
     end

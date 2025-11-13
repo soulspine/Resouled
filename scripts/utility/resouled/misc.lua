@@ -852,7 +852,7 @@ end
 
 ---@param player EntityPlayer
 Resouled:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.IMPORTANT, function(_, player)
-    local RunSave = SAVE_MANAGER.GetRunSave(player)
+    local RunSave = Resouled.SaveManager.GetRunSave(player)
 
     if not RunSave.StartingStats then
         ---@type ResouledPlayerStats
@@ -870,7 +870,7 @@ end)
 ---@param player EntityPlayer
 ---@return ResouledPlayerStats
 function Resouled:GetPlayerStartingStats(player)
-    local RunSave = SAVE_MANAGER.GetRunSave(player)
+    local RunSave = Resouled.SaveManager.GetRunSave(player)
     return RunSave.StartingStats
 end
 

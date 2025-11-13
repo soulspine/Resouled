@@ -1,7 +1,7 @@
 local function postNewRoom()
     if Resouled:RoomEventPresent(Resouled.RoomEvents.PITY_FOR_THE_POOR) then
         print("THis happened", 1 - Resouled:GetPossessedSoulsNum()/100)
-        local RoomSave = SAVE_MANAGER.GetRoomSave()
+        local RoomSave = Resouled.SaveManager.GetRoomSave()
         if not RoomSave.PityForThePoor then
             RoomSave.PityForThePoorDiscount = 1 - Resouled:GetPossessedSoulsNum()/100
         end
@@ -15,7 +15,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)
 ---@param price integer
 local function onGetShopItemPrice(_, variant, subtype, shopItemId, price) --Pre steam sale
     if Resouled:RoomEventPresent(Resouled.RoomEvents.PITY_FOR_THE_POOR) then
-        local RoomSave = SAVE_MANAGER.GetRoomSave()
+        local RoomSave = Resouled.SaveManager.GetRoomSave()
         if RoomSave.PityForThePoorDiscount then
             return math.floor(price * (1 - RoomSave.PityForThePoorDiscount) + 0.5)
         end

@@ -13,8 +13,8 @@ if REPENTOGON and MinimapAPI then
     -- ALL EXTERNAL IMPORTS
 
     ---@type SaveManager
-    SAVE_MANAGER = include("scripts.utility.save_manager")
-    SAVE_MANAGER.Init(Resouled)
+    Resouled.SaveManager = include("scripts.utility.save_manager")
+    Resouled.SaveManager.Init(Resouled)
 
     include("scripts.utility.status_effect_library")
 
@@ -61,8 +61,8 @@ if REPENTOGON and MinimapAPI then
     --    ---@type ResouledEID
     --    Resouled.EID = include("scripts.utility.resouled.eid_functions")
     --end
-    include("scripts.popup_notification")
     include("scripts.callbacks")
+    include("scripts.popup_notification")
     ---@type ResouledEID
     Resouled.EID = include("scripts.utility.resouled.eid")
     include("scripts.utility.resouled.misc")

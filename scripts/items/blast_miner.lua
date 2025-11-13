@@ -17,7 +17,7 @@ local function playerPlaceBomb(_, player, bomb)
         local tnt = Game():Spawn(EntityType.ENTITY_PICKUP, TNT_VARIANT, player.Position, Vector.Zero, player, subtype, bomb.InitSeed)
         tnt.Velocity = player.Velocity * 2
         bomb:Remove()
-        local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(tnt)
+        local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(tnt)
         ROOM_SAVE.BlastMiner = {
             GOLDEN = player:HasGoldenBomb(),
             BOBBYBOMB = player:HasCollectible(CollectibleType.COLLECTIBLE_BOBBY_BOMB),

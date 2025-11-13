@@ -15,15 +15,15 @@ MinimapAPI:AddMapFlag(
 )
 
 local function onUpdate()
-    local FLOOR_SAVE_MANAGER = SAVE_MANAGER.GetFloorSave()
+    local FLOOR_SAVE = Resouled.SaveManager.GetFloorSave()
     if (Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_FATIGUE)) then
-        if not FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue then
-            FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue = 0
+        if not FLOOR_SAVE.ResouledCurseOfFatigue then
+            FLOOR_SAVE.ResouledCurseOfFatigue = 0
             cachedIndicatorFrame = 0
         end
     else
-        if FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue then
-            FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue = nil
+        if FLOOR_SAVE.ResouledCurseOfFatigue then
+            FLOOR_SAVE.ResouledCurseOfFatigue = nil
         end        
 
         Resouled.Iterators:IterateOverPlayers(function(player)
@@ -44,16 +44,15 @@ Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 local function onPlayerHit(_, entity, amount, flags, source, countdown)
     local entityData = entity:GetData()
     if entity.Type == EntityType.ENTITY_PLAYER and Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_FATIGUE) then
-        local FLOOR_SAVE_MANAGER = SAVE_MANAGER.GetFloorSave()
-        FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue = 1
-        cachedIndicatorFrame = FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue
+        local FLOOR_SAVE = Resouled.SaveManager.GetFloorSave()
+        FLOOR_SAVE.ResouledCurseOfFatigue = 1
+        cachedIndicatorFrame = FLOOR_SAVE.ResouledCurseOfFatigue
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, onPlayerHit, EntityType.ENTITY_PLAYER)
 
 ---@param player EntityPlayer
 local function prePlayerUpdate(_, player)
-    local FLOOR_SAVE_MANAGER = SAVE_MANAGER.GetFloorSave()
     local playerData = player:GetData()
     if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_FATIGUE) then
         if not playerData.ResouledCurseOfFatigue then
@@ -69,9 +68,9 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_PLAYER_UPDATE, prePlayerUpdate)
 
 local function preClearReward()
     if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_FATIGUE) then
-        local FLOOR_SAVE_MANAGER = SAVE_MANAGER.GetFloorSave()
+        local FLOOR_SAVE = Resouled.SaveManager.GetFloorSave()
 
-        if FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue == 1 then
+        if FLOOR_SAVE.ResouledCurseOfFatigue == 1 then
             ---@param player EntityPlayer
             Resouled.Iterators:IterateOverPlayers(function(player)
                 for i = 0, 3 do
@@ -89,9 +88,9 @@ local function preClearReward()
                 SFXManager():Stop(SoundEffect.SOUND_BATTERYCHARGE)
             end
 
-            FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue = 0
+            FLOOR_SAVE.ResouledCurseOfFatigue = 0
         end
-        cachedIndicatorFrame = FLOOR_SAVE_MANAGER.ResouledCurseOfFatigue
+        cachedIndicatorFrame = FLOOR_SAVE.ResouledCurseOfFatigue
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, preClearReward)

@@ -36,13 +36,13 @@ end
 
 --Sets the next entered stage to the afterlife shop
 function Resouled.AfterlifeShop:SetAfterlifeShop()
-    local RunSave = SAVE_MANAGER.GetRunSave()
+    local RunSave = Resouled.SaveManager.GetRunSave()
     RunSave.AfterlifeShopNext = true
 end
 
 ---@return integer | nil
 function Resouled.AfterlifeShop:getRoomTypeFromIdx(index)
-    local RunSave = SAVE_MANAGER.GetRunSave()
+    local RunSave = Resouled.SaveManager.GetRunSave()
     if RunSave.AfterlifeShop and RunSave.AfterlifeShop["LevelLayout"] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(index)] then
         return RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(index)]
     end
@@ -51,7 +51,7 @@ end
 
 ---@return boolean
 function Resouled.AfterlifeShop:IsAfterlifeShop()
-    local RunSave = SAVE_MANAGER.GetRunSave()
+    local RunSave = Resouled.SaveManager.GetRunSave()
     return RunSave.AfterlifeShop
 end
 
@@ -67,7 +67,7 @@ Resouled.AfterlifeShop.ShopLevels = {
 
 ---@return AfterlifeShopLevel
 function Resouled.AfterlifeShop:GetShopLevel()
-    local FileSave = SAVE_MANAGER.GetPersistentSave()
+    local FileSave = Resouled.SaveManager.GetPersistentSave()
     if not FileSave then
         FileSave = {}
     end
@@ -79,7 +79,7 @@ end
 
 ---@param level AfterlifeShopLevel
 function Resouled.AfterlifeShop:SetShopLevel(level)
-    local FileSave = SAVE_MANAGER.GetPersistentSave()
+    local FileSave = Resouled.SaveManager.GetPersistentSave()
     if not FileSave then
         FileSave = {}
     end
@@ -90,7 +90,7 @@ function Resouled.AfterlifeShop:SetShopLevel(level)
 end
 
 local function preNewLevel()
-    local RunSave = SAVE_MANAGER.GetRunSave()
+    local RunSave = Resouled.SaveManager.GetRunSave()
     if RunSave.AfterlifeShopNext then
         RunSave.AfterlifeShop = {}
         RunSave.AfterlifeShopNext = nil

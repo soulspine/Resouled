@@ -32,7 +32,7 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_USE_ITEM, preUseItem)
 ---@param activeSlot ActiveSlot
 local function onItemUse(_, collectibleType, rng, player, useFlags, activeSlot)
     if collectibleType == CONJOINED_D6 then
-        local RunSave = SAVE_MANAGER.GetRunSave()
+        local RunSave = Resouled.SaveManager.GetRunSave()
 
         local indexKey = tostring(player:GetPlayerIndex())
         local formKey = tostring(player:GetCollectibleRNG(CONJOINED_D6):GetSeed())
@@ -79,7 +79,7 @@ Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onItemUse)
 ---@param player EntityPlayer
 ---@param cacheFlags CacheFlag
 local function onCacheEval(_, player, cacheFlags)
-    local RunSave = SAVE_MANAGER.GetRunSave()
+    local RunSave = Resouled.SaveManager.GetRunSave()
 
     if RunSave.ResouledCD6Multiplier == nil then
         return
@@ -107,7 +107,7 @@ Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval)
 
 ---@param player EntityPlayer
 local function postPlayerInit(_, player)
-    local RunSave = SAVE_MANAGER.GetRunSave()
+    local RunSave = Resouled.SaveManager.GetRunSave()
     player:GetPlayerIndex()
 
     if RunSave.ResouledCD6Multiplier == nil then

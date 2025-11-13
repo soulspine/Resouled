@@ -39,7 +39,7 @@ local function postNewRoom()
                 local randomNum = rng:RandomFloat()
                 
                 if randomNum < curseActivationChance then
-                    local GRID_SAVE = SAVE_MANAGER.GetRoomSave()
+                    local GRID_SAVE = Resouled.SaveManager.GetRoomSave()
                     GRID_SAVE.Resouled_CurseOfHollow = {}
                     ---@param entity Entity
                     Resouled.Iterators:IterateOverRoomEntities(function(entity)
@@ -101,7 +101,7 @@ end
 ---@param entity GridEntity
 local function doGridEntityCurseEffect(_, entity)
     if not Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_THE_HOLLOW) then return end
-    local GRID_SAVE = SAVE_MANAGER.GetRoomSave()
+    local GRID_SAVE = Resouled.SaveManager.GetRoomSave()
     if not GRID_SAVE.Resouled_CurseOfHollow then return end
     local key = tostring(entity:GetGridIndex())
     if not GRID_SAVE.Resouled_CurseOfHollow[key] then return end

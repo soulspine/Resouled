@@ -33,7 +33,7 @@ local EXPLODE = function(tnt, flags)
     if tnt.SubType == TNT_MEGA_SUBTYPE then
         bomb.ExplosionDamage = 185 --MR. MEGA damage
     end
-    local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(tnt)
+    local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(tnt)
     bomb:AddTearFlags(flags)
     bomb:SetExplosionCountdown(0)
     bomb:Update()
@@ -67,8 +67,8 @@ end
 local function postPickupInit(_, pickup)
     if subtypeWhitelist[pickup.SubType] then
         local sprite = pickup:GetSprite()
-        local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(pickup)
-        local ROOM_SAVE_POSITION = SAVE_MANAGER.GetRoomFloorSave(pickup.Position)
+        local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(pickup)
+        local ROOM_SAVE_POSITION = Resouled.SaveManager.GetRoomFloorSave(pickup.Position)
         ROOM_SAVE.BlastMiner = ROOM_SAVE_POSITION.BlastMiner
         if ROOM_SAVE.BlastMiner and ROOM_SAVE.BlastMiner.GOLDEN and pickup.SubType == TNT_SUBTYPE then
             sprite:ReplaceSpritesheet(0, "gfx/pickups/bombs/blast_miner_crate_gold.png", true)
@@ -88,7 +88,7 @@ local function onPickupUpdate(_, pickup)
             sprite:Play(tostring(varData), true)
         end
 
-        local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(pickup)
+        local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(pickup)
         if ROOM_SAVE.BlastMiner and pickup:GetVarData() < TNT_HP then
             if pickup.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_ALL then
                 pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
@@ -191,8 +191,8 @@ local function preRoomLeave()
     ---@param pickup EntityPickup
     Resouled.Iterators:IterateOverRoomPickups(function(pickup)
         if pickup.Variant == TNT_VARIANT and subtypeWhitelist[pickup.SubType] then
-            local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(pickup)
-            local ROOM_SAVE_POSITION = SAVE_MANAGER.GetRoomFloorSave(pickup.Position)
+            local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(pickup)
+            local ROOM_SAVE_POSITION = Resouled.SaveManager.GetRoomFloorSave(pickup.Position)
             if ROOM_SAVE.BlastMiner then
                 ROOM_SAVE_POSITION.BlastMiner = ROOM_SAVE.BlastMiner
             end

@@ -83,13 +83,13 @@ local OPTION_EFFECTS = {
         end
         Resouled:ClearBuffSave()
         Isaac.RunCallback(Resouled.Callbacks.StatsReset)
-        SAVE_MANAGER.Save()
+        Resouled.SaveManager.Save()
     end,
     [Resouled.Options[5].Name.." "..Resouled.Options[5].StringOptions[2]] = function()
         if loadedSave then
             for _, config in ipairs(Resouled.Options) do
                 optionsSave[config.Name] = config.DefaultValue
-                SAVE_MANAGER.Save()
+                Resouled.SaveManager.Save()
             end
         end
     end,
@@ -119,10 +119,11 @@ local OPTION_EFFECTS = {
 }
 
 local function loadOptions()
-    if SAVE_MANAGER.IsLoaded() and not loadedSave then
+    if Resouled.SaveManager.IsLoaded() and not loadedSave then
+        local save = Resouled.SaveManager.GetEntireSave()
         
-        local save = SAVE_MANAGER.GetPersistentSave()["ResouledOptions"]
-        if not save then save = {} end
+        if not save["ResouledOptions"] then save["ResouledOptions"] = {} end
+        save = save["ResouledOptions"]
         
         
         for _, config in ipairs(Resouled.Options) do
@@ -132,7 +133,7 @@ local function loadOptions()
         optionsSave = save
         loadedSave = true
         Isaac.RunCallback(Resouled.Callbacks.OptionsLoaded)
-        SAVE_MANAGER.Save()
+        Resouled.SaveManager.Save()
     end
 end
 Resouled:AddPriorityCallback(ModCallbacks.MC_MAIN_MENU_RENDER, CallbackPriority.IMPORTANT, loadOptions)
@@ -194,7 +195,7 @@ function Resouled:StepOptionValue(optionName, increment)
     end
 
     optionsSave[optionName] = value
-    SAVE_MANAGER.Save()
+    Resouled.SaveManager.Save()
     return true
 end
 
@@ -202,7 +203,7 @@ end
 ---@param value any
 function Resouled:SetOptionValue(optionName, value)
     optionsSave[optionName] = value
-    SAVE_MANAGER.Save()
+    Resouled.SaveManager.Save()
 end
 
 ---@param optionName string
@@ -212,7 +213,7 @@ function Resouled:GetOptionValue(optionName)
         for _, container in ipairs(Resouled.Options) do
             if optionName == container.Name then
                 optionsSave[optionName] = container.DefaultValue
-                SAVE_MANAGER.Save()
+                Resouled.SaveManager.Save()
                 break
             end
         end

@@ -35,7 +35,7 @@ local function postNewRoom()
                     
             local itemCount = player:GetCollectibleNum(UNSTABLE_DNA)
             if itemCount > 0 then
-                local RUN_SAVE = SAVE_MANAGER.GetRunSave(player)
+                local RUN_SAVE = Resouled.SaveManager.GetRunSave(player)
                 local rng = RNG()
                 rng:SetSeed(room:GetAwardSeed())
                 if not RUN_SAVE.UnstableDNA or rng:RandomFloat() < STAT_UP_CHANCE then -- stat up
@@ -120,7 +120,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)
 ---@param player EntityPlayer
 ---@param flag CacheFlag
 local function onCacheEval(_, player, flag)
-    local RUN_SAVE = SAVE_MANAGER.GetRunSave(player)
+    local RUN_SAVE = Resouled.SaveManager.GetRunSave(player)
     if RUN_SAVE.UnstableDNA then
 
         local statValue = 0

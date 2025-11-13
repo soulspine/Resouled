@@ -12,7 +12,7 @@ local function makeLookupKey(integer)
 end
 
 local function postNewLevel()
-    local RunSave = SAVE_MANAGER.GetRunSave()
+    local RunSave = Resouled.SaveManager.GetRunSave()
     if not RunSave.WhatTimeStagesBeenEntered then
         RunSave.WhatTimeStagesBeenEntered = {}
     end
@@ -23,7 +23,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewLevel)
 
 ---@return table
 function Resouled:GetTimesStagesHaveBeenEntered()
-    local RunSave = SAVE_MANAGER.GetRunSave()
+    local RunSave = Resouled.SaveManager.GetRunSave()
 
     if not RunSave.WhatTimeStagesBeenEntered then
         RunSave.WhatTimeStagesBeenEntered = {}
@@ -36,7 +36,7 @@ end
 ---@return integer
 local function getNextStageFromSave(player)
     local times = Resouled:GetTimesStagesHaveBeenEntered()
-    local RunSave = SAVE_MANAGER.GetRunSave(player)
+    local RunSave = Resouled.SaveManager.GetRunSave(player)
 
     if not RunSave.IsaacsLastWill then
         RunSave.IsaacsLastWill = 1
@@ -59,7 +59,7 @@ end
 local function postPlayerRevive(_, entity)
     local player = entity:ToPlayer()
     if player and player:HasCollectible(ISAACS_LAST_WILL) then
-        local RunSave = SAVE_MANAGER.GetRunSave(player)
+        local RunSave = Resouled.SaveManager.GetRunSave(player)
         local times = Resouled:GetTimesStagesHaveBeenEntered()
         local items = player:GetHistory():GetCollectiblesHistory()
 
@@ -89,7 +89,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_REVIVE, postPlayerRevive)
 ---@param player EntityPlayer
 local function playerDeathPostCheckRevives(_, player)
     if player:HasCollectible(ISAACS_LAST_WILL) then
-        local RunSave = SAVE_MANAGER.GetRunSave(player)
+        local RunSave = Resouled.SaveManager.GetRunSave(player)
         local lastRoomIdx = Game():GetLevel():GetLastRoomDesc().GridIndex
 
         local times = Resouled:GetTimesStagesHaveBeenEntered()

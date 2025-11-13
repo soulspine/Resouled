@@ -32,14 +32,14 @@ end
 ---@param index integer
 ---@return boolean
 local function roomExists(index)
-    local RunSave = SAVE_MANAGER.GetRunSave()
+    local RunSave = Resouled.SaveManager.GetRunSave()
     return RunSave.AfterlifeShop and RunSave.AfterlifeShop["LevelLayout"] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(index)] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(index)] > 0
 end
 
 ---@param index integer
 ---@return boolean
 local function isAnySpotAroundRoomFree(index)
-    local RunSave = SAVE_MANAGER.GetRunSave()
+    local RunSave = Resouled.SaveManager.GetRunSave()
     if RunSave.AfterlifeShop and RunSave.AfterlifeShop["LevelLayout"] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(index)] then
         for i = 0, 3 do -- all directions
             if not Resouled:GetRoomIdxFromDir(i, index) then
@@ -58,7 +58,7 @@ local function moveAroundMap(currentIndex, dir)
         dir = math.random(0, 3)
     end
 
-    local RunSave = SAVE_MANAGER.GetRunSave()
+    local RunSave = Resouled.SaveManager.GetRunSave()
     if RunSave.AfterlifeShop and RunSave.AfterlifeShop["LevelLayout"] then
 
         local newIndex = Resouled:GetRoomIdxFromDir(dir, currentIndex)
@@ -125,7 +125,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, Door.Type)
 ---@param position Vector
 ---@return boolean
 local function ShouldDoorBeLocked(position)
-    local RunSave = SAVE_MANAGER.GetRunSave()
+    local RunSave = Resouled.SaveManager.GetRunSave()
     local nearestRoom = Resouled:GetNearestRoomIndexAndDirectionFromPos(position)
     if nearestRoom and RunSave.AfterlifeShop and RunSave.AfterlifeShop["LevelLayout"] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(nearestRoom.RoomIndex)] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(nearestRoom.RoomIndex)] > 0 then
 
@@ -139,7 +139,7 @@ end
 
 ---@return boolean
 function Resouled.AfterlifeShop:AreRoomsConnected(roomIdx1, roomIdx2)
-    local RunSave = SAVE_MANAGER.GetRunSave()
+    local RunSave = Resouled.SaveManager.GetRunSave()
     if RunSave.AfterlifeShop and RunSave.AfterlifeShop["LevelLayout"] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(roomIdx2)] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(roomIdx2)] > 0 then
         if (not Resouled.AfterlifeShop.SpecialBuffRoomsConnectionWhitelist[RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(roomIdx1)]] and
         RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(roomIdx2)] == Resouled.AfterlifeShop.RoomTypes.SpecialBuffsRoom) or
@@ -159,7 +159,7 @@ local DOOR_OFFSET = Vector(0, 4)
 ---@param doorSlot DoorSlot
 ---@param position Vector
 local function trySpawnDoor(doorSlot, position)
-    local RunSave = SAVE_MANAGER.GetRunSave()
+    local RunSave = Resouled.SaveManager.GetRunSave()
     local nearestRoom = Resouled:GetNearestRoomIndexAndDirectionFromPos(position)
     local currentIndex = Game():GetLevel():GetCurrentRoomIndex()
 
@@ -193,7 +193,7 @@ local function trySpawnDoor(doorSlot, position)
 end
 
 local function spawnDoors()
-    local RunSave = SAVE_MANAGER.GetRunSave()
+    local RunSave = Resouled.SaveManager.GetRunSave()
     if RunSave.AfterlifeShop then
         local room = Game():GetRoom()
         local doorsPos = getDoorsPositions()
@@ -265,7 +265,7 @@ end
 Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onNpcUpdate, Door.Type)
 
 local function postFloorGenerate()
-    local RunSave = SAVE_MANAGER.GetRunSave()
+    local RunSave = Resouled.SaveManager.GetRunSave()
     if Resouled.AfterlifeShop:IsAfterlifeShop() then
         local level = game:GetLevel()
         
@@ -347,7 +347,7 @@ end
 Resouled:AddPriorityCallback(ModCallbacks.MC_POST_NEW_LEVEL, CallbackPriority.LATE, postFloorGenerate)
 
 Resouled:AddCallback(ModCallbacks.MC_PRE_LEVEL_PLACE_ROOM, function()
-    local RunSave = SAVE_MANAGER.GetRunSave()
+    local RunSave = Resouled.SaveManager.GetRunSave()
     if RunSave.AfterlifeShopNext then
         RunSave.AfterlifeShop = {}
         RunSave.AfterlifeShopNext = nil
@@ -361,7 +361,7 @@ end)
 
 ---@return table|nil
 function Resouled.AfterlifeShop:GetLayout()
-    local RunSave = SAVE_MANAGER.GetRunSave()
+    local RunSave = Resouled.SaveManager.GetRunSave()
     if Resouled.AfterlifeShop:IsAfterlifeShop() and RunSave.AfterlifeShop["LevelLayout"] then
         return RunSave.AfterlifeShop["LevelLayout"]
     end

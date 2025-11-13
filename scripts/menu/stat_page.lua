@@ -207,29 +207,29 @@ Resouled.SpecialSeedEffects = {
 
 
 local shenaniganSave
-local shenaniganSaveLoaded = false
 
 ---@param effect ResouledSpecialSeedEffects
 function Resouled:IsSpecialSeedEffectActive(effect)
-    return shenaniganSave and shenaniganSave[tostring(1)] and shenaniganSave[tostring(1)][effect] and shenaniganSave[tostring(1)][effect] == "Enabled"
+    return shenaniganSave and shenaniganSave[SHENANIGANS[1].Name] and shenaniganSave[SHENANIGANS[1].Name][effect] and shenaniganSave[SHENANIGANS[1].Name][effect] == "Enabled"
 end
 
 local function loadShenaniganSave()
-    if not shenaniganSaveLoaded and SAVE_MANAGER.IsLoaded() then
+    local save = Resouled.SaveManager:GetEntireSave()["Resouled Shenanigans"]
+
+    if not save then save = {} end
+    
+    for _, page in ipairs(SHENANIGANS) do
+        if not save[page.Name] then save[page.Name] = {} end
         
-        local save = SAVE_MANAGER.GetPersistentSave()
-        if not save then save = {} end
-        if not save["Resouled Shenanigans"] then save["Resouled Shenanigans"] = {} end
-
-        shenaniganSave = save["Resouled Shenanigans"]
-        shenaniganSaveLoaded = true
-
-        Resouled:RemoveCallback(ModCallbacks.MC_POST_RENDER, loadShenaniganSave)
-        Resouled:RemoveCallback(ModCallbacks.MC_MAIN_MENU_RENDER, loadShenaniganSave)
+        for _, shenanigan in ipairs(page.Options) do
+            if not save[page.Name][shenanigan] then save[page.Name][shenanigan] = "Disabled" end
+        end
     end
+    
+    shenaniganSave = save
+    Resouled.SaveManager.Save()
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, loadShenaniganSave)
-Resouled:AddCallback(ModCallbacks.MC_MAIN_MENU_RENDER, loadShenaniganSave)
+Resouled:AddCallback(Resouled.Callbacks.OptionsLoaded, loadShenaniganSave)
 
 local selectedShenaniganPage = 1
 local selectedShenanigan = 1
@@ -478,7 +478,7 @@ local PAGES = {
         Name = "Shenanigans",
         Renderer = function(renderPos, _, enableInput)
 
-            local key1 = tostring(selectedShenaniganPage)
+            local key1 = SHENANIGANS[selectedShenaniganPage].Name
             if not shenaniganSave[key1] then shenaniganSave[key1] = {} end
 
             local startPos = renderPos - CONFIG.BackgroundSpriteSize/2 + Vector(0, CONFIG.HeaderLineOffset) + SHENANIGANS_OFFSET
@@ -515,9 +515,10 @@ local PAGES = {
                     local newValue = tostring(shenaniganSave[key1][SHENANIGANS[selectedShenaniganPage].Options[selectedShenanigan]])
 
                     if newValue == "Disabled" then newValue = "Enabled" else newValue = "Disabled" end
-
+                    
                     shenaniganSave[key1][SHENANIGANS[selectedShenaniganPage].Options[selectedShenanigan]] = newValue
-                    SAVE_MANAGER.Save()
+
+                    Resouled.SaveManager.Save()
 
                     SFXManager():Play(SoundEffect.SOUND_PLOP)
                 end
@@ -656,6 +657,7 @@ local function menuRender()
         elseif menu == CONFIG.CustomMenuType and Resouled:HasAnyoneTriggeredAction(inputLookup.Leave) then
             MenuManager.SetActiveMenu(MainMenuType.GAME)
             SFXManager():Play(SoundEffect.SOUND_BOOK_PAGE_TURN_12)
+            Resouled.SaveManager.Save()
         end
     end
 

@@ -31,6 +31,7 @@ local function postRender()
 
         font:DrawString(time, pos.X, pos.Y + separation, color, font:GetStringWidth(time)/2)
     else
+        Resouled.SaveManager.Save()
         Resouled:RemoveCallback(ModCallbacks.MC_POST_RENDER, postRender)
     end
 end

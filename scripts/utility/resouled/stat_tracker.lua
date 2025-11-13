@@ -3,8 +3,8 @@ Resouled.StatTracker.CursedEnemies = {}
 
 ---@return table
 function Resouled.StatTracker:GetSave()
-    if SAVE_MANAGER.IsLoaded() then
-        local save = SAVE_MANAGER.GetPersistentSave()
+    if Resouled.SaveManager.IsLoaded() then
+        local save = Resouled.SaveManager.GetPersistentSave()
         if not save then save = {} end
         if not save["ResouledStatTracker"] then save["ResouledStatTracker"] = {} end
         return save["ResouledStatTracker"]

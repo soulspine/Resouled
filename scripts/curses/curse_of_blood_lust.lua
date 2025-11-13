@@ -20,36 +20,36 @@ MinimapAPI:AddMapFlag(
 
 
 local function onUpdate()
-    local FLOOR_SAVE_MANAGER = SAVE_MANAGER.GetFloorSave()
+    local FLOOR_SAVE = Resouled.SaveManager.GetFloorSave()
     
-    if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_BLOOD_LUST) and not FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer then
-        FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer = TIME_BEFORE_TAKING_DAMAGE
-    elseif not Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_BLOOD_LUST) and FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer then
-        FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer = nil
+    if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_BLOOD_LUST) and not FLOOR_SAVE.ResouledCurseOfBloodLustTimer then
+        FLOOR_SAVE.ResouledCurseOfBloodLustTimer = TIME_BEFORE_TAKING_DAMAGE
+    elseif not Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_BLOOD_LUST) and FLOOR_SAVE.ResouledCurseOfBloodLustTimer then
+        FLOOR_SAVE.ResouledCurseOfBloodLustTimer = nil
     end
     
-    if FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer then
-        if FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer > 0 then
-            FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer = FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer - 1
+    if FLOOR_SAVE.ResouledCurseOfBloodLustTimer then
+        if FLOOR_SAVE.ResouledCurseOfBloodLustTimer > 0 then
+            FLOOR_SAVE.ResouledCurseOfBloodLustTimer = FLOOR_SAVE.ResouledCurseOfBloodLustTimer - 1
         end
-        if FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer <= 0  then
+        if FLOOR_SAVE.ResouledCurseOfBloodLustTimer <= 0  then
             ---@param player EntityPlayer
             Resouled.Iterators:IterateOverPlayers(function(player)
                 player:TakeDamage(1, DamageFlag.DAMAGE_COUNTDOWN, EntityRef(player), 0)
             end)
-            FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer = TIME_BEFORE_TAKING_DAMAGE / 2
+            FLOOR_SAVE.ResouledCurseOfBloodLustTimer = TIME_BEFORE_TAKING_DAMAGE / 2
         end
-        cachedTimer = (FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer + FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer//30)//30 --not FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer//30 because frame 46 wouldn't appear
+        cachedTimer = (FLOOR_SAVE.ResouledCurseOfBloodLustTimer + FLOOR_SAVE.ResouledCurseOfBloodLustTimer//30)//30 --not FLOOR_SAVE.ResouledCurseOfBloodLustTimer//30 because frame 46 wouldn't appear
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 
 ---@param npc EntityNPC
 local function postNpcDeath(_, npc)
-    local FLOOR_SAVE_MANAGER = SAVE_MANAGER.GetFloorSave()
-    if FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer then
+    local FLOOR_SAVE = Resouled.SaveManager.GetFloorSave()
+    if FLOOR_SAVE.ResouledCurseOfBloodLustTimer then
         if npc.Type ~= EntityType.ENTITY_PLAYER and npc:IsEnemy() and npc:IsActiveEnemy(true) then
-            FLOOR_SAVE_MANAGER.ResouledCurseOfBloodLustTimer = TIME_BEFORE_TAKING_DAMAGE
+            FLOOR_SAVE.ResouledCurseOfBloodLustTimer = TIME_BEFORE_TAKING_DAMAGE
         end
     end
 end

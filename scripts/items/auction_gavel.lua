@@ -35,7 +35,7 @@ local function onActiveUse(_, _, rng, player)
 
     player:RemoveCollectible(collectibleIndexToRemove)
 
-    local RUN_SAVE = SAVE_MANAGER.GetRunSave(player)
+    local RUN_SAVE = Resouled.SaveManager.GetRunSave(player)
     if not RUN_SAVE.Resouled_AuctionGavel then
         RUN_SAVE.Resouled_AuctionGavel = collectibleIndexToRemove
     else
@@ -79,14 +79,14 @@ local function postPickupInit(_, pickup)
     local auctionGavelItem = nil
     ---@param player EntityPlayer
     Resouled.Iterators:IterateOverPlayers(function(player)
-        local RUN_SAVE = SAVE_MANAGER.GetRunSave(player)
+        local RUN_SAVE = Resouled.SaveManager.GetRunSave(player)
         if not auctionGavelItem and RUN_SAVE.Resouled_AuctionGavel then
             auctionGavelItem = RUN_SAVE.Resouled_AuctionGavel
             RUN_SAVE.Resouled_AuctionGavel = nil
         end
     end)
     local room = Game():GetRoom()
-    local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(pickup)
+    local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(pickup)
     if Game():GetRoom():GetType() == RoomType.ROOM_SHOP and room:IsFirstVisit() and auctionGavelItem then
         pickup:Morph(pickup.Type, pickup.Variant, auctionGavelItem, true)
         ROOM_SAVE.AuctionGavelPrice = 15
@@ -99,7 +99,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, postPickupInit, PickupVar
 
 ---@param pickup EntityPickup
 local function onPickupUpdate(_, pickup)
-    local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(pickup)
+    local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(pickup)
     if ROOM_SAVE.AuctionGavelPrice then
         Resouled.Prices:FlatDecreaseShopPickupPrice(pickup, 0, ROOM_SAVE.AuctionGavelPrice)
     end
@@ -108,7 +108,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onPickupUpdate)
 
 ---@param pickup EntityPickup
 local function postPurchase(_, pickup)
-    local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(pickup)
+    local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(pickup)
     if ROOM_SAVE.AuctionGavelPrice then
         ROOM_SAVE.AuctionGavelPrice = nil
     end

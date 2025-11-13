@@ -18,7 +18,7 @@ local MIN_COOLDOWN = 13
 local MAX_COOLDOWN = 22
 
 local function postUpdate()
-    local FLOOR_SAVE = SAVE_MANAGER.GetFloorSave()
+    local FLOOR_SAVE = Resouled.SaveManager.GetFloorSave()
     if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_THE_HUNTED) then
         local room = Game():GetRoom()
         if not FLOOR_SAVE.ResouledCurseOfTheHuntedCooldown then

@@ -115,7 +115,7 @@ local function graveyardLayout()
 end
 
 local function bossfightLayout()
-    local FileSave = SAVE_MANAGER.GetPersistentSave()
+    local FileSave = Resouled.SaveManager.GetPersistentSave()
     if not FileSave then FileSave = {} end
     if not FileSave.WiseSkullKilled then FileSave.WiseSkullKilled = false end
     local room = game:GetRoom()

@@ -19,7 +19,7 @@ local function onPickupFirstUpdate(_, pickup)
 
 
     local g = Game()
-    local roomSave = SAVE_MANAGER.GetRoomFloorSave()
+    local roomSave = Resouled.SaveManager.GetRoomFloorSave()
     if roomSave.Stacy_Head_Proc_Done then return end
 
     roomSave.Stacy_Head_Proc_Done = true
@@ -66,7 +66,7 @@ local function onPickupFirstUpdate(_, pickup)
         newPickup.OptionsPickupIndex = selectionId
     end
 
-    local pickupData = SAVE_MANAGER.GetRoomFloorSave(newPickup).RerollSave
+    local pickupData = Resouled.SaveManager.GetRoomFloorSave(newPickup).RerollSave
     pickupData.Stacy_Head_Delete = true
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onPickupFirstUpdate, PickupVariant.PICKUP_COLLECTIBLE)
@@ -78,7 +78,7 @@ local function onPickupContact(_, pickup, collider, low)
     local player = collider:ToPlayer()
     if not player then return end
 
-    local pickupData = SAVE_MANAGER.GetRoomFloorSave(pickup).RerollSave
+    local pickupData = Resouled.SaveManager.GetRoomFloorSave(pickup).RerollSave
     if not pickupData.Stacy_Head_Delete then return end
     local deleted = false
     Resouled.Iterators:IterateOverPlayers(function(player)

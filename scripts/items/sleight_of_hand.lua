@@ -60,7 +60,7 @@ local function onActiveUse(_, itemId, rng, player, useFlags, activeSlot, customV
     local game = Game()
 
     -- we use global save to prevent multiple players from using it at the same time
-    local runSave = SAVE_MANAGER.GetRunSave(nil, true)
+    local runSave = Resouled.SaveManager.GetRunSave(nil, true)
 
     if runSave.SleightOfHand              -- this is here to prevent player from spamming it between time frame of glowing hourglass teleport and charge adjustment
         or not Game():GetRoom():IsClear() -- if there are enemies alive, we cannot use it
@@ -143,7 +143,7 @@ end
 Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onActiveUse, SLEIGHT_OF_HAND)
 
 local function postNewRoomEnter()
-    local runSave = SAVE_MANAGER.GetRunSave(nil, true)
+    local runSave = Resouled.SaveManager.GetRunSave(nil, true)
     if runSave.SleightOfHand then
         if runSave.SleightOfHand.RoomEnterCounter == 0 then
             -- saving pickups data
@@ -165,7 +165,7 @@ end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoomEnter)
 
 local function onUpdate()
-    local runSave = SAVE_MANAGER.GetRunSave(nil, true)
+    local runSave = Resouled.SaveManager.GetRunSave(nil, true)
 
     if not runSave.SleightOfHand then
         blackoutFadeIn = false
@@ -393,7 +393,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, onRender)
 ---@param source EntityRef
 ---@param countdownFrames integer
 local function onEntityTakeDamage(_, entity, amount, damageFlags, source, countdownFrames)
-    local runSave = SAVE_MANAGER.GetRunSave(nil, true)
+    local runSave = Resouled.SaveManager.GetRunSave(nil, true)
     if runSave.SleightOfHand and entity.Type == EntityType.ENTITY_PLAYER then
         return false -- prevent damage to player while sleight of hand is active
     end

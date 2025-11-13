@@ -34,7 +34,7 @@ local BUFF_PEDESTAL_SUBTYPE = Isaac.GetEntitySubTypeByName("Buff Pedestal")
 
 
 local function makeSureSavesExist()
-    local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
+    local FILE_SAVE = Resouled.SaveManager.GetPersistentSave()
 
     if not FILE_SAVE then
         FILE_SAVE = {}
@@ -357,7 +357,7 @@ local SAVE_ENTRY = "Buffs Collected"
 
 ---@param buffID ResouledBuff
 function Resouled:AddPendingBuff(buffID)
-    local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
+    local FILE_SAVE = Resouled.SaveManager.GetPersistentSave()
 
     if not FILE_SAVE then
         FILE_SAVE = {}
@@ -386,7 +386,7 @@ end
 
 ---@param buffID ResouledBuff
 function Resouled:RemovePendingBuff(buffID)
-    local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
+    local FILE_SAVE = Resouled.SaveManager.GetPersistentSave()
     if not FILE_SAVE then
         FILE_SAVE = {}
     end
@@ -418,7 +418,7 @@ end
 
 ---@param buffID ResouledBuff
 function Resouled:RemoveActiveBuff(buffID)
-    local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
+    local FILE_SAVE = Resouled.SaveManager.GetPersistentSave()
     if not FILE_SAVE then
         FILE_SAVE = {}
     end
@@ -452,7 +452,7 @@ end
 ---@param buffID ResouledBuff
 ---@return integer
 function Resouled:GetPendingBuffAmount(buffID)
-    local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
+    local FILE_SAVE = Resouled.SaveManager.GetPersistentSave()
     local buff = Resouled:GetBuffById(buffID)
     if buff then
         if FILE_SAVE and FILE_SAVE.Resouled_PendingBuffs and FILE_SAVE.Resouled_PendingBuffs[tostring(buffID)] then
@@ -467,7 +467,7 @@ end
 function Resouled:ActiveBuffPresent(buffID)
     local buff = Resouled:GetBuffById(buffID)
     if buff then
-        local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
+        local FILE_SAVE = Resouled.SaveManager.GetPersistentSave()
         if FILE_SAVE and FILE_SAVE.Resouled_ActiveBuffs and FILE_SAVE.Resouled_ActiveBuffs[tostring(buffID)] then
             return true
         end
@@ -476,7 +476,7 @@ function Resouled:ActiveBuffPresent(buffID)
 end
 
 function Resouled:ClearBuffSave()
-    local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
+    local FILE_SAVE = Resouled.SaveManager.GetPersistentSave()
     if FILE_SAVE then
         if FILE_SAVE.Resouled_PendingBuffs then
             FILE_SAVE.Resouled_PendingBuffs = nil
@@ -498,7 +498,7 @@ function Resouled:ClearBuffSave()
 end
 
 function Resouled:ActivatePendingBuffs()
-    local FILE_SAVE = SAVE_MANAGER.GetPersistentSave()
+    local FILE_SAVE = Resouled.SaveManager.GetPersistentSave()
 
     if FILE_SAVE and FILE_SAVE.Resouled_PendingBuffs then
         if not FILE_SAVE.Resouled_ActiveBuffs then
@@ -527,8 +527,8 @@ function Resouled:ActivatePendingBuffs()
 end
 
 local function postPlayerInit() --Appearently this is THE first callback when starting a run
-    local RUN_SAVE = SAVE_MANAGER.GetRunSave()
-    local FileSave = SAVE_MANAGER.GetPersistentSave()
+    local RUN_SAVE = Resouled.SaveManager.GetRunSave()
+    local FileSave = Resouled.SaveManager.GetPersistentSave()
 
     makeSureSavesExist()
 

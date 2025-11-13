@@ -16,7 +16,7 @@ function doorsModule:ForceShutDoors(filter)
             door:Close(true)
             door:GetSprite():Play(door.CloseAnimation, true)
             door:SetVariant(DoorVariant.DOOR_HIDDEN)
-            local grid_save = SAVE_MANAGER.GetRoomFloorSave(room:GetGridPosition(door:GetGridIndex()))
+            local grid_save = Resouled.SaveManager.GetRoomFloorSave(room:GetGridPosition(door:GetGridIndex()))
             if not grid_save.Doors__HasForcedShut then
                 grid_save.Doors__HasForcedShut = true
             else
@@ -39,7 +39,7 @@ function doorsModule:ForceOpenDoor(doorSlot)
             door:Open()
             door:GetSprite():Play(door.OpenAnimation, true)
             door:SetVariant(DoorVariant.DOOR_UNLOCKED)
-            local grid_save = SAVE_MANAGER.GetRoomFloorSave(room:GetGridPosition(door:GetGridIndex()))
+            local grid_save = Resouled.SaveManager.GetRoomFloorSave(room:GetGridPosition(door:GetGridIndex()))
             if grid_save.Doors__HasForcedShut then
                 grid_save.Doors__HasForcedShut = nil
             else

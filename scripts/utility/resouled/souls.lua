@@ -86,7 +86,7 @@ Resouled:AddCallback(ModCallbacks.MC_HUD_RENDER, hudRenderer)
 
 ---@param isContinued boolean
 local function createSoulsContainerOnRunStart(_, isContinued)
-    local runSave = SAVE_MANAGER.GetRunSave()
+    local runSave = Resouled.SaveManager.GetRunSave()
     if not isContinued then
         runSave.Souls = {
             Spawned = {},
@@ -103,7 +103,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, createSoulsContainerOnRu
 
 ---@param soul ResouledSoul
 function Resouled:WasSoulSpawned(soul)
-    local runSave = SAVE_MANAGER.GetRunSave()
+    local runSave = Resouled.SaveManager.GetRunSave()
     if runSave.Souls and runSave.Spawned and runSave.Spawned[soul] > 0 then
         return true
     end
@@ -112,13 +112,13 @@ end
 
 ---@return integer
 function Resouled:GetPossessedSoulsNum()
-    local runSave = SAVE_MANAGER.GetRunSave()
+    local runSave = Resouled.SaveManager.GetRunSave()
     return (runSave.Souls) and runSave.Souls.Possessed or 0
 end
 
 ---@param num integer
 function Resouled:SetPossessedSoulsNum(num)
-    local runSave = SAVE_MANAGER.GetRunSave()
+    local runSave = Resouled.SaveManager.GetRunSave()
     if runSave.Souls then
         runSave.Souls.Possessed = num
         cachedSoulsNum = num
@@ -130,7 +130,8 @@ end
 ---@param weight? integer -- default 1
 ---@return boolean
 function Resouled:TrySpawnSoulPickup(soul, position, weight)
-    local runSave = SAVE_MANAGER.GetRunSave()
+    if Resouled:IsSpecialSeedEffectActive(Resouled.SpecialSeedEffects.SoulsBeGone) then return false end
+    local runSave = Resouled.SaveManager.GetRunSave()
     if
         runSave.Souls and
         not runSave.Souls.Spawned[tostring(soul)] and
@@ -138,7 +139,7 @@ function Resouled:TrySpawnSoulPickup(soul, position, weight)
         local pickup = game:Spawn(EntityType.ENTITY_PICKUP, Soul.Variant, position, Vector.Zero, nil, Soul.SubType,
             Resouled:NewSeed())
         if weight and weight ~= DEFAULT_WEIGHT then
-            local pickupSave = SAVE_MANAGER.GetRoomFloorSave(pickup)
+            local pickupSave = Resouled.SaveManager.GetRoomFloorSave(pickup)
             pickupSave.SoulWeight = weight
         end
         runSave.Souls.Spawned[tostring(soul)] = true
@@ -168,9 +169,9 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onSoulPickupInit, Soul.Va
 local function onSoulPickupCollision(_, pickup, collider, low)
     if pickup.SubType == Soul.SubType then
         if collider.Type == EntityType.ENTITY_PLAYER then
-            local runSave = SAVE_MANAGER.GetRunSave()
+            local runSave = Resouled.SaveManager.GetRunSave()
             if runSave.Souls then
-                local pickupSave = SAVE_MANAGER.GetRoomFloorSave(pickup)
+                local pickupSave = Resouled.SaveManager.GetRoomFloorSave(pickup)
                 local weight = pickupSave.SoulWeight or DEFAULT_WEIGHT
                 runSave.Souls.Possessed = runSave.Souls.Possessed + weight
                 cachedSoulsNum = runSave.Souls.Possessed

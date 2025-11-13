@@ -3,7 +3,7 @@ local function preSpawnCleanReward()
         local player = Isaac.GetPlayer()
         player:UseActiveItem(CollectibleType.COLLECTIBLE_D7, UseFlag.USE_NOANIM | UseFlag.USE_NOHUD)
         SFXManager():Play(SoundEffect.SOUND_BERSERK_START)
-        local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
+        local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave()
         ROOM_SAVE.RoomEvent = "Null"
     end
 end

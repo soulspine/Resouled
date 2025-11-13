@@ -318,7 +318,7 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_COLLISION, onNpcCollision, WiseSkul
 
 ---@return boolean
 function Resouled.AfterlifeShop:IsShuffleComplete()
-    local FileSave = SAVE_MANAGER.GetPersistentSave()
+    local FileSave = Resouled.SaveManager.GetPersistentSave()
 
     if not FileSave then FileSave = {} end
     if not FileSave.ShuffleGameDone then FileSave.ShuffleGameDone = false end
@@ -328,7 +328,7 @@ end
 
 ---@param complete boolean
 function Resouled.AfterlifeShop:SetShuffleComplete(complete)
-    local FileSave = SAVE_MANAGER.GetPersistentSave()
+    local FileSave = Resouled.SaveManager.GetPersistentSave()
 
     if not FileSave then FileSave = {} end
     if not FileSave.ShuffleGameDone then FileSave.ShuffleGameDone = complete return end

@@ -8,7 +8,7 @@ local SOUL_OBTAIN_CHANCE = 0.25
 ---@param player EntityPlayer
 local function postAddCollectible(_, type, charge, firstTime, slot, varData, player)
     if type == CURSED_SOUL and firstTime then
-        local RUN_SAVE = SAVE_MANAGER.GetRunSave(player)
+        local RUN_SAVE = Resouled.SaveManager.GetRunSave(player)
         if not RUN_SAVE.Resouled_CursedSoul then
             RUN_SAVE.Resouled_CursedSoul = {
                 SOULS = SOULS_PER_ITEM,
@@ -28,7 +28,7 @@ local function playerTakeDamage(_, entity, amount, flags)
     local player = entity:ToPlayer()
     if not player then return end
 
-    local RUN_SAVE = SAVE_MANAGER.GetRunSave(player)
+    local RUN_SAVE = Resouled.SaveManager.GetRunSave(player)
     if RUN_SAVE.Resouled_CursedSoul and RUN_SAVE.Resouled_CursedSoul.SOULS > 0 then
         if DamageFlag ~= DamageFlag.DAMAGE_FAKE and player:HasCollectible(CURSED_SOUL) then
             local randomNum = math.random()
@@ -47,7 +47,7 @@ local function postNewRoom()
     if not Game():GetRoom():IsClear() then
         ---@param player EntityPlayer
         Resouled.Iterators:IterateOverPlayers(function(player)
-            local RUN_SAVE = SAVE_MANAGER.GetRunSave(player)
+            local RUN_SAVE = Resouled.SaveManager.GetRunSave(player)
             if RUN_SAVE.Resouled_CursedSoul and RUN_SAVE.Resouled_CursedSoul.SOULS > 0 and Resouled.AccurateStats:GetEffectiveHP(player) > 1 then
                 player:TakeDamage(1, DamageFlag.DAMAGE_NO_PENALTIES, EntityRef(player), 0)
             end

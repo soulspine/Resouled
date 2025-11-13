@@ -11,7 +11,7 @@ local PICKUP_SPAWNING_TRANSLATOR = {
 
 ---@param player EntityPlayer
 local function postPlayerUpdate(_, player)
-    local RUN_SAVE = SAVE_MANAGER.GetRunSave()
+    local RUN_SAVE = Resouled.SaveManager.GetRunSave()
     if player:HasCollectible(FRIENDLY_SACK) then
         if not RUN_SAVE.ResouledFriendlySack then
             RUN_SAVE.ResouledFriendlySack = {}
@@ -24,7 +24,7 @@ end
 Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, postPlayerUpdate)
 
 local function postNewRoom()
-    local RUN_SAVE = SAVE_MANAGER.GetRunSave()
+    local RUN_SAVE = Resouled.SaveManager.GetRunSave()
     
     if RUN_SAVE.ResouledFriendlySack then
 

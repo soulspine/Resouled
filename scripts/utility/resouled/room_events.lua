@@ -78,7 +78,7 @@ end
 ---@param roomEventID ResouledRoomEvent
 ---@return boolean
 function Resouled:RoomEventPresent(roomEventID)
-    local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
+    local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave()
     if ROOM_SAVE.RoomEvent then
         if ROOM_SAVE.RoomEvent == roomEventID then
             return true
@@ -191,7 +191,7 @@ end
 ---@param roomEventID ResouledRoomEvent
 ---@param roomListIndex integer
 local function forceRoomEvent(roomEventID, roomListIndex)
-    local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(nil, false, roomListIndex)
+    local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(nil, false, roomListIndex)
     ROOM_SAVE.RoomEvent = roomEventID
 end
 
@@ -200,10 +200,10 @@ local blacklistedRoomIndexes = {
 }
 
 local function initializeRoomEventifNotInitialized()
-    local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
+    local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave()
     if ROOM_SAVE.RoomEvent and type(ROOM_SAVE.RoomEvent) ~= "number" then
         ROOM_SAVE.RoomEvent = chooseRandomRoomEvent(game:GetLevel():GetCurrentRoomDesc().SafeGridIndex)
-        SAVE_MANAGER.Save()
+        Resouled.SaveManager.Save()
     end
 end
 
@@ -215,7 +215,7 @@ local function postNewFloor()
         return
     end
 
-    local RUN_SAVE = SAVE_MANAGER.GetRunSave()
+    local RUN_SAVE = Resouled.SaveManager.GetRunSave()
 
 
     if not RUN_SAVE.RoomEvents or (RUN_SAVE.RoomEvents and RUN_SAVE.RoomEvents.CurrentChapter ~= Resouled.AccurateStats:GetCurrentChapter()) then -- we moved onto different chapter and refresh amount of room events to distribute
@@ -266,7 +266,7 @@ local function postNewFloor()
 
         local roomListIndex = level:GetRoomByIdx(roomGridIndex).ListIndex
 
-        local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave(nil, false, roomListIndex)
+        local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(nil, false, roomListIndex)
         ROOM_SAVE.RoomEvent = true
 
         table.remove(correctRooms, randomRoomIndex)
@@ -279,7 +279,7 @@ local SAVE_ENTRY = "Room Events Seen"
 local function postNewRoom()
     initializeRoomEventifNotInitialized()
 
-    local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
+    local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave()
     local room = game:GetRoom()
 
     if ROOM_SAVE.RoomEvent then
@@ -305,7 +305,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)
 local function preRoomExit()
     initializeRoomEventifNotInitialized()
 
-    local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
+    local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave()
 
     if ROOM_SAVE.RoomEvent then
         if not Resouled:GetRoomEventByID(ROOM_SAVE.RoomEvent).NoDespawn then
@@ -317,7 +317,7 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_ROOM_EXIT, preRoomExit)
 
 local function postUpdate()
     if not isRoomEventPopupVisible() and Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MAP) then
-        local ROOM_SAVE = SAVE_MANAGER.GetRoomFloorSave()
+        local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave()
         if ROOM_SAVE.RoomEvent then
             showRoomEventPopup(ROOM_SAVE.RoomEvent)
         end

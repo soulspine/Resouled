@@ -215,7 +215,7 @@ Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onDummyActiveUse, CONSTANTS.Items
 local function procPostNewRoom()
     if not Game():GetRoom():IsFirstVisit() then return end
     Resouled.Iterators:IterateOverPlayers(function(player)
-        local data = SAVE_MANAGER.GetRunSave(player).Prototype
+        local data = Resouled.SaveManager.GetRunSave(player).Prototype
         if not data then return end
 
         for _, container in ipairs(data) do
@@ -236,7 +236,7 @@ local function procPostTakeDamage(_, entity, amount, flags, source, countdown)
     local player = entity:ToPlayer()
     if not player then return end
 
-    local data = SAVE_MANAGER.GetRunSave(player).Prototype
+    local data = Resouled.SaveManager.GetRunSave(player).Prototype
     if not data then return end
 
     for _, container in ipairs(data) do
@@ -265,7 +265,7 @@ local function postPlayerUpdate(_, player)
         fullData.Resouled__PrototypeConfig = nil
 
         if data.Selected then
-            local runSave = SAVE_MANAGER.GetRunSave(player)
+            local runSave = Resouled.SaveManager.GetRunSave(player)
 
             local bitset = 0
             local offset = 0
@@ -572,9 +572,9 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, postPlayerRender)
 local function handlePassiveDataTransferUponDrop_FirstUpdate(_, pickup)
     if pickup.FrameCount > 1 then return end
     if pickup.SubType ~= CONSTANTS.Items.Passive then return end
-    local itemData = SAVE_MANAGER.GetRoomFloorSave(pickup).NoRerollSave
+    local itemData = Resouled.SaveManager.GetRoomFloorSave(pickup).NoRerollSave
     Resouled.Iterators:IterateOverPlayers(function(player)
-        local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+        local playerRunSave = Resouled.SaveManager.GetRunSave(player)
         local playerData = playerRunSave.Prototype
         if not playerData then return end
 
@@ -612,10 +612,10 @@ local function passiveCollisionBitsetTransfer(_, pickup, collider)
     if pickup.SubType ~= CONSTANTS.Items.Passive then return end
     local player = collider:ToPlayer()
     if not player then return end
-    local itemSave = SAVE_MANAGER.GetRoomFloorSave(pickup).NoRerollSave
+    local itemSave = Resouled.SaveManager.GetRoomFloorSave(pickup).NoRerollSave
     if not itemSave.Prototype then return end
 
-    local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+    local playerRunSave = Resouled.SaveManager.GetRunSave(player)
 
     if not playerRunSave.PrototypeQueue then
         playerRunSave.PrototypeQueue = {}
@@ -634,7 +634,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_COLLISION, passiveCollisionBits
 ---@param player EntityPlayer
 local function onPassiveGetPostCollision(_, item, charge, firstTime, slot, varData, player)
     if item ~= CONSTANTS.Items.Passive then return end
-    local playerData = SAVE_MANAGER.GetRunSave(player)
+    local playerData = Resouled.SaveManager.GetRunSave(player)
     if not playerData.PrototypeQueue then return end
 
     local itemHistory = player:GetHistory():GetCollectiblesHistory()

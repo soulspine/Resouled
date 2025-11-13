@@ -46,7 +46,7 @@ end
 ---@param pickup EntityPickup
 ---@param afterReroll boolean
 local function onPickupInit(_, pickup, afterReroll)
-    local roomFloorSave = SAVE_MANAGER.GetRoomFloorSave(pickup).RerollSave
+    local roomFloorSave = Resouled.SaveManager.GetRoomFloorSave(pickup).RerollSave
     if pickup.SubType == GLITCH or afterReroll then
         if not roomFloorSave.Glitch then -- first spawn
             roomFloorSave.Glitch = {
@@ -64,7 +64,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onPickupInit, PickupVaria
 
 ---@param pickup EntityPickup
 local function onPickupUpdate(_, pickup)
-    local roomFloorSave = SAVE_MANAGER.GetRoomFloorSave(pickup).RerollSave
+    local roomFloorSave = Resouled.SaveManager.GetRoomFloorSave(pickup).RerollSave
 
     if roomFloorSave.Glitch and pickup.SubType ~= GLITCH then
         roomFloorSave.Glitch = nil
@@ -92,7 +92,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onPickupUpdate, PickupV
 local function onRoomClear()
     ---@param player EntityPlayer
     Resouled.Iterators:IterateOverPlayers(function(player)
-        local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+        local playerRunSave = Resouled.SaveManager.GetRunSave(player)
         if playerRunSave.Glitch then
             playerRunSave.Glitch.UpdateIndex = 1
         end
@@ -103,7 +103,7 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, onRoomClear)
 local function onUpdate()
     ---@param player EntityPlayer
     Resouled.Iterators:IterateOverPlayers(function(player)
-        local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+        local playerRunSave = Resouled.SaveManager.GetRunSave(player)
         if playerRunSave.Glitch then
             local i = playerRunSave.Glitch.UpdateIndex
             if i then
@@ -159,9 +159,9 @@ Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 local function onPickupCollision(_, pickup, collider)
     local player = collider:ToPlayer()
     if player then
-        local roomFloorSave = SAVE_MANAGER.GetRoomFloorSave(pickup).RerollSave
+        local roomFloorSave = Resouled.SaveManager.GetRoomFloorSave(pickup).RerollSave
         if roomFloorSave.Glitch then
-            local playerRunSave = SAVE_MANAGER.GetRunSave(player)
+            local playerRunSave = Resouled.SaveManager.GetRunSave(player)
 
             local itemIndex = math.max(1, roomFloorSave.Glitch.ItemIndex)
             local collectibleToAdd = roomFloorSave.Glitch.Items[itemIndex].Id

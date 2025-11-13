@@ -19,7 +19,7 @@ local pickupsBlacklist = {
 
 local function preRoomExit()
     if Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_AMNESIA) then
-        local RoomSave = SAVE_MANAGER.GetRoomFloorSave()
+        local RoomSave = Resouled.SaveManager.GetRoomFloorSave()
         if not RoomSave.CurseOfAmnesia then
             RoomSave.CurseOfAmnesia = {
                 Pickups = {},
@@ -47,7 +47,7 @@ end
 Resouled:AddCallback(ModCallbacks.MC_PRE_ROOM_EXIT, preRoomExit)
 
 local function postNewRoom()
-    local RoomSave = SAVE_MANAGER.GetRoomFloorSave()
+    local RoomSave = Resouled.SaveManager.GetRoomFloorSave()
     if RoomSave.CurseOfAmnesia then
 
         if RoomSave.CurseOfAmnesia.Pickups then

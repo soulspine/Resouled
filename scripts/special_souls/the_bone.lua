@@ -6,7 +6,7 @@ local BURY_MAX_DISTANCE = 75
 
 ---@param player EntityPlayer
 local function onActiveUse(_, type, rng, player)
-    local RUN_SAVE = SAVE_MANAGER.GetRunSave()
+    local RUN_SAVE = Resouled.SaveManager.GetRunSave()
     if not RUN_SAVE.ResouledForgottenSacrificed then
         if Isaac.GetPersistentGameData():Unlocked(Achievement.FORGOTTEN) then
             if player:GetPlayerType() == PlayerType.PLAYER_THESOUL then
@@ -35,7 +35,7 @@ end
 Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onActiveUse)
 
 local function postNewRoom()
-    local RUN_SAVE = SAVE_MANAGER.GetRunSave()
+    local RUN_SAVE = Resouled.SaveManager.GetRunSave()
     local removedForgottens = 0
     if RUN_SAVE.ResouledForgottenSacrificed then
         ---@param player EntityPlayer
@@ -65,7 +65,7 @@ local function prePickupCollision(_, pickup, collider)
     if pickup.Variant == PickupVariant.PICKUP_HEART then
         if pickup.SubType == HeartSubType.HEART_BONE then
             if collider.Type == EntityType.ENTITY_PLAYER then
-                local RUN_SAVE = SAVE_MANAGER.GetRunSave()
+                local RUN_SAVE = Resouled.SaveManager.GetRunSave()
                 if RUN_SAVE.ResouledForgottenSacrificed then 
                     if RUN_SAVE.ResouledForgottenSacrificed[tostring(collider:ToPlayer():GetPlayerIndex())] then
                         return false
@@ -79,7 +79,7 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, prePickupCollision)
 
 ---@param player EntityPlayer
 local function prePlayerUpdate(_, player)
-    local RUN_SAVE = SAVE_MANAGER.GetRunSave()
+    local RUN_SAVE = Resouled.SaveManager.GetRunSave()
     if RUN_SAVE.ResouledForgottenSacrificed then 
         if RUN_SAVE.ResouledForgottenSacrificed[tostring(player:GetPlayerIndex())] then
             player:AddBoneHearts(-12)

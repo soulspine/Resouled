@@ -30,19 +30,21 @@ end
 ---@param effect EntityEffect
 local function onEffectRender(_, effect)
     if effect.SubType == SUBTYPE then
-        local data = effect:GetData()
-
-        if not data.Resouled_MiniNuke then
-            effect.SpriteOffset.Y = -STARTING_HEIGHT
-            data.Resouled_MiniNuke = FALLING_SPEED
-        end
-
-        effect.SpriteOffset.Y = math.min(0, effect.SpriteOffset.Y + (data.Resouled_MiniNuke * data.Resouled_MiniNuke))
-
-        data.Resouled_MiniNuke = data.Resouled_MiniNuke + FALLING_SPEED
-
-        if effect.SpriteOffset.Y >= 0 then
-            data.Resouled_MiniNukeDie = true
+        if not Game():IsPaused() then
+            local data = effect:GetData()
+            
+            if not data.Resouled_MiniNuke then
+                effect.SpriteOffset.Y = -STARTING_HEIGHT
+                data.Resouled_MiniNuke = FALLING_SPEED
+            end
+        
+            effect.SpriteOffset.Y = math.min(0, effect.SpriteOffset.Y + (data.Resouled_MiniNuke * data.Resouled_MiniNuke))
+        
+            data.Resouled_MiniNuke = data.Resouled_MiniNuke + FALLING_SPEED
+        
+            if effect.SpriteOffset.Y >= 0 then
+                data.Resouled_MiniNukeDie = true
+            end
         end
 
         local renderPos = Isaac.WorldToScreen(effect.Position)

@@ -17,7 +17,7 @@ COLLIDER_COLOR_SHARE = true
 local basicSpawnLookupTable = {} -- NOT STATIC, POPULATED AT RUNTIME by Resouled:AddNewBasicSoulSpawnRule
 
 local font = Font()
-font:Load("font/luaminioutlined.fnt")
+font:Load("font/pftempestasevencondensed.fnt")
 
 local ICON_DIMENSIONS = 16
 local iconSprite = Sprite()

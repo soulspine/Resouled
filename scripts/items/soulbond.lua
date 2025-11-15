@@ -18,7 +18,7 @@ local SPEED_MIN = 10
 
 ---@param position Vector
 local function spawnChainParticles(position)
-    for _ = 1, math.random(2, 6) do
+    for _ = 1, Resouled:GetRandomParticleCount(2, 6) do
         Resouled:SpawnPrettyParticles(EFFECT_VARIANT, EFFECT_SUBTYPE, math.random(SPEED_MIN, SPEED_MAX), SPEED_UPWARD, 0, 90, position, SPAWN_HEIGHT, nil, nil, WEIGHT, BOUNCINESS, FRICTION, GridCollisionClass.COLLISION_SOLID)
     end
 end

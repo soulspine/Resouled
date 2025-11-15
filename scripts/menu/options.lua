@@ -45,6 +45,13 @@ Resouled.Options = {
     },
     {
         Achievement = nil,
+        Name = "Custom Particle Amount",
+        DefaultValue = "Max",
+        StringOptions = {"Disabled", "Minimal", "Medium", "Max"},
+        Type = types.OneClick,
+    },
+    {
+        Achievement = nil,
         Name = "Reset Mod Progress",
         DefaultValue = "Confirm",
         StringOptions = {"Confirm", "Are you sure?"},
@@ -69,7 +76,7 @@ Resouled.Options = {
         Type = types.OneClick,
         Color = Resouled.OptionColors.Positive,
         NotSelectedValue = "Confirm"
-    }
+    },
 }
 
 local loadedSave = false
@@ -224,4 +231,23 @@ end
 ---@return table
 function Resouled:GetOptionsSave()
     return optionsSave
+end
+
+---@return number
+function Resouled:GetParticleCountModified()
+    local modifier = optionsSave["Custom Particle Amount"] or "Max"
+    if modifier == "Disabled" then return 0 end
+    if modifier == "Minimal" then return 1/3 end
+    if modifier == "Medium" then return 2/3 end
+    if modifier == "Max" then return 1 end
+    return 1
+end
+---@param min integer
+---@param max integer
+---@return integer
+function Resouled:GetRandomParticleCount(min, max)
+    local modifier = Resouled:GetParticleCountModified()
+    min = math.floor(min * modifier + 0.5)
+    max = math.floor(max * modifier + 0.5)
+    return math.random(min, max)
 end

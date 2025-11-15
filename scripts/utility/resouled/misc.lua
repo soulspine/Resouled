@@ -582,7 +582,7 @@ local friction = 0.35
 ---@param position Vector
 ---@param amount integer
 function Resouled:SpawnPaperGore(position, amount)
-    for _ = 1, amount do
+    for _ = 1, Resouled:GetRandomParticleCount(amount, amount) do
         Resouled:SpawnPrettyParticles(Isaac.GetEntityVariantByName("Paper Gore Particle"),
             Isaac.GetEntitySubTypeByName("Paper Gore Particle"), math.random(7, 15), math.random(8, 12), 15, 90, position,
             15, nil, nil, weight, bounciness, friction, GridCollisionClass.COLLISION_SOLID)

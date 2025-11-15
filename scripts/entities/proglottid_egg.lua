@@ -97,7 +97,7 @@ local function onTearDeath(_, tear)
     local targetSubType = EGG_TO_PARTICLE_LOOKUP[tear.SubType]
     if not targetSubType then return end
 
-    for _ = 1, math.random(EGG_HIT_PARTICLE_SPAWN_COUNT_MIN, EGG_HIT_PARTICLE_SPAWN_COUNT_MAX) do
+    for _ = 1, Resouled:GetRandomParticleCount(EGG_HIT_PARTICLE_SPAWN_COUNT_MIN, EGG_HIT_PARTICLE_SPAWN_COUNT_MAX) do
         Resouled:SpawnPrettyParticles(
             PINK_EGG_PARTICLE.Variant,
             targetSubType,

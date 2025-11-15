@@ -1,82 +1,187 @@
-local CURSED_HAUNT_TYPE = Isaac.GetEntityTypeByName("Cursed Haunt")
-local CURSED_HAUNT_VARIANT = Isaac.GetEntityVariantByName("Cursed Haunt")
-local CURSED_HAUNT_SUBTYPE = Isaac.GetEntitySubTypeByName("Cursed Haunt")
+local game = Game()
 
-local RESOULED_DUMMY_TYPE = Isaac.GetEntityTypeByName("ResouledDummy")
-local RESOULED_DUMMY_VARIANT = Isaac.GetEntityVariantByName("ResouledDummy")
-local RESOULED_DUMMY_SUBTYPE = Isaac.GetEntitySubTypeByName("ResouledDummy")
+local ID = Isaac.GetEntityTypeByName("Cursed Haunt")
+local VARIANT = Isaac.GetEntityVariantByName("Cursed Haunt")
+local SUBTYPE = Isaac.GetEntitySubTypeByName("Cursed Haunt")
 
-local HALO_SUBTYPE = 3
-local HALO_OFFSET = Vector(0, 0)
-local HALO_SCALE = Vector(3, 3)
+local CursedHauntPhasesConfig = {
+    Phase1 = {
+        MoveSpeed = 0.95,
+    }
+}
 
-local ATTACK_COOLDOWN = 5 * 30
+local lilHauntConfig = {
+    ID = Isaac.GetEntityTypeByName("Cursed Lil Haunt"),
+    VARIANT = Isaac.GetEntityVariantByName("Cursed Lil Haunt"),
+    SUBTYPE = Isaac.GetEntitySubTypeByName("Cursed Lil Haunt"),
+    InitSpawnCount = 3,
+    DistanceFromParent = 50,
+    PostSpawnChaseCooldown = 60,
+    RotateSpeed = 2,
+}
 
-local ATTACK1_TEAR_COUNT = 4 --!!! there are 4 waves with x amount of tears
+---@param npc EntityNPC
+local function setTransparentColor(npc)
+    npc:SetColor(Color(nil, nil, nil, 0.5), 2, 1000, false, true)
+end
 
-local ATTACK1_WAVE1_PROJECTILE_PARAMS = ProjectileParams()
-local ATTACK1_WAVE2_PROJECTILE_PARAMS = ProjectileParams()
-ATTACK1_WAVE1_PROJECTILE_PARAMS.BulletFlags = (ProjectileFlags.GHOST | ProjectileFlags.BLUE_FIRE_SPAWN | ProjectileFlags.CURVE_LEFT)
-ATTACK1_WAVE1_PROJECTILE_PARAMS.Color = Color(1, 0, 1, 1)
-ATTACK1_WAVE1_PROJECTILE_PARAMS.CurvingStrength = 0.01
-ATTACK1_WAVE2_PROJECTILE_PARAMS.BulletFlags = (ProjectileFlags.GHOST | ProjectileFlags.BLUE_FIRE_SPAWN | ProjectileFlags.CURVE_RIGHT)
-ATTACK1_WAVE2_PROJECTILE_PARAMS.Color = Color(1, 0, 1, 1)
-ATTACK1_WAVE2_PROJECTILE_PARAMS.CurvingStrength = 0.01
+---@param parent EntityNPC
+local function spawnLilHaunts(parent)
+    local offset = Vector(0, -lilHauntConfig.DistanceFromParent)
+    local parentData = parent:GetData()
+    if not parentData.Resouled_CursedHauntLilHaunts then parentData.Resouled_CursedHauntLilHaunts = {} end
+
+    for _ = 1, lilHauntConfig.InitSpawnCount do
+        local haunt = game:Spawn(lilHauntConfig.ID, lilHauntConfig.VARIANT, parent.Position + offset, Vector.Zero, parent, lilHauntConfig.SUBTYPE, Random()):ToNPC()
+
+        haunt:GetData().Resouled_CursedHauntMinion = {
+            ChaseCooldown = lilHauntConfig.PostSpawnChaseCooldown,
+            Offset = offset
+        }
+        offset = offset:Rotated(360/lilHauntConfig.InitSpawnCount)
+
+        haunt.State = NpcState.STATE_IDLE
+        haunt.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
+        haunt.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
+        
+        table.insert(parentData.Resouled_CursedHauntLilHaunts, EntityRef(haunt))
+    end
+end
+
+---@param wall integer
+---@return number
+local function getLockedToWallY(wall)
+    local room = game:GetRoom()
+    local y
+    if wall == 0 then
+        y = room:GetTopLeftPos().Y + 30
+    else
+        y = room:GetBottomRightPos().Y - 30
+    end
+    return y
+end
 
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
-    if npc.Variant == CURSED_HAUNT_VARIANT and npc.SubType == CURSED_HAUNT_SUBTYPE then
-        local data = npc:GetData()
-        data.ResouledAttackCooldown = ATTACK_COOLDOWN
+    if npc.Variant == VARIANT and npc.SubType == SUBTYPE then
+        spawnLilHaunts(npc)
+        npc:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
+        npc.I2 = 1
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CURSED_HAUNT_TYPE)
+Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, ID)
 
 ---@param npc EntityNPC
 local function onNpcUpdate(_, npc)
-    if npc.Variant == CURSED_HAUNT_VARIANT and npc.SubType == CURSED_HAUNT_SUBTYPE then
+    if npc.Variant == VARIANT and npc.SubType == SUBTYPE then
         local data = npc:GetData()
 
-        if data.ResouledAttackCooldown > 0 then
-            data.ResouledAttackCooldown = data.ResouledAttackCooldown - 1
-        end
+        if data.Resouled_CursedHauntLilHaunts or data.Resouled_CursedHauntReleasedLilHaunts then --Phase 1
 
-        if data.ResouledAttackCooldown == 0 then
-            for i = 1, ATTACK1_TEAR_COUNT do
-                npc:FireProjectiles(npc.Position, Vector(10, 0):Rotated((360/ATTACK1_TEAR_COUNT)*i), 0, ATTACK1_WAVE1_PROJECTILE_PARAMS)
-                npc:FireProjectiles(npc.Position, Vector(10, 0):Rotated((360/ATTACK1_TEAR_COUNT)*i) * 0.5, 0, ATTACK1_WAVE1_PROJECTILE_PARAMS)
-                npc:FireProjectiles(npc.Position, Vector(10, 0):Rotated(((360/ATTACK1_TEAR_COUNT)*i) + (360/ATTACK1_TEAR_COUNT)/2) * 1.25, 0, ATTACK1_WAVE2_PROJECTILE_PARAMS)
-                npc:FireProjectiles(npc.Position, Vector(10, 0):Rotated(((360/ATTACK1_TEAR_COUNT)*i) + (360/ATTACK1_TEAR_COUNT)/2) * 0.75, 0, ATTACK1_WAVE2_PROJECTILE_PARAMS)
+            npc.Pathfinder:MoveRandomlyBoss(false)
+
+            setTransparentColor(npc)
+            npc.Velocity = npc.Velocity * CursedHauntPhasesConfig.Phase1.MoveSpeed
+
+            local lilHaunts = data.Resouled_CursedHauntLilHaunts
+            local deadCount = 0
+
+            if data.Resouled_CursedHauntReleasedLilHaunts then
+                ---@param lilHauntRef EntityRef
+                for _, lilHauntRef in ipairs(data.Resouled_CursedHauntReleasedLilHaunts) do
+                    if lilHauntRef.Entity:IsDead() then
+                        deadCount = deadCount + 1
+                    end
+                end
             end
-            data.ResouledAttackCooldown = ATTACK_COOLDOWN
+
+            if lilHaunts then
+                ---@param lilHauntRef EntityRef
+                for i, lilHauntRef in ipairs(lilHaunts) do
+                    local lilHaunt = lilHauntRef.Entity
+                    if not lilHaunt:IsDead() then
+                        local lilHauntData = lilHaunt:GetData()
+                        lilHaunt.Position = npc.Position + lilHauntData.Resouled_CursedHauntMinion.Offset
+                        lilHauntData.Resouled_CursedHauntMinion.Offset = lilHauntData.Resouled_CursedHauntMinion.Offset:Rotated(lilHauntConfig.RotateSpeed)
+                        
+                        lilHauntData.Resouled_CursedHauntMinion.ChaseCooldown = math.max(lilHauntData.Resouled_CursedHauntMinion.ChaseCooldown - 1, 0)
+
+
+                        if lilHauntData.Resouled_CursedHauntMinion.ChaseCooldown <= 0 and not data.Resouled_CursedHauntReleasedLilHaunts then
+
+                            data.Resouled_CursedHauntReleasedLilHaunts = {}
+
+                            lilHauntData.Resouled_CursedHauntMinion = nil
+                                
+    
+                            table.insert(data.Resouled_CursedHauntReleasedLilHaunts, EntityRef(lilHaunt))
+                            table.remove(data.Resouled_CursedHauntLilHaunts, i)
+                            break
+                        elseif lilHauntData.Resouled_CursedHauntMinion.ChaseCooldown <= 0 and data.Resouled_CursedHauntReleasedLilHaunts
+                        and deadCount == 1 then
+                            lilHauntData.Resouled_CursedHauntMinion = nil
+                                
+    
+                            table.insert(data.Resouled_CursedHauntReleasedLilHaunts, EntityRef(lilHaunt))
+                            table.remove(data.Resouled_CursedHauntLilHaunts, 1)
+                        end
+                    end
+                end
+                
+                if deadCount == 3 then
+                    data.Resouled_CursedHauntLilHaunts = nil
+                    data.Resouled_CursedHauntReleasedLilHaunts = nil
+                end
+            end
+        else
+            local pos = npc.Position
+            local velocity = npc.Velocity
+
+            if not data.Resouled_CursedHauntTargetY then
+                npc.I1 = 0
+                data.Resouled_CursedHauntTargetY = getLockedToWallY(npc.I1)
+            end
+
+            npc.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
+
+            local distance = data.Resouled_CursedHauntTargetY - pos.Y
+            pos.Y = pos.Y + (distance)/5
+            
+            if math.abs(distance) > 4.5 then
+                velocity.X = 0
+            else
+                if not game:GetRoom():IsPositionInRoom(pos + velocity * 2, 5) then
+                    npc.I2 = -npc.I2
+                end
+                velocity.X = 7 * npc.I2
+            end
+
+            velocity.Y = 0
+
+            npc.Velocity = velocity
+            npc.Position = pos
         end
-
-        npc.Pathfinder:MoveRandomlyBoss(true)
-        npc.Pathfinder:MoveRandomly(true)
-
 
 
         return true
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, onNpcUpdate, CURSED_HAUNT_TYPE)
+Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, onNpcUpdate, ID)
 
----@param type EntityType
----@param variant integer
----@param subtype integer
----@param position Vector
----@param velocity Vector
----@param spawner Entity
----@param seed integer
-local function preEntitySpawn(_, type, variant, subtype, position, velocity, spawner, seed)
-    if spawner then
-        if spawner.SpawnerEntity then
-            if spawner.SpawnerEntity.Type == CURSED_HAUNT_TYPE and spawner.SpawnerEntity.Variant == CURSED_HAUNT_VARIANT and spawner.SpawnerEntity.SubType == CURSED_HAUNT_SUBTYPE then
-                if type == 33 and variant == 12 then
-                    return {RESOULED_DUMMY_TYPE, RESOULED_DUMMY_VARIANT, RESOULED_DUMMY_SUBTYPE, seed}
-                end
-            end
+---@param npc EntityNPC
+local function onLilHauntUpdate(_, npc)
+    if npc.Variant == lilHauntConfig.VARIANT and npc.SubType == lilHauntConfig.SUBTYPE then
+        local data = npc:GetData()
+        if data.Resouled_CursedHauntMinion then
+            local sprite = npc:GetSprite()
+            sprite:SetFrame("Idle", (sprite:GetFrame() + 1)%sprite:GetAnimationData("Idle"):GetLength())
+
+            npc.Velocity = Vector.Zero
+
+            setTransparentColor(npc)
+
+            return true
         end
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_PRE_ENTITY_SPAWN, preEntitySpawn)
+Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, onLilHauntUpdate, lilHauntConfig.ID)

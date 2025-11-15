@@ -56,13 +56,13 @@ local EXPLODE = function(tnt, flags)
     end
 
     if tnt.Velocity:LengthSquared() < 0.01 then
-        for _ = 1, AMOUNT do
+        for _ = 1, Resouled:GetRandomParticleCount(AMOUNT, AMOUNT) do
             Resouled:SpawnPrettyParticles(EFFECT_VARIANT, EFFECT_SUBTYPE, math.random(MIN_SPEED, MAX_SPEED),
                 math.random(MIN_SPEED_UPWARDS, MAX_SPEED_UPWARDS), -25, 90, tnt.Position, START_OFFSET, nil, nil, WEIGHT,
                 BOUNCINESS, FRICTION, GridCollisionClass.COLLISION_SOLID)
         end
     else
-        for _ = 1, AMOUNT do
+        for _ = 1, Resouled:GetRandomParticleCount(AMOUNT, AMOUNT) do
             Resouled:SpawnPrettyParticles(EFFECT_VARIANT, EFFECT_SUBTYPE,
                 math.random(MIN_SPEED, MAX_SPEED) + tnt.Velocity:Length(),
                 math.random(MIN_SPEED_UPWARDS, MAX_SPEED_UPWARDS), -25, 90, tnt.Position, START_OFFSET,

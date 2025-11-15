@@ -3,6 +3,11 @@ local Soul = Resouled.Stats.Soul
 
 local DeathStatue = Resouled.Stats.DeathStatue
 
+local SNAKE_TRAIL_SPEED = 5
+local SNAKE_TRAIL_STRENGTH = 6
+
+local FAST_TARGET_AREA = 100
+
 ---@param pickup EntityPickup
 ---@param black? boolean
 local function spawnTrail(pickup, black)
@@ -109,16 +114,28 @@ local function onPickupUpdate(_, pickup)
             end)
 
             if nearestPlayer then
-                local distance = pickup.Position:Distance(nearestPlayer.Position) / 50
-                if distance > 1 then
-                    distance = 1
+                local distance = math.min(math.max(pickup.Position:Distance(nearestPlayer.Position) / FAST_TARGET_AREA, 0.975), 1)
+
+                local pickupToPlayerVector = (nearestPlayer.Position - pickup.Position)
+                local playerTargettingStrength = distance == 0.975 and 2 or 1
+                
+                pickup.Velocity = (pickup.Velocity + playerTargettingStrength * pickupToPlayerVector:Normalized()) * distance
+
+
+                local rotationModifier = pickupToPlayerVector:GetAngleDegrees()%360 - pickup.Velocity:GetAngleDegrees()%360
+                rotationModifier = (rotationModifier < 7.5 and rotationModifier > -7.5) and 0 or rotationModifier/(math.abs(pickupToPlayerVector:GetAngleDegrees()%360 - pickup.Velocity:GetAngleDegrees()%360)/5)
+                
+                pickup.Velocity = pickup.Velocity:Rotated(playerTargettingStrength == 2 and rotationModifier or 0)
+
+                if distance == 1 then
+                    local snakePatternModifier = (0.5 - (math.abs((pickup.FrameCount%(SNAKE_TRAIL_SPEED)/SNAKE_TRAIL_SPEED - pickup.FrameCount%(SNAKE_TRAIL_SPEED*2)/(SNAKE_TRAIL_SPEED*2))) * 2)) * 2
+                    
+                    pickup.Velocity = pickup.Velocity:Rotated(SNAKE_TRAIL_STRENGTH * snakePatternModifier)
                 end
-                if distance < 0.9 then
-                    distance = 0.9
-                end
-                pickup.Velocity = (pickup.Velocity + (nearestPlayer.Position - pickup.Position):Normalized()) * distance
             end
         end
+
+        
 
         if not sprite:IsPlaying("Appear") then
             sprite:SetFrame("Idle", ((pickup.Velocity:GetAngleDegrees() - 67.5)%360)//45)

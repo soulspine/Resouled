@@ -99,6 +99,7 @@ if REPENTOGON and MinimapAPI then
     include("scripts.afterlife_shop")
     include("scripts.other")
     include("scripts.special_seed_effects")
+    include("scripts.shaders")
 
     for _, func in ipairs(thingsToRunAfterImports) do
         func()

@@ -27,6 +27,7 @@
         <parameters>
             <param name="PointPos" type="vec2"/>
             <param name="AreaSize" type="float"/>
+            <param name="Smoothing" type="float"/>
         </parameters>
         <vertex><![CDATA[
             attribute vec3 Position;
@@ -36,6 +37,7 @@
             attribute float Scale;
             attribute vec2 PointPos;
             attribute float AreaSize;
+            attribute float Smoothing;
             vec2 Pos = vec2(Position.xy);
             varying vec4 Color0;
             varying vec2 TexCoord0;
@@ -43,6 +45,7 @@
             varying float ScaleOut;
             varying vec2 PointPosOut;
             varying float AreaSizeOut;
+            varying float SmoothingOut;
             varying vec2 PosOut;
             uniform mat4 Transform;
             void main(void)
@@ -53,6 +56,7 @@
                 TexCoord0 = TexCoord;
                 PointPosOut = PointPos;
                 AreaSizeOut = AreaSize;
+                SmoothingOut = Smoothing;
                 PosOut = Pos;
                 gl_Position = Transform * vec4(Position.xyz, 1.0);
             }
@@ -65,14 +69,20 @@
             varying lowp vec2 PointPosOut;
             varying lowp vec2 PosOut;
             varying lowp float AreaSizeOut;
+            varying lowp float SmoothingOut;
             uniform sampler2D Texture0;
             void main(void)
             {
                 vec2 Pos = PosOut;
                 vec4 Color = Color0 * texture2D(Texture0, TexCoord0);
 
-                float Distance = distance(Pos, PointPosOut) - AreaSizeOut;
+                int i = 0;
+                
+                float Distance = (distance(Pos, PointPosOut) - AreaSizeOut);
+
                 if (Distance < 0) {Distance = 0;}
+                while (SmoothingOut * i < Distance/SmoothingOut) {i++;}
+                Distance = i * SmoothingOut;
                 Distance *= Distance;
 
                 float strength = (AreaSizeOut - Distance)/AreaSizeOut;

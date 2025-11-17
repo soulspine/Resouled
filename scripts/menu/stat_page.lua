@@ -635,6 +635,7 @@ local function menuRender()
     -- FOR NOW ASSUME KEYBOARD
     local inputLookup = CONFIG.ButtonActions.Keyboard
     
+    ---@diagnostic disable-next-line
     if not IsaacReflourished or (IsaacReflourished and not IsaacReflourished.RunLogger.RecordsMenuOpen) then
         -- handling menu page changing
         if menu == MainMenuType.GAME and Resouled:HasAnyoneTriggeredAction(inputLookup.Enter) then

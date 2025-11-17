@@ -16,11 +16,10 @@ local BAG_ITEM_SPRITE_EMPTY_FRAME = 1
 local BAG_ITEM_SPRITE_FULL_FRAME = 0
 local BAG_ITEM_SPRITE_WIDTH_HEIGHT = 32
 
-local FONT_SCALE = 0.4
 local FONT_OFFSET = Vector(-5, -12)
 local FONT_COLOR = KColor(1, 1, 1, 1)
 local FONT = Font()
-FONT:Load("font/teammeatfont16bold.fnt")
+FONT:Load("font/pftempestasevencondensed.fnt")
 
 local VFX_PICKUP_VARIANT = EffectVariant.POOF01
 local VFX_PICKUP_SCALE = Vector(0.5, 0.5)
@@ -309,10 +308,9 @@ local function onActiveItemRender(_, player, activeSlot, offset, alpha, scale, c
 
         if activeSlot == ActiveSlot.SLOT_PRIMARY or activeSlot == ActiveSlot.SLOT_POCKET then
             local text = "x" .. tostring(itemDesc.VarData)
-            local textWidth = Isaac.GetTextWidth(text)
-            local textPosition = BAG_ITEM_SPRITE.Offset - Vector(textWidth / 2, 0)
-            FONT:DrawStringScaled(text, textPosition.X + FONT_OFFSET.X, textPosition.Y + FONT_OFFSET.Y, scale *
-                FONT_SCALE, scale * FONT_SCALE, FONT_COLOR)
+            local textWidth = FONT:GetStringWidth(text)
+            local textPosition = BAG_ITEM_SPRITE.Offset + Vector(textWidth / 2, 16)
+            FONT:DrawStringScaled(text, textPosition.X + FONT_OFFSET.X, textPosition.Y + FONT_OFFSET.Y, scale, scale, FONT_COLOR)
         end
 
         return true

@@ -18,7 +18,7 @@ Resouled:AddPriorityCallback(ModCallbacks.MC_GET_SHADER_PARAMS, CallbackPriority
     if shaderName == 'ResouledBlankCanvasPolygon' then
 
         local points = {}
-        local sides = math.random(7, 7)
+        local sides = math.random(3, 3)
         for i = 1, sides do
             table.insert(points, Vector(75, 0):Rotated(360/sides * i))
         end
@@ -55,8 +55,7 @@ Resouled:AddPriorityCallback(ModCallbacks.MC_GET_SHADER_PARAMS, CallbackPriority
             Point7 = {
                 points[7] and points[7].X or 0,
                 points[7] and points[7].Y or 0,
-            },
-            Size = 75.0
+            }
         }
     end
 end)
@@ -69,7 +68,7 @@ local function negativeOrPositive()
 end
 
 local r = 0
-local sides = 7
+local sides = 3
 
 local checkPoints = {}
 
@@ -84,7 +83,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, function()
     local points = {}
     local screenEnd = Isaac.GetScreenWidth()
     local anchorPoint = Vector(screenEnd/2, Isaac.GetScreenHeight()/2)
-
+    
     local mouse = Isaac.WorldToScreen(Input.GetMousePosition(true))
 
     local size = anchorPoint:Distance(mouse)
@@ -99,58 +98,51 @@ Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, function()
         lastPoint = points[i]
         local idx = 1 + i%sides
         local point = points[idx]
-
+        
         Isaac.DrawLine(anchorPoint + lastPoint, anchorPoint + point, KColor(1, 1, 1, 1), KColor(1, 1, 1, 1), 1)
         
         lastPoint = point
     end
+    
+    for _, point in ipairs(checkPoints) do
+        local thickness = 3
+        local color = KColor(1, 0, 0, 1)
 
-    for i, point in ipairs(checkPoints) do
-        if i <= pointCount then
-            local thickness = 3
-            local pos = point
+
+        local pos = point + anchorPoint
+
+        local isInside = true
+
+        for i = 1, sides do
+            local sidePos = points[i] + anchorPoint
+            local nextIndex = i + 1
+            local lastIndex = i - 1
+            if nextIndex > sides then nextIndex = nextIndex - sides end
+            if lastIndex < 1 then lastIndex = sides + lastIndex end
+            local nextPos = points[nextIndex] + anchorPoint
+            local lastPos = points[lastIndex] + anchorPoint
             
-            local color = KColor(1, 0, 0, 1)
+            local sideToNextPosVector = sidePos - nextPos
+            local sideToLastPosVector = sidePos - lastPos
+            local sideToPointPosVector = sidePos - pos
+
+            local anchorToSidePos = (sidePos - anchorPoint):GetAngleDegrees()%360
+
+            local lastPosDegrees = sideToLastPosVector:Normalized():Rotated(-anchorToSidePos):GetAngleDegrees()
+            local nextPosDegrees = sideToNextPosVector:Normalized():Rotated(-anchorToSidePos):GetAngleDegrees()
+            local toPointDegrees = sideToPointPosVector:Normalized():Rotated(-anchorToSidePos):GetAngleDegrees()
             
-            local cutCount = 0
-
-            for j = 1, sides do
-                local pos1 = points[j]
-                local pos2 = points[1 + j%sides]
-
-                local y1 = math.max(pos1.Y, pos2.Y)
-                local y2 = math.min(pos1.Y, pos2.Y)
-
-                Isaac.DrawLine(pos1 + anchorPoint, pos2 + anchorPoint, KColor(1, 0, 0, 1), KColor(1, 0, 0, 1), 1)
-                    
-                if pos.Y <= y1 and pos.Y >= y2 then
-
-                    local rotation = -(pos1:GetAngleDegrees() + pos2:GetAngleDegrees())/2
-
-                    if pos1:Rotated(rotation):GetAngleDegrees() > 0 or pos2:Rotated(rotation):GetAngleDegrees() < 0 then rotation = rotation - 180 end
-
-                    local newPointX = pos:Rotated(rotation).X
-                    local newLineX = pos1:Rotated(rotation).X
-
-                    if newPointX <= newLineX then
-                        cutCount = cutCount + 1
-                    end
-
-                    if anchorPoint.Y + y1 > anchorPoint.Y or anchorPoint.Y + y2 < anchorPoint.Y then
-                        cutCount = cutCount + 1
-                    end
-                end
+            if (toPointDegrees >= nextPosDegrees and toPointDegrees <= lastPosDegrees) == false then
+                isInside = false
+                break
             end
-            
-            if cutCount > 0 and cutCount%2 == 0 then
-                color.Green = 1
-            end
-            
-            pos = pos + anchorPoint
-            
-            Isaac.DrawLine(pos - Vector(thickness/2, 0), pos + Vector(thickness/2, 0), color, color, thickness)
-            --Isaac.DrawLine(pos, Vector(screenEnd, pos.Y), color, color, 1)
         end
+
+        if isInside then
+            color.Green = 1
+        end
+            
+        Isaac.DrawLine(pos - Vector(thickness/2, 0), pos + Vector(thickness/2, 0), color, color, thickness)
     end
 
     r = (r + 0.5)%360

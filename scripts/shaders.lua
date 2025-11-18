@@ -15,6 +15,50 @@ Resouled:AddPriorityCallback(ModCallbacks.MC_GET_SHADER_PARAMS, CallbackPriority
             Smoothing = 3
         }
     end
+    if shaderName == 'ResouledBlankCanvasPolygon' then
+
+        local points = {}
+        local sides = math.random(7, 7)
+        for i = 1, sides do
+            table.insert(points, Vector(75, 0):Rotated(360/sides * i))
+        end
+
+        return {
+            AnchorPos = {
+                Isaac.GetScreenWidth()/2,
+                Isaac.GetScreenHeight()/2
+            },
+            Point1 = {
+                points[1] and points[1].X or 0,
+                points[1] and points[1].Y or 0,
+            },
+            Point2 = {
+                points[2] and points[2].X or 0,
+                points[2] and points[2].Y or 0,
+            },
+            Point3 = {
+                points[3] and points[3].X or 0,
+                points[3] and points[3].Y or 0,
+            },
+            Point4 = {
+                points[4] and points[4].X or 0,
+                points[4] and points[4].Y or 0,
+            },
+            Point5 = {
+                points[5] and points[5].X or 0,
+                points[5] and points[5].Y or 0,
+            },
+            Point6 = {
+                points[6] and points[6].X or 0,
+                points[6] and points[6].Y or 0,
+            },
+            Point7 = {
+                points[7] and points[7].X or 0,
+                points[7] and points[7].Y or 0,
+            },
+            Size = 75.0
+        }
+    end
 end)
 
 local function negativeOrPositive()
@@ -25,7 +69,7 @@ local function negativeOrPositive()
 end
 
 local r = 0
-local sides = 8
+local sides = 7
 
 local checkPoints = {}
 
@@ -46,7 +90,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, function()
     local size = anchorPoint:Distance(mouse)
     for i = 1, sides do
         local shake = Vector(math.random() * 2.5 * negativeOrPositive(), math.random() * 2.5 * negativeOrPositive()) * math.min(size/20, 1)
-        table.insert(points, shake + Vector(size, 0):Rotated(360/sides * i + (anchorPoint - mouse):GetAngleDegrees() - 360/sides * 6))
+        table.insert(points, Vector(size, 0):Rotated(360/sides * i + (anchorPoint - mouse):GetAngleDegrees() - 360/sides * 6))
     end
     
     local lastPoint
@@ -79,7 +123,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, function()
 
                 Isaac.DrawLine(pos1 + anchorPoint, pos2 + anchorPoint, KColor(1, 0, 0, 1), KColor(1, 0, 0, 1), 1)
                     
-                if pos.X >= -size and pos.X <= size and pos.Y <= y1 and pos.Y >= y2 then
+                if pos.Y <= y1 and pos.Y >= y2 then
 
                     local rotation = -(pos1:GetAngleDegrees() + pos2:GetAngleDegrees())/2
 
@@ -88,7 +132,11 @@ Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, function()
                     local newPointX = pos:Rotated(rotation).X
                     local newLineX = pos1:Rotated(rotation).X
 
-                    if newPointX < newLineX then
+                    if newPointX <= newLineX then
+                        cutCount = cutCount + 1
+                    end
+
+                    if anchorPoint.Y + y1 > anchorPoint.Y or anchorPoint.Y + y2 < anchorPoint.Y then
                         cutCount = cutCount + 1
                     end
                 end

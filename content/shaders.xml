@@ -125,4 +125,196 @@
             }
         ]]></fragment>
     </shader>
+    <shader name="ResouledBlankCanvasPolygon">
+        <parameters>
+            <param name="AnchorPos" type="vec2"/>
+            <param name="Point1" type="vec2"/>
+            <param name="Point2" type="vec2"/>
+            <param name="Point3" type="vec2"/>
+            <param name="Point4" type="vec2"/>
+            <param name="Point5" type="vec2"/>
+            <param name="Point6" type="vec2"/>
+            <param name="Point7" type="vec2"/>
+            <param name="Size" type="float"/>
+        </parameters>
+        <vertex><![CDATA[
+            attribute vec3 Position;
+            attribute vec4 Color;
+            attribute vec2 TexCoord;
+            attribute vec4 RenderData;
+            attribute float Scale;
+            attribute vec2 AnchorPos;
+            attribute vec2 Point1;
+            attribute vec2 Point2;
+            attribute vec2 Point3;
+            attribute vec2 Point4;
+            attribute vec2 Point5;
+            attribute vec2 Point6;
+            attribute vec2 Point7;
+            attribute float Size;
+            vec2 Pos = vec2(Position.xy);
+            varying vec4 Color0;
+            varying vec2 TexCoord0;
+            varying vec4 RenderDataOut;
+            varying float ScaleOut;
+            varying vec2 AnchorPosOut;
+            varying vec2 PosOut;
+            varying vec2 Point1Out;
+            varying vec2 Point2Out;
+            varying vec2 Point3Out;
+            varying vec2 Point4Out;
+            varying vec2 Point5Out;
+            varying vec2 Point6Out;
+            varying vec2 Point7Out;
+            varying float SizeOut;
+            uniform mat4 Transform;
+            void main(void)
+            {
+                RenderDataOut = RenderData;
+                ScaleOut = Scale;
+                Color0 = Color;
+                TexCoord0 = TexCoord;
+                AnchorPosOut = AnchorPos;
+                PosOut = Pos;
+                Point1Out = Point1;
+                Point2Out = Point2;
+                Point3Out = Point3;
+                Point4Out = Point4;
+                Point5Out = Point5;
+                Point6Out = Point6;
+                Point7Out = Point7;
+                SizeOut = Size;
+                gl_Position = Transform * vec4(Position.xyz, 1.0);
+            }
+        ]]></vertex>
+        <fragment><![CDATA[
+            varying lowp vec4 Color0;
+            varying mediump vec2 TexCoord0;
+            varying lowp vec4 RenderDataOut;
+            varying lowp float ScaleOut;
+            varying lowp vec2 AnchorPosOut;
+            varying lowp vec2 PosOut;
+            varying lowp vec2 Point1Out;
+            varying lowp vec2 Point2Out;
+            varying lowp vec2 Point3Out;
+            varying lowp vec2 Point4Out;
+            varying lowp vec2 Point5Out;
+            varying lowp vec2 Point6Out;
+            varying lowp vec2 Point7Out;
+            varying lowp float SizeOut;
+            uniform sampler2D Texture0;
+
+            vec2 getPoint(int n)
+            {
+                if (n == 1) {return Point1Out;}
+                if (n == 2) {return Point2Out;}
+                if (n == 3) {return Point3Out;}
+                if (n == 4) {return Point4Out;}
+                if (n == 5) {return Point5Out;}
+                if (n == 6) {return Point6Out;}
+                if (n == 7) {return Point7Out;}
+                return vec2(0, 0);
+            }
+
+            vec2 getPoint2(int n, int max)
+            {
+                if (n > max) {
+                    n = n - max;
+                }
+
+                if (n == 1) {return Point1Out;}
+                if (n == 2) {return Point2Out;}
+                if (n == 3) {return Point3Out;}
+                if (n == 4) {return Point4Out;}
+                if (n == 5) {return Point5Out;}
+                if (n == 6) {return Point6Out;}
+                if (n == 7) {return Point7Out;}
+                return vec2(0, 0);
+            }
+
+            vec2 rotate(vec2 v, float a) {
+	            float s = sin(a);
+	            float c = cos(a);
+	            mat2 m = mat2(c, s, -s, c);
+	            return m * v;
+            }
+
+            void main(void)
+            {
+                vec4 Color = Color0 * texture2D(Texture0, TexCoord0);
+
+                int sides = 0;
+                if (Point1Out.x != 0 && Point1Out.y != 0) {sides++;}
+                if (Point2Out.x != 0 && Point2Out.y != 0) {sides++;}
+                if (Point3Out.x != 0 && Point3Out.y != 0) {sides++;}
+                if (Point4Out.x != 0 && Point4Out.y != 0) {sides++;}
+                if (Point5Out.x != 0 && Point5Out.y != 0) {sides++;}
+                if (Point6Out.x != 0 && Point6Out.y != 0) {sides++;}
+                if (Point7Out.x != 0 && Point7Out.y != 0) {sides++;}
+
+                if (sides >= 3) {
+                    vec2 Pos = PosOut;
+    
+                    vec2 Anchor = AnchorPosOut;
+                    vec2 pos = Pos - Anchor;
+                    float Size = SizeOut;
+
+                    int cutCount = 0;
+
+                    bool isInside = false;
+
+                    for (int i = 1; i <= sides; i++) {
+                        vec2 pos1 = getPoint(i);
+                        vec2 pos2 = getPoint2(i, sides);
+
+                        float y1 = 0;
+                        float y2 = 0;
+                        if (pos1.y > pos2.y) {y1 = pos1.y; y2 = pos2.y;} else {y1 = pos2.y; y2 = pos1.y;}
+                            
+                        if (pos.y >= y1 && pos.y <= y2) {
+                            float rotation = -(degrees(atan(pos1.y, pos1.x)) + degrees(atan(pos2.y, pos2.x)))/2;
+
+                            float newPointX = rotate(pos, rotation).x;
+                            float newLineX = rotate(pos1, rotation).x;
+
+                            if (newPointX <= newLineX) {cutCount++;}
+
+                            if (y1 > 0 || y2 < 0) {cutCount++;}
+                        }
+                    }
+
+                    if (cutCount > 0 && mod(cutCount, 2) == 0) {
+                        vec4 ColorHelper = Color0 * texture2D(Texture0, TexCoord0);
+
+                        ColorHelper.r *= 0.25 + ColorHelper.r;
+                        ColorHelper.g *= 0.3 + ColorHelper.g;
+                        ColorHelper.b *= 0.3 + ColorHelper.b;
+                        ColorHelper.r += 0.22;
+                        ColorHelper.g += 0.215;
+                        ColorHelper.b += 0.215;
+
+                        float similarityTo1stColor = abs(-ColorHelper.r -ColorHelper.g -ColorHelper.b);
+                        float similarityTo2ndColor = abs(0.674 - ColorHelper.r + 0.549 - ColorHelper.g + 0.549 - ColorHelper.b);
+                        float similarityTo3rdColor = abs(0.894 - ColorHelper.r + 0.871 - ColorHelper.g + 0.839 - ColorHelper.b);
+
+                        if (similarityTo1stColor < similarityTo2ndColor) {
+                            Color.r += 0 - Color.r;
+                            Color.g += 0 - Color.g;
+                            Color.b += 0 - Color.b;
+                        } else if (similarityTo2ndColor < similarityTo1stColor && similarityTo2ndColor < similarityTo3rdColor) {
+                            Color.r += 0.674 - Color.r;
+                            Color.g += 0.549 - Color.g;
+                            Color.b += 0.549 - Color.b;
+                        } else {
+                            Color.r += 0.894 - Color.r;
+                            Color.g += 0.871 - Color.g;
+                            Color.b += 0.839 - Color.b;
+                        }
+                    }
+                }
+
+                gl_FragColor = Color;
+            }
+        ]]></fragment>
+    </shader>
 </shaders>

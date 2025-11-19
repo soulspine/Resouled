@@ -191,9 +191,9 @@
                     }
 
                     for (int i = 1; i <= sides; i++) {
-                        vec2 sidePos = getPoint(i) * 1.025;
-                        vec2 lastPos = getLastPoint(i, sides) * 1.1;
-                        vec2 nextPos = getNextPoint(i, sides) * 1.1;
+                        vec2 sidePos = getPoint(i) * (1.025 + i/sides);
+                        vec2 lastPos = getLastPoint(i, sides) * (1.05 + sides/(i + 10));
+                        vec2 nextPos = getNextPoint(i, sides) * (1.05 + (sides)/((i + 3) * i));
                         float anchorToSidePos = getAngleDegrees(sidePos);
 
                         float lastPosDegrees = getAngleDegrees(rotate(lastPos - sidePos, -anchorToSidePos));

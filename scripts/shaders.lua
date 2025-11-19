@@ -1,30 +1,60 @@
-local x = 0
+local x = 1
 local maxAuraSize = 0 --75
-local r = 0
 local sides = math.random(3, 7)
 
-local function negativeOrPositive()
-    ::Start::
-    local num = math.random(-1, 1)
-    if num == 0 then goto Start end
-    return num
-end
-
-Resouled:AddPriorityCallback(ModCallbacks.MC_GET_SHADER_PARAMS, CallbackPriority.IMPORTANT, function(_, shaderName)
+Resouled:AddCallback(ModCallbacks.MC_GET_SHADER_PARAMS, function(_, shaderName)
     if shaderName == 'ResouledBlankCanvas' then
+        if PauseMenu.GetState() ~= PauseMenuStates.CLOSED then
+            return {
+            AnchorPos = {
+                0,
+                0
+            },
+            Point1 = {
+                0,
+                0,
+            },
+            Point2 = {
+                0,
+                0,
+            },
+            Point3 = {
+                0,
+                0,
+            },
+            Point4 = {
+                0,
+                0,
+            },
+            Point5 = {
+                0,
+                0,
+            },
+            Point6 = {
+                0,
+                0,
+            },
+            Point7 = {
+                0,
+                0,
+            }
+        }
+        end
+
         local points = {}
 
-        x = math.min(x + (maxAuraSize - x)/(50 + x/50), maxAuraSize)
+        local mouse = Isaac.WorldToScreen(Input.GetMousePosition(true))
+
+        x = math.min(0.5 + x + x/2, maxAuraSize)
 
         for i = 1, sides do
-            local shake = Vector(math.random() * 2.5 * negativeOrPositive(), math.random() * 2.5 * negativeOrPositive()) * (x/maxAuraSize)
-            table.insert(points, shake + Vector(x, 0):Rotated(360/sides * i +  r))
+            table.insert(points, Vector(x, 0):Rotated(360/sides * i))
         end
 
         return {
             AnchorPos = {
-                0,
-                0
+                mouse.X,
+                mouse.Y
             },
             Point1 = {
                 points[1] and points[1].X or 0,
@@ -56,17 +86,4 @@ Resouled:AddPriorityCallback(ModCallbacks.MC_GET_SHADER_PARAMS, CallbackPriority
             }
         }
     end
-end)
-local sides = 3
-
-local checkPoints = {}
-
-local pointCount = 250
-
-for _ = 1, pointCount do
-    table.insert(checkPoints, Vector(math.random() * math.random(-150, 150), math.random() * math.random(-150, 150)))
-end
-
-Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, function()
-    r = (r + 3)%360
 end)

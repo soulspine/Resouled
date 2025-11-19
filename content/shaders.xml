@@ -25,108 +25,6 @@
     </shader>
     <shader name="ResouledBlankCanvas">
         <parameters>
-            <param name="PointPos" type="vec2"/>
-            <param name="AreaSize" type="float"/>
-            <param name="Smoothing" type="float"/>
-        </parameters>
-        <vertex><![CDATA[
-            attribute vec3 Position;
-            attribute vec4 Color;
-            attribute vec2 TexCoord;
-            attribute vec4 RenderData;
-            attribute float Scale;
-            attribute vec2 PointPos;
-            attribute float AreaSize;
-            attribute float Smoothing;
-            vec2 Pos = vec2(Position.xy);
-            varying vec4 Color0;
-            varying vec2 TexCoord0;
-            varying vec4 RenderDataOut;
-            varying float ScaleOut;
-            varying vec2 PointPosOut;
-            varying float AreaSizeOut;
-            varying float SmoothingOut;
-            varying vec2 PosOut;
-            uniform mat4 Transform;
-            void main(void)
-            {
-                RenderDataOut = RenderData;
-                ScaleOut = Scale;
-                Color0 = Color;
-                TexCoord0 = TexCoord;
-                PointPosOut = PointPos;
-                AreaSizeOut = AreaSize;
-                SmoothingOut = Smoothing;
-                PosOut = Pos;
-                gl_Position = Transform * vec4(Position.xyz, 1.0);
-            }
-        ]]></vertex>
-        <fragment><![CDATA[
-            varying lowp vec4 Color0;
-            varying mediump vec2 TexCoord0;
-            varying lowp vec4 RenderDataOut;
-            varying lowp float ScaleOut;
-            varying lowp vec2 PointPosOut;
-            varying lowp vec2 PosOut;
-            varying lowp float AreaSizeOut;
-            varying lowp float SmoothingOut;
-            uniform sampler2D Texture0;
-            void main(void)
-            {
-                vec4 Color = Color0 * texture2D(Texture0, TexCoord0);
-
-                if (AreaSizeOut > 0) {
-                    vec2 Pos = PosOut;
-                    
-                    float Distance = (distance(Pos, PointPosOut) - AreaSizeOut);
-                    if (Distance < 0) {Distance = 0;}
-    
-                    int i = 0;
-                    while (SmoothingOut * i < Distance/SmoothingOut) {i++;}
-                    Distance = i * SmoothingOut;
-    
-                    Distance *= Distance;
-    
-                    float strength = (AreaSizeOut - Distance)/AreaSizeOut;
-                    if (strength < 0) {strength = 0;}
-                    if (strength > 1) {strength = 1;}
-    
-                    float sum = 0;
-    
-                    vec4 ColorHelper = Color0 * texture2D(Texture0, TexCoord0);
-    
-                    ColorHelper.r *= 0.25 + ColorHelper.r;
-                    ColorHelper.g *= 0.3 + ColorHelper.g;
-                    ColorHelper.b *= 0.3 + ColorHelper.b;
-                    ColorHelper.r += 0.22;
-                    ColorHelper.g += 0.215;
-                    ColorHelper.b += 0.215;
-    
-                    float similarityTo1stColor = abs(-ColorHelper.r -ColorHelper.g -ColorHelper.b);
-                    float similarityTo2ndColor = abs(0.674 - ColorHelper.r + 0.549 - ColorHelper.g + 0.549 - ColorHelper.b);
-                    float similarityTo3rdColor = abs(0.894 - ColorHelper.r + 0.871 - ColorHelper.g + 0.839 - ColorHelper.b);
-    
-                    if (similarityTo1stColor < similarityTo2ndColor) {
-                        Color.r += (0 - Color.r) * strength;
-                        Color.g += (0 - Color.g) * strength;
-                        Color.b += (0 - Color.b) * strength;
-                    } else if (similarityTo2ndColor < similarityTo1stColor && similarityTo2ndColor < similarityTo3rdColor) {
-                        Color.r += (0.674 - Color.r) * strength;
-                        Color.g += (0.549 - Color.g) * strength;
-                        Color.b += (0.549 - Color.b) * strength;
-                    } else {
-                        Color.r += (0.894 - Color.r) * strength;
-                        Color.g += (0.871 - Color.g) * strength;
-                        Color.b += (0.839 - Color.b) * strength;
-                    }
-                }
-
-                gl_FragColor = Color;
-            }
-        ]]></fragment>
-    </shader>
-    <shader name="ResouledBlankCanvasPolygon">
-        <parameters>
             <param name="AnchorPos" type="vec2"/>
             <param name="Point1" type="vec2"/>
             <param name="Point2" type="vec2"/>
@@ -213,6 +111,7 @@
 
             vec2 getLastPoint(int n, int max)
             {
+                n = n - 1;
                 if (n < 1) {
                     n = max + n;
                 }
@@ -229,6 +128,7 @@
 
             vec2 getNextPoint(int n, int max)
             {
+                n = n + 1;
                 if (n > max) {
                     n = n - max;
                 }
@@ -248,6 +148,7 @@
             }
 
             vec2 rotate(vec2 v, float a) {
+                a = radians(a);
 	            float s = sin(a);
 	            float c = cos(a);
 	            mat2 m = mat2(c, s, -s, c);
@@ -268,30 +169,40 @@
                 if (Point7Out.x != 0 && Point7Out.y != 0) {sides++;}
 
                 if (sides >= 3) {
-                    vec2 pos = PosOut;
                     vec2 Anchor = AnchorPosOut;
+                    vec2 pos = PosOut - Anchor;
                     bool isInside = true;
+                    bool isInsideOutline = true;
 
                     for (int i = 1; i <= sides; i++) {
-                        vec2 sidePos = getPoint(i) + Anchor;
-                        vec2 lastPos = getLastPoint(i, sides) + Anchor;
-                        vec2 nextPos = getNextPoint(i, sides) + Anchor;
+                        vec2 sidePos = getPoint(i);
+                        vec2 lastPos = getLastPoint(i, sides);
+                        vec2 nextPos = getNextPoint(i, sides);
+                        float anchorToSidePos = getAngleDegrees(sidePos);
 
-                        vec2 sideToNextPosVector = sidePos - nextPos;
-                        vec2 sideToLastPosVector = sidePos - lastPos;
-                        vec2 sideToPointPosVector = sidePos - pos;
+                        float lastPosDegrees = getAngleDegrees(rotate(lastPos - sidePos, -anchorToSidePos));
+                        float nextPosDegrees = getAngleDegrees(rotate(nextPos - sidePos, -anchorToSidePos));
+                        float toPointDegrees = getAngleDegrees(rotate(pos - sidePos, -anchorToSidePos));
 
-                        float anchorToSidePos = mod(getAngleDegrees(sidePos - Anchor), 360);
+                        if ((toPointDegrees >= nextPosDegrees == false) && (toPointDegrees <= lastPosDegrees == false)) {
+                            isInside = false;
+                            break;
+                        }
+                    }
 
-                        float lastPosDegrees = getAngleDegrees(rotate(normalize(sideToLastPosVector), -anchorToSidePos));
-                        float nextPosDegrees = getAngleDegrees(rotate(normalize(sideToNextPosVector), -anchorToSidePos));
-                        float toPointDegrees = getAngleDegrees(rotate(normalize(sideToPointPosVector), -anchorToSidePos));
+                    for (int i = 1; i <= sides; i++) {
+                        vec2 sidePos = getPoint(i) * 1.025;
+                        vec2 lastPos = getLastPoint(i, sides) * 1.1;
+                        vec2 nextPos = getNextPoint(i, sides) * 1.1;
+                        float anchorToSidePos = getAngleDegrees(sidePos);
 
-                        if ((toPointDegrees >= nextPosDegrees) == false) {
-                            if ((toPointDegrees <= lastPosDegrees) == false) {
-                                isInside = false;
-                                break;
-                            }
+                        float lastPosDegrees = getAngleDegrees(rotate(lastPos - sidePos, -anchorToSidePos));
+                        float nextPosDegrees = getAngleDegrees(rotate(nextPos - sidePos, -anchorToSidePos));
+                        float toPointDegrees = getAngleDegrees(rotate(pos - sidePos, -anchorToSidePos));
+
+                        if ((toPointDegrees >= nextPosDegrees == false) && (toPointDegrees <= lastPosDegrees == false)) {
+                            isInsideOutline = false;
+                            break;
                         }
                     }
 
@@ -322,6 +233,10 @@
                             Color.g += 0.871 - Color.g;
                             Color.b += 0.839 - Color.b;
                         }
+                    } else if (isInsideOutline == true) {
+                        Color.r = 0;
+                        Color.g = 0;
+                        Color.b = 0;
                     }
                 }
 

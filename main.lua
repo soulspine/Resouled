@@ -100,6 +100,7 @@ if REPENTOGON and MinimapAPI then
     include("scripts.other")
     include("scripts.special_seed_effects")
     include("scripts.shaders")
+    include("scripts.starting_items")
 
     for _, func in ipairs(thingsToRunAfterImports) do
         func()

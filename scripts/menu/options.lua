@@ -48,7 +48,14 @@ Resouled.Options = {
         Name = "Custom Particle Amount",
         DefaultValue = "Max",
         StringOptions = {"Disabled", "Minimal", "Medium", "Max"},
-        Type = types.OneClick,
+        Type = types.OneClick
+    },
+    {
+        Achievement = nil,
+        Name = "Accurate Eternal Items",
+        DefaultValue = "True",
+        StringOptions = {"True", "False"},
+        Type = types.OneClick
     },
     {
         Achievement = nil,
@@ -83,7 +90,7 @@ local loadedSave = false
 local optionsSave
 
 local OPTION_EFFECTS = {
-    [Resouled.Options[4].Name.." "..Resouled.Options[5].StringOptions[2]] = function()
+    [Resouled.Options[6].Name.." "..Resouled.Options[6].StringOptions[2]] = function()
         local save = Resouled.StatTracker:GetSave()
         for key, _ in pairs(save) do
             save[key] = nil
@@ -92,7 +99,7 @@ local OPTION_EFFECTS = {
         Isaac.RunCallback(Resouled.Callbacks.StatsReset)
         Resouled.SaveManager.Save()
     end,
-    [Resouled.Options[5].Name.." "..Resouled.Options[5].StringOptions[2]] = function()
+    [Resouled.Options[7].Name.." "..Resouled.Options[7].StringOptions[2]] = function()
         if loadedSave then
             for _, config in ipairs(Resouled.Options) do
                 optionsSave[config.Name] = config.DefaultValue
@@ -100,7 +107,7 @@ local OPTION_EFFECTS = {
             end
         end
     end,
-    [Resouled.Options[6].Name.." "..Resouled.Options[5].StringOptions[2]] = function()
+    [Resouled.Options[8].Name.." "..Resouled.Options[8].StringOptions[2]] = function()
         local save = Resouled.StatTracker:GetSave()
 
         local buffs = Resouled:GetBuffs()

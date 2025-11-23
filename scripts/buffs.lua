@@ -9,6 +9,7 @@ Resouled.BuffFamilies = {
     METEOR = 6,
     BLUE_KING_CROWN = 7,
     SCARY_FACE = 18,
+    SMALL_CAP = 19,
 
     WAR = 8, --Special start from here
     DEATH = 9,
@@ -51,6 +52,9 @@ Resouled.Buffs = {
     SCARY_FACE = 35,
     FRIGHTENING_VISAGE = 36,
     TERRIFYING_PHYSIOGNOMY = 37,
+    SMALL_CAP = 38,
+    MEDIUM_CAP = 39,
+    BIG_CAP = 40,
 
     WAR = 25, -- Special start from here
     DEATH = 26,
@@ -89,6 +93,7 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SADNESS, "Sadness", "gfx/buffs
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.PESTILENCE, "Pestilence", "gfx/buffs/pestilence.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.FAMINE, "Famine", "gfx/buffs/famine.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SCARY_FACE, "Scary Face", "gfx/buffs/scary_face.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SMALL_CAP, "Small Cap", "gfx/buffs/small_cap.png")
 
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.WAR, "War", "gfx/buffs/war.png") -- Special
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.DEATH, "Death", "gfx/buffs/death.png")
@@ -169,6 +174,10 @@ Resouled:RegisterBuff(Resouled.Buffs.PESTILENCE, "Pestilence", 0, Resouled.BuffR
     Resouled.BuffFamilies.PESTILENCE, false, Resouled.Souls.PESTILENCE)
 Resouled:RegisterBuff(Resouled.Buffs.FAMINE, "Famine", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.FAMINE,
     false, Resouled.Souls.FAMINE)
+Resouled:RegisterBuff(Resouled.Buffs.SMALL_CAP, "Small Cap", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.SMALL_CAP, false)
+Resouled:RegisterBuff(Resouled.Buffs.MEDIUM_CAP, "Meduim Cap", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.SMALL_CAP, false)
+Resouled:RegisterBuff(Resouled.Buffs.BIG_CAP, "Big Cap", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.SMALL_CAP, false)
+
 
 Resouled:Log("Loaded " .. tostring(#Resouled:GetBuffs()) .. " buffs")
 

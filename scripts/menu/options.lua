@@ -52,6 +52,13 @@ Resouled.Options = {
     },
     {
         Achievement = nil,
+        Name = "Buff Descriptions",
+        DefaultValue = "Enabled",
+        StringOptions = {"Enabled", "Disabled"},
+        Type = types.OneClick
+    },
+    {
+        Achievement = nil,
         Name = "Accurate Eternal Items",
         DefaultValue = "True",
         StringOptions = {"True", "False"},

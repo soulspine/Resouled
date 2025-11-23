@@ -351,6 +351,8 @@ local glowColorsPedestal = {
 }
 
 local function onRender()
+    if Resouled:GetOptionValue("Buff Descriptions") == "Disabled" then return end
+
     if Resouled.AfterlifeShop:IsAfterlifeShop() then
         local player = Isaac.GetPlayer()
         local closest = nil

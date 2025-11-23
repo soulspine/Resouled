@@ -113,7 +113,7 @@
     <entity name="Daddy Haunt" id="3" variant="872" subtype="0" anm2path="daddy_haunt.anm2" collisionRadius="12" shadowSize="15" friction="1" tags="cansacrifice"/>
     <entity name="Mama Haunt" id="3" variant="872" subtype="1" anm2path="mama_haunt.anm2" collisionRadius="12" friction="1"shadowSize="15" tags="cansacrifice"/>
     <entity name="Coop Baby" id="3" variant="246" subtype="0" anm2path="coop_baby.anm2" collisionMass="1" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="10" tags="cansacrifice"/>
-    <entity name="Ultra Flesh Kid" id="3" variant="248" subtype="0" anm2path="ultra_flesh_kid.anm2" collisionMass="1" collisionRadius="18" friction="1" numGridCollisionPoints="12" shadowSize="0" tags="cansacrifice"/>
+    <entity name="Ultra Flesh Kid" id="3" variant="248" subtype="0" anm2path="familiar/ultra_flesh_kid.anm2" collisionMass="1" collisionRadius="18" friction="1" numGridCollisionPoints="12" shadowSize="0" tags="cansacrifice"/>
     <entity name="Black Proglottid" id="3" variant="444" subtype="0" anm2path="familiar/proglottid.anm2" collisionMass="1" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="10" tags="cansacrifice"/>
     <entity name="White Proglottid" id="3" variant="444" subtype="1" anm2path="familiar/proglottid.anm2" collisionMass="1" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="10" tags="cansacrifice"/>
     <entity name="Pink Proglottid" id="3" variant="444" subtype="2" anm2path="familiar/proglottid.anm2" collisionMass="1" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="10" tags="cansacrifice"/>

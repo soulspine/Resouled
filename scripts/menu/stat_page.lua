@@ -194,22 +194,16 @@ local SHENANIGANS = {
             "RESO ULED",
             "R3S0 VL3D",
             "Isaac IOS",
-            "Souls Be Gone"
+            "Souls Be Gone",
+            "No Soul Challenge"
         }
     }
 }
 
----@enum ResouledSpecialSeedEffects
-Resouled.SpecialSeedEffects = {
-    IsaacIOS = "Isaac IOS",
-    SoulsBeGone = "Souls Be Gone"
-}
-
-
 local shenaniganSave
 
 ---@param effect ResouledSpecialSeedEffects
-function Resouled:IsSpecialSeedEffectActive(effect)
+function Resouled:IsSpecialSeedEffectOptionActive(effect)
     return shenaniganSave and shenaniganSave[SHENANIGANS[1].Name] and shenaniganSave[SHENANIGANS[1].Name][effect] and shenaniganSave[SHENANIGANS[1].Name][effect] == "Enabled"
 end
 

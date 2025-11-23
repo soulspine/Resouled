@@ -12,6 +12,12 @@ local ATTACK_COOLDOWN = 20
 
 local PLAYER_FOLLOW_ORBIT = 80
 
+local animations = {
+    HeadIdle = "HeadIdle",
+    Bite = "HeadBite",
+    BodyIdle = "BodyIdle"
+}
+
 ---@param player EntityPlayer
 local function onCacheEval(_, player)
     player:CheckFamiliar(FAMILIAR_VARIANT, player:GetCollectibleNum(ULTRA_FLESH_KID),
@@ -22,7 +28,9 @@ Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACH
 ---@param familiar EntityFamiliar
 local function onFamiliarInit(_, familiar)
     if familiar.SubType == FAMILIAR_SUBTYPE then
-        familiar:GetSprite():Play("Idle", true)
+        local sprite = familiar:GetSprite()
+        sprite:Play(animations.BodyIdle, true)
+        sprite:PlayOverlay(animations.HeadIdle, true)
 
         familiar.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_GROUND
     end
@@ -33,6 +41,7 @@ Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onFamiliarInit, FAMILIAR_VAR
 local function onFamiliarUpdate(_, familiar)
     if familiar.SubType == FAMILIAR_SUBTYPE then
         local data = familiar:GetData()
+        local sprite = familiar:GetSprite()
         local familiarPos = familiar.Position
         local room = game:GetRoom()
 
@@ -72,7 +81,13 @@ local function onFamiliarUpdate(_, familiar)
             if room:CheckLine(familiarPos, targetPos, LineCheckMode.ENTITY) then
                 familiar.Velocity = familiar.Velocity + (targetPos - familiarPos):Normalized()
 
-                if Resouled:GetDistanceFromHitboxEdge(familiar, familiar.Target) <= 0 and not data.Resouled_AttackCooldown then
+                if Resouled:GetDistanceFromHitboxEdge(familiar, familiar.Target) <= 0 then
+                    
+                    if not sprite:IsOverlayPlaying(animations.Bite) then sprite:PlayOverlay(animations.Bite, true) end
+
+                end
+
+                if sprite:IsOverlayEventTriggered("Bite") then
                     familiar.Target:TakeDamage(DAMAGE, DamageFlag.DAMAGE_NO_MODIFIERS, EntityRef(familiar), 0)
                     data.Resouled_AttackCooldown = ATTACK_COOLDOWN
                 end
@@ -81,13 +96,11 @@ local function onFamiliarUpdate(_, familiar)
             end
         end
 
-        if data.Resouled_AttackCooldown then
-            data.Resouled_AttackCooldown = data.Resouled_AttackCooldown - 1
-            if data.Resouled_AttackCooldown <= 0 then
-                data.Resouled_AttackCooldown = nil
-            end
-        end
+        if sprite:IsOverlayFinished(animations.Bite) then sprite:PlayOverlay(animations.HeadIdle, true) end
+
         familiar.Velocity = familiar.Velocity * VELOCITY_MULTIPLIER
+
+        sprite.FlipX = familiar.Velocity.X < 0
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_UPDATE, onFamiliarUpdate, FAMILIAR_VARIANT)

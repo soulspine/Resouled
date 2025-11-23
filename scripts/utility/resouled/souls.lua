@@ -194,6 +194,8 @@ local function onSoulPickupCollision(_, pickup, collider, low)
             save[Resouled.StatTracker.Fields.SoulsCollected] = save[Resouled.StatTracker.Fields.SoulsCollected] + 1
 
             pickup:Remove()
+
+            if Resouled:IsSpecialSeedEffectActive(Resouled.SpecialSeedEffects.NoSoulChallenge) then Game():End(Ending.DIE) end
         end
     end
 end

@@ -43,7 +43,11 @@ local function onPlayerInit(_, player)
     local type = player:GetPlayerType()
     local config = playerTypeToStartItem[type]
     if config and config.Type ~= "Familiar" then
-        player:AddCollectible(config.Item, config.Charge, true, config.ActiveSlot, config.VarData)
+        if config.ActiveSlot and config.ActiveSlot > ActiveSlot.SLOT_SECONDARY then
+            player:SetPocketActiveItem(config.Item, config.ActiveSlot, false)
+        else
+            player:AddCollectible(config.Item, config.Charge, true, config.ActiveSlot, config.VarData)
+        end
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, onPlayerInit)

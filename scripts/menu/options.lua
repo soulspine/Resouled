@@ -97,7 +97,7 @@ local loadedSave = false
 local optionsSave
 
 local OPTION_EFFECTS = {
-    [Resouled.Options[6].Name.." "..Resouled.Options[6].StringOptions[2]] = function()
+    ["Reset Mod Progress Are you sure?"] = function()
         local save = Resouled.StatTracker:GetSave()
         for key, _ in pairs(save) do
             save[key] = nil
@@ -106,7 +106,7 @@ local OPTION_EFFECTS = {
         Isaac.RunCallback(Resouled.Callbacks.StatsReset)
         Resouled.SaveManager.Save()
     end,
-    [Resouled.Options[7].Name.." "..Resouled.Options[7].StringOptions[2]] = function()
+    ["Reset Settings To Default Are you sure?"] = function()
         if loadedSave then
             for _, config in ipairs(Resouled.Options) do
                 optionsSave[config.Name] = config.DefaultValue
@@ -114,7 +114,7 @@ local OPTION_EFFECTS = {
             end
         end
     end,
-    [Resouled.Options[8].Name.." "..Resouled.Options[8].StringOptions[2]] = function()
+    ["Unlock All (Dev option, hide before uploading) Are you sure?"] = function()
         local save = Resouled.StatTracker:GetSave()
 
         local buffs = Resouled:GetBuffs()

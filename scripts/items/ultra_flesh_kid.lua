@@ -7,8 +7,9 @@ local FAMILIAR_SUBTYPE = Isaac.GetEntitySubTypeByName("Ultra Flesh Kid")
 
 local VELOCITY_MULTIPLIER = 0.85
 
+local ATTACK_DISTANCE = 25
 local DAMAGE = 8
-local ATTACK_COOLDOWN = 20
+local DAMAGE_AREA_MULTIPLIER = 2.5
 
 local PLAYER_FOLLOW_ORBIT = 80
 
@@ -40,7 +41,6 @@ Resouled:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, onFamiliarInit, FAMILIAR_VAR
 ---@param familiar EntityFamiliar
 local function onFamiliarUpdate(_, familiar)
     if familiar.SubType == FAMILIAR_SUBTYPE then
-        local data = familiar:GetData()
         local sprite = familiar:GetSprite()
         local familiarPos = familiar.Position
         local room = game:GetRoom()
@@ -79,17 +79,35 @@ local function onFamiliarUpdate(_, familiar)
             end
 
             if room:CheckLine(familiarPos, targetPos, LineCheckMode.ENTITY) then
-                familiar.Velocity = familiar.Velocity + (targetPos - familiarPos):Normalized()
+                local distance = Resouled:GetDistanceFromHitboxEdge(familiar, familiar.Target)
 
-                if Resouled:GetDistanceFromHitboxEdge(familiar, familiar.Target) <= 0 then
+                if distance > 0 then
+                    familiar.Velocity = familiar.Velocity + (targetPos - familiarPos):Normalized()
+                end
+
+                if distance <= ATTACK_DISTANCE then
                     
                     if not sprite:IsOverlayPlaying(animations.Bite) then sprite:PlayOverlay(animations.Bite, true) end
 
                 end
 
                 if sprite:IsOverlayEventTriggered("Bite") then
-                    familiar.Target:TakeDamage(DAMAGE, DamageFlag.DAMAGE_NO_MODIFIERS, EntityRef(familiar), 0)
-                    data.Resouled_AttackCooldown = ATTACK_COOLDOWN
+
+                    local damage = DAMAGE
+                    local player = Resouled:TryFindPlayerSpawner(familiar)
+                    if player then
+                        damage = damage * (player:HasCollectible(CollectibleType.COLLECTIBLE_BFFS) and 2 or 1)
+                    end
+
+                    ---@param entity Entity
+                    for _, entity in pairs(Isaac.FindInRadius(familiar.Position + (familiar.Target.Position - familiar.Position):Resized(familiar.Size * DAMAGE_AREA_MULTIPLIER)/2, familiar.Size * DAMAGE_AREA_MULTIPLIER, EntityPartition.ENEMY)) do
+                        local npc = entity:ToNPC()
+                        if npc then
+                            if Resouled:IsValidEnemy(npc) then
+                                npc:TakeDamage(damage, DamageFlag.DAMAGE_NO_MODIFIERS, EntityRef(familiar), 0)
+                            end
+                        end
+                    end
                 end
             else
                 familiar:GetPathFinder():FindGridPath(targetPos, VELOCITY_MULTIPLIER, 1, false)

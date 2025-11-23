@@ -781,6 +781,20 @@ function Resouled:CanBeChampion(entity)
     return EntityConfig.GetEntity(entity.Type, entity.Variant, entity.SubType):CanBeChampion()
 end
 
+---@param npc EntityNPC
+---@param championType? ChampionColor
+---@param pickupsOnKill? boolean --Default value: true
+function Resouled:TryMakeChampion(npc, championType, pickupsOnKill)
+    if npc:IsChampion() then return end
+    pickupsOnKill = pickupsOnKill or true
+    if npc:IsEnemy() and npc:IsActiveEnemy() and Resouled:CanBeChampion(npc) then
+        npc:MakeChampion(npc.InitSeed, championType)
+        if pickupsOnKill == false then
+            npc:AddEntityFlags(EntityFlag.FLAG_NO_REWARD)
+        end
+    end
+end
+
 local CornerFlashSprite = Sprite()
 local CornerFlashFadeSpeed = 0
 CornerFlashSprite:Load("gfx/misc/screen_flash_limbo.anm2", true)

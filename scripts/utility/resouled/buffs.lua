@@ -464,15 +464,18 @@ end
 
 ---@param buffID ResouledBuff
 ---@return boolean
+function Resouled:PendingBuffPresent(buffID)
+    local buff = Resouled:GetBuffById(buffID)
+    local FILE_SAVE = Resouled.SaveManager.GetPersistentSave()
+    return buff ~= nil and FILE_SAVE ~= nil and FILE_SAVE.Resouled_PendingBuffs and FILE_SAVE.Resouled_PendingBuffs[tostring(buffID)]
+end
+
+---@param buffID ResouledBuff
+---@return boolean
 function Resouled:ActiveBuffPresent(buffID)
     local buff = Resouled:GetBuffById(buffID)
-    if buff then
-        local FILE_SAVE = Resouled.SaveManager.GetPersistentSave()
-        if FILE_SAVE and FILE_SAVE.Resouled_ActiveBuffs and FILE_SAVE.Resouled_ActiveBuffs[tostring(buffID)] then
-            return true
-        end
-    end
-    return false
+    local FILE_SAVE = Resouled.SaveManager.GetPersistentSave()
+    return buff ~= nil and FILE_SAVE ~= nil and FILE_SAVE.Resouled_ActiveBuffs and FILE_SAVE.Resouled_ActiveBuffs[tostring(buffID)]
 end
 
 function Resouled:ClearBuffSave()

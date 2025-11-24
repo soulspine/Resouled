@@ -2,14 +2,7 @@ local CURSED_GAPER_TYPE = Isaac.GetEntityTypeByName("Cursed Gaper")
 local CURSED_GAPER_VARIANT = Isaac.GetEntityVariantByName("Cursed Gaper")
 local CURSED_GAPER_SUBTYPE = Isaac.GetEntitySubTypeByName("Cursed Gaper")
 
----@param npc EntityNPC
-local function onNpcInit(_, npc)
-    --Try to turn enemy into a cursed enemy
-    if Game():GetLevel():GetCurses() > 0 then
-        Resouled:TryEnemyMorph(npc, Resouled.Stats.CursedEnemyMorphChance(), CURSED_GAPER_TYPE, CURSED_GAPER_VARIANT, 0)
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CURSED_GAPER_TYPE)
+Resouled:RegisterCursedEnemyMorph(EntityType.ENTITY_GAPER, nil, nil, CURSED_GAPER_TYPE, CURSED_GAPER_VARIANT, CURSED_GAPER_SUBTYPE)
 
 ---@param npc EntityNPC
 local function onNpcUpdate(_, npc)

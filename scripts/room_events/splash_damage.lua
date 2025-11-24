@@ -7,12 +7,14 @@ local function postTearDeath(_, tear)
         local player = Resouled:TryFindPlayerSpawner(tear)
         if player then
             local playerDamage = player.Damage
-            ---@param entity Entity
-            Resouled.Iterators:IterateOverRoomEntities(function(entity)
-                if entity:IsEnemy() and entity:IsActiveEnemy() and entity:IsVulnerableEnemy() and entity.Position:Distance(tear.Position) < DAMAGE_RADIUS then
+
+            ---@param entity Entity | EntityNPC | nil
+            for _, entity in pairs(Isaac.FindInRadius(tear.Position, DAMAGE_RADIUS, EntityPartition.ENEMY)) do
+                entity = entity:ToNPC()
+                if entity and entity:IsEnemy() and entity:IsActiveEnemy() and entity:IsVulnerableEnemy() and entity.Position:Distance(tear.Position) < DAMAGE_RADIUS then
                     entity:TakeDamage(playerDamage * AOE_DAMAGE, DamageFlag.DAMAGE_CRUSH, EntityRef(tear.SpawnerEntity), 0)
                 end
-            end)
+            end
         end
     end
 end

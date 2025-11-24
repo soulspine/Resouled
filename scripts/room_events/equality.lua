@@ -49,7 +49,7 @@ local function postPickupCollision(_, pickup, collider)
                 player:AddBloodCharge(1)
             end
         end
-        if pickup.Variant == PickupVariant.PICKUP_POOP then --HEARTS
+        if pickup.Variant == PickupVariant.PICKUP_HEART then --HEARTS
             player:AddBombs(1)
             player:AddKeys(1)
             player:AddCoins(1)

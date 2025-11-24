@@ -1,3 +1,60 @@
+local cursedEnemies = {}
+
+---@param id integer
+---@param var? integer
+---@param sub? integer
+---@param cId integer
+---@param cVar integer
+---@param cSub integer
+---@return boolean -- Returns false if there's already a morph registered under this id
+function Resouled:RegisterCursedEnemyMorph(id, var, sub, cId, cVar, cSub)
+    local config = {Id = cId, Var = cVar, Sub = cSub}
+
+    if not sub then
+        if not var then
+            local key = tostring(id)
+            if not cursedEnemies[key] then
+                cursedEnemies[key] = config
+                return true
+            else
+                return false
+            end
+        else
+            local key = tostring(id).."."..tostring(var)
+            if not cursedEnemies[key] then
+                cursedEnemies[key] = config
+                return true
+            else
+                return false
+            end
+        end
+    else
+        local key = tostring(id).."."..tostring(var).."."..tostring(sub)
+        if not cursedEnemies[key] then
+            cursedEnemies[key] = config
+            return true
+        else
+            return false
+        end
+    end
+end
+
+---@param npc EntityNPC
+Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, function(_, npc)
+    if Game():GetLevel():GetCurses() > 0 then
+        local key1 = tostring(npc.Type)
+        local key2 = key1.."."..tostring(npc.Variant)
+        local key3 = key2.."."..tostring(npc.SubType)
+        
+        if cursedEnemies[key1] or cursedEnemies[key2] or cursedEnemies[key3] then
+            
+            local config = cursedEnemies[key3] or cursedEnemies[key2] or cursedEnemies[key1]
+
+            Resouled:TryEnemyMorph(npc, Resouled.Stats.CursedEnemyMorphChance(), config.Id, config.Var, config.Sub)
+        end
+    end
+end)
+
 include("scripts.entities.cursed_gaper")
 include("scripts.entities.cursed_fatty")
 include("scripts.entities.cursed_keeper_head")

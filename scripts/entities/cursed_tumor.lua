@@ -2,6 +2,8 @@ local ID = Isaac.GetEntityTypeByName("Cursed Tumor")
 local VARIANT = Isaac.GetEntityVariantByName("Cursed Tumor")
 local SUBTYPE = Isaac.GetEntitySubTypeByName("Cursed Tumor")
 
+Resouled:RegisterCursedEnemyMorph(229, 0, nil, ID, VARIANT, SUBTYPE)
+
 local SHOOT_AMOUNT = 5
 local TEAR_AMOUNT = 8
 local TEAR_SPEED = 5

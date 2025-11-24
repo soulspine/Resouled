@@ -2,6 +2,8 @@ local ID = Isaac.GetEntityTypeByName("Cursed Mulliboom")
 local VARIANT = Isaac.GetEntityVariantByName("Cursed Mulliboom")
 local SUBTYPE = Isaac.GetEntitySubTypeByName("Cursed Mulliboom")
 
+Resouled:RegisterCursedEnemyMorph(EntityType.ENTITY_MULLIGAN, 2, nil, ID, VARIANT, SUBTYPE)
+
 local EXPLOSION_DAMAGE = 60
 local BLAST_RADIUS = 87
 

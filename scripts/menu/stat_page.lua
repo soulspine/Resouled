@@ -193,7 +193,6 @@ local SHENANIGANS = {
         Options = {
             "RESO ULED",
             "R3S0 VL3D",
-            "Isaac IOS",
             "Souls Be Gone",
             "No Soul Challenge"
         }

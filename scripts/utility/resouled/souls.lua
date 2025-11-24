@@ -34,6 +34,34 @@ local HUD_OPACITY_STEP = 0.08
 local hudDisplayTimer = 0
 local hudOpacity = 0
 
+local SOUL_LIMIT = 4
+
+local function getThisFloorSoulsCollected()
+    local save = Resouled.SaveManager.GetRunSave().SoulLimit
+    if not save then save = 0 end
+    return save
+end
+
+local function increaseThisFloorSoulsCollected()
+    local save = getThisFloorSoulsCollected()
+    save = save + 1
+    Resouled.SaveManager.GetRunSave().SoulLimit = save
+end
+
+---@return boolean
+local function canSpawnSoul()
+    local save = getThisFloorSoulsCollected()
+    return save < SOUL_LIMIT
+end
+
+local function resetSoulsCollected()
+    local save = getThisFloorSoulsCollected()
+    save = 0
+    Resouled.SaveManager.GetRunSave().SoulLimit = save
+end
+
+Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, resetSoulsCollected)
+
 ---@param duration? integer
 function Resouled:DisplaySoulsHud(duration)
     hudDisplayTimer = duration or HUD_DEFAULT_FADEOUT_TIME
@@ -130,7 +158,7 @@ end
 ---@param weight? integer -- default 1
 ---@return boolean
 function Resouled:TrySpawnSoulPickup(soul, position, weight)
-    if Resouled:IsSpecialSeedEffectActive(Resouled.SpecialSeedEffects.SoulsBeGone) then return false end
+    if Resouled:IsSpecialSeedEffectActive(Resouled.SpecialSeedEffects.SoulsBeGone) or not canSpawnSoul() then return false end
     local runSave = Resouled.SaveManager.GetRunSave()
     if
         runSave.Souls and
@@ -148,6 +176,8 @@ function Resouled:TrySpawnSoulPickup(soul, position, weight)
         if buffID then
             Resouled.AfterlifeShop:AddSpecialBuffToSpawn(buffID)
         end
+
+        increaseThisFloorSoulsCollected()
 
         return true
     else

@@ -1,6 +1,5 @@
 ---@enum ResouledSpecialSeedEffects
 Resouled.SpecialSeedEffects = {
-    IsaacIOS = "Isaac IOS",
     SoulsBeGone = "Souls Be Gone",
     NoSoulChallenge = "No Soul Challenge"
 }

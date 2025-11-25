@@ -89,7 +89,7 @@ local function hudRenderer()
     end
 
 
-    if game:GetHUD():IsVisible() and hudOpacity > 0 then
+    if (game:GetHUD():IsVisible() or Resouled.AfterlifeShop:IsAfterlifeShop()) and hudOpacity > 0 then
         local screenWidth = Isaac.GetScreenWidth()
         local screenHeight = Isaac.GetScreenHeight()
 

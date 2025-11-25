@@ -14,20 +14,12 @@ local ANIMATION_PEDESTAL_EMPTY = "Empty"
 
 local PICKUP_VOLUME = 1
 
----@param pickup EntityPickup
+---@param seed integer
 ---@param seedOffset integer | nil
-function Resouled:RollShopBuffPedestalBuff(pickup, seedOffset)
-    local startBuff = pickup:GetVarData()
-    local seed = pickup.InitSeed + (seedOffset or 0)
-    local rng = RNG()
-    ::RollAgain::
-    rng:SetSeed(seed, 0)
-    local buff = Resouled:GetRandomWeightedBuff(rng)
-    if buff == startBuff then
-        seed = seed + 1
-        goto RollAgain
-    end
-    pickup:SetVarData(buff or 0)
+---@param blacklist? table
+---@return integer | nil
+function Resouled:GetShopBuffRoll(seed, seedOffset, blacklist)
+    return Resouled:GetRandomWeightedBuff(RNG(seed + (seedOffset or 0)),blacklist)
 end
 
 ---@param sprite Sprite
@@ -37,8 +29,12 @@ local function loadProperSprite(sprite, buffId)
     if buff then
         local animationName = Resouled:GetBuffRarityById(buff.Rarity).Name
         if not sprite:IsOverlayPlaying(animationName) then
-            sprite:ReplaceSpritesheet(0, Resouled:GetBuffFamilyById(buff.Family).Spritesheet, true)
             sprite:PlayOverlay(animationName, true)
+        end
+
+        local spritesheet = Resouled:GetBuffFamilyById(buff.Family).Spritesheet
+        if sprite:GetLayer(0):GetSpritesheetPath() ~= spritesheet then
+            sprite:ReplaceSpritesheet(0, spritesheet, true)
         end
         
         if not sprite:IsPlaying(ANIMATION_PEDESTAL_MAIN) then
@@ -77,7 +73,7 @@ local function onInit(_, pickup)
         local save = Resouled.SaveManager.GetRoomSave(pickup)
 
         if varData == 0 and not save.Inited then
-            Resouled:RollShopBuffPedestalBuff(pickup)
+            pickup:SetVarData(Resouled:GetShopBuffRoll(pickup:GetVarData(), pickup.InitSeed) or 0)
         end
 
         save.Inited = true
@@ -98,12 +94,8 @@ local function postPickupUpdate(_, pickup)
         if varData > 0 then
             loadProperSprite(sprite, pickup:GetVarData())
         elseif varData == 0 then -- STOP ANIMATION
-            if spritesheet ~= "gfx/buffs/placeholder.png" then
-                sprite:ReplaceSpritesheet(0, "gfx/buffs/placeholder.png", true)
-            end
-            if anim ~= ANIMATION_PEDESTAL_EMPTY then
-                sprite:PlayOverlay(ANIMATION_PEDESTAL_EMPTY, true)
-            end
+            sprite:ReplaceSpritesheet(0, "gfx/buffs/placeholder.png", true)
+            sprite:PlayOverlay(ANIMATION_PEDESTAL_EMPTY, true)
         end
         
         --- HOLD IT IN PLACE

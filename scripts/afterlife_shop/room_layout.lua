@@ -3,6 +3,7 @@ local game = Game()
 local DeathStatue = Resouled.Stats.DeathStatue
 local BuffPedestal = Resouled.Stats.BuffPedestal
 local WiseSkull = Resouled.Stats.WiseSkull
+local RestockMachine = Resouled.Stats.RerollMachine
 
 local ShopLevels = Resouled.AfterlifeShop.ShopLevels
 
@@ -20,8 +21,14 @@ local DecorationConfig = {
 
 ---@param position Vector
 ---@param seed integer
-local function spawnBuffPedestal(position, seed)
-    Game():Spawn(BuffPedestal.Type, BuffPedestal.Variant, position, Vector.Zero, nil, BuffPedestal.SubType, game:GetSeeds():GetStartSeed() + seed)
+---@param blacklist? table
+local function spawnBuffPedestal(position, seed, blacklist)
+    seed = game:GetSeeds():GetStartSeed() + seed
+    local pedestal = Game():Spawn(BuffPedestal.Type, BuffPedestal.Variant, position, Vector.Zero, nil, BuffPedestal.SubType, seed):ToPickup()
+    if not pedestal then return end
+    local buff = Resouled:GetShopBuffRoll(seed, 0, blacklist) or 0
+    blacklist[buff] = true
+    pedestal:SetVarData(buff)
 end
 
 local buffPos = {
@@ -64,10 +71,16 @@ local function mainShopLayout()
     local room = game:GetRoom()
     local centerPos = room:GetCenterPos()
 
+    local blacklist = {}
+
     Resouled.AfterlifeShop:SetShopLevel(Resouled.AfterlifeShop.ShopLevels.Level5)
     local shopLevel = Resouled.AfterlifeShop:GetShopLevel()
     for i = 1, #buffPos[shopLevel] do
-        spawnBuffPedestal(centerPos + buffPos[shopLevel][i], i)
+        spawnBuffPedestal(centerPos + buffPos[shopLevel][i], 10000 * i, blacklist)
+    end
+
+    if shopLevel >= ShopLevels.Level3 then
+        game:Spawn(EntityType.ENTITY_EFFECT, RestockMachine.Variant, centerPos + Vector(200, 75), Vector.Zero, nil, RestockMachine.SubType, Random())
     end
 end
 

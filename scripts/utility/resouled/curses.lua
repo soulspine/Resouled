@@ -12,7 +12,7 @@ end
 
 ---@param curses? LevelCurse
 function Resouled:GetCursesNum(curses)
-    local curses = curses or Game():GetLevel():GetCurses()
+    curses = curses or Game():GetLevel():GetCurses()
     local curseCount = 0
     for i = 0, 31 do
         if (curses & (1 << i)) ~= 0 then

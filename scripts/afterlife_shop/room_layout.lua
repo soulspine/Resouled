@@ -19,8 +19,9 @@ local DecorationConfig = {
 }
 
 ---@param position Vector
-local function spawnBuffPedestal(position)
-    Isaac.Spawn(BuffPedestal.Type, BuffPedestal.Variant, BuffPedestal.SubType, position, Vector.Zero, nil)
+---@param seed integer
+local function spawnBuffPedestal(position, seed)
+    Game():Spawn(BuffPedestal.Type, BuffPedestal.Variant, position, Vector.Zero, nil, BuffPedestal.SubType, game:GetSeeds():GetStartSeed() + seed)
 end
 
 local buffPos = {
@@ -66,7 +67,7 @@ local function mainShopLayout()
     Resouled.AfterlifeShop:SetShopLevel(Resouled.AfterlifeShop.ShopLevels.Level5)
     local shopLevel = Resouled.AfterlifeShop:GetShopLevel()
     for i = 1, #buffPos[shopLevel] do
-        spawnBuffPedestal(centerPos + buffPos[shopLevel][i])
+        spawnBuffPedestal(centerPos + buffPos[shopLevel][i], i)
     end
 end
 

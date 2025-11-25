@@ -106,6 +106,7 @@
     <entity name="Afterlife Backdrop Decoration" id="1000" variant="445" subtype="0" anm2path="misc/afterlife_backdrop_decoration.anm2" friction="1"/>
     <entity name="Mini Nuke" id="1000" variant="446" subtype="0" anm2path="mini_nuke.anm2" friction="1"/>
     <entity name="Afterlife Backdrop Fix" id="1000" variant="447" subtype="0" anm2path="backdrop/afterlife_backdrop_fix.anm2" friction="1"/>
+    <entity name="Afterlife Shop Reroll Machine" id="1000" variant="448" subtype="0" anm2path="misc/afterlife_restock_machine.anm2" friction="1"/>
 
 <!-- Familiars-->
     <entity name="A Friend" id="3" variant="244" subtype="0" anm2path="a_friend.anm2" collisionMass="5" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="16" tags="cansacrifice"/>

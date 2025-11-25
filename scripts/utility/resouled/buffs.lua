@@ -303,54 +303,22 @@ end
 ---@param blacklist? ResouledBuff[]
 ---@return ResouledBuff | nil
 function Resouled:GetRandomWeightedBuff(rng, blacklist)
-    local randomFloat = rng:RandomFloat()
-    local ranges = {}
+    local pool = WeightedOutcomePicker()
     blacklist = blacklist or {}
 
-    local blacklistSet = {}
+    ---@param buff ResouledBuffDesc
+    for _, buff in pairs(registeredBuffs) do
+        if not blacklist[buff.Id] then
 
-    for _, buffId in ipairs(blacklist) do
-        blacklistSet[tostring(buffId)] = true
-    end
+            local rarity = Resouled:GetBuffRarityById(buff.Rarity)
 
-    for _, rarityDesc in pairs(registeredRarities) do
-        if rarityDesc.Weight > 0 then
-            local upperBound = rarityDesc.Weight
-            if #ranges > 0 then
-                local previous = ranges[#ranges]
-                upperBound = previous.UpperBound + upperBound
+            if rarity and rarity.Weight > 0 then
+                pool:AddOutcomeFloat(buff.Id, rarity.Weight)
             end
-            table.insert(ranges, {
-                Rarity = rarityDesc.Id,
-                UpperBound = upperBound,
-            })
         end
     end
 
-    ---@type ResouledBuffRarity
-    local chosenRarity = nil
-
-    for _, range in ipairs(ranges) do
-        if randomFloat < range.UpperBound then
-            chosenRarity = range.Rarity
-            break
-        end
-    end
-
-    if not chosenRarity then
-        Resouled:LogError("Failed to choose a rarity for the random buff, no valid ranges found.")
-        return nil
-    end
-
-    local possibleBuffs = {}
-
-    for _, buffDesc in ipairs(self:GetBuffs()) do
-        if buffDesc.Rarity == chosenRarity and not blacklistSet[tostring(buffDesc.Id)] then
-            table.insert(possibleBuffs, buffDesc.Id)
-        end
-    end
-
-    return #possibleBuffs > 0 and possibleBuffs[rng:RandomInt(#possibleBuffs) + 1] or nil
+    return pool:PickOutcome(rng) or nil
 end
 
 local SAVE_ENTRY = "Buffs Collected"

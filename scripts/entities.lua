@@ -87,6 +87,5 @@ include("scripts.effects.stun_tentacle")
 
 include("scripts.entities.resouled_dummy")
 include("scripts.entities.resouled_hitbox")
-include("scripts.entities.buff_pedestal")
 
 include("scripts.entities.lightswitch")

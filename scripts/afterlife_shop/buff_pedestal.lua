@@ -5,7 +5,6 @@ local BUFF_PEDESTAL_SUBTYPE = Isaac.GetEntitySubTypeByName("Buff Pedestal")
 local Soul = Resouled.Stats.Soul
 
 local SIZE_MULTI = Vector(1.2, 0.8)
-local BUFF_REFRESH_COOLDOWN = 60
 
 local font = Font()
 font:Load("font/teammeatfont10.fnt")
@@ -14,6 +13,22 @@ local ANIMATION_PEDESTAL_MAIN = "Pedestal"
 local ANIMATION_PEDESTAL_EMPTY = "Empty"
 
 local PICKUP_VOLUME = 1
+
+---@param pickup EntityPickup
+---@param seedOffset integer | nil
+function Resouled:RollShopBuffPedestalBuff(pickup, seedOffset)
+    local startBuff = pickup:GetVarData()
+    local seed = pickup.InitSeed + (seedOffset or 0)
+    local rng = RNG()
+    ::RollAgain::
+    rng:SetSeed(seed, 0)
+    local buff = Resouled:GetRandomWeightedBuff(rng)
+    if buff == startBuff then
+        seed = seed + 1
+        goto RollAgain
+    end
+    pickup:SetVarData(buff or 0)
+end
 
 ---@param sprite Sprite
 ---@param buffId ResouledBuff
@@ -44,6 +59,7 @@ end
 ---@param pickup EntityPickup
 local function onInit(_, pickup)
     if pickup.SubType == BUFF_PEDESTAL_SUBTYPE then
+
         -- leaving vardata as 0 means it will roll a random buff on 1st update
         pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
         local sprite = pickup:GetSprite()
@@ -57,6 +73,14 @@ local function onInit(_, pickup)
         pickup:GetData().Resouled_BuffPedestalInitPosition = pickup.Position
         
         pickup.SizeMulti = SIZE_MULTI
+
+        local save = Resouled.SaveManager.GetRoomSave(pickup)
+
+        if varData == 0 and not save.Inited then
+            Resouled:RollShopBuffPedestalBuff(pickup)
+        end
+
+        save.Inited = true
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onInit, BUFF_PEDESTAL_VARIANT)
@@ -68,33 +92,18 @@ local function postPickupUpdate(_, pickup)
         local varData = pickup:GetVarData()
         local sprite = pickup:GetSprite()
         local data = pickup:GetData()
-        if varData < 1 and not data.Resouled_PickedUpBuff then
-            ::BuffWasPresent::
-            local chosenBuff = Resouled:GetRandomWeightedBuff(pickup:GetDropRNG())
-            
-            if chosenBuff then
-                if Resouled:ActiveBuffPresent(chosenBuff) and not Resouled:GetBuffById(chosenBuff).Stackable then
-                    goto BuffWasPresent
-                end
-                pickup:SetVarData(chosenBuff)
-            end
-        end
-        
-        varData = pickup:GetVarData() -- in case it was refreshed in previous if block
-        
-        if data.Resouled_PickedUpBuff then
-            if data.Resouled_PickedUpBuff > 0 then
-                data.Resouled_PickedUpBuff = data.Resouled_PickedUpBuff - 1
-            elseif data.Resouled_PickedUpBuff == 0 then
-                data.Resouled_PickedUpBuff = nil
-            end
-        end
+        local spritesheet = sprite:GetLayer(0):GetSpritesheetPath()
+        local anim = sprite:GetOverlayAnimation()
         
         if varData > 0 then
             loadProperSprite(sprite, pickup:GetVarData())
         elseif varData == 0 then -- STOP ANIMATION
-            sprite:ReplaceSpritesheet(0, "gfx/buffs/placeholder.png", true)
-            sprite:PlayOverlay(ANIMATION_PEDESTAL_EMPTY, true)
+            if spritesheet ~= "gfx/buffs/placeholder.png" then
+                sprite:ReplaceSpritesheet(0, "gfx/buffs/placeholder.png", true)
+            end
+            if anim ~= ANIMATION_PEDESTAL_EMPTY then
+                sprite:PlayOverlay(ANIMATION_PEDESTAL_EMPTY, true)
+            end
         end
         
         --- HOLD IT IN PLACE
@@ -110,8 +119,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, postPickupUpdate, BUFF_
 local function postPickupCollision(_, pickup, collider)
     if pickup.SubType == BUFF_PEDESTAL_SUBTYPE then
         local player = collider:ToPlayer()
-        local data = pickup:GetData()
-        if player and not data.Resouled_PickedUpBuff and pickup:GetVarData() > 0 and Resouled:GetPossessedSoulsNum() >= Resouled:GetBuffById(pickup:GetVarData()).Price then
+        if player and pickup:GetVarData() > 0 and Resouled:GetPossessedSoulsNum() >= Resouled:GetBuffById(pickup:GetVarData()).Price then
             local price = Resouled:GetBuffById(pickup:GetVarData()).Price
             Resouled:SetPossessedSoulsNum(Resouled:GetPossessedSoulsNum() - price)
             
@@ -131,8 +139,6 @@ local function postPickupCollision(_, pickup, collider)
             local save = Resouled.StatTracker:GetSave()
             if not save[Resouled.StatTracker.Fields.BuffsPickedUp] then save[Resouled.StatTracker.Fields.BuffsPickedUp] = 0 end
             save[Resouled.StatTracker.Fields.BuffsPickedUp] = save[Resouled.StatTracker.Fields.BuffsPickedUp] + 1
-
-            data.Resouled_PickedUpBuff = BUFF_REFRESH_COOLDOWN
             
             for i = 1, price do
                 Game():Spawn(EntityType.ENTITY_PICKUP, Soul.Variant, player.Position, Vector.Zero, nil, Soul.SubTypeStatue, player.InitSeed + i)

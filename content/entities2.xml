@@ -103,6 +103,8 @@
     <entity name="Pink Cracked Egg Particle" id="1000" variant="444" subtype="2" anm2path="effects/particles/egg_cracked.anm2" friction="1"/>
     <entity name="White Cracked Egg Particle" id="1000" variant="444" subtype="3" anm2path="effects/particles/egg_cracked.anm2" friction="1"/>
     <entity name="Clear Cracked Egg Particle" id="1000" variant="444" subtype="4" anm2path="effects/particles/egg_cracked.anm2" friction="1"/>
+    <entity name="Resouled Club" id="1000" variant="444" subtype="5" anm2path="effects/club.anm2" friction="1"/>
+    <entity name="Resouled Club Swing" id="1000" variant="444" subtype="6" anm2path="effects/club.anm2" friction="1"/>
     <entity name="Afterlife Backdrop Decoration" id="1000" variant="445" subtype="0" anm2path="misc/afterlife_backdrop_decoration.anm2" friction="1"/>
     <entity name="Mini Nuke" id="1000" variant="446" subtype="0" anm2path="mini_nuke.anm2" friction="1"/>
     <entity name="Afterlife Backdrop Fix" id="1000" variant="447" subtype="0" anm2path="backdrop/afterlife_backdrop_fix.anm2" friction="1"/>

@@ -114,7 +114,7 @@
     <entity name="A Friend" id="3" variant="244" subtype="0" anm2path="a_friend.anm2" collisionMass="5" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="16" tags="cansacrifice"/>
     <entity name="Tumor Ball" id="3" variant="245" subtype="0" anm2path="tumor_ball.anm2" collisionMass="1" collisionRadius="8" friction="1" numGridCollisionPoints="12" shadowSize="5" tags="noreroll cansacrifice"/>
     <entity name="Daddy Haunt" id="3" variant="872" subtype="0" anm2path="daddy_haunt.anm2" collisionRadius="12" shadowSize="15" friction="1" tags="cansacrifice"/>
-    <entity name="Mama Haunt" id="3" variant="872" subtype="1" anm2path="mama_haunt.anm2" collisionRadius="12" friction="1"shadowSize="15" tags="cansacrifice"/>
+    <entity name="Mama Haunt" id="3" variant="872" subtype="1" anm2path="mama_haunt.anm2" collisionRadius="12" friction="1" shadowSize="15" tags="cansacrifice"/>
     <entity name="Coop Baby" id="3" variant="246" subtype="0" anm2path="coop_baby.anm2" collisionMass="1" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="10" tags="cansacrifice"/>
     <entity name="Ultra Flesh Kid" id="3" variant="248" subtype="0" anm2path="familiar/ultra_flesh_kid.anm2" collisionMass="1" collisionRadius="18" friction="1" numGridCollisionPoints="12" shadowSize="0" tags="cansacrifice"/>
     <entity name="Black Proglottid" id="3" variant="444" subtype="0" anm2path="familiar/proglottid.anm2" collisionMass="1" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="10" tags="cansacrifice"/>
@@ -124,13 +124,13 @@
     <entity name="Fetal Haunt" id="3" variant="444" subtype="4" anm2path="familiar/fetal_haunt.anm2" collisionMass="1" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="10" tags="cansacrifice"/>
 
 <!-- Pickups-->
-    <entity anm2path="soul_card.anm2" id="5" variant="444" subtype="0" collisionMass="1" collisionRadius="16" name="Soul Pickup" shadowSize="14" reroll="false" tags="noreroll"/>
     <entity name="Buff Pedestal" id="5" variant="200" subtype="1" anm2path="buffs/buffs.anm2" collisionRadius="14" collisionMass="3" numGridCollisionPoints="12" friction="0" shadowSize="20" tags="noreroll"/>
     <entity name="Blast Miner TNT" id="5" variant="201" subtype="0" anm2path="blast_miner_tnt.anm2" collisionRadius="15" collisionMass="5" numGridCollisionPoints="12" friction="1" shadowSize="21" tags="noreroll"/>
     <entity name="Blast Miner TNT Mega" id="5" variant="201" subtype="1" anm2path="blast_miner_tnt_mega.anm2" collisionRadius="20" collisionMass="8" numGridCollisionPoints="12" friction="1" shadowSize="28" tags="noreroll"/>
     <entity name="Magic Marker" id="5" variant="300" subtype="82492" anm2path="magic_marker.anm2" collisionRadius="12" collisionMass="3" friction="1" numGridCollisionPoints="24" shadowSize="16"/>
-    <entity name="Soul" id="5" variant="444" subtype="1" anm2path="soul.anm2" collisionRadius="4" collisionMass="1" friction="1" numGridCollisionPoints="12" shadowSize="0"/>
-    <entity name="Soul Statue Target" id="5" variant="444" subtype="2" anm2path="soul.anm2" collisionRadius="4" collisionMass="1" friction="1" numGridCollisionPoints="12" shadowSize="0"/>
+    <entity name="Soul" id="5" variant="444" subtype="0" anm2path="soul.anm2" collisionRadius="4" collisionMass="1" friction="1" numGridCollisionPoints="12" shadowSize="0"/>
+    <entity name="Soul Statue Target" id="5" variant="444" subtype="1" anm2path="soul.anm2" collisionRadius="4" collisionMass="1" friction="1" numGridCollisionPoints="12" shadowSize="0"/>
+    <entity name="Afterlife Shop Donation Machine" id="5" variant="444" subtype="2" anm2path="misc/urn.anm2" collisionRadius="16" collisionMass="3" friction="0" numGridCollisionPoints="12" shadowSize="16"/>
     <entity name="Casket" id="5" variant="444" subtype="3" anm2path="misc/casket.anm2" collisionRadius="20" collisionMass="99999" friction="0.1" numGridCollisionPoints="12" shadowSize="0"/>
     <entity name="Light Switch" id="5" variant="444" subtype="4" anm2path="lightswitch.anm2" friction="1"/>
 

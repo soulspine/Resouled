@@ -4,6 +4,7 @@ local DeathStatue = Resouled.Stats.DeathStatue
 local BuffPedestal = Resouled.Stats.BuffPedestal
 local WiseSkull = Resouled.Stats.WiseSkull
 local RestockMachine = Resouled.Stats.RerollMachine
+local DonoMachine = Resouled.Stats.DontionMachine
 
 local ShopLevels = Resouled.AfterlifeShop.ShopLevels
 
@@ -71,6 +72,9 @@ local function mainShopLayout()
     local room = game:GetRoom()
     local centerPos = room:GetCenterPos()
 
+    local topLeft = room:GetTopLeftPos()
+    local bottomRight = room:GetBottomRightPos()
+
     local blacklist = {}
 
     Resouled.AfterlifeShop:SetShopLevel(Resouled.AfterlifeShop.ShopLevels.Level5)
@@ -80,8 +84,10 @@ local function mainShopLayout()
     end
 
     if shopLevel >= ShopLevels.Level3 then
-        game:Spawn(EntityType.ENTITY_EFFECT, RestockMachine.Variant, centerPos + Vector(200, 75), Vector.Zero, nil, RestockMachine.SubType, Random())
+        game:Spawn(EntityType.ENTITY_EFFECT, RestockMachine.Variant, Vector(bottomRight.X - 64, bottomRight.Y - 64), Vector.Zero, nil, RestockMachine.SubType, Random())
     end
+
+    game:Spawn(DonoMachine.Type, DonoMachine.Variant, Vector(bottomRight.X - 48, topLeft.Y + 48), Vector.Zero, nil, DonoMachine.SubType, Random())
 end
 
 local specialBuffPos = {

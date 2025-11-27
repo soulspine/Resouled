@@ -144,3 +144,9 @@ Resouled.Stats.RerollMachine = {
     Variant = Isaac.GetEntityVariantByName("Afterlife Shop Reroll Machine"),
     SubType = Isaac.GetEntitySubTypeByName("Afterlife Shop Reroll Machine")
 }
+
+Resouled.Stats.DontionMachine = {
+    Type = EntityType.ENTITY_PICKUP,
+    Variant = Isaac.GetEntityVariantByName("Afterlife Shop Donation Machine"),
+    SubType = Isaac.GetEntitySubTypeByName("Afterlife Shop Donation Machine")
+}

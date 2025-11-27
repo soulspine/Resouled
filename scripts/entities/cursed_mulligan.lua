@@ -2,6 +2,8 @@ local ID = EntityType.ENTITY_MULLIGAN
 local VARIANT = Isaac.GetEntityVariantByName("Cursed Mulligan")
 local SUBTYPE = Isaac.GetEntitySubTypeByName("Cursed Mulligan")
 
+Resouled:RegisterCursedEnemyMorph(EntityType.ENTITY_MULLIGAN, 0, nil, ID, VARIANT, SUBTYPE)
+
 local FLY_LIGHT_COLOT = Color(200/255, 128/255, 128/255, 255/255, 128/255, 0, 255/255)
 local FLY_TAIL_CONFIG = {
     Color = Color(0.5, 0, 1, 0.25),

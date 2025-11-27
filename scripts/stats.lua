@@ -138,3 +138,15 @@ Resouled.Stats.AfterlifeBackdropFix = {
     Variant = Isaac.GetEntityVariantByName("Afterlife Backdrop Fix"),
     SubType = Isaac.GetEntitySubTypeByName("Afterlife Backdrop Fix")
 }
+
+Resouled.Stats.RerollMachine = {
+    Type = EntityType.ENTITY_EFFECT,
+    Variant = Isaac.GetEntityVariantByName("Afterlife Shop Reroll Machine"),
+    SubType = Isaac.GetEntitySubTypeByName("Afterlife Shop Reroll Machine")
+}
+
+Resouled.Stats.DontionMachine = {
+    Type = EntityType.ENTITY_PICKUP,
+    Variant = Isaac.GetEntityVariantByName("Afterlife Shop Donation Machine"),
+    SubType = Isaac.GetEntitySubTypeByName("Afterlife Shop Donation Machine")
+}

@@ -15,14 +15,7 @@ local ATTACK2 = {
 local PROJECTILE_PARAMS = Resouled.Stats:GetCursedProjectileParams()
 local PROJECTILE_SPEED = 7
 
----@param npc EntityNPC
-local function onNpcInit(_, npc)
-    --Try to turn enemy into a cursed enemy
-    if Game():GetLevel():GetCurses() > 0 then
-        Resouled:TryEnemyMorph(npc, Resouled.Stats.CursedEnemyMorphChance(), CURSED_KEEPER_HEAD_TYPE, CURSED_KEEPER_HEAD_VARIANT, CURSED_KEEPER_HEAD_SUBTYPE)
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CURSED_KEEPER_HEAD_TYPE)
+Resouled:RegisterCursedEnemyMorph(EntityType.ENTITY_KEEPER, nil, nil, CURSED_KEEPER_HEAD_TYPE, CURSED_KEEPER_HEAD_VARIANT, CURSED_KEEPER_HEAD_SUBTYPE)
 
 ---@param npc EntityNPC
 local function preNpcUpdate(_, npc)

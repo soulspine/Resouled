@@ -25,20 +25,7 @@ local GRAB_TELEPORT_ROOM_TYPE_WHITELIST = {
     [RoomType.ROOM_SACRIFICE] = true,
 }
 
----@param npc EntityNPC
-local function onNpcInit(_, npc)
-    if Game():GetLevel():GetCurses() > 0 then
-        Resouled:TryEnemyMorph(npc, Resouled.Stats.CursedEnemyMorphChance(), CURSED_MOMS_HAND_TYPE, CURSED_MOMS_HAND_VARIANT, CURSED_MOMS_HAND_SUBTYPE)
-    end
-    if npc.Variant == CURSED_MOMS_HAND_VARIANT then
-        npc.Mass = math.huge
-        npc:GetData().ResouledCursedMomsHand = {
-            StunLock = nil,
-            GrabbedPlayerId = nil,
-        }
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CURSED_MOMS_HAND_TYPE)
+Resouled:RegisterCursedEnemyMorph(EntityType.ENTITY_MOMS_HAND, nil, nil, CURSED_MOMS_HAND_TYPE, CURSED_MOMS_HAND_VARIANT, CURSED_MOMS_HAND_SUBTYPE)
 
 ---@param npc EntityNPC
 local function onNpcUpdate(_, npc)

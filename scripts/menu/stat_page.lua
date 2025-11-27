@@ -193,7 +193,6 @@ local SHENANIGANS = {
         Options = {
             "RESO ULED",
             "R3S0 VL3D",
-            "Isaac IOS",
             "Souls Be Gone",
             "No Soul Challenge"
         }
@@ -234,6 +233,16 @@ local SHENANIGANS_COLORS = {
     ["Disabled"] = KColor(47/255 * 2, 27/255/2, 33/255/2, 1)
 }
 
+
+
+local OPTIONS_PER_PAGE = 12
+
+---@param currentOption integer
+---@return integer
+local function getStartingOptionToRender(currentOption)
+    return OPTIONS_PER_PAGE * ((currentOption - 1)//OPTIONS_PER_PAGE) + 1
+end
+
 local PAGES = {
     {
         Name = "Stats",
@@ -265,6 +274,38 @@ local PAGES = {
                     stringValue, renderPos.X + CONFIG.BackgroundSpriteSize.X/2 - CONFIG.StatOffset.X, posY, 1, 1, CONFIG.TextColor, 1
                 )
                 i = i + 1
+            end
+        end
+    },
+    {
+        Name = "Active Buffs",
+        Renderer = function(renderPos, save, enableInput)
+
+            local startPos = renderPos + CONFIG.BuffPage.StartBuffPos
+
+            ---@param familyDesc ResouledBuffFamilyDesc
+            for _, familyDesc in ipairs(sortedBuffFamilies) do
+                
+                ---@param buffID ResouledBuff
+                for _, buffID in ipairs(familyDesc.ChildBuffs) do
+                    local buffDesc = Resouled:GetBuffById(buffID)
+
+                    if buffDesc then
+                        
+                        if Resouled:PendingBuffPresent(buffDesc.Id) then
+                            
+                            BUFF_SPRITE:ReplaceSpritesheet(0, familyDesc.Spritesheet, true)
+                            BUFF_SPRITE:Play(Resouled:GetBuffRarityById(buffDesc.Rarity).Name, true)
+                            BUFF_SPRITE:Render(startPos)
+
+                            startPos.X = startPos.X + CONFIG.BackgroundSpriteSize.X/CONFIG.BuffPage.BuffsPerLine
+                            if startPos.X > renderPos.X + CONFIG.BackgroundSpriteSize.X/2 then
+                                startPos.X = renderPos.X + CONFIG.BuffPage.StartBuffPos.X
+                                startPos.Y = startPos.Y + CONFIG.BuffPage.VerticalSpacing/1.5
+                            end
+                        end
+                    end
+                end
             end
         end
     },
@@ -527,38 +568,43 @@ local PAGES = {
         Renderer = function(renderPos, save, enableInput)
             local startPos = renderPos - CONFIG.BackgroundSpriteSize/2 + Vector(5, CONFIG.HeaderLineOffset + 5)
             local separation = FONTS.Size10:GetBaselineHeight()
-            local maxOption = 0
             local selectedOption
+            
+            local startOption = getStartingOptionToRender(currentSelectedOption)
 
-            for i, optionConfig in ipairs(Resouled.Options) do
-                local y = startPos.Y + separation * (i - 1)
+            for i = startOption, startOption + OPTIONS_PER_PAGE - 1 do
+                local optionConfig = Resouled.Options[i]
 
-                FONTS.Size10:DrawStringScaled(optionConfig.Name, startPos.X, y, 1, 1, CONFIG.TextColor)
-                
-                local value = Resouled:GetOptionValue(optionConfig.Name)
-                if i ~= currentSelectedOption and optionConfig.NotSelectedValue and value ~= optionConfig.NotSelectedValue then
-                    Resouled:SetOptionValue(optionConfig.Name, optionConfig.NotSelectedValue)
-                    value = optionConfig.NotSelectedValue
+                if optionConfig then
+                    local y = startPos.Y + separation * (i - startOption)
+                    
+                    FONTS.Size10:DrawStringScaled(optionConfig.Name, startPos.X, y, 1, 1, CONFIG.TextColor)
+                    
+                    local value = Resouled:GetOptionValue(optionConfig.Name)
+                    if i ~= currentSelectedOption and optionConfig.NotSelectedValue and value ~= optionConfig.NotSelectedValue then
+                        Resouled:SetOptionValue(optionConfig.Name, optionConfig.NotSelectedValue)
+                        value = optionConfig.NotSelectedValue
+                    end
+                    local valueString = tostring(value)..(optionConfig.Suffix or "")
+                    
+                    local color
+                    
+                    color = optionConfig.Color or CONFIG.TextColor
+                    
+                    if i == currentSelectedOption then
+                        selectedOption = optionConfig.Name
+                        valueString = ">> "..valueString.." <<"
+                    end
+                    
+                    FONTS.Size10:DrawStringScaled(valueString, renderPos.X - FONTS.Size10:GetStringWidth(valueString) + CONFIG.BackgroundSpriteSize.X/2 - 5, y, 1, 1, color)
+                else
+                    break
                 end
-                local valueString = tostring(value)..(optionConfig.Suffix or "")
-
-                local color
-                
-                color = optionConfig.Color or CONFIG.TextColor
-                
-                if i == currentSelectedOption then
-                    selectedOption = optionConfig.Name
-                    valueString = ">> "..valueString.." <<"
-                end
-
-                FONTS.Size10:DrawStringScaled(valueString, renderPos.X - FONTS.Size10:GetStringWidth(valueString) + CONFIG.BackgroundSpriteSize.X/2 - 5, y, 1, 1, color)
-
-                maxOption = maxOption + 1
             end
 
             if enableInput then
                 if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENUDOWN) then
-                    currentSelectedOption = math.min(currentSelectedOption + 1, maxOption)
+                    currentSelectedOption = math.min(currentSelectedOption + 1, #Resouled.Options)
                     SFXManager():Play(SoundEffect.SOUND_MENU_SCROLL)
                 end
                 if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENUUP) then

@@ -5,6 +5,7 @@ Resouled.AfterlifeShop.Goto = {
     SoulNum = nil,
     ReplaceMusic = false,
     PlayTime = nil,
+    Seed = nil,
     SpecialBuffs = {}
 }
 
@@ -35,6 +36,7 @@ local function postGameEnd(_, isGameOver)
         Resouled.AfterlifeShop.Goto.SoulNum = Resouled:GetPossessedSoulsNum()
         Resouled.AfterlifeShop.Goto.ReplaceMusic = true
         Resouled.AfterlifeShop.Goto.PlayTime = Game().TimeCounter
+        Resouled.AfterlifeShop.Goto.Seed = Game():GetSeeds():GetStartSeed()
     else
         Resouled.AfterlifeShop.Goto.SpecialBuffs = {}
     end
@@ -51,7 +53,7 @@ Resouled:AddCallback(ModCallbacks.MC_MAIN_MENU_RENDER, function()
         black:Render(Vector(x, y))
 
         local RunParams = Resouled.AfterlifeShop.Goto
-        Isaac.StartNewGame(RunParams.PlayerType, Challenge.CHALLENGE_NULL, RunParams.Difficulty)
+        Isaac.StartNewGame(RunParams.PlayerType, Challenge.CHALLENGE_NULL, RunParams.Difficulty, RunParams.Seed)
     end
 end)
 

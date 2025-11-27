@@ -141,6 +141,8 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, function(_, player) -- 
     end
 end)
 
+include("scripts.afterlife_shop.buff_pedestal")
+include("scripts.afterlife_shop.reroll_machine")
 include("scripts.afterlife_shop.backdrop")
 include("scripts.afterlife_shop.doors_and_floor_layout")
 include("scripts.afterlife_shop.room_layout")
@@ -151,3 +153,4 @@ include("scripts.afterlife_shop.casket")
 include("scripts.afterlife_shop.wise_skull")
 include("scripts.afterlife_shop.minimap")
 include("scripts.afterlife_shop.buff_descriptions")
+include("scripts.afterlife_shop.donation_machine")

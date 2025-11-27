@@ -6,4 +6,4 @@ local function onActiveUse(_, type, rng, player)
         Game():Darken(1, 2)
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onActiveUse)
+Resouled:AddPriorityCallback(ModCallbacks.MC_USE_ITEM, CallbackPriority.IMPORTANT, onActiveUse)

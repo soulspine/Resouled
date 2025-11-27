@@ -1,6 +1,5 @@
 local function postNewRoom()
     if Resouled:RoomEventPresent(Resouled.RoomEvents.PITY_FOR_THE_POOR) then
-        print("THis happened", 1 - Resouled:GetPossessedSoulsNum()/100)
         local RoomSave = Resouled.SaveManager.GetRoomSave()
         if not RoomSave.PityForThePoor then
             RoomSave.PityForThePoorDiscount = 1 - Resouled:GetPossessedSoulsNum()/100

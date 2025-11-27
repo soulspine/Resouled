@@ -15,16 +15,18 @@ end
 ---@enum ResouledStatTrackerFields
 Resouled.StatTracker.Fields = {
     CursedEnemiesKilled = "Cursed Enemies Killed",
-    SoulsCollected = "Souls Collected",
     BuffsPickedUp = "Buffs Picked Up",
     RoomEventsEncountered = "Room Events Encountered",
+    SoulsCollected = "Souls Collected",
+    SoulsDonated = "Souls Donated"
 }
 
 Resouled.StatTracker.FiledsSorted = {
     [1] = Resouled.StatTracker.Fields.CursedEnemiesKilled,
-    [2] = Resouled.StatTracker.Fields.SoulsCollected,
-    [3] = Resouled.StatTracker.Fields.BuffsPickedUp,
-    [4] = Resouled.StatTracker.Fields.RoomEventsEncountered
+    [2] = Resouled.StatTracker.Fields.BuffsPickedUp,
+    [3] = Resouled.StatTracker.Fields.RoomEventsEncountered,
+    [4] = Resouled.StatTracker.Fields.SoulsCollected,
+    [5] = Resouled.StatTracker.Fields.SoulsDonated
 }
 
 ---@param id integer

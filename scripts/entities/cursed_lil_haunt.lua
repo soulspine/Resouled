@@ -2,6 +2,8 @@ local ID = Isaac.GetEntityTypeByName("Cursed Lil Haunt")
 local VARIANT = Isaac.GetEntityVariantByName("Cursed Lil Haunt")
 local SUBTYPE = Isaac.GetEntitySubTypeByName("Cursed Lil Haunt")
 
+Resouled:RegisterCursedEnemyMorph(ID, 10, nil, ID, VARIANT, SUBTYPE)
+
 local TP_UP = "ResouledTeleportUp"
 local TP_DOWN = "ResouledTeleportDown"
 local TP_UP_END = "ResouledTeleportUpEnd"

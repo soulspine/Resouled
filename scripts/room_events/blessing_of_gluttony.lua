@@ -1,18 +1,29 @@
-local CLEAN_REWARD_POOL = {
-    [1] = {["Variant"] = PickupVariant.PICKUP_CHEST, ["SubType"] = 0},
-    [2] = {["Variant"] = PickupVariant.PICKUP_TRINKET, ["SubType"] = 0},
-    [3] = {["Variant"] = PickupVariant.PICKUP_TAROTCARD, ["SubType"] = 0},
-    [4] = {["Variant"] = PickupVariant.PICKUP_PILL, ["SubType"] = 0},
-    [5] = {["Variant"] = PickupVariant.PICKUP_WOODENCHEST, ["SubType"] = 0},
-    [6] = {["Variant"] = PickupVariant.PICKUP_COIN, ["SubType"] = CoinSubType.COIN_DIME},
-    [7] = {["Variant"] = PickupVariant.PICKUP_KEY, ["SubType"] = KeySubType.KEY_CHARGED},
-    [8] = {["Variant"] = PickupVariant.PICKUP_BOMB, ["SubType"] = BombSubType.BOMB_GIGA},
-}
+local clearPool = {}
+
+---@param variant integer
+---@param subType integer
+local function addToClearPool(variant, subType)
+    table.insert(clearPool,
+        {
+            variant,
+            subType,
+        }
+    )
+end
+
+addToClearPool(PickupVariant.PICKUP_CHEST, 0)
+addToClearPool(PickupVariant.PICKUP_TRINKET, 0)
+addToClearPool(PickupVariant.PICKUP_TAROTCARD, 0)
+addToClearPool(PickupVariant.PICKUP_PILL, 0)
+addToClearPool(PickupVariant.PICKUP_WOODENCHEST, 0)
+addToClearPool(PickupVariant.PICKUP_COIN, CoinSubType.COIN_DIME)
+addToClearPool(PickupVariant.PICKUP_KEY, KeySubType.KEY_CHARGED)
+addToClearPool(PickupVariant.PICKUP_BOMB, BombSubType.BOMB_GIGA)
 
 local function preSpawnCleanReward()
     if Resouled:RoomEventPresent(Resouled.RoomEvents.BLESSING_OF_GLUTTONY) then
-        local randomNum = RNG(Game():GetRoom():GetAwardSeed()):RandomInt(#CLEAN_REWARD_POOL) + 1
-        Game():Spawn(EntityType.ENTITY_PICKUP, CLEAN_REWARD_POOL[randomNum]["Variant"], Isaac.GetFreeNearPosition(Game():GetRoom():GetCenterPos(), 0), Vector.Zero, nil, CLEAN_REWARD_POOL[randomNum]["SubType"], Game():GetRoom():GetAwardSeed())
+        local config = clearPool[RNG(Game():GetRoom():GetAwardSeed()):RandomInt(#clearPool) + 1]
+        Game():Spawn(EntityType.ENTITY_PICKUP, config[1], Isaac.GetFreeNearPosition(Game():GetRoom():GetCenterPos(), 0), Vector.Zero, nil, config[2], Game():GetRoom():GetAwardSeed())
         return true
     end
 end

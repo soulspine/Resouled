@@ -1,47 +1,32 @@
+---@param index integer
+local function revealRoomsAround(index)
+    local level = Game():GetLevel()
+    local roomDir = Vector(1, 0)
+
+    for i = 1, 8 do
+        local vert = roomDir.X > 0 and Direction.RIGHT or roomDir.X < 0 and Direction.LEFT or Direction.NO_DIRECTION
+        local hori = roomDir.Y > 0 and Direction.DOWN or roomDir.Y < 0 and Direction.UP or Direction.NO_DIRECTION
+        local targetIndex = Resouled:GetRoomIdxFromDir(hori, Resouled:GetRoomIdxFromDir(vert, index) or index) or index
+
+        local desc = level:GetRoomByIdx(targetIndex)
+        if desc.DisplayFlags ~= RoomDescriptor.DISPLAY_ALL then
+            desc.DisplayFlags = RoomDescriptor.DISPLAY_ALL
+        end
+
+        roomDir = roomDir:Rotated(45)
+    end
+end
+
 local function postNewRoom()
     if Resouled:RoomEventPresent(Resouled.RoomEvents.BLESSING_OF_INNER_EYE) then
         local level = Game():GetLevel()
-        local currentRoomDescriptor = level:GetCurrentRoomDesc()
-        local roomsNear1st = currentRoomDescriptor:GetNeighboringRooms()
-        
-        for i = 0, #roomsNear1st do
-            
-            local roomDescriptor2nd = roomsNear1st[i]
-            
-            if roomDescriptor2nd then
-                
-                if roomDescriptor2nd.DisplayFlags ~= RoomDescriptor.DISPLAY_ALL then
-                    roomDescriptor2nd.DisplayFlags = RoomDescriptor.DISPLAY_ALL
-                end
-                
-                local roomsNear2nd = roomDescriptor2nd:GetNeighboringRooms()
-                
-                for j = 0, #roomsNear2nd do
-                    
-                    local roomDescriptor3rd = roomsNear2nd[j]
-                    
-                    if roomDescriptor3rd then
-                        
-                        if roomDescriptor3rd.DisplayFlags ~= RoomDescriptor.DISPLAY_ALL then
-                            roomDescriptor3rd.DisplayFlags = RoomDescriptor.DISPLAY_ALL
-                        end
-                        
-                        local roomsNear3rd = roomDescriptor3rd:GetNeighboringRooms()
-                        
-                        for l = 0, #roomsNear3rd do
-                            local roomDescriptor4th = roomsNear3rd[l]
-                            
-                            if roomDescriptor4th then
-                                
-                                if roomDescriptor4th.DisplayFlags ~= RoomDescriptor.DISPLAY_ALL then
-                                    roomDescriptor4th.DisplayFlags = RoomDescriptor.DISPLAY_ALL
-                                end
-                            end
-                        end
-                    end
-                end
-            end
+        local currentIndex = level:GetCurrentRoomIndex()
+
+        for i = Direction.LEFT, Direction.DOWN do
+            revealRoomsAround(Resouled:GetRoomIdxFromDir(i, currentIndex) or currentIndex)
         end
+
+        level:UpdateVisibility()
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)

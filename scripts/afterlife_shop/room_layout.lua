@@ -3,6 +3,8 @@ local game = Game()
 local DeathStatue = Resouled.Stats.DeathStatue
 local BuffPedestal = Resouled.Stats.BuffPedestal
 local WiseSkull = Resouled.Stats.WiseSkull
+local RestockMachine = Resouled.Stats.RerollMachine
+local DonoMachine = Resouled.Stats.DontionMachine
 
 local ShopLevels = Resouled.AfterlifeShop.ShopLevels
 
@@ -19,8 +21,15 @@ local DecorationConfig = {
 }
 
 ---@param position Vector
-local function spawnBuffPedestal(position)
-    Isaac.Spawn(BuffPedestal.Type, BuffPedestal.Variant, BuffPedestal.SubType, position, Vector.Zero, nil)
+---@param seed integer
+---@param blacklist? table
+local function spawnBuffPedestal(position, seed, blacklist)
+    seed = game:GetSeeds():GetStartSeed() + seed
+    local pedestal = Game():Spawn(BuffPedestal.Type, BuffPedestal.Variant, position, Vector.Zero, nil, BuffPedestal.SubType, seed):ToPickup()
+    if not pedestal then return end
+    local buff = Resouled:GetShopBuffRoll(seed, 0, blacklist) or 0
+    blacklist[buff] = true
+    pedestal:SetVarData(buff)
 end
 
 local buffPos = {
@@ -63,11 +72,22 @@ local function mainShopLayout()
     local room = game:GetRoom()
     local centerPos = room:GetCenterPos()
 
+    local topLeft = room:GetTopLeftPos()
+    local bottomRight = room:GetBottomRightPos()
+
+    local blacklist = {}
+
     Resouled.AfterlifeShop:SetShopLevel(Resouled.AfterlifeShop.ShopLevels.Level5)
     local shopLevel = Resouled.AfterlifeShop:GetShopLevel()
     for i = 1, #buffPos[shopLevel] do
-        spawnBuffPedestal(centerPos + buffPos[shopLevel][i])
+        spawnBuffPedestal(centerPos + buffPos[shopLevel][i], 10000 * i, blacklist)
     end
+
+    if shopLevel >= ShopLevels.Level3 then
+        game:Spawn(EntityType.ENTITY_EFFECT, RestockMachine.Variant, Vector(bottomRight.X - 64, bottomRight.Y - 64), Vector.Zero, nil, RestockMachine.SubType, Random())
+    end
+
+    game:Spawn(DonoMachine.Type, DonoMachine.Variant, Vector(bottomRight.X - 48, topLeft.Y + 48), Vector.Zero, nil, DonoMachine.SubType, Random())
 end
 
 local specialBuffPos = {

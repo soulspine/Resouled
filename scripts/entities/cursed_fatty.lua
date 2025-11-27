@@ -32,14 +32,7 @@ local PICKUP_BLACKLIST = {
     [PickupVariant.PICKUP_MOMSCHEST] = true,
 }
     
----@param npc EntityNPC
-local function onNpcInit(_, npc)
-    --Try to turn enemy into a cursed enemy
-    if Game():GetLevel():GetCurses() > 0 then
-        Resouled:TryEnemyMorph(npc, Resouled.Stats.CursedEnemyMorphChance(), CURSED_FATTY_TYPE, CURSED_FATTY_VARIANT, CURSED_FATTY_SUBTYPE)
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CURSED_FATTY_TYPE)
+Resouled:RegisterCursedEnemyMorph(EntityType.ENTITY_FATTY, nil, nil, CURSED_FATTY_TYPE, CURSED_FATTY_VARIANT, CURSED_FATTY_SUBTYPE)
 
 ---@param npc EntityNPC
 local function onNpcUpdate(_, npc)

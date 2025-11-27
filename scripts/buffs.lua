@@ -76,6 +76,10 @@ Resouled.BuffRarity = {
     SPECIAL = 3,
 }
 
+local COMMON_BASE_PRICE = 4
+local RARE_BASE_PRICE = 7
+local LEGENDARY_BASE_PRICE = 10
+
 -- REGISTERING BUFF FAMILIES
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.CURSED_SKULL, "Cursed Skull", "gfx/buffs/cursed_skull.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.STEAM_SALE, "Steam Sale", "gfx/buffs/steam_sale.png")
@@ -106,53 +110,53 @@ Resouled:RegisterBuffRarity(Resouled.BuffRarity.LEGENDARY, "Legendary", 0.1)
 Resouled:RegisterBuffRarity(Resouled.BuffRarity.SPECIAL, "Special", 0)
 
 -- REGISTERING BUFFS
-Resouled:RegisterBuff(Resouled.Buffs.CURSED_SKULL, "Cursed Skull", 3, Resouled.BuffRarity.COMMON,
+Resouled:RegisterBuff(Resouled.Buffs.CURSED_SKULL, "Cursed Skull", COMMON_BASE_PRICE, Resouled.BuffRarity.COMMON,
     Resouled.BuffFamilies.CURSED_SKULL, false)
-Resouled:RegisterBuff(Resouled.Buffs.DEVILS_HEAD, "Devil's Head", 5, Resouled.BuffRarity.RARE,
+Resouled:RegisterBuff(Resouled.Buffs.DEVILS_HEAD, "Devil's Head", RARE_BASE_PRICE, Resouled.BuffRarity.RARE,
     Resouled.BuffFamilies.CURSED_SKULL, false)
-Resouled:RegisterBuff(Resouled.Buffs.FORBIDDEN_CRANIUM, "Forbidden Cranium", 8, Resouled.BuffRarity.LEGENDARY,
+Resouled:RegisterBuff(Resouled.Buffs.FORBIDDEN_CRANIUM, "Forbidden Cranium", LEGENDARY_BASE_PRICE, Resouled.BuffRarity.LEGENDARY,
     Resouled.BuffFamilies.CURSED_SKULL, false)
-Resouled:RegisterBuff(Resouled.Buffs.STEAM_SALE, "Steam Sale", 3, Resouled.BuffRarity.COMMON,
+Resouled:RegisterBuff(Resouled.Buffs.STEAM_SALE, "Steam Sale", COMMON_BASE_PRICE, Resouled.BuffRarity.COMMON,
     Resouled.BuffFamilies.STEAM_SALE, true)
-Resouled:RegisterBuff(Resouled.Buffs.STEAM_GIVEAWAY, "Steam Giveaway", 5, Resouled.BuffRarity.RARE,
+Resouled:RegisterBuff(Resouled.Buffs.STEAM_GIVEAWAY, "Steam Giveaway", RARE_BASE_PRICE, Resouled.BuffRarity.RARE,
     Resouled.BuffFamilies.STEAM_SALE, false)
-Resouled:RegisterBuff(Resouled.Buffs.PIRACY, "Piracy", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies
+Resouled:RegisterBuff(Resouled.Buffs.PIRACY, "Piracy", LEGENDARY_BASE_PRICE, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies
     .STEAM_SALE, false)
-Resouled:RegisterBuff(Resouled.Buffs.CROSS, "Cross", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.CROSS, false)
-Resouled:RegisterBuff(Resouled.Buffs.RELIC, "Relic", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.CROSS, false)
-Resouled:RegisterBuff(Resouled.Buffs.CRUCIFIX, "Crucifix", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.CROSS,
+Resouled:RegisterBuff(Resouled.Buffs.CROSS, "Cross", COMMON_BASE_PRICE, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.CROSS, false)
+Resouled:RegisterBuff(Resouled.Buffs.RELIC, "Relic", RARE_BASE_PRICE, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.CROSS, false)
+Resouled:RegisterBuff(Resouled.Buffs.CRUCIFIX, "Crucifix", LEGENDARY_BASE_PRICE, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.CROSS,
     false)
-Resouled:RegisterBuff(Resouled.Buffs.KIDS_DRAWING, "Kid's Drawing", 3, Resouled.BuffRarity.COMMON,
+Resouled:RegisterBuff(Resouled.Buffs.KIDS_DRAWING, "Kid's Drawing", COMMON_BASE_PRICE, Resouled.BuffRarity.COMMON,
     Resouled.BuffFamilies.KIDS_DRAWING, true)
-Resouled:RegisterBuff(Resouled.Buffs.FORGOTTEN_POLAROID, "Forgotten Polaroid", 5, Resouled.BuffRarity.RARE,
+Resouled:RegisterBuff(Resouled.Buffs.FORGOTTEN_POLAROID, "Forgotten Polaroid", RARE_BASE_PRICE, Resouled.BuffRarity.RARE,
     Resouled.BuffFamilies.KIDS_DRAWING, true)
-Resouled:RegisterBuff(Resouled.Buffs.BROKEN_MEMORY, "Broken Memory", 8, Resouled.BuffRarity.LEGENDARY,
+Resouled:RegisterBuff(Resouled.Buffs.BROKEN_MEMORY, "Broken Memory", LEGENDARY_BASE_PRICE, Resouled.BuffRarity.LEGENDARY,
     Resouled.BuffFamilies.KIDS_DRAWING, true)
-Resouled:RegisterBuff(Resouled.Buffs.ZODIAC_SIGN, "Zodiac Sign", 3, Resouled.BuffRarity.COMMON,
+Resouled:RegisterBuff(Resouled.Buffs.ZODIAC_SIGN, "Zodiac Sign", COMMON_BASE_PRICE, Resouled.BuffRarity.COMMON,
     Resouled.BuffFamilies.ZODIAC_SIGN, false)
-Resouled:RegisterBuff(Resouled.Buffs.CONSTELLATION, "Constellation", 5, Resouled.BuffRarity.RARE,
+Resouled:RegisterBuff(Resouled.Buffs.CONSTELLATION, "Constellation", RARE_BASE_PRICE, Resouled.BuffRarity.RARE,
     Resouled.BuffFamilies.ZODIAC_SIGN, false)
-Resouled:RegisterBuff(Resouled.Buffs.HEAVENS_CALL, "Heaven's Call", 8, Resouled.BuffRarity.LEGENDARY,
+Resouled:RegisterBuff(Resouled.Buffs.HEAVENS_CALL, "Heaven's Call", LEGENDARY_BASE_PRICE, Resouled.BuffRarity.LEGENDARY,
     Resouled.BuffFamilies.ZODIAC_SIGN, true)
-Resouled:RegisterBuff(Resouled.Buffs.IMP, "Imp", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.IMP, false)
-Resouled:RegisterBuff(Resouled.Buffs.FIEND, "Fiend", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.IMP, false)
-Resouled:RegisterBuff(Resouled.Buffs.DEMON, "Demon", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.IMP, false)
-Resouled:RegisterBuff(Resouled.Buffs.METEOR, "Meteor", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.METEOR, false)
-Resouled:RegisterBuff(Resouled.Buffs.THE_MOON, "The Moon", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.METEOR,
+Resouled:RegisterBuff(Resouled.Buffs.IMP, "Imp", COMMON_BASE_PRICE, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.IMP, false)
+Resouled:RegisterBuff(Resouled.Buffs.FIEND, "Fiend", RARE_BASE_PRICE, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.IMP, false)
+Resouled:RegisterBuff(Resouled.Buffs.DEMON, "Demon", LEGENDARY_BASE_PRICE, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.IMP, false)
+Resouled:RegisterBuff(Resouled.Buffs.METEOR, "Meteor", COMMON_BASE_PRICE, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.METEOR, false)
+Resouled:RegisterBuff(Resouled.Buffs.THE_MOON, "The Moon", RARE_BASE_PRICE, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.METEOR,
     true)
-Resouled:RegisterBuff(Resouled.Buffs.THE_SUN, "The Sun", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.METEOR,
+Resouled:RegisterBuff(Resouled.Buffs.THE_SUN, "The Sun", LEGENDARY_BASE_PRICE, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.METEOR,
     true)
-Resouled:RegisterBuff(Resouled.Buffs.BLUE_KING_CROWN, "Blue King Crown", 3, Resouled.BuffRarity.COMMON,
+Resouled:RegisterBuff(Resouled.Buffs.BLUE_KING_CROWN, "Blue King Crown", COMMON_BASE_PRICE, Resouled.BuffRarity.COMMON,
     Resouled.BuffFamilies.BLUE_KING_CROWN, false)
-Resouled:RegisterBuff(Resouled.Buffs.KING_CROWN, "King Crown", 5, Resouled.BuffRarity.RARE,
+Resouled:RegisterBuff(Resouled.Buffs.KING_CROWN, "King Crown", RARE_BASE_PRICE, Resouled.BuffRarity.RARE,
     Resouled.BuffFamilies.BLUE_KING_CROWN, false)
-Resouled:RegisterBuff(Resouled.Buffs.ROYAL_CROWN, "Royal Crown", 8, Resouled.BuffRarity.LEGENDARY,
+Resouled:RegisterBuff(Resouled.Buffs.ROYAL_CROWN, "Royal Crown", LEGENDARY_BASE_PRICE, Resouled.BuffRarity.LEGENDARY,
     Resouled.BuffFamilies.BLUE_KING_CROWN, false)
-Resouled:RegisterBuff(Resouled.Buffs.SCARY_FACE, "Scary Face", 3, Resouled.BuffRarity.COMMON,
+Resouled:RegisterBuff(Resouled.Buffs.SCARY_FACE, "Scary Face", COMMON_BASE_PRICE, Resouled.BuffRarity.COMMON,
     Resouled.BuffFamilies.SCARY_FACE, false)
-Resouled:RegisterBuff(Resouled.Buffs.FRIGHTENING_VISAGE, "Frightening Visage", 5, Resouled.BuffRarity.RARE,
+Resouled:RegisterBuff(Resouled.Buffs.FRIGHTENING_VISAGE, "Frightening Visage", RARE_BASE_PRICE, Resouled.BuffRarity.RARE,
     Resouled.BuffFamilies.SCARY_FACE, false)
-Resouled:RegisterBuff(Resouled.Buffs.TERRIFYING_PHYSIOGNOMY, "Terrifying Physiognomy", 8, Resouled.BuffRarity.LEGENDARY,
+Resouled:RegisterBuff(Resouled.Buffs.TERRIFYING_PHYSIOGNOMY, "Terrifying Physiognomy", LEGENDARY_BASE_PRICE, Resouled.BuffRarity.LEGENDARY,
     Resouled.BuffFamilies.SCARY_FACE, false)
 
 Resouled:RegisterBuff(Resouled.Buffs.WAR, "War", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.WAR, false,
@@ -174,9 +178,9 @@ Resouled:RegisterBuff(Resouled.Buffs.PESTILENCE, "Pestilence", 0, Resouled.BuffR
     Resouled.BuffFamilies.PESTILENCE, false, Resouled.Souls.PESTILENCE)
 Resouled:RegisterBuff(Resouled.Buffs.FAMINE, "Famine", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.FAMINE,
     false, Resouled.Souls.FAMINE)
-Resouled:RegisterBuff(Resouled.Buffs.SMALL_CAP, "Small Cap", 3, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.SMALL_CAP, false)
-Resouled:RegisterBuff(Resouled.Buffs.MEDIUM_CAP, "Meduim Cap", 5, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.SMALL_CAP, false)
-Resouled:RegisterBuff(Resouled.Buffs.BIG_CAP, "Big Cap", 8, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.SMALL_CAP, false)
+Resouled:RegisterBuff(Resouled.Buffs.SMALL_CAP, "Small Cap", COMMON_BASE_PRICE, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.SMALL_CAP, false)
+Resouled:RegisterBuff(Resouled.Buffs.MEDIUM_CAP, "Meduim Cap", RARE_BASE_PRICE, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.SMALL_CAP, false)
+Resouled:RegisterBuff(Resouled.Buffs.BIG_CAP, "Big Cap", LEGENDARY_BASE_PRICE, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.SMALL_CAP, false)
 
 
 Resouled:Log("Loaded " .. tostring(#Resouled:GetBuffs()) .. " buffs")

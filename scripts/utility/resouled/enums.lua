@@ -58,6 +58,41 @@ enums.Trinkets = {
     GAME_SQUID = Isaac.GetTrinketIdByName("Game Squid"),
 }
 
+enums.Effects = {
+    AIR_SHOCKWAVE = Resouled:GetEntityByName("Air Shockwave"),
+    TORNADO = Resouled:GetEntityByName("Tornado"),
+    HUNTER_CLAWS = Resouled:GetEntityByName("COTH attack claws"),
+    HUNTER_SPEAR = Resouled:GetEntityByName("COTH attack spear"),
+    PAPER_GORE_PARTICLE = Resouled:GetEntityByName("Paper Gore Particle"),
+    DEATH_STATUE = Resouled:GetEntityByName("Death Statue"),
+    CHAIN_PARTICLE = Resouled:GetEntityByName("Chain Particle"),
+    WOOD_PARTICLE = Resouled:GetEntityByName("Wood Particle"),
+    WOOD_GOLD_PARTICLE = Resouled:GetEntityByName("Wood Gold Particle"),
+    DISAPPEAR = Resouled:GetEntityByName("Disappear"),
+    GAVEL = Resouled:GetEntityByName("Gavel"),
+    BALL_SPARKLE = Resouled:GetEntityByName("Ball Sparkle"),
+
+    MUSIC_NOTE = Resouled:GetEntityByName("Music Note"),
+    SOUL_LANTERN = Resouled:GetEntityByName("Soul Lantern"),
+    SHUFFLE = Resouled:GetEntityByName("Shuffle"),
+    SHUFFLE_SKULL = Resouled:GetEntityByName("Shuffle Skull"),
+
+    STUN_TENTACLE_BLACK = Resouled:GetEntityByName("Stun Tentacle (Black)"),
+    STUN_TENTACLE_PINK = Resouled:GetEntityByName("Stun Tentacle (Pink)"),
+
+    PINK_CRACKED_EGG_PARTICLE = Resouled:GetEntityByName("Pink Cracked Egg Particle"),
+    WHITE_CRACKED_EGG_PARTICLE = Resouled:GetEntityByName("White Cracked Egg Particle"),
+    CLEAR_CRACKED_EGG_PARTICLE = Resouled:GetEntityByName("Clear Cracked Egg Particle"),
+
+    CLUB = Resouled:GetEntityByName("Resouled Club"),
+    CLUB_SWING = Resouled:GetEntityByName("Resouled Club Swing"),
+
+    AFTERLIFE_BACKDROP_DECORATION = Resouled:GetEntityByName("Afterlife Backdrop Decoration"),
+    MINI_NUKE = Resouled:GetEntityByName("Mini Nuke"),
+    AFTERLIFE_BACKDROP_FIX = Resouled:GetEntityByName("Afterlife Backdrop Fix"),
+}
+
+
 enums.Buffs = Resouled.Buffs
 
 -- Values double down as animation names in /gfx/status_effects/status_effects.anm2

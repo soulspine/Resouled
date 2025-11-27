@@ -320,7 +320,7 @@ local function postFloorGenerate()
 
         layout[makeLookupKey(currentIndex)] = setRoomType(Resouled.AfterlifeShop.RoomTypes.SecretFight)
 
-        currentIndex = moveAroundMap(currentIndex, Direction.RIGHT)
+        currentIndex = moveAroundMap(shopIdx, Direction.UP)
         
         layout[makeLookupKey(currentIndex)] = setRoomType(Resouled.AfterlifeShop.RoomTypes.SoulSanctum)
 

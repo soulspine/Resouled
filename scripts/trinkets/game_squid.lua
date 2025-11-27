@@ -1,5 +1,5 @@
-local TRINKET = Isaac.GetTrinketIdByName("Game Squid")
-local TENTACLE = Resouled:GetEntityByName("Stun Tentacle (Pink)")
+local TRINKET = Resouled.Enums.Trinkets.GAME_SQUID
+local TENTACLE = Resouled.Enums.Effects.STUN_TENTACLE_PINK
 
 local CONFIG = {
     ApplyChance = 0.12,
@@ -31,7 +31,6 @@ Resouled.EID:AddTrinketConditional(TRINKET, "Resouled__GameSquid_Golden",
     end
 )
 
-
 ---@param entity Entity
 ---@param amount number
 ---@param flags DamageFlag
@@ -40,6 +39,7 @@ Resouled.EID:AddTrinketConditional(TRINKET, "Resouled__GameSquid_Golden",
 local function onEntityDamage(_, entity, amount, flags, source, countdown)
     local npc = entity:ToNPC()
     if not npc or not npc:IsVulnerableEnemy() then return end
+
 
     local data = entity:GetData()
     if data.Resouled__GameSquidCooldown then return end
@@ -76,4 +76,3 @@ local function onNpcUpdate(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onNpcUpdate)
-local TRINKET = Isaac.GetTrinketIdByName("Game Squid")

@@ -4,8 +4,10 @@ local CONFIG = {
     SwingHitboxRadius = 25,
     SpinStep = 20,
     HoldOffset = Vector(0, -6),
-    KnockbackVelocity = 40,
-    KnockbackDamageTimeout = 30,
+    SplashDamageRadius = 50,
+    KnockbackVelocity = 5,
+    KnockupDuration = 50, -- in render frames, so 2x more than updates
+    KnockupHeight = 100,
     ChargeIndicator = {
         Scale = 1,
         Offset = Vector(16, 16),
@@ -16,24 +18,43 @@ local CONFIG = {
     ---@param playerDamage number
     ---@return number
     OnHitDamageFormula = function(playerDamage)
-        return 0.7 * playerDamage
+        return 0.2 * playerDamage
     end,
     ---@param playerDamage number
     ---@return number
-    KnockbackImpactDamageFormula = function(playerDamage)
+    LadingDamageFormula = function(playerDamage)
         return 1.2 * playerDamage
     end,
     ---@param playerDamage number
     ---@param enemyHealth number
     ---@return number
-    KnockbackExplosionDamageFormula = function(playerDamage, enemyHealth)
+    LandingExplosionDamageFormula = function(playerDamage, enemyHealth)
         return 0.3 * playerDamage + 0.5 * enemyHealth
     end,
-    ---@param fireDelay number
-    ---@return number
-    CooldownFormula = function(fireDelay)
-        return 90
+}
+
+---@param fireDelay number
+---@return number
+CONFIG.CooldownFormula = function(fireDelay)
+    -- https://www.desmos.com/calculator/z0xxhwhsy1
+    local num = 0
+    if fireDelay >= 10 then
+        num = 60 + 3 * math.log(fireDelay - 9, 10)
+    else
+        num = 6 + (6 / 25) * (fireDelay + 5) ^ 2
     end
+    return num
+end
+
+---@param durationLeft integer
+CONFIG.KnockupHeightFormula = function(durationLeft)
+    -- https://www.desmos.com/calculator/8yk3wubzmp
+    return -4 * (CONFIG.KnockupHeight) / CONFIG.KnockupDuration ^ 2 * durationLeft *
+        (durationLeft - CONFIG.KnockupDuration)
+end
+
+local DEBUG = {
+    ConsumeCharges = false,
 }
 
 local EFFECTS = {
@@ -194,7 +215,9 @@ local function onPlayerUpdate(_, player)
         clubSprite:Play(data.AttackString % 2 == 0 and EFFECTS.Club.Attack[1] or EFFECTS.Club.Attack[2], true)
         spawnSwing(player, data.AttackString % 2 == 0, (shootVector:GetAngleDegrees() - 90) % 360)
         data.AttackString = (data.AttackString + 1) % 2
-        player:SetActiveVarData(itemDesc.VarData - 1, data.Slot)
+        if DEBUG.ConsumeCharges then
+            player:SetActiveVarData(itemDesc.VarData - 1, data.Slot)
+        end
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, onPlayerUpdate)
@@ -313,9 +336,9 @@ local function onSwingEffectUpdate(_, effect)
 
         if not data.Resouled__ClubEffectEnemiesHit[GetPtrHash(enemy)] then
             ---@diagnostic disable-next-line: param-type-mismatch
-            if Resouled:IsValidEnemy(enemy:ToNPC()) then
+            if Resouled:IsValidEnemy(enemy:ToNPC()) and not enemy:IsBoss() then
                 enemy:TakeDamage(CONFIG.OnHitDamageFormula(effect.Parent:ToPlayer().Damage), 0, EntityRef(effect.Parent),
-                    0)
+                    10)
 
                 local removeFlag = false
 
@@ -325,9 +348,16 @@ local function onSwingEffectUpdate(_, effect)
                 end
 
                 enemy:GetData().Resouled__ClubKnockback = {
-                    Timeout = CONFIG.KnockbackDamageTimeout,
+                    Timeout = CONFIG.KnockupDuration,
                     RemoveFlag = removeFlag,
+                    InitialOffsetY = enemy.SpriteOffset.Y,
+                    InitialEntColClass = enemy.EntityCollisionClass,
+                    InitialGridColClass = enemy.GridCollisionClass,
+                    PlayerId = effect.Parent.Index,
                 }
+
+                enemy.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_WALLS
+                enemy.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
             end
             data.Resouled__ClubEffectEnemiesHit[GetPtrHash(enemy)] = true
             enemy.Velocity = enemy.Velocity +
@@ -345,8 +375,19 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_EFFECT_UPDATE, onSwingEffectUpdate, EFF
 
 ---@param npc EntityNPC
 local function onNpcUpdate(_, npc)
+    if npc:GetData().Resouled__ClubKnockback then
+        return true
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, onNpcUpdate)
+
+---@param npc EntityNPC
+local function onNpcRender(_, npc)
+    if Game():IsPaused() then return end
     local data = npc:GetData().Resouled__ClubKnockback
     if not data then return end
+
+    npc.SpriteOffset.Y = data.InitialOffsetY - CONFIG.KnockupHeightFormula(data.Timeout)
 
     data.Timeout = math.max(data.Timeout - 1, 0)
 
@@ -355,7 +396,36 @@ local function onNpcUpdate(_, npc)
             npc:ClearEntityFlags(EntityFlag.FLAG_SLIPPERY_PHYSICS)
         end
 
+        npc.SpriteOffset.Y = data.InitialOffsetY
+        npc.EntityCollisionClass = data.InitialEntColClass
+        npc.GridCollisionClass = data.InitialGridColClass
+
+        local player = Isaac.GetPlayer(data.PlayerId)
+        npc:TakeDamage(
+            CONFIG.LadingDamageFormula(player.Damage),
+            0,
+            EntityRef(player),
+            10
+        )
+
+        local enemies = Isaac.FindInRadius(npc.Position, CONFIG.SplashDamageRadius, EntityPartition.ENEMY)
+        for _, enemy in ipairs(enemies) do
+            if GetPtrHash(enemy) ~= GetPtrHash(npc) then
+                enemy:TakeDamage(
+                    CONFIG.LandingExplosionDamageFormula(player.Damage, npc.MaxHitPoints),
+                    0,
+                    EntityRef(player),
+                    10
+                )
+            end
+        end
+
+        -- instakill if lands on a pit
+        local currentGrid = Game():GetRoom():GetGridEntityFromPos(npc.Position)
+        if not npc:IsFlying() and currentGrid and currentGrid:GetType() == GridEntityType.GRID_PIT then
+            npc:Die()
+        end
         npc:GetData().Resouled__ClubKnockback = nil
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onNpcUpdate)
+Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_RENDER, onNpcRender)

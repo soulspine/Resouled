@@ -292,7 +292,7 @@ local PAGES = {
 
                     if buffDesc then
                         
-                        if Resouled:PendingBuffPresent(buffDesc.Id) then
+                        if Resouled:PendingBuffPresent(buffDesc.Id) or Resouled:ActiveBuffPresent(buffDesc.Id) then
                             
                             BUFF_SPRITE:ReplaceSpritesheet(0, familyDesc.Spritesheet, true)
                             BUFF_SPRITE:Play(Resouled:GetBuffRarityById(buffDesc.Rarity).Name, true)

@@ -914,3 +914,13 @@ function Resouled:IsPlayerShooting(player)
         Input.IsActionPressed(ButtonAction.ACTION_SHOOTUP, player.ControllerIndex) or
         Input.IsActionPressed(ButtonAction.ACTION_SHOOTDOWN, player.ControllerIndex)
 end
+
+---@param speed integer
+---@param offset? integer
+---@return number
+function Resouled:GetPhaseLevel(speed, offset)
+    local frame = Isaac.GetFrameCount() + (offset or 0)
+    local maxAnimTime = speed
+    local maxAnimTime2 = speed * 2
+    return math.abs((frame % maxAnimTime / maxAnimTime) - (frame % maxAnimTime2 / maxAnimTime2)) * 2
+end

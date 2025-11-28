@@ -51,12 +51,28 @@ local EID_BUFFS = {
         [Resouled.Buffs.ZODIAC_SIGN] = "First treasure room item is a zodiac sign",
 }
 
-for buff, description in pairs(EID_BUFFS) do
-    Resouled:AddBuffDescription(buff, description)
+for id, desc in ipairs(EID_BUFFS) do
+    Resouled:AddBuffDescription(id, desc)
 end
 
+local buffPedestal = Resouled.Stats.BuffPedestal
 
+local nameFont = Font()
+local descFont = Font()
+nameFont:Load("font/teammeatfont16bold.fnt")
+descFont:Load("font/teammeatfont10.fnt")
 
+local dotSprite = Sprite()
+dotSprite:Load("gfx/ui/description_dot.anm2", true)
+dotSprite:Play("Idle", true)
+local boxSprite = Sprite()
+boxSprite:Load("gfx/ui/buff_description_box.anm2", true)
+local BOX_SPRITE_SCALE = Vector(32, 32)
+local maxBoxSpriteAlpha = 0.75
+
+local playbackSpeed = 0.5
+local startPos = Vector(30, 30)
+local maxDescriptionRange = 175
 
 Resouled.BuffRarityDescriptionColors = {
     [Resouled.BuffRarity.COMMON] = KColor(117/255, 152/255, 161/255, 1),
@@ -65,275 +81,221 @@ Resouled.BuffRarityDescriptionColors = {
     [Resouled.BuffRarity.SPECIAL] = KColor(1, 1, 1, 1)
 }
 
-local buffDescriptionConfigs = {}
 
-local buffPedestal = Resouled.Stats.BuffPedestal
+---@param width number
+---@param height number
+local function getBoxSize(width, height)
+    return Vector(math.ceil(width/BOX_SPRITE_SCALE.X) + 2, math.ceil(height/BOX_SPRITE_SCALE.Y) + 2)
+end
 
-local Background = Sprite()
-Background:Load("gfx/ui/buff_desc_background.anm2", true)
-Background:Play("Idle", true)
-Background.Color.A = 0.75
-
-local NameFont = Font()
-NameFont:Load("font/upheaval.fnt")
-
-local DescFont = Font()
-DescFont:Load("font/luamini.fnt")
+local MAX_WIDTH = 5
 
 local ENDL = "//endl//"
 
-local startPos = Vector(12, 12)
-local MAX_WIDTH = 125
-local NEW_LINE = ">> "
-
----@param Name string
----@param maxWidth? number
+---@param s string
+---@param font Font
+---@param space? boolean
 ---@return table
-local function alignName(Name, maxWidth)
-    local alignedDesc = {}
-    
+local function alignText(s, font, space)
+    space = space or false
+    local alignedByEndl = {}
+    local aligned = {}
+
+    while true do
+        local endl = s:find(ENDL)
+        if endl then
+            alignedByEndl[#alignedByEndl+1] = s:sub(1, endl-1)
+            s = s:sub(endl+ENDL:len()+1, s:len())
+        else break end
+    end
+
+    if s ~= "" then
+        alignedByEndl[#alignedByEndl+1] = s
+    end
+
+    local len = 0
     local lastSpace = 1
 
-    ::Start::
-
-    local length = 0
-
-    for i = 1, Name:len() do
-        local char = Name:sub(i, i)
-
-        if char == " " then
-            lastSpace = i
-        end
-        length = length + NameFont:GetStringWidth(char)
-
-        if length > (maxWidth or MAX_WIDTH) then
-            alignedDesc[#alignedDesc+1] = Name:sub(1, lastSpace)
-            Name = Name:sub(lastSpace + 1, Name:len())
-            goto Start
-        end
-    end
-
-    if Name ~= "" then
-        alignedDesc[#alignedDesc+1] = Name
-    end
-
-    return alignedDesc
-end
-
----@param Family string
----@param maxWidth? number
----@return table
-local function alignFamily(Family, maxWidth)
-    local alignedDesc = {}
     
-    local lastSpace = 1
-
-    ::Start::
-
-    local length = 0
-
-    for i = 1, Family:len() do
-        local char = Family:sub(i, i)
-
-        if char == " " then
-            lastSpace = i
+    for _, string in ipairs(alignedByEndl) do
+        s = string
+        if space then
+            s = "    "..s
         end
-        length = length + DescFont:GetStringWidth(char)
+        ::Start::
 
-        if length > (maxWidth or MAX_WIDTH) then
-            alignedDesc[#alignedDesc+1] = Family:sub(1, lastSpace)
-            Family = Family:sub(lastSpace + 1, Family:len())
-            goto Start
-        end
-    end
-
-    if Family ~= "" then
-        alignedDesc[#alignedDesc+1] = Family
-    end
-
-    return alignedDesc
-end
-
----@param description string
----@param maxWidth? number
----@return table
-local function alignDesc(description, maxWidth)
-    local alignedDesc = {}
-    
-    description = NEW_LINE..description
-    
-    local lastSpace = 1
-
-    ::Start::
-
-    local length = 0
-
-    for i = 1, description:len() do
-        local char = description:sub(i, i)
-
-        if char == " " then
-            lastSpace = i
-        end
-        length = length + DescFont:GetStringWidth(char)
+        for i = 1, s:len() do
+            local c = s:sub(i, i)
+            if c == ' ' then lastSpace = i end
+            len = len + font:GetStringWidth(c)
         
-        local endline = description:find(ENDL)
-        if endline then
-            if i == endline then
-                alignedDesc[#alignedDesc+1] = description:sub(1, i - 1)
-                description = NEW_LINE..description:sub(i + 1 + ENDL:len(), description:len())
+            if getBoxSize(len, 0).X > MAX_WIDTH + 2 then
+                aligned[#aligned+1] = s:sub(1, lastSpace)
+                s = s:sub(lastSpace + 1, s:len())
+                len = 0
                 goto Start
             end
         end
-
-        if length > (maxWidth or MAX_WIDTH) then
-            alignedDesc[#alignedDesc+1] = description:sub(1, lastSpace)
-            description = description:sub(lastSpace + 1, description:len())
-            goto Start
+        if s ~= '' then
+            aligned[#aligned+1] = s
+            len = 0
         end
     end
 
-    if description ~= "" then
-        alignedDesc[#alignedDesc+1] = description
-    end
 
-    return alignedDesc
-end
-
-local outline = 10
-local LINE_OFFSET = 12
-
----@param config table
----@return number
-local function getBoxHeightFromConfig(config)
-    local length = 0
-    local offset = 0
-        
-    local i = 0
-        
-    local lineHeightName = NameFont:GetLineHeight() - 2
-        
-    for _, _ in pairs(config.Name) do
-        i = i + 1
-    end
-    offset = offset + lineHeightName * (i - 1) + lineHeightName/2
-        
-    i = 0
-
-    local lineHeightDesc = DescFont:GetLineHeight()
-    for _, _ in pairs(config.Family) do
-        i = i + 1
-    end
-        
-    offset = offset + lineHeightDesc * i
-        
-    i = 0
-
-    offset = offset + LINE_OFFSET
-
-    for _, _ in pairs(config.Description) do
-        i = i + 1
-        length = math.max(length, lineHeightDesc * (i - 1) + offset)
-    end
-
-    return length
+    return aligned
 end
 
 
----@param font Font
----@param string string
----@param posX number
----@param posY number
----@param color KColor
----@param color2 KColor
----@param maxWidth? integer
----@param center? boolean
-local function drawString(font, string, posX, posY, color, color2, maxWidth, center)
-    font:DrawString(string, posX + 1, posY + 1, color2, maxWidth, center)
-    font:DrawString(string, posX, posY, color, maxWidth, center)
+
+local descsAligned = {}
+
+for id, desc in pairs(Resouled.Stats.BuffDescriptions) do
+    local buff = Resouled:GetBuffById(id)
+    descsAligned[id] = {
+        Name = alignText(buff and buff.Name or "No Name", nameFont),
+        Desc = alignText(desc or "No Description", descFont, true),
+        Color = Resouled.BuffRarityDescriptionColors[buff and buff.Rarity or Resouled.BuffRarity.SPECIAL]
+    }
 end
 
-local function renderDescription(buffId)
-    local config = buffDescriptionConfigs[buffId]
-    if config then
-        local maxWidth = config.BoxWidth
 
-        ---@type KColor
-        local color = config.Color
-        local colorShadow = KColor(color.Red/2, color.Green/2, color.Blue/2, color.Alpha/2)
 
-        if not config.BoxLength then
-            config.BoxLength = getBoxHeightFromConfig(config)
-        end
+---@param pos Vector
+---@param width integer
+---@param height integer
+local function renderBox(pos, width, height)
+    boxSprite.Scale = Vector(1, 1)
 
-        Background.Scale = Vector(maxWidth + outline, config.BoxLength + outline)
+    local frame = math.floor((Isaac.GetFrameCount()%(16/playbackSpeed)) * playbackSpeed)
+    boxSprite:SetFrame("topLeft", frame)
+    boxSprite:Render(pos)
 
-        Background:Render(Vector(startPos.X - outline/2, startPos.Y - outline/2))
+    local offset = Vector(0, 0)
 
-        local offset = 0
-        
-        local i = 0
-        
-        local lineHeightName = NameFont:GetLineHeight() - 2
-        
-        for _, string in pairs(config.Name) do
-            drawString(NameFont, string, startPos.X, startPos.Y + lineHeightName * (i - 1) + lineHeightName/2, color, colorShadow, maxWidth, true)
-            i = i + 1
-            
-        end
-        offset = offset + lineHeightName * (i - 1) + lineHeightName/2
-        
-        local dotString = ""
-        local dotLength = DescFont:GetStringWidth("-")
-        local dotStringLength = 0
-        while dotStringLength <= maxWidth do
-            dotStringLength = dotStringLength + dotLength
-            if dotStringLength <= maxWidth then
-                dotString = dotString.."-"
-            end
-        end
-        
-        drawString(DescFont, dotString, startPos.X, startPos.Y + offset - LINE_OFFSET/2, color, colorShadow, maxWidth, true)
-        
-        i = 0
+    boxSprite:SetFrame("top", frame)
+    for _ = 1, width - 2 do
+        boxSprite:Render(pos + offset)
+        offset.X = offset.X + BOX_SPRITE_SCALE.X
+    end
 
-        local lineHeightDesc = DescFont:GetLineHeight()
-        for _, string in pairs(config.Family) do
-            drawString(DescFont, string, startPos.X, startPos.Y + LINE_OFFSET * i + offset, color, colorShadow, maxWidth, true)
-            i = i + 1
-        end
-        
-        offset = offset + lineHeightDesc * i
-        
-        i = 0
-        
-        drawString(DescFont, dotString, startPos.X, startPos.Y + LINE_OFFSET * i + offset - LINE_OFFSET/2, color, colorShadow, maxWidth, true)
+    boxSprite:SetFrame("topRight", frame)
+    boxSprite:Render(pos + offset)
 
-        offset = offset + LINE_OFFSET
-
-        for _, string in pairs(config.Description) do
-            drawString(DescFont, string, startPos.X, startPos.Y + lineHeightDesc * (i - 1) + offset, color, colorShadow)
+    local rightPos = offset.X
     
-            i = i + 1
-            
+    offset = Vector(0, 0)
+
+    boxSprite:SetFrame("left", frame)
+    for _ = 1, height - 2 do
+        boxSprite:Render(pos + offset)
+        offset.Y = offset.Y + BOX_SPRITE_SCALE.Y
+    end
+
+    boxSprite:SetFrame("bottomLeft", frame)
+    boxSprite:Render(pos + offset)
+
+    boxSprite:SetFrame("bottom", frame)
+    for _ = 1, width - 2 do
+        boxSprite:Render(pos + offset)
+        offset.X = offset.X + BOX_SPRITE_SCALE.X
+    end
+
+    boxSprite:SetFrame("bottomRight", frame)
+    boxSprite:Render(pos + offset)
+
+    offset = Vector(rightPos, 0)
+
+    boxSprite:SetFrame("right", frame)
+    for _ = 1, height - 2 do
+        boxSprite:Render(pos + offset)
+        offset.Y = offset.Y + BOX_SPRITE_SCALE.Y
+    end
+
+    boxSprite.Scale = Vector(width - 2, height - 2)
+    boxSprite:SetFrame("middle", frame)
+    boxSprite:Render(pos)
+end
+
+
+local maxAppearTime = 25
+
+local descriptionBoxConfig = {
+    Id = 0,
+    AppearTime = 0,
+    Side = "Left",
+}
+
+---@param buffId ResouledBuff | integer
+function Resouled:UpdateBuffDescription(buffId)
+    descriptionBoxConfig.Id = buffId
+end
+
+---@param buffId ResouledBuff | integer
+---@param pos Vector
+function Resouled:RenderBuffDescription(buffId, pos)
+    local config = descsAligned[buffId]
+
+    if not config then return end
+
+    local color = KColor(config.Color.Red, config.Color.Green, config.Color.Blue, config.Color.Alpha)
+    local alphaMultiplier = math.min(descriptionBoxConfig.AppearTime^2/100, 1)
+    color.Alpha = color.Alpha * alphaMultiplier
+
+    boxSprite.Color.RO = color.Red/25
+    boxSprite.Color.GO = color.Green/25
+    boxSprite.Color.BO = color.Blue/25
+    boxSprite.Color.A = color.Alpha * maxBoxSpriteAlpha
+
+    local size = getBoxSize(MAX_WIDTH * 32, #config.Desc * descFont:GetBaselineHeight() + #config.Name * nameFont:GetBaselineHeight())
+    renderBox(pos, size.X, size.Y)
+
+    local x1 = pos.X - 8
+    local x2 = 32 * (size.X - 1.5)
+
+    local x = pos.X
+    local y = pos.Y
+    
+    local center = math.floor((MAX_WIDTH * 32)/2 + 0.5)
+    local sep = nameFont:GetBaselineHeight()
+    for _, s in ipairs(config.Name) do
+        nameFont:DrawString(s, x + center, y - sep/4, color, math.floor(nameFont:GetStringWidth(s)/2 + 0.5))
+        y = y + sep
+    end
+    
+    Isaac.DrawLine(
+        Vector(x1, y),
+        Vector(x1 + x2/5, y),
+        KColor(color.Red, color.Green, color.Blue, 0),
+        KColor(color.Red, color.Green, color.Blue, boxSprite.Color.A/2 * alphaMultiplier),
+        1
+    )
+    Isaac.DrawLine(
+        Vector(x1 + x2/5, y),
+        Vector(x1 + x2/5 * 4, y),
+        KColor(color.Red, color.Green, color.Blue, boxSprite.Color.A/2 * alphaMultiplier),
+        KColor(color.Red, color.Green, color.Blue, boxSprite.Color.A/2 * alphaMultiplier),
+        1
+    )
+    Isaac.DrawLine(
+        Vector(x1 + x2/5 * 4, y),
+        Vector(x1 + x2, y),
+        KColor(color.Red, color.Green, color.Blue, boxSprite.Color.A/2 * alphaMultiplier),
+        KColor(color.Red, color.Green, color.Blue, 0),
+        1
+    )
+
+    y = y + sep/4
+
+    for _, s in ipairs(config.Desc) do
+        descFont:DrawString(s, x, y, color)
+
+        if s:find("    ") then
+            dotSprite.Color = Color(color.Red, color.Green, color.Blue, color.Alpha)
+            dotSprite:Render(Vector(x, y))
         end
 
-        Isaac.DrawQuad(
-            Vector(startPos.X - outline/2, startPos.Y - outline/2),
-            Vector(startPos.X + maxWidth + outline/2, startPos.Y - outline/2),
-            Vector(startPos.X - outline/2, startPos.Y + config.BoxLength + outline/2),
-            Vector(startPos.X + maxWidth + outline/2, startPos.Y + config.BoxLength + outline/2),
-            config.Color,
-            1
-        )
-
-        Isaac.DrawQuad(
-            Vector(startPos.X - outline/2, startPos.Y - outline/2),
-            Vector(startPos.X + maxWidth + outline/2, startPos.Y - outline/2),
-            Vector(startPos.X - outline/2, startPos.Y + config.BoxLength + outline/2),
-            Vector(startPos.X + maxWidth + outline/2, startPos.Y + config.BoxLength + outline/2),
-            KColor(color.Red * 1.5, color.Green * 1.5, color.Blue * 1.5, color.Alpha),
-            0.5
-        )
+        y = y + descFont:GetBaselineHeight()
     end
 end
 
@@ -350,81 +312,52 @@ local glowColorsPedestal = {
     [Resouled.BuffRarity.SPECIAL] = Color(1 + 1/4, 1 + 1/4, 1 + 1/4)
 }
 
-local function onRender()
-    if Resouled:GetOptionValue("Buff Descriptions") == "Disabled" then return end
+Resouled:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, function()
+    local closest = nil
+    ---@type integer | ResouledBuff
+    local buffId = 0
+    local entity = nil
 
-    if Resouled.AfterlifeShop:IsAfterlifeShop() then
-        local player = Isaac.GetPlayer()
-        local closest = nil
-        local buffId = nil
-        ---@type nil | EntityPickup
-        local entity = nil
-        
-        ---@param pickup EntityPickup
-        Resouled.Iterators:IterateOverRoomPickups(function(pickup)
-            local varData = pickup:GetVarData()
-            if pickup.Variant == buffPedestal.Variant and pickup.SubType == buffPedestal.SubType and varData > 0 then
-                local distance = pickup.Position:Distance(player.Position)
-                if not closest or closest > distance then
-                    closest = distance
-                    buffId = varData
-                    entity = pickup
-                end
-            end
-        end)
-        
-        if buffId and entity then
-            renderDescription(buffId)
+    local player = Isaac.GetPlayer()
 
-            local buff = Resouled:GetBuffById(buffId)
-            if buff then
-                if not Game():IsPauseMenuOpen() then
-                    EntityEffect.CreateLight(entity.Position + Vector(0, -43), 0.4, 5, 6, glowColors[buff.Rarity])
-                    entity:SetColor(glowColorsPedestal[buff.Rarity], 2, 1, true, true)
-                end
+    ---@param pickup EntityPickup
+    Resouled.Iterators:IterateOverRoomPickups(function(pickup)
+        local varData = pickup:GetVarData()
+        if pickup.Variant == buffPedestal.Variant and pickup.SubType == buffPedestal.SubType and varData > 0 then
+            local distance = pickup.Position:Distance(player.Position)
+            if (not closest or closest > distance) and distance <= maxDescriptionRange then
+                closest = distance
+                buffId = pickup:GetVarData()
+                entity = pickup
             end
         end
+    end)
+
+    if buffId > 0 and entity then
+        Resouled:UpdateBuffDescription(buffId)
+
+        local buff = Resouled:GetBuffById(buffId)
+        if buff then
+            if not Game():IsPauseMenuOpen() then
+                EntityEffect.CreateLight(entity.Position + Vector(0, -43), 0.4, 5, 6, glowColors[buff.Rarity])
+                entity:SetColor(glowColorsPedestal[buff.Rarity], 2, 1, true, true)
+            end
+        end
+
+        descriptionBoxConfig.AppearTime = math.min(descriptionBoxConfig.AppearTime + 1, maxAppearTime)
+
+        if entity.Position.X <= Game():GetRoom():GetCenterPos().X then
+            descriptionBoxConfig.Side = "Left"
+        else
+            descriptionBoxConfig.Side = "Right"
+        end
+    else
+        descriptionBoxConfig.AppearTime = math.max(descriptionBoxConfig.AppearTime - 1, 0)
     end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, onRender)
 
---Resouled:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, function() --comment the addcallback to be able to luamod
-    for _, buffDesc in pairs(Resouled:GetBuffs()) do
+    if Resouled:GetOptionValue("Buff Descriptions") ~= "Enabled" then return end
 
-        local config = {
-            Name = alignName(buffDesc.Name),
-            Family = alignFamily("''"..buffDesc.FamilyName.."''"),
-            Description = alignDesc(Resouled.Stats.BuffDescriptions[buffDesc.Id] or "No Description"),
-            Color = Resouled.BuffRarityDescriptionColors[buffDesc.Rarity],
-        }
-
-        local function redoConfig()
-            config.Name = alignName(buffDesc.Name, config.BoxWidth)
-            config.Family = alignFamily("''"..buffDesc.FamilyName.."''", config.BoxWidth)
-            config.Description = alignDesc(Resouled.Stats.BuffDescriptions[buffDesc.Id] or "No Description", config.BoxWidth)
-        end
-
-        local length = 0
-        ---@param string string
-        for _, string in pairs(config.Name) do
-            length = math.max(length, NameFont:GetStringWidth(string))
-        end
-
-        config.BoxWidth = math.max(MAX_WIDTH, length)
-
-        local nameLength = NameFont:GetStringWidth(buffDesc.Name)
-        if not buffDesc.Name:find(" ") and nameLength > MAX_WIDTH then
-            config.BoxWidth = math.max(MAX_WIDTH, nameLength)
-
-            redoConfig()
-        end
-
-        if config.Name[1]:len() == 1 then
-            config.BoxWidth = config.BoxWidth + NameFont:GetCharacterWidth(config.Name[1])
-
-            redoConfig()
-        end
-
-        buffDescriptionConfigs[buffDesc.Id] = config
+    if descriptionBoxConfig.AppearTime > 0 then
+        Resouled:RenderBuffDescription(descriptionBoxConfig.Id, descriptionBoxConfig.Side == "Left" and startPos or Vector(Isaac.GetScreenWidth() - startPos.X - MAX_WIDTH * BOX_SPRITE_SCALE.X, startPos.Y))
     end
---end)
+end)

@@ -358,6 +358,6 @@ Resouled:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, function()
     if Resouled:GetOptionValue("Buff Descriptions") ~= "Enabled" then return end
 
     if descriptionBoxConfig.AppearTime > 0 then
-        Resouled:RenderBuffDescription(descriptionBoxConfig.Id, descriptionBoxConfig.Side == "Left" and startPos or Vector(Isaac.GetScreenWidth() - startPos.X - MAX_WIDTH * BOX_SPRITE_SCALE.X, startPos.Y))
+        Resouled:RenderBuffDescription(descriptionBoxConfig.Id, descriptionBoxConfig.Side == "Left" and Vector(Isaac.GetScreenWidth() - startPos.X - MAX_WIDTH * BOX_SPRITE_SCALE.X, startPos.Y) or startPos)
     end
 end)

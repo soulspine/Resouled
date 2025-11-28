@@ -3,11 +3,15 @@ local CONFIG = {
     SwingHitboxOffset = Vector(0, 30), -- downward vector describing base offset of the swing's hitbox with scale 1, it will be rotated accordingly
     SwingHitboxRadius = 25,
     SpinStep = 20,
-    HoldOffset = Vector(0, -6),
+    HoldOffset = Vector(0, -10),
     SplashDamageRadius = 50,
     KnockbackVelocity = 5,
     KnockupDuration = 50, -- in render frames, so 2x more than updates
     KnockupHeight = 100,
+    MaxShadowReduction = 0.5,
+    PitPerishDuration = 20, -- in reder frames so 2x more than updates
+    PitPerishVelocityLoss = 0.1,
+    LandingEffect = Resouled:EntityDescConstructor(1000, 16, 1),
     ChargeIndicator = {
         Scale = 1,
         Offset = Vector(16, 16),
@@ -54,7 +58,7 @@ CONFIG.KnockupHeightFormula = function(durationLeft)
 end
 
 local DEBUG = {
-    ConsumeCharges = false,
+    ConsumeCharges = true,
 }
 
 local EFFECTS = {
@@ -81,14 +85,24 @@ local function getTargetRotationFromDirection(dir)
 end
 
 ---@param dir Direction
+---@param mirrored boolean
 ---@return Vector
-local function getPositionOffsetFromDirection(dir)
-    if dir == Direction.DOWN or dir == Direction.RIGHT then
-        return Vector(0, 1)
-    elseif dir == Direction.UP or dir == Direction.LEFT then
-        return Vector(0, -1)
+local function getPositionOffsetFromDirection(dir, mirrored)
+    local ret = Vector.Zero
+    if mirrored then
+        if dir == Direction.UP or dir == Direction.RIGHT then
+            ret = Vector(0, -1)
+        elseif dir == Direction.DOWN or dir == Direction.LEFT then
+            ret = Vector(0, 1)
+        end
+    else
+        if dir == Direction.DOWN or dir == Direction.RIGHT then
+            ret = Vector(0, 1)
+        elseif dir == Direction.UP or dir == Direction.LEFT then
+            ret = Vector(0, -1)
+        end
     end
-    return Vector.Zero
+    return ret
 end
 
 ---@param player EntityPlayer
@@ -205,7 +219,9 @@ local function onPlayerUpdate(_, player)
     local clubSprite = club:GetSprite()
     club.SpriteScale = player.SpriteScale
     club.PositionOffset = CONFIG.HoldOffset * player.SpriteScale
-    club.Position = player.Position + getPositionOffsetFromDirection(player:GetHeadDirection())
+    club.Position = player.Position +
+        getPositionOffsetFromDirection(player:GetHeadDirection(),
+            clubSprite:IsPlaying(EFFECTS.Club.Attack[1]) or clubSprite:IsFinished(EFFECTS.Club.Attack[1]))
 
     data.Cooldown = math.max(0, data.Cooldown - 1)
 
@@ -336,9 +352,11 @@ local function onSwingEffectUpdate(_, effect)
 
         if not data.Resouled__ClubEffectEnemiesHit[GetPtrHash(enemy)] then
             ---@diagnostic disable-next-line: param-type-mismatch
-            if Resouled:IsValidEnemy(enemy:ToNPC()) and not enemy:IsBoss() then
-                enemy:TakeDamage(CONFIG.OnHitDamageFormula(effect.Parent:ToPlayer().Damage), 0, EntityRef(effect.Parent),
-                    10)
+            if Resouled:IsValidEnemy(enemy:ToNPC()) then
+                enemy:TakeDamage(CONFIG.OnHitDamageFormula(effect.Parent:ToPlayer().Damage), 0,
+                    EntityRef(effect.Parent), 10)
+
+                if enemy:IsBoss() then goto skipKnockup end
 
                 local removeFlag = false
 
@@ -354,10 +372,14 @@ local function onSwingEffectUpdate(_, effect)
                     InitialEntColClass = enemy.EntityCollisionClass,
                     InitialGridColClass = enemy.GridCollisionClass,
                     PlayerId = effect.Parent.Index,
+                    Perish = 0,
+                    InitailShadowSize = enemy:GetShadowSize(),
                 }
 
                 enemy.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_WALLS
                 enemy.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
+
+                ::skipKnockup::
             end
             data.Resouled__ClubEffectEnemiesHit[GetPtrHash(enemy)] = true
             enemy.Velocity = enemy.Velocity +
@@ -388,8 +410,25 @@ local function onNpcRender(_, npc)
     if not data then return end
 
     npc.SpriteOffset.Y = data.InitialOffsetY - CONFIG.KnockupHeightFormula(data.Timeout)
+    npc:SetShadowSize(data.InitailShadowSize -
+        CONFIG.MaxShadowReduction * data.InitailShadowSize * CONFIG.KnockupHeightFormula(data.Timeout) /
+        CONFIG.KnockupHeight)
 
-    data.Timeout = math.max(data.Timeout - 1, 0)
+    if data.Timeout > 0 then
+        data.Timeout = data.Timeout - 1
+    end
+
+    if data.Perish > 0 then
+        npc.Velocity = npc.Velocity * (1 - CONFIG.PitPerishVelocityLoss)
+        data.Perish = data.Perish - 1
+        local color = npc:GetColor()
+        color.A = data.Perish / CONFIG.PitPerishDuration
+        npc:SetColor(color, 1, 0, false, true)
+        npc.SpriteScale = Vector(1, 1) * data.Perish / CONFIG.PitPerishDuration
+        if data.Perish == 0 then
+            npc:Die()
+        end
+    end
 
     if data.Timeout == 0 then
         if data.RemoveFlag then
@@ -399,6 +438,7 @@ local function onNpcRender(_, npc)
         npc.SpriteOffset.Y = data.InitialOffsetY
         npc.EntityCollisionClass = data.InitialEntColClass
         npc.GridCollisionClass = data.InitialGridColClass
+        npc:SetShadowSize(data.InitailShadowSize)
 
         local player = Isaac.GetPlayer(data.PlayerId)
         npc:TakeDamage(
@@ -423,9 +463,24 @@ local function onNpcRender(_, npc)
         -- instakill if lands on a pit
         local currentGrid = Game():GetRoom():GetGridEntityFromPos(npc.Position)
         if not npc:IsFlying() and currentGrid and currentGrid:GetType() == GridEntityType.GRID_PIT then
-            npc:Die()
+            data.Perish = CONFIG.PitPerishDuration
+            npc.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
+            npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
+            data.Timeout = -1
+            data:SetShadowSize(0)
+        else
+            local landinEffect = Game():Spawn(
+                CONFIG.LandingEffect.Type,
+                CONFIG.LandingEffect.Variant,
+                npc.Position,
+                Vector.Zero,
+                npc,
+                CONFIG.LandingEffect.SubType,
+                Resouled:NewSeed()
+            )
+
+            npc:GetData().Resouled__ClubKnockback = nil
         end
-        npc:GetData().Resouled__ClubKnockback = nil
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_RENDER, onNpcRender)

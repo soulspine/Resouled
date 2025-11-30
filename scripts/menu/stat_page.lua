@@ -194,7 +194,8 @@ local SHENANIGANS = {
             "RESO ULED",
             "R3S0 VL3D",
             "Souls Be Gone",
-            "No Soul Challenge"
+            "No Soul Challenge",
+            "Everything is Cursed!"
         }
     }
 }

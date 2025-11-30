@@ -1,7 +1,8 @@
 ---@enum ResouledSpecialSeedEffects
 Resouled.SpecialSeedEffects = {
     SoulsBeGone = "Souls Be Gone",
-    NoSoulChallenge = "No Soul Challenge"
+    NoSoulChallenge = "No Soul Challenge",
+    EverythingIsCursed = "Everything is Cursed!"
 }
 
 local save = {}

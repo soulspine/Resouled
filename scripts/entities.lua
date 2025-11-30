@@ -41,7 +41,8 @@ end
 
 ---@param npc EntityNPC
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, function(_, npc)
-    if Game():GetLevel():GetCurses() > 0 then
+    local EverythingIsCursed = Resouled:IsSpecialSeedEffectActive(Resouled.SpecialSeedEffects.EverythingIsCursed)
+    if Game():GetLevel():GetCurses() > 0 or EverythingIsCursed then
         local key1 = tostring(npc.Type)
         local key2 = key1.."."..tostring(npc.Variant)
         local key3 = key2.."."..tostring(npc.SubType)
@@ -50,7 +51,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, function(_, npc)
             
             local config = cursedEnemies[key3] or cursedEnemies[key2] or cursedEnemies[key1]
 
-            Resouled:TryEnemyMorph(npc, Resouled.Stats.CursedEnemyMorphChance(), config.Id, config.Var, config.Sub)
+            Resouled:TryEnemyMorph(npc, EverythingIsCursed and 1 or Resouled.Stats.CursedEnemyMorphChance(), config.Id, config.Var, config.Sub)
         end
     end
 end)

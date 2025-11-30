@@ -21,7 +21,7 @@ font:Load("font/pftempestasevencondensed.fnt")
 
 local ICON_DIMENSIONS = 16
 local iconSprite = Sprite()
-iconSprite:Load("gfx/ui/soul_icon.anm2", true)
+iconSprite:Load("gfx_resouled/ui/soul_icon.anm2", true)
 iconSprite:Play(iconSprite:GetDefaultAnimation(), true)
 iconSprite:SetFrame(1)
 

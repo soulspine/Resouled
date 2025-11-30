@@ -1,4 +1,4 @@
-local anm2path = "/gfx/status_effects/status_effects.anm2"
+local anm2path = "/gfx_resouled/status_effects/status_effects.anm2"
 
 -- reference Resouled.Enums.StatusEffect when adding them
 local effects = Resouled.Enums.StatusEffects

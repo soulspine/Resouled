@@ -37,11 +37,11 @@ end
 local PITCH = 3
 
 local chainSprite = Sprite()
-chainSprite:Load("gfx/soulbond_chain.anm2", true)
+chainSprite:Load("gfx_resouled/soulbond_chain.anm2", true)
 chainSprite:Play("Idle", true)
 
 local chainLockSprite = Sprite()
-chainLockSprite:Load("gfx/soulbond_chain_2.anm2", true)
+chainLockSprite:Load("gfx_resouled/soulbond_chain_2.anm2", true)
 chainLockSprite:Play("Idle", true)
 
 

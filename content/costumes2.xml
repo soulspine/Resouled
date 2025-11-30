@@ -1,4 +1,4 @@
-<costumes anm2root="gfx/characters/">
+<costumes anm2root="gfx_resouled/characters/">
     <costume id="2" anm2path="cheese_grater.anm2" type="passive" priority="0"/>
     <costume id="8" anm2path="soulbond.anm2" type="passive" priority="0"/>
     <costume id="22" anm2path="cursed_soul.anm2" type="passive" priority="1"/>

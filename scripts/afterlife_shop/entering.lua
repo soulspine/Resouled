@@ -15,7 +15,7 @@ function Resouled.AfterlifeShop:AddSpecialBuffToSpawn(buffID)
 end
 
 local black = Sprite()
-black:Load("gfx/effects/blackout.anm2", true)
+black:Load("gfx_resouled/effects/blackout.anm2", true)
 black:Play("Idle", true)
 
 ---@param isGameOver boolean

@@ -6,11 +6,11 @@ local ACTIVATE_HOLD_DURATION = 90
 
 local KNIFE_VARIANT = KnifeVariant.BAG_OF_CRAFTING
 
-local BAG_ENTITY_SPRITESHEET = "gfx/effects/bag_o_trash_knife.png"
+local BAG_ENTITY_SPRITESHEET = "gfx_resouled/effects/bag_o_trash_knife.png"
 local BAG_ENTITY_SPRITE_PLAYBACK_SPEED = 0.5
 
 local BAG_ITEM_SPRITE = Sprite()
-BAG_ITEM_SPRITE:Load("gfx/items/bag_o_trash.anm2", true)
+BAG_ITEM_SPRITE:Load("gfx_resouled/items/bag_o_trash.anm2", true)
 local BAG_ITEM_SPRITE_DEFAULT_ANIMATION = "Idle"
 local BAG_ITEM_SPRITE_EMPTY_FRAME = 1
 local BAG_ITEM_SPRITE_FULL_FRAME = 0
@@ -38,7 +38,7 @@ local ANIMATION_PICKUP_PLAYER_PICKUP = "PlayerPickup"
 local ANIMATION_CHARGEBAR = "Charging"
 local ANIMATION_CHARGEBAR_FRAME_NUM = 101
 local CHARGEBAR_SPRITE = Sprite()
-CHARGEBAR_SPRITE:Load("gfx/chargebar.anm2", true)
+CHARGEBAR_SPRITE:Load("gfx_resouled/chargebar.anm2", true)
 CHARGEBAR_SPRITE:Play(ANIMATION_CHARGEBAR, true)
 CHARGEBAR_SPRITE.Offset = Vector(12, -40)
 local INPUT_IGNORE_DURATION = 4

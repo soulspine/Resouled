@@ -80,7 +80,7 @@ local function postPickupInit(_, pickup)
         local ROOM_SAVE_POSITION = Resouled.SaveManager.GetRoomFloorSave(pickup.Position)
         ROOM_SAVE.BlastMiner = ROOM_SAVE_POSITION.BlastMiner
         if ROOM_SAVE.BlastMiner and ROOM_SAVE.BlastMiner.GOLDEN and pickup.SubType == TNT_SUBTYPE then
-            sprite:ReplaceSpritesheet(0, "gfx/pickups/bombs/blast_miner_crate_gold.png", true)
+            sprite:ReplaceSpritesheet(0, "gfx_resouled/pickups/bombs/blast_miner_crate_gold.png", true)
         end
         sprite:Play("0", true)
     end

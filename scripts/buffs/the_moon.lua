@@ -5,7 +5,7 @@ local CONFIG = {
     MoonIconOffset = Vector(0, -56)
 }
 
-local INDICATOR_SPRITE = Resouled:CreateLoadedSprite("gfx/ui/moon_buff_ui.anm2", "Idle")
+local INDICATOR_SPRITE = Resouled:CreateLoadedSprite("gfx_resouled/ui/moon_buff_ui.anm2", "Idle")
 
 local PHASES = {
     New = 0,

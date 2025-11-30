@@ -1,7 +1,7 @@
 local GFUEL = Resouled.Enums.Items.RED_GFUEL
 
 local GFUEL_SPRITE = Sprite()
-GFUEL_SPRITE:Load("gfx/red_gfuel.anm2", true)
+GFUEL_SPRITE:Load("gfx_resouled/red_gfuel.anm2", true)
 GFUEL_SPRITE:Play("Idle", true)
 
 local UP_BRIMSTONE_OFFSET = Vector(0, -80)

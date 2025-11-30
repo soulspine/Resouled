@@ -7,8 +7,8 @@ local STARTING_HEIGHT = 3000
 local FALLING_SPEED = 0.05
 
 local Shadow = Sprite()
-Shadow:Load("gfx/shadow.anm2", false)
-Shadow:ReplaceSpritesheet(0, "resources/gfx/shadow.png", true)
+Shadow:Load("gfx_resouled/shadow.anm2", false)
+Shadow:ReplaceSpritesheet(0, "resources/gfx_resouled/shadow.png", true)
 Shadow:Play("Idle", true)
 
 local MAX_SHADOW_ALPHA = 0.25

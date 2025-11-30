@@ -30,11 +30,11 @@ local MAP_SIZE = 54
 local MAP_CENTER = 6
 
 for _, sprite in pairs(IconSprites) do
-    sprite:Load("gfx/ui/minimap_icons_afterlife.anm2", true)
+    sprite:Load("gfx_resouled/ui/minimap_icons_afterlife.anm2", true)
 end
 
 for _, sprite in pairs(MapSprites) do
-    sprite:Load("gfx/ui/afterlife_minimap.anm2", true)
+    sprite:Load("gfx_resouled/ui/afterlife_minimap.anm2", true)
 end
 
 local Map = MapSprites.Map

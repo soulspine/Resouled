@@ -103,8 +103,8 @@ end
 -- THIS IS FROM EID'S CODE BUT MODIFIED A BIT
 -- https://github.com/wofsauge/External-Item-Descriptions/blob/9908279ec579f2b1ec128c9c513e4cb3c3138a93/main.lua#L221
 local questionMarkSprite = Sprite()
-questionMarkSprite:Load("gfx/005.100_collectible.anm2", true)
-questionMarkSprite:ReplaceSpritesheet(1, "gfx/items/collectibles/questionmark.png")
+questionMarkSprite:Load("gfx_resouled/005.100_collectible.anm2", true)
+questionMarkSprite:ReplaceSpritesheet(1, "gfx_resouled/items/collectibles/questionmark.png")
 questionMarkSprite:LoadGraphics()
 
 --- Checks whether the pickup is a question mark item. \

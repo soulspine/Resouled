@@ -797,7 +797,7 @@ end
 
 local CornerFlashSprite = Sprite()
 local CornerFlashFadeSpeed = 0
-CornerFlashSprite:Load("gfx/misc/screen_flash_limbo.anm2", true)
+CornerFlashSprite:Load("gfx_resouled/misc/screen_flash_limbo.anm2", true)
 CornerFlashSprite:Play("Idle", true)
 CornerFlashSprite.Color = Color(0, 0, 0, 0)
 
@@ -821,7 +821,7 @@ end)
 
 local WhiteOverlaySprite = Sprite()
 local WhiteOverlayFadeSpeed = 0
-WhiteOverlaySprite:Load("gfx/effects/white_overlay.anm2", true)
+WhiteOverlaySprite:Load("gfx_resouled/effects/white_overlay.anm2", true)
 WhiteOverlaySprite:Play("Idle", true)
 WhiteOverlaySprite.Color = Color(0, 0, 0, 0)
 

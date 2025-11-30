@@ -4,7 +4,7 @@ local proceduralMaxChargeModule = {}
 local CUSTOM_TAG = "alwaysproceduralcharge"
 
 local separatorSprite = Sprite()
-separatorSprite:Load("gfx/ui/chargebar_separator.anm2", true)
+separatorSprite:Load("gfx_resouled/ui/chargebar_separator.anm2", true)
 separatorSprite:Play("Separator", true)
 
 local MOD = Resouled

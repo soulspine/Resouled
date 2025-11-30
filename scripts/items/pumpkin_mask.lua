@@ -3,7 +3,7 @@ local PUMPKIN_MASK = Resouled.Enums.Items.PUMPKIN_MASK
 
 local FEAR_TIME = 180
 
-local COSTUME_ID = Isaac.GetCostumeIdByPath("gfx/characters/pumpkin_mask.anm2")
+local COSTUME_ID = Isaac.GetCostumeIdByPath("gfx_resouled/characters/pumpkin_mask.anm2")
 local SOUND_ID = Isaac.GetSoundIdByName("Jumpscare")
 
 ---@param entity Entity

@@ -94,7 +94,7 @@ local function postPickupUpdate(_, pickup)
         if varData > 0 then
             loadProperSprite(sprite, pickup:GetVarData())
         elseif varData == 0 then -- STOP ANIMATION
-            sprite:ReplaceSpritesheet(0, "gfx/buffs/placeholder.png", true)
+            sprite:ReplaceSpritesheet(0, "gfx_resouled/buffs/placeholder.png", true)
             sprite:PlayOverlay(ANIMATION_PEDESTAL_EMPTY, true)
         end
         
@@ -116,7 +116,7 @@ local function postPickupCollision(_, pickup, collider)
             Resouled:SetPossessedSoulsNum(Resouled:GetPossessedSoulsNum() - price)
             
             local pickupSprite = Sprite()
-            pickupSprite:Load("gfx/buffs/buffs.anm2", true)
+            pickupSprite:Load("gfx_resouled/buffs/buffs.anm2", true)
             pickupSprite:ReplaceSpritesheet(0, Resouled:GetBuffFamilyById(Resouled:GetBuffById(pickup:GetVarData()).Family).Spritesheet, true)
             pickupSprite:PlayOverlay(pickup:GetSprite():GetOverlayAnimation().."Pickup", true)
             

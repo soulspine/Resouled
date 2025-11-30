@@ -181,8 +181,8 @@ end)
 
 local BUFF_SPRITE = Sprite()
 local SELECTED_BUFF_BIG_SPRITE = Sprite()
-BUFF_SPRITE:Load("gfx/buffs/buffEID.anm2", true)
-SELECTED_BUFF_BIG_SPRITE:Load("gfx/buffs/buffEID.anm2", true)
+BUFF_SPRITE:Load("gfx_resouled/buffs/buffEID.anm2", true)
+SELECTED_BUFF_BIG_SPRITE:Load("gfx_resouled/buffs/buffEID.anm2", true)
 SELECTED_BUFF_BIG_SPRITE.Scale = CONFIG.BuffPage.BigSpriteScale
 
 
@@ -459,6 +459,10 @@ local PAGES = {
 
             local lineHeight = FONTS.Size10:GetBaselineHeight()
 
+            if REPENTANCE_PLUS then
+                lineHeight = lineHeight * 1.25
+            end
+
             FONTS.Size10:DrawStringScaled(pageString, pos.X, pos.Y, 1, 1, CONFIG.TextColor, math.floor(FONTS.Size10:GetStringWidth(pageString)/2 + 0.5))
 
             Isaac.DrawLine(pos + Vector(-CONFIG.BackgroundSpriteSize.X/2, lineHeight), pos + Vector(CONFIG.BackgroundSpriteSize.X/2, lineHeight), CONFIG.LineColor, CONFIG.LineColor, CONFIG.LineThickness)
@@ -520,6 +524,10 @@ local PAGES = {
 
             local separation = FONTS.Size10:GetBaselineHeight()
 
+            if REPENTANCE_PLUS then
+                separation = separation * 1.25
+            end
+
             
             for i, option in pairs(pageConfig.Options) do
                 
@@ -568,6 +576,11 @@ local PAGES = {
         Renderer = function(renderPos, save, enableInput)
             local startPos = renderPos - CONFIG.BackgroundSpriteSize/2 + Vector(5, CONFIG.HeaderLineOffset + 5)
             local separation = FONTS.Size10:GetBaselineHeight()
+
+            if REPENTANCE_PLUS then
+                separation = separation * 1.25
+            end
+
             local selectedOption
             
             local startOption = getStartingOptionToRender(currentSelectedOption)
@@ -626,7 +639,7 @@ local PAGES = {
 }
 
 local BACKGROUND_SPRITE = Sprite()
-BACKGROUND_SPRITE:Load("gfx/menu/stats_menu_resouled.anm2", true)
+BACKGROUND_SPRITE:Load("gfx_resouled/menu/stats_menu_resouled.anm2", true)
 BACKGROUND_SPRITE:Play("Idle", true)
 
 local currentPageIdx = 1 -- 1-indexed because lua

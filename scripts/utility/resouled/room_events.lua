@@ -106,7 +106,7 @@ local popupFont = Font()
 popupFont:Load("font/upheaval.fnt")
 
 local popupSprite = Sprite()
-popupSprite:Load("gfx/ui/room_event_popup.anm2", true)
+popupSprite:Load("gfx_resouled/ui/room_event_popup.anm2", true)
 local MAX_POPUP_ALPHA = 0.75
 
 local X = 0

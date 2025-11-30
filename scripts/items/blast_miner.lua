@@ -24,7 +24,7 @@ local function playerPlaceBomb(_, player, bomb)
             FLAGS = player:GetBombFlags()
         }
         if ROOM_SAVE.BlastMiner.GOLDEN and tnt.SubType == TNT_SUBTYPE then
-            tnt:GetSprite():ReplaceSpritesheet(0, "gfx/pickups/bombs/blast_miner_crate_gold.png", true)
+            tnt:GetSprite():ReplaceSpritesheet(0, "gfx_resouled/pickups/bombs/blast_miner_crate_gold.png", true)
         end
         Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, tnt.Position, Vector.Zero, nil, 0, tnt.InitSeed)
     end

@@ -28,7 +28,7 @@ end
 local SelectedPickup = 1
 
 local selector = Sprite()
-selector:Load("gfx/ui/selector_box.anm2")
+selector:Load("gfx_resouled/ui/selector_box.anm2")
 local selectorPos = Vector(BagOHoles:HUDOffset(8, 38, 'topleft'))
 
 local callbacksActive = false
@@ -149,11 +149,11 @@ ThrowableItemLib:RegisterThrowableItem({
     AnimateFn = function (player, state)
         local throwSprite = Sprite()
         if SelectedPickup == 1 then
-            throwSprite:Load("gfx/002.020_coin tear.anm2", true)
+            throwSprite:Load("gfx_resouled/002.020_coin tear.anm2", true)
             throwSprite:Play("Rotate3")
         elseif SelectedPickup == 2 then
         elseif SelectedPickup == 3 then
-            throwSprite:Load("gfx/002.043_key tear.anm2", true)
+            throwSprite:Load("gfx_resouled/002.043_key tear.anm2", true)
             throwSprite:Play(throwSprite:GetDefaultAnimation())
         end
 

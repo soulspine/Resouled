@@ -1,8 +1,8 @@
 local TENTACLE_BLACK = Resouled:GetEntityByName("Stun Tentacle (Black)")
 local TENTACLE_PINK = Resouled:GetEntityByName("Stun Tentacle (Pink)")
 
-local TENTACLE_BLACK_SPRITESHEET = "gfx/effects/stun_tentacle_black.png"
-local TENTACLE_PINK_SPRITESHEET = "gfx/effects/stun_tentacle_pink.png"
+local TENTACLE_BLACK_SPRITESHEET = "gfx_resouled/effects/stun_tentacle_black.png"
+local TENTACLE_PINK_SPRITESHEET = "gfx_resouled/effects/stun_tentacle_pink.png"
 
 local SPRITESHEET_LAYER = 0
 

@@ -67,7 +67,7 @@ for _, entity in pairs(ENTITIES) do
     if not string.find(string.lower(entity.Name), "proglottid") then goto continue end
 
     local color = getFirstWord(entity.Name)
-    SPRITESHEETS[entity.SubType] = string.lower("gfx/familiar/" .. color .. "_proglottid.png")
+    SPRITESHEETS[entity.SubType] = string.lower("gfx_resouled/familiar/" .. color .. "_proglottid.png")
     EGGS[entity.SubType] = Resouled:GetEntityByName(entity.Name .. "'s Egg")
     ITEMS[entity.SubType] = Isaac.GetItemIdByName(entity.Name)
 

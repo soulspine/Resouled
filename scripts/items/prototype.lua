@@ -360,10 +360,10 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_ROOM_EXIT, removeContainerPreRoomExit)
 
 local font = Font()
 font:Load(CONFIG.FontPath)
-local background = Resouled:CreateLoadedSprite("gfx/ui/prototype_menu.anm2")
+local background = Resouled:CreateLoadedSprite("gfx_resouled/ui/prototype_menu.anm2")
 background.Scale = CONFIG.BackgroundScale
 
-local buttons = Resouled:CreateLoadedSprite("gfx/ui/prototype_keys.anm2")
+local buttons = Resouled:CreateLoadedSprite("gfx_resouled/ui/prototype_keys.anm2")
 local keycapParts = {
     Left = {
         Width = 4,

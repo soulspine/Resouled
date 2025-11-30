@@ -81,27 +81,27 @@ local RARE_BASE_PRICE = 7
 local LEGENDARY_BASE_PRICE = 10
 
 -- REGISTERING BUFF FAMILIES
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.CURSED_SKULL, "Cursed Skull", "gfx/buffs/cursed_skull.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.STEAM_SALE, "Steam Sale", "gfx/buffs/steam_sale.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.CROSS, "Cross", "gfx/buffs/cross.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.KIDS_DRAWING, "Kid's Drawing", "gfx/buffs/kids_drawing.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.ZODIAC_SIGN, "Zodiac Sign", "gfx/buffs/zodiac_sign.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.IMP, "Imp", "gfx/buffs/imp.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.METEOR, "Meteor", "gfx/buffs/meteor.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.BLUE_KING_CROWN, "Blue King Crown", "gfx/buffs/blue_king_crown.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SIGHT, "Sight", "gfx/buffs/sight.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.FORTUNE, "Fortune", "gfx/buffs/fortune.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.AGILITY, "Agility", "gfx/buffs/agility.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.STRENGTH, "Strength", "gfx/buffs/strength.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SADNESS, "Sadness", "gfx/buffs/sadness.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.PESTILENCE, "Pestilence", "gfx/buffs/pestilence.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.FAMINE, "Famine", "gfx/buffs/famine.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SCARY_FACE, "Scary Face", "gfx/buffs/scary_face.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SMALL_CAP, "Small Cap", "gfx/buffs/small_cap.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.CURSED_SKULL, "Cursed Skull", "gfx_resouled/buffs/cursed_skull.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.STEAM_SALE, "Steam Sale", "gfx_resouled/buffs/steam_sale.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.CROSS, "Cross", "gfx_resouled/buffs/cross.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.KIDS_DRAWING, "Kid's Drawing", "gfx_resouled/buffs/kids_drawing.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.ZODIAC_SIGN, "Zodiac Sign", "gfx_resouled/buffs/zodiac_sign.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.IMP, "Imp", "gfx_resouled/buffs/imp.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.METEOR, "Meteor", "gfx_resouled/buffs/meteor.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.BLUE_KING_CROWN, "Blue King Crown", "gfx_resouled/buffs/blue_king_crown.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SIGHT, "Sight", "gfx_resouled/buffs/sight.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.FORTUNE, "Fortune", "gfx_resouled/buffs/fortune.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.AGILITY, "Agility", "gfx_resouled/buffs/agility.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.STRENGTH, "Strength", "gfx_resouled/buffs/strength.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SADNESS, "Sadness", "gfx_resouled/buffs/sadness.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.PESTILENCE, "Pestilence", "gfx_resouled/buffs/pestilence.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.FAMINE, "Famine", "gfx_resouled/buffs/famine.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SCARY_FACE, "Scary Face", "gfx_resouled/buffs/scary_face.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SMALL_CAP, "Small Cap", "gfx_resouled/buffs/small_cap.png")
 
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.WAR, "War", "gfx/buffs/war.png") -- Special
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.DEATH, "Death", "gfx/buffs/death.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SOUL_CATCHER, "Soul Catcher", "gfx/buffs/soul_catcher.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.WAR, "War", "gfx_resouled/buffs/war.png") -- Special
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.DEATH, "Death", "gfx_resouled/buffs/death.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SOUL_CATCHER, "Soul Catcher", "gfx_resouled/buffs/soul_catcher.png")
 
 -- REGISTERING BUFF RARITIES
 Resouled:RegisterBuffRarity(Resouled.BuffRarity.COMMON, "Common", 0.65)

@@ -39,7 +39,7 @@ local CURSES_BLACKLIST = {
 }
 
 Resouled.CursesSprite = Sprite()
-Resouled.CursesSprite:Load("gfx/curses.anm2", true)
+Resouled.CursesSprite:Load("gfx_resouled/curses.anm2", true)
 
 include("scripts.curses.curse_of_greed")
 include("scripts.curses.curse_of_pain")

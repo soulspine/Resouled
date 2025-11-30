@@ -7,7 +7,7 @@ local SPECIAL_TEAR_COLOR = Color(1, 0.6, 1, 0.7, 0.7, 0.7, 0)
 local SPECIAL_TEAR_COLOR_DURATION = 300
 local SPECIAL_TEAR_COLOR_PRIORITY = 1
 
-local NORMAL_CHEESE_SPRITESHEET = "gfx/tears/tears_cheese.png"
+local NORMAL_CHEESE_SPRITESHEET = "gfx_resouled/tears/tears_cheese.png"
 
 local MAGGOT_INNACURACY = 50
 local INNACURACY_ROTATION = 30

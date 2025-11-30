@@ -95,7 +95,7 @@ enums.Effects = {
 
 enums.Buffs = Resouled.Buffs
 
--- Values double down as animation names in /gfx/status_effects/status_effects.anm2
+-- Values double down as animation names in /gfx_resouled/status_effects/status_effects.anm2
 enums.StatusEffects = {
     BLACK_PROGLOTTID = "Black Proglottid's Tentacles",
     PINK_PROGLOTTID = "Pink Proglottid's Heart",

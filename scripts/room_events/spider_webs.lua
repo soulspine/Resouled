@@ -1,6 +1,6 @@
 local EMPTY_GRID_REPLACE_CHANCE = 0.7
 
-local EFFECT_SPRITE = Resouled:CreateLoadedSprite("gfx/ui/spider_webs_room_event.anm2", "Idle")
+local EFFECT_SPRITE = Resouled:CreateLoadedSprite("gfx_resouled/ui/spider_webs_room_event.anm2", "Idle")
 EFFECT_SPRITE.Color = Color(1, 1, 1, 0, 0, 0, 0)
 local EFFECT_WIDTH_HEIGHT = 238
 local EFFECT_ALPHA = 0.67

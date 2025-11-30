@@ -50,10 +50,10 @@ local Chargebar = {
     },
 }
 
-Monster.Sprite:Load("gfx/the_monster.anm2", true)
-Tongue.Sprite:Load("gfx/the_monster_tongue.anm2", true)
-Chargebar.Sprite:Load("gfx/chargebar.anm2", true)
-Chargebar.Sprite:ReplaceSpritesheet(0, "gfx/ui/monster_chargebar.png", true)
+Monster.Sprite:Load("gfx_resouled/the_monster.anm2", true)
+Tongue.Sprite:Load("gfx_resouled/the_monster_tongue.anm2", true)
+Chargebar.Sprite:Load("gfx_resouled/chargebar.anm2", true)
+Chargebar.Sprite:ReplaceSpritesheet(0, "gfx_resouled/ui/monster_chargebar.png", true)
 
 ---@param player EntityPlayer
 local function monstersRender(_, player)

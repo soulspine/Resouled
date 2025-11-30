@@ -6,17 +6,17 @@ local PINK_PROGLOTTIDS_EGG = Resouled:GetEntityByName("Pink Proglottid's Egg")
 local WHITE_PROGLOTTIDS_EGG = Resouled:GetEntityByName("White Proglottid's Egg")
 local RED_PROGLOTTIDS_EGG = Resouled:GetEntityByName("Red Proglottid's Egg")
 
-local CLEAR_EGG_SPRITESHEET = "gfx/tears/egg_clear.png"
-local PINK_EGG_SPRITESHEET = "gfx/tears/egg_pink.png"
-local WHITE_EGG_SPRITESHEET = "gfx/tears/egg_white.png"
+local CLEAR_EGG_SPRITESHEET = "gfx_resouled/tears/egg_clear.png"
+local PINK_EGG_SPRITESHEET = "gfx_resouled/tears/egg_pink.png"
+local WHITE_EGG_SPRITESHEET = "gfx_resouled/tears/egg_white.png"
 
 local PINK_EGG_PARTICLE = Resouled:GetEntityByName("Pink Cracked Egg Particle")
 local WHITE_EGG_PARTICLE = Resouled:GetEntityByName("White Cracked Egg Particle")
 local CLEAR_EGG_PARTICLE = Resouled:GetEntityByName("Clear Cracked Egg Particle")
 
-local PINK_EGG_PARTICLE_SPRITESHEET = "gfx/effects/particles/egg_cracked_pink.png"
-local WHITE_EGG_PARTICLE_SPRITESHEET = "gfx/effects/particles/egg_cracked_white.png"
-local CLEAR_EGG_PARTICLE_SPRITESHEET = "gfx/effects/particles/egg_cracked_clear.png"
+local PINK_EGG_PARTICLE_SPRITESHEET = "gfx_resouled/effects/particles/egg_cracked_pink.png"
+local WHITE_EGG_PARTICLE_SPRITESHEET = "gfx_resouled/effects/particles/egg_cracked_white.png"
+local CLEAR_EGG_PARTICLE_SPRITESHEET = "gfx_resouled/effects/particles/egg_cracked_clear.png"
 
 local EGG_SPRITESHEETS = {
     [BLACK_PROGLOTTIDS_EGG.SubType] = PINK_EGG_SPRITESHEET,

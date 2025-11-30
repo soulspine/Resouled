@@ -37,7 +37,7 @@ local IsaacEnemy = {
 local game = Game()
 local sfx = SFXManager()
 
-local SpritesheetPath = "gfx/characters/costumes/character_001_isaac.png"
+local SpritesheetPath = "gfx_resouled/characters/costumes/character_001_isaac.png"
 
 local Animations = IsaacEnemy.Animations
 local SoundsIsac = IsaacEnemy.Sounds

@@ -15,7 +15,7 @@ local CONFIG = {
 }
 
 local DOOR_OVERLAY_SPRITE = Sprite()
-DOOR_OVERLAY_SPRITE:Load("gfx/effects/handicapped_placard_door_overlay.anm2", true)
+DOOR_OVERLAY_SPRITE:Load("gfx_resouled/effects/handicapped_placard_door_overlay.anm2", true)
 DOOR_OVERLAY_SPRITE:Play("Idle", true)
 
 Resouled.EID:AddTrinket(TRINKET,

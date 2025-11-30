@@ -39,7 +39,7 @@ end
 Resouled:AddCallback(ModCallbacks.MC_PLAYER_GET_ACTIVE_MAX_CHARGE, playerGetActiveMaxCharge, KEEPERS_PENNY)
 
 local chargebarSprite = Sprite()
-chargebarSprite:Load("gfx/ui/ui_chargebar.anm2", true)
+chargebarSprite:Load("gfx_resouled/ui/ui_chargebar.anm2", true)
 
 local BAR_ANIMATION_EMPTY = "BarEmpty"
 local BAR_ANIMATION_FULL = "BarFull"
@@ -51,8 +51,8 @@ local BAR_DEFAULT_BOTTOM_RIGHT_CLAMP = Vector(0, 6)
 local BAR_SPRITE_ACTUAL_HEIGHT = 23
 
 local itemSprite = Sprite()
-itemSprite:Load("gfx/ui/active_item.anm2")
-itemSprite:ReplaceSpritesheet(0, "gfx/items/collectibles/keepers_penny.png")
+itemSprite:Load("gfx_resouled/ui/active_item.anm2")
+itemSprite:ReplaceSpritesheet(0, "gfx_resouled/items/collectibles/keepers_penny.png")
 itemSprite:LoadGraphics()
 
 local ITEM_ANIMATION_BACKDROP = "Backdrop"

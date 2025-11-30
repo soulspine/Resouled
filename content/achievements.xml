@@ -1,4 +1,4 @@
-<achievements gfxroot="gfx/ui/achievement/">
+<achievements gfxroot="gfx_resouled/ui/achievement/">
     <achievement name="Everything is cursed!" gfx="everything_is_cursed.png" gfxback="resouled_ach_paper.png" hidden="false"/>
     <achievement name="Cain now holds sleight of hand!" gfx="cain_now_holds_sleight_of_hand.png" gfxback="resouled_ach_paper.png" hidden="false"/>
     <achievement name="??? now holds forever alone!" gfx="blue_baby_now_holds_forever_alone.png" gfxback="resouled_ach_paper.png" hidden="false"/>

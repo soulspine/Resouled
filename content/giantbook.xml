@@ -1,4 +1,4 @@
-<giantbook anm2root="gfx/ui/giantbook/">
+<giantbook anm2root="gfx_resouled/ui/giantbook/">
     <entry name="Pumpkin Mask" anm2="GiantBook.anm2" anim="Appear" gfx="pumpkin_mask.png">
         <layer name="poof" r="228" g="228" b="228" a="255" />
         <layer name="bg" r="228" g="228" b="228" a="153" />

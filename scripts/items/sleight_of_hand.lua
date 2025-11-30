@@ -23,13 +23,13 @@ local ANIMATION_TELEPORT_UP = "TeleportUp"
 local ANIMATION_TELEPORT_UP_FRAME_NUM = 19
 
 local GLOWING_DOOR_SPRITE = Sprite()
-GLOWING_DOOR_SPRITE:Load("gfx/effects/glowing_door.anm2", true)
+GLOWING_DOOR_SPRITE:Load("gfx_resouled/effects/glowing_door.anm2", true)
 GLOWING_DOOR_SPRITE:Play("Idle", true)
 local globalGlowingDoorPosition = Vector.Zero
 local globalGlowingDoorRotation = 0
 
 local BLACKOUT_SPRITE = Sprite()
-BLACKOUT_SPRITE:Load("gfx/effects/blackout.anm2", true)
+BLACKOUT_SPRITE:Load("gfx_resouled/effects/blackout.anm2", true)
 BLACKOUT_SPRITE:Play("Idle", true)
 local BLACKOUT_TRANSITION_TIME = 10
 

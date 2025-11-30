@@ -63,10 +63,10 @@ nameFont:Load("font/teammeatfont16bold.fnt")
 descFont:Load("font/teammeatfont10.fnt")
 
 local dotSprite = Sprite()
-dotSprite:Load("gfx/ui/description_dot.anm2", true)
+dotSprite:Load("gfx_resouled/ui/description_dot.anm2", true)
 dotSprite:Play("Idle", true)
 local boxSprite = Sprite()
-boxSprite:Load("gfx/ui/buff_description_box.anm2", true)
+boxSprite:Load("gfx_resouled/ui/buff_description_box.anm2", true)
 local BOX_SPRITE_SCALE = Vector(32, 32)
 local maxBoxSpriteAlpha = 0.75
 

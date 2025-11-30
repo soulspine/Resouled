@@ -297,7 +297,7 @@ Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_FISTULA_BIG, 1, nil, Resoule
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_MOMS_HEART, 1, nil, Resouled.Souls.IT_LIVES, 2)
 
-Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BEAST, 1, nil, Resouled.Souls.THE_BEAST, 2)
+Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BEAST, 0, 0, Resouled.Souls.THE_BEAST, 2)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_LARRYJR, 1, nil, Resouled.Souls.THE_HOLLOW, 1)
 

@@ -32,6 +32,16 @@ local function spawnBuffPedestal(position, seed, blacklist)
     pedestal:SetVarData(buff)
 end
 
+---@param position Vector
+---@param seed integer
+---@param buff ResouledBuff | integer
+local function spawnSetBuffPedestal(position, seed, buff)
+    seed = game:GetSeeds():GetStartSeed() + seed
+    local pedestal = Game():Spawn(BuffPedestal.Type, BuffPedestal.Variant, position, Vector.Zero, nil, BuffPedestal.SubType, seed):ToPickup()
+    if not pedestal then return end
+    pedestal:SetVarData(buff)
+end
+
 local buffPos = {
     [ShopLevels.Level0] = {
         [1] = Vector(50, -25),
@@ -83,46 +93,51 @@ local function mainShopLayout()
         spawnBuffPedestal(centerPos + buffPos[shopLevel][i], 10000 * i, blacklist)
     end
 
-    if shopLevel >= ShopLevels.Level3 then
-        game:Spawn(EntityType.ENTITY_EFFECT, RestockMachine.Variant, Vector(bottomRight.X - 64, bottomRight.Y - 64), Vector.Zero, nil, RestockMachine.SubType, Random())
-    end
-
     game:Spawn(DonoMachine.Type, DonoMachine.Variant, Vector(bottomRight.X - 48, topLeft.Y + 48), Vector.Zero, nil, DonoMachine.SubType, Random())
 end
 
 local specialBuffPos = {
-    [1] = Vector(-200, -75),
-    [2] = Vector(-100, -75),
-    [3] = Vector(200, -75),
-    [4] = Vector(100, -75),
-    [5] = Vector(-200, 75),
-    [6] = Vector(-100, 75),
-    [7] = Vector(200, 75),
-    [8] = Vector(100, 75),
+    [1] = {
+        [1] = Vector(0, -50),
+        [2] = Vector(-50, -35),
+        [3] = Vector(50, -35),
+        [4] = Vector(-75, -25),
+        [5] = Vector(75, 25),
+    },
+    [2] = {
+        [1] = Vector(35, -45),
+        [2] = Vector(-35, -45),
+        [3] = Vector(65, -30),
+        [4] = Vector(-65, -30),
+    }
 }
 
-Resouled.AfterlifeShop.SpecialBuffsPerRoom = #specialBuffPos
+local function soulSanctumLayout()
+    local buffs = WeightedOutcomePicker()
 
-local function specialBuffsLayout()
-    local buffs = {}
-
-    local i = 1
     for key, buffID in pairs(Resouled.AfterlifeShop.Goto.SpecialBuffs) do
 
-        if i <= #specialBuffPos then
-            buffs[i] = buffID
-            Resouled.AfterlifeShop.Goto.SpecialBuffs[key] = nil
-        end
-
-        i = i + 1
+        buffs:AddOutcomeWeight(buffID, 1)
+        Resouled.AfterlifeShop.Goto.SpecialBuffs[key] = nil
     end
 
-    for j = 1, #specialBuffPos do
-        if buffs[j] then
-            local room = game:GetRoom()
-            local centerPos = room:GetCenterPos()
-            Resouled:SpawnSetBuffPedestal(buffs[j], centerPos + specialBuffPos[j])
-        end
+    local buffsOut = {}
+
+    local rng = RNG()
+    
+    for i = 1, math.min(buffs:GetNumOutcomes(), 5) do
+        local seed = game:GetSeeds():GetStartSeed() + 10000 * i
+        rng:SetSeed(seed)
+
+        local chosenBuff = buffs:PickOutcome(rng)
+        buffs:RemoveOutcome(chosenBuff)
+        table.insert(buffsOut, chosenBuff)
+    end
+
+    local roomCenter = game:GetRoom():GetCenterPos()
+
+    for i = 1, #buffsOut do
+        spawnSetBuffPedestal(roomCenter + specialBuffPos[#buffsOut%2][i], i, buffsOut[i])
     end
 end
 
@@ -147,7 +162,7 @@ end
 
 local layouts = {
     [Resouled.AfterlifeShop.RoomTypes.MainShop] = mainShopLayout,
-    [Resouled.AfterlifeShop.RoomTypes.SpecialBuffsRoom] = specialBuffsLayout,
+    [Resouled.AfterlifeShop.RoomTypes.SoulSanctum] = soulSanctumLayout,
     [Resouled.AfterlifeShop.RoomTypes.Graveyard] = graveyardLayout,
     [Resouled.AfterlifeShop.RoomTypes.SecretFight] = bossfightLayout,
 }
@@ -162,6 +177,9 @@ local function mainShopAlwaysLayout()
         (topLeft.Y + bottomRight.Y)/3
     )
     game:Spawn(EntityType.ENTITY_EFFECT, DeathStatue.Variant, statuePos, Vector.Zero, nil, DeathStatue.SubType, Random() + 1)
+    if Resouled.AfterlifeShop:GetShopLevel() >= ShopLevels.Level3 then
+        game:Spawn(EntityType.ENTITY_EFFECT, RestockMachine.Variant, Vector(bottomRight.X - 64, bottomRight.Y - 64), Vector.Zero, nil, RestockMachine.SubType, Random())
+    end
 end
 
 local layoutAlwaysOnEnter = {

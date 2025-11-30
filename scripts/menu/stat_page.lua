@@ -23,8 +23,8 @@ local CONFIG = {
     CustomMenuType = 444,
     MaxStatWidth = 250,
     StatOffset = Vector(8, -70),
-    PageOffset = Vector(510, 140),
-    ViewportOffset = Vector(-39.5, -162),
+    PageOffset = Vector(-500, 2770),
+    ViewportOffset = Vector(13, -290),
     StatVerticalSpacing = 3,
     HeaderLineOffset = 25,
     BuffPage = {
@@ -712,7 +712,7 @@ local function menuRender()
         MenuManager.SetViewPosition(pos)
     end
 
-    local renderPos = Isaac.WorldToMenuPosition(MainMenuType.STATS, Vector(0, 0)) + CONFIG.BackgroundSpriteSize / 2 +
+    local renderPos = Isaac.WorldToMenuPosition(MainMenuType.TITLE, Vector(0, 0)) + CONFIG.BackgroundSpriteSize / 2 +
         CONFIG.PageOffset
     BACKGROUND_SPRITE:Render(renderPos)
 

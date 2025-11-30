@@ -63,6 +63,10 @@
         <gibs amount="6" blood="1" bone="1" eye="1" gut="1" large="0" />
         <devolve id="16.2.0" weight="1" />
     </entity>
+    <entity anm2path="monsters/cursed_dople.anm2" reroll="true" boss="0" champion="0" collisionDamage="0" collisionMass="10" collisionRadius="13" friction="1" id="53" name="Cursed Dople" numGridCollisionPoints="12" shadowSize="14" variant="2" subtype="1" portrait="40">
+		<bestiary transform="0,0,1" anim="WalkVert" overlay="HeadIdle" />
+        <gibs amount="6" blood="1" bone="1" eye="1" gut="1" large="0" />
+    </entity>
     <entity anm2path="monsters/hunter.anm2" name="Hunter" id="416" variant="0" collisionMass="999" collisionRadius="15" friction="0" numGridCollisionPoints="12" collisionDamage="1"/>
     <entity name="Holy Portal" id="418" variant="0" anm2path="holy_portal.anm2" collisionMass="999" collisionRadius="20" friction="0" numGridCollisionPoints="12" collisionDamage="0" champion="0" shadowSize="26"/>
     <entity name="Holy Brain" id="419" variant="0" anm2path="holy_brain.anm2" collisionMass="10" friction="1" collisionRadius="18" collisionDamage="1" champion="1" baseHP="30" numGridCollisionPoints="12" shadowSize="22"/>
@@ -79,7 +83,7 @@
     <entity name="Blank Canvas Dip" id="417" variant="5" subtype="0" anm2path="blank_canvas_dip.anm2" collisionMass="1" collisionRadius="8" collisionDamage="1" friction="1" numGridCollisionPoints="12" shadowSize="12" baseHP="8"/> 
     <entity name="Wise Skull" id="418" variant="0" subtype="0" anm2path="misc/wise_skull.anm2" collisionMass="1" collisionRadius="10" collisionDamage="0" friction="1" numGridCollisionPoints="12" baseHP="1"/> 
     <entity name="Isaac Enemy" id="419" variant="0" subtype="0" anm2path="isaac_enemy.anm2" collisionMass="5" collisionRadius="10" collisionDamage="1" friction="1" numGridCollisionPoints="12" baseHP="10" stageHP="2" shadowSize="16"/> 
-    <entity name="Curse Fly" id="420" variant="0" subtype="0" anm2path="cursed_mulligan_fly.anm2" collisionMass="1" collisionRadius="3" collisionDamage="0" friction="1" numGridCollisionPoints="12" baseHP="0"/> 
+    <entity name="Curse Fly" id="420" variant="0" subtype="0" anm2path="cursed_mulligan_fly.anm2" collisionMass="1" collisionRadius="3" collisionDamage="0" friction="1" numGridCollisionPoints="12" baseHP="0"/>
 
 <!-- Effects-->
     <entity anm2path="effects/air_shockwave.anm2" name="Air Shockwave" id="1000" variant="200"/>

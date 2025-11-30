@@ -61,32 +61,3 @@ local function onUpdate(_, eff)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, onUpdate, restockMachineConfig.Variant)
-
-local function preRoomExit()
-    if not Resouled.AfterlifeShop:IsAfterlifeShop() then return end
-        
-    local save = Resouled.SaveManager.GetRoomFloorSave()
-    ---@param eff EntityEffect
-    Resouled.Iterators:IterateOverRoomEffects(function(eff)
-        if eff.Variant == restockMachineConfig.Variant and eff.SubType == restockMachineConfig.SubType then
-            if not save.BuffRerollMachine then save.BuffRerollMachine = {} end
-
-            table.insert(save.BuffRerollMachine, eff.Position)
-        end
-    end)
-end
-Resouled:AddCallback(ModCallbacks.MC_PRE_ROOM_EXIT, preRoomExit)
-
-local function postNewRoom()
-    if not Resouled.AfterlifeShop:IsAfterlifeShop() then return end
-
-    local save = Resouled.SaveManager.GetRoomFloorSave()
-    if save.BuffRerollMachine then
-        for _, pos in ipairs(save.BuffRerollMachine) do
-            local eff = Game():Spawn(EntityType.ENTITY_EFFECT, restockMachineConfig.Variant, pos, Vector.Zero, nil, restockMachineConfig.SubType, Random())
-            eff:GetSprite():Play("Idle", true)
-        end
-        save.BuffRerollMachine = nil
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)

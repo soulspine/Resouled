@@ -51,7 +51,7 @@ local EID_BUFFS = {
         [Resouled.Buffs.ZODIAC_SIGN] = "First treasure room item is a zodiac sign",
 }
 
-for id, desc in ipairs(EID_BUFFS) do
+for id, desc in pairs(EID_BUFFS) do
     Resouled:AddBuffDescription(id, desc)
 end
 

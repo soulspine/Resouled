@@ -324,20 +324,6 @@ local function postFloorGenerate()
         
         layout[makeLookupKey(currentIndex)] = setRoomType(Resouled.AfterlifeShop.RoomTypes.SoulSanctum)
 
-        local soulSanctumIdx = currentIndex
-
-        local specialBuffRooms = math.ceil(#Resouled.AfterlifeShop.Goto.SpecialBuffs / Resouled.AfterlifeShop.SpecialBuffsPerRoom)
-
-        for _ = 1, specialBuffRooms do
-            if math.random() < Resouled.AfterlifeShop.ChanceToGoBackToSoulSanctumDuringGeneration and isAnySpotAroundRoomFree(soulSanctumIdx) then
-                currentIndex = soulSanctumIdx
-            end
-
-            currentIndex = moveAroundMap(currentIndex, math.random(1, 3)) -- UP, RIGHT, DOWN
-
-            layout[makeLookupKey(currentIndex)] = setRoomType(Resouled.AfterlifeShop.RoomTypes.SpecialBuffsRoom)
-        end
-
         --Finished
         spawnDoors()
         

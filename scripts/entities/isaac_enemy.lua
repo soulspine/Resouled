@@ -177,6 +177,11 @@ local function onNpcInit(_, npc)
         sprite:PlayOverlay(Animations.Head.Down, true)
 
         npc:AddEntityFlags(EntityFlag.FLAG_NO_BLOOD_SPLASH)
+
+        for i = 0, sprite:GetLayerCount() - 1 do
+            sprite:ReplaceSpritesheet(i, "gfx/characters/costumes/character_001_isaac.png", false)
+        end
+        sprite:LoadGraphics()
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, IsaacEnemy.Type)

@@ -18,6 +18,7 @@
 ---@field Id ResouledBuffRarity
 ---@field Weight integer
 ---@field Name string
+---@field Color Color
 
 --- @type table<string, ResouledBuffFamilyDesc>
 local registeredFamilies = {}
@@ -88,13 +89,15 @@ end
 ---@param rarity ResouledBuffRarity
 ---@param name string
 ---@param weight number
-function Resouled:RegisterBuffRarity(rarity, name, weight)
+---@param color Color --The brightest color on the buff's sprite
+function Resouled:RegisterBuffRarity(rarity, name, weight, color)
     local key = tostring(rarity)
     if not registeredRarities[key] then
         registeredRarities[key] = {
             Id = rarity,
             Name = name,
             Weight = weight,
+            Color = color
         }
         return true
     end

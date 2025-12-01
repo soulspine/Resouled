@@ -74,6 +74,7 @@ Resouled.BuffRarity = {
     RARE = 1,
     LEGENDARY = 2,
     SPECIAL = 3,
+    CURSED = 4,
 }
 
 local COMMON_BASE_PRICE = 4
@@ -104,10 +105,11 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.DEATH, "Death", "gfx_resouled/
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SOUL_CATCHER, "Soul Catcher", "gfx_resouled/buffs/soul_catcher.png")
 
 -- REGISTERING BUFF RARITIES
-Resouled:RegisterBuffRarity(Resouled.BuffRarity.COMMON, "Common", 0.65)
-Resouled:RegisterBuffRarity(Resouled.BuffRarity.RARE, "Rare", 0.25)
-Resouled:RegisterBuffRarity(Resouled.BuffRarity.LEGENDARY, "Legendary", 0.1)
-Resouled:RegisterBuffRarity(Resouled.BuffRarity.SPECIAL, "Special", 0)
+Resouled:RegisterBuffRarity(Resouled.BuffRarity.COMMON, "Common", 0.65, Color(117/255, 152/255, 161/255))
+Resouled:RegisterBuffRarity(Resouled.BuffRarity.RARE, "Rare", 0.25, Color(154/255, 113/255, 176/255))
+Resouled:RegisterBuffRarity(Resouled.BuffRarity.LEGENDARY, "Legendary", 0.1, Color(185/255, 170/255, 35/255))
+Resouled:RegisterBuffRarity(Resouled.BuffRarity.SPECIAL, "Special", 0, Color(1, 1, 1))
+Resouled:RegisterBuffRarity(Resouled.BuffRarity.CURSED, "Cursed", 0, Color(142/255, 84/255, 242/255))
 
 -- REGISTERING BUFFS
 Resouled:RegisterBuff(Resouled.Buffs.CURSED_SKULL, "Cursed Skull", COMMON_BASE_PRICE, Resouled.BuffRarity.COMMON,

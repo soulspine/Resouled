@@ -74,12 +74,18 @@ local playbackSpeed = 0.5
 local startPos = Vector(30, 30)
 local maxDescriptionRange = 175
 
-Resouled.BuffRarityDescriptionColors = {
-    [Resouled.BuffRarity.COMMON] = KColor(117/255, 152/255, 161/255, 1),
-    [Resouled.BuffRarity.RARE] = KColor(154/255, 113/255, 176/255, 1),
-    [Resouled.BuffRarity.LEGENDARY] = KColor(185/255, 170/255, 35/255, 1),
-    [Resouled.BuffRarity.SPECIAL] = KColor(1, 1, 1, 1)
-}
+Resouled.BuffRarityDescriptionColors = {}
+
+local glowColors = {}
+
+local glowColorsPedestal = {}
+
+for _, rarity in pairs(Resouled:GetBuffRarities()) do
+    local c = rarity.Color
+    glowColors[rarity.Id] = Color(c.R * 2, c.G * 2, c.B * 2)
+    glowColorsPedestal[rarity.Id] = Color(1 + c.R/3, 1 + c.G/3, 1 + c.B/3)
+    Resouled.BuffRarityDescriptionColors[rarity.Id] = KColor(c.R, c.G, c.B, 1)
+end
 
 
 ---@param width number
@@ -298,19 +304,6 @@ function Resouled:RenderBuffDescription(buffId, pos)
         y = y + descFont:GetBaselineHeight()
     end
 end
-
-local glowColors = {
-    [Resouled.BuffRarity.COMMON] = Color(117/255 * 2, 152/255 * 2, 161/255 * 2, 1),
-    [Resouled.BuffRarity.RARE] = Color(154/255 * 2, 113/255 * 2, 176/255 * 2, 1),
-    [Resouled.BuffRarity.LEGENDARY] = Color(185/255 * 2, 170/255 * 2, 35/255 * 2, 1),
-    [Resouled.BuffRarity.SPECIAL] = Color(1, 1, 1, 1)
-}
-local glowColorsPedestal = {
-    [Resouled.BuffRarity.COMMON] = Color(1 + 117/255/2, 1 + 152/255/2, 1 + 161/255/2),
-    [Resouled.BuffRarity.RARE] = Color(1 + 154/255/2, 1 + 113/255/2, 1 + 176/255/2),
-    [Resouled.BuffRarity.LEGENDARY] = Color(1 + 185/255/2, 1 + 170/255/2, 1 + 35/255/2),
-    [Resouled.BuffRarity.SPECIAL] = Color(1 + 1/4, 1 + 1/4, 1 + 1/4)
-}
 
 Resouled:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, function()
     local closest = nil

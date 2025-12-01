@@ -1,4 +1,4 @@
-<sounds root="sfx_resouled">
+<sounds root="sfx_resouled/">
     <sound name="Paper Flip">
         <sample weight="1" path="paper_flip.wav"/>
     </sound>

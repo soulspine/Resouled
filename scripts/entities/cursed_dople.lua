@@ -5,9 +5,11 @@ local CursedDople = {
 
     MoveSpeed = 2,
     TearSpeed = 10,
-    BaseTearDamage = 3.5,
+    BaseTearDamage = 2,
     TearDamagePerStage = 0.15,
-    VelocityMultiplier = 0.8
+    VelocityMultiplier = 0.8,
+
+    TearColor = Resouled.Stats:GetCursedProjectileColor()
 }
 
 local SHOOT = "Shoot"
@@ -111,11 +113,14 @@ local function shoot(en, input, data, sprite)
     if input.X == 0 and input.Y == 0 then return end
 
     if not sprite:GetOverlayAnimation():find(SHOOT) then
-        local tear = Game():Spawn(EntityType.ENTITY_TEAR, TearVariant.BLOOD, en.Position, Vector.Zero, data.Resouled_CursedDopleBind.Entity, 0, Random()):ToTear()
+        local tear = Game():Spawn(EntityType.ENTITY_TEAR, 0, en.Position, Vector.Zero, data.Resouled_CursedDopleBind.Entity, 0, Random()):ToTear()
         if not tear then return end
+
+        tear.Color = CursedDople.TearColor
+        tear.CollisionDamage = CursedDople.BaseTearDamage + Game():GetLevel():GetStage() * CursedDople.TearDamagePerStage
         
         local angle = input:GetAngleDegrees()%360
-        tear.Velocity = Vector(1, 0):Rotated(angle + angle%90) * CursedDople.TearSpeed
+        tear.Velocity = Vector(1, 0):Rotated(angle + angle%90) * CursedDople.TearSpeed + en.Velocity/5
 
         sprite:PlayOverlay(getShootAnimationFromInput(input), true)
     end

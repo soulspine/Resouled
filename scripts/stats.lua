@@ -15,6 +15,11 @@ function Resouled.Stats:GetCursedProjectileParams()
     return x
 end
 
+---@return Color
+function Resouled.Stats:GetCursedProjectileColor()
+    return Resouled.Stats.CursedProjectileColor
+end
+
 Resouled.Stats.BlueKingCrownBuff = {
     [PickupVariant.PICKUP_BOMB] = {
         [BombSubType.BOMB_NORMAL] = {[1] = BombSubType.BOMB_DOUBLEPACK, [2] = BombSubType.BOMB_GOLDEN}

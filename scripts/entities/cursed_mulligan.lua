@@ -32,11 +32,11 @@ local CurseFlyConfig = {
                 if npc2.Index ~= npc.Index and npc2.Type ~= npc.Type and npc2:IsActiveEnemy() and npc2:IsEnemy() and npc2:IsVulnerableEnemy() and not (npc.SpawnerEntity and npc.SpawnerEntity.Index == npc2.Index) and
                 not data.Resouled_NoCursedMulliganTargetting
                 then
-                    local weight = math.floor(npc2.HitPoints/npc2.MaxHitPoints * 100 + math.abs(maxDistance - npc2.Position:Distance(npc.Position)/2) + 0.5)
+                    local weight = npc2.HitPoints/npc2.MaxHitPoints * 100 + math.abs(maxDistance - npc2.Position:Distance(npc.Position)/2)
                     if data.Resouled_CursedMulliganDeath then
                         weight = math.max(weight - 15, 0)
                     end
-                    enemies:AddOutcomeWeight(npc2.Index, weight)
+                    enemies:AddOutcomeFloat(npc2.Index, weight)
                     enemiesIndexes[npc2.Index] = npc2
                 end
             end

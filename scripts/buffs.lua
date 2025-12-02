@@ -21,9 +21,15 @@ Resouled.BuffFamilies = {
     SADNESS = 15,
     PESTILENCE = 16,
     FAMINE = 17,
+    PUTRIFIER = 25,
+    CHITIN = 26,
 
     RESSURECTION_DAY = 20,
     LORD_OF_THE_FLIES = 21,
+    MASQUERADE = 22,
+    DELIRIOUS = 23,
+    MOTHERLY_LOVE = 24,
+    GREEDS_GAMBLE = 27
 }
 
 ---@enum ResouledBuff
@@ -69,9 +75,15 @@ Resouled.Buffs = {
     SADNESS = 32,
     PESTILENCE = 33,
     FAMINE = 34,
+    PUTRIFIER = 46,
+    CHITIN = 47,
 
     RESSURECTION_DAY = 41,
     LORD_OF_THE_FLIES = 42,
+    MASQUERADE = 43,
+    DELIRIOUS = 44,
+    MOTHERLY_LOVE = 45,
+    GREEDS_GAMBLE = 48
 }
 
 ---@enum ResouledBuffRarity
@@ -96,29 +108,35 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.ZODIAC_SIGN, "Zodiac Sign", "g
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.IMP, "Imp", "gfx_resouled/buffs/imp.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.METEOR, "Meteor", "gfx_resouled/buffs/meteor.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.BLUE_KING_CROWN, "Blue King Crown", "gfx_resouled/buffs/blue_king_crown.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SCARY_FACE, "Scary Face", "gfx_resouled/buffs/scary_face.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SMALL_CAP, "Small Cap", "gfx_resouled/buffs/small_cap.png")
+
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.WAR, "War", "gfx_resouled/buffs/war.png") -- Special
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.FAMINE, "Famine", "gfx_resouled/buffs/famine.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.DEATH, "Death", "gfx_resouled/buffs/death.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.PESTILENCE, "Pestilence", "gfx_resouled/buffs/pestilence.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SOUL_CATCHER, "Soul Catcher", "gfx_resouled/buffs/soul_catcher.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SIGHT, "Sight", "gfx_resouled/buffs/sight.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.FORTUNE, "Fortune", "gfx_resouled/buffs/fortune.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.AGILITY, "Agility", "gfx_resouled/buffs/agility.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.STRENGTH, "Strength", "gfx_resouled/buffs/strength.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SADNESS, "Sadness", "gfx_resouled/buffs/sadness.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.PESTILENCE, "Pestilence", "gfx_resouled/buffs/pestilence.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.FAMINE, "Famine", "gfx_resouled/buffs/famine.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SCARY_FACE, "Scary Face", "gfx_resouled/buffs/scary_face.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SMALL_CAP, "Small Cap", "gfx_resouled/buffs/small_cap.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.PUTRIFIER, "Putrifier", "gfx_resouled/buffs/placeholder.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.CHITIN, "Chitin", "gfx_resouled/buffs/placeholder.png")
 
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.WAR, "War", "gfx_resouled/buffs/war.png") -- Special
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.DEATH, "Death", "gfx_resouled/buffs/death.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SOUL_CATCHER, "Soul Catcher", "gfx_resouled/buffs/soul_catcher.png")
-
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.RESSURECTION_DAY, "Ressurection Day", "gfx_resouled/buffs/placeholder_cursed.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.LORD_OF_THE_FLIES, "Lord of The Flies", "gfx_resouled/buffs/placeholder_cursed.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.RESSURECTION_DAY, "Ressurection Day", "gfx_resouled/buffs/cursed/placeholder_cursed.png") -- Cursed
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.LORD_OF_THE_FLIES, "Lord of The Flies", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.MASQUERADE, "Masquerade", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.DELIRIOUS, "Delirious", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.MOTHERLY_LOVE, "Motherly Love", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.GREEDS_GAMBLE, "Greed's Gamble", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
 
 -- REGISTERING BUFF RARITIES
 Resouled:RegisterBuffRarity(Resouled.BuffRarity.COMMON, "Common", 0.65, Color(117/255, 152/255, 161/255))
 Resouled:RegisterBuffRarity(Resouled.BuffRarity.RARE, "Rare", 0.25, Color(154/255, 113/255, 176/255))
 Resouled:RegisterBuffRarity(Resouled.BuffRarity.LEGENDARY, "Legendary", 0.1, Color(185/255, 170/255, 35/255))
 Resouled:RegisterBuffRarity(Resouled.BuffRarity.SPECIAL, "Special", 0, Color(1, 1, 1))
-Resouled:RegisterBuffRarity(Resouled.BuffRarity.CURSED, "Cursed", 1, Color(142/255, 84/255, 242/255))
+Resouled:RegisterBuffRarity(Resouled.BuffRarity.CURSED, "Cursed", 100, Color(108.9/255, 94/255, 198/255))
 
 -- REGISTERING BUFFS
 Resouled:RegisterBuff(Resouled.Buffs.CURSED_SKULL, "Cursed Skull", COMMON_BASE_PRICE, Resouled.BuffRarity.COMMON,
@@ -171,7 +189,7 @@ Resouled:RegisterBuff(Resouled.Buffs.TERRIFYING_PHYSIOGNOMY, "Terrifying Physiog
     Resouled.BuffFamilies.SCARY_FACE, false)
 
 Resouled:RegisterBuff(Resouled.Buffs.WAR, "War", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.WAR, false,
-    Resouled.Souls.WAR) -- Special
+    Resouled.Souls.WAR)
 Resouled:RegisterBuff(Resouled.Buffs.DEATH, "Death", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.DEATH, false,
     Resouled.Souls.DEATH)
 Resouled:RegisterBuff(Resouled.Buffs.SOUL_CATCHER, "Soul Catcher", 0, Resouled.BuffRarity.SPECIAL,
@@ -192,11 +210,42 @@ Resouled:RegisterBuff(Resouled.Buffs.FAMINE, "Famine", 0, Resouled.BuffRarity.SP
 Resouled:RegisterBuff(Resouled.Buffs.SMALL_CAP, "Small Cap", COMMON_BASE_PRICE, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.SMALL_CAP, false)
 Resouled:RegisterBuff(Resouled.Buffs.MEDIUM_CAP, "Meduim Cap", RARE_BASE_PRICE, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.SMALL_CAP, false)
 Resouled:RegisterBuff(Resouled.Buffs.BIG_CAP, "Big Cap", LEGENDARY_BASE_PRICE, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.SMALL_CAP, false)
-
 Resouled:RegisterBuff(Resouled.Buffs.RESSURECTION_DAY, "Ressurection Day", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.RESSURECTION_DAY, false)
 Resouled:RegisterBuff(Resouled.Buffs.LORD_OF_THE_FLIES, "Lord of The Flies", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.LORD_OF_THE_FLIES, false)
+Resouled:RegisterBuff(Resouled.Buffs.MASQUERADE, "Masquerade", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.MASQUERADE, false)
+Resouled:RegisterBuff(Resouled.Buffs.DELIRIOUS, "Delirious", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.DELIRIOUS, false)
+Resouled:RegisterBuff(Resouled.Buffs.MOTHERLY_LOVE, "Motherly Love", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.MOTHERLY_LOVE, false)
+Resouled:RegisterBuff(Resouled.Buffs.PUTRIFIER, "Putrifier", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.PUTRIFIER, false)
+Resouled:RegisterBuff(Resouled.Buffs.CHITIN, "Chitin", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.CHITIN, false)
+Resouled:RegisterBuff(Resouled.Buffs.GREEDS_GAMBLE, "Greed's Gamble", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.GREEDS_GAMBLE, false)
 
 Resouled:Log("Loaded " .. tostring(#Resouled:GetBuffs()) .. " buffs")
+
+
+
+local buffsToRemoveOnGameEnd = {}
+local removeIfDeath = {}
+
+---@param buffId ResouledBuff
+---@param removeOnDeath? boolean --Default: false
+function Resouled:AddBuffToRemoveOnRunEnd(buffId, removeOnDeath)
+    table.insert(buffsToRemoveOnGameEnd, buffId)
+    removeIfDeath[buffId] = removeOnDeath or false
+end
+
+---@param isGameOver boolean
+local function postGameEnd(_, isGameOver)
+    for _, buffId in ipairs(buffsToRemoveOnGameEnd) do
+        if isGameOver and removeIfDeath[buffId] == false then else
+            if Resouled:ActiveBuffPresent(buffId) then
+                Resouled:RemoveActiveBuff(buffId)
+            end
+        end
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, postGameEnd)
+
+
 
 
 -- IMPORTING BUFF SCRIPTS
@@ -237,5 +286,11 @@ include("scripts.buffs.strength")
 include("scripts.buffs.sadness")
 include("scripts.buffs.pestilence")
 include("scripts.buffs.famine")
+include("scripts.buffs.chitin")
 
 include("scripts.buffs.cursed.lord_of_the_flies")
+include("scripts.buffs.cursed.masquerade")
+include("scripts.buffs.cursed.ressurection_day")
+include("scripts.buffs.cursed.delirious")
+include("scripts.buffs.cursed.motherly_love")
+include("scripts.buffs.cursed.greeds_gamble")

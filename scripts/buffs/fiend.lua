@@ -11,9 +11,4 @@ local function onNpcUpdate(_, npc)
 end
 Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onNpcUpdate)
 
-local function onRunEnd()
-    if Resouled:ActiveBuffPresent(Resouled.Buffs.FIEND) then
-        Resouled:RemoveActiveBuff(Resouled.Buffs.FIEND)
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, onRunEnd)
+Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.FIEND, true)

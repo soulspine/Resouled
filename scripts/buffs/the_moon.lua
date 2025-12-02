@@ -79,9 +79,4 @@ end
 Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACHE_FIREDELAY)
 Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACHE_DAMAGE)
 
-local function postGameEnd()
-    if Resouled:ActiveBuffPresent(Resouled.Buffs.THE_MOON) then
-        Resouled:RemoveActiveBuff(Resouled.Buffs.THE_MOON)
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, postGameEnd)
+Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.THE_MOON, true)

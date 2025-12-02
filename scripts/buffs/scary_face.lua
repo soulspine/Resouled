@@ -27,7 +27,6 @@ function scaryFace:removeCallbacks()
 end
 
 function scaryFace:postGameEnd()
-    Resouled:RemoveActiveBuff(Resouled.Buffs.TERRIFYING_PHYSIOGNOMY)
     scaryFace:removeCallbacks()
 end
 
@@ -40,3 +39,5 @@ mod:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.LATE,
 
 mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, scaryFace.removeCallbacks)
 mod:AddCallback(ModCallbacks.MC_POST_GAME_END, scaryFace.postGameEnd)
+
+Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.SCARY_FACE, true)

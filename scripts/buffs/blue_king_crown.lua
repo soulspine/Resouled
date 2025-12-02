@@ -43,8 +43,4 @@ local function onPickupInit(_, pickup)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onPickupInit)
 
-Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, function()
-    if Resouled:ActiveBuffPresent(Resouled.Buffs.BLUE_KING_CROWN) then
-        Resouled:RemoveActiveBuff(Resouled.Buffs.BLUE_KING_CROWN)
-    end
-end)
+Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.BLUE_KING_CROWN, true)

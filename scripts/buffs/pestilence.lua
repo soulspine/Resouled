@@ -42,10 +42,7 @@ function pestilence:onNpcInit(npc)
 end
 
 function pestilence:onGameEnd()
-    if Resouled:ActiveBuffPresent(Resouled.Buffs.PESTILENCE) then
-        Resouled:RemoveActiveBuff(Resouled.Buffs.PESTILENCE)
-        pestilence:removeCallbacks()
-    end
+    pestilence:removeCallbacks()
 end
 
 function pestilence:preGameExit()
@@ -80,3 +77,5 @@ local function postPlayerInit()
     end
 end
 mod:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.LATE, postPlayerInit)
+
+Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.PESTILENCE, true)

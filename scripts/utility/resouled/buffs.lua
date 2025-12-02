@@ -446,7 +446,7 @@ end
 function Resouled:ActiveBuffPresent(buffID)
     local buff = Resouled:GetBuffById(buffID)
     local FILE_SAVE = Resouled.SaveManager.GetPersistentSave()
-    return buff ~= nil and FILE_SAVE ~= nil and FILE_SAVE.Resouled_ActiveBuffs and FILE_SAVE.Resouled_ActiveBuffs[tostring(buffID)]
+    return (not Resouled.AfterlifeShop:IsAfterlifeShop()) and buff ~= nil and FILE_SAVE ~= nil and FILE_SAVE.Resouled_ActiveBuffs and FILE_SAVE.Resouled_ActiveBuffs[tostring(buffID)]
 end
 
 function Resouled:ClearBuffSave()

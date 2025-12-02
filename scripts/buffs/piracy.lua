@@ -33,8 +33,4 @@ local function postPickupUpdate(_, pickup)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, postPickupUpdate)
 
-Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, function()
-    if Resouled:ActiveBuffPresent(Resouled.Buffs.PIRACY) then
-        Resouled:RemoveActiveBuff(Resouled.Buffs.PIRACY)
-    end
-end)
+Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.PIRACY, true)

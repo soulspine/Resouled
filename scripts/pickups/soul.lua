@@ -197,6 +197,10 @@ local function onPickupUpdate(_, pickup)
         if pickup.FrameCount % 3 == 0 then
             Resouled:SpawnSparkleEffect(pickup.Position, -pickup.Velocity / 5, 60, pickup.SpriteOffset)
         end
+
+        if not Game():GetRoom():IsPositionInRoom(pickup.Position, -75) then
+            pickup.Velocity = pickup.Velocity * 0.95
+        end
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onPickupUpdate, Soul.Variant)

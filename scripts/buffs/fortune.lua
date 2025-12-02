@@ -8,9 +8,4 @@ local function onCacheEval(_, player)
 end
 Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACHE_LUCK)
 
-local function postGameEnd()
-    if Resouled:ActiveBuffPresent(Resouled.Buffs.FORTUNE) then
-        Resouled:RemoveActiveBuff(Resouled.Buffs.FORTUNE)
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, postGameEnd)
+Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.FORTUNE, true)

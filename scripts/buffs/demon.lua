@@ -25,9 +25,4 @@ local function entityTakeDMG(_, entity)
 end
 Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, entityTakeDMG)
 
-local function postGameEnd()
-    if Resouled:ActiveBuffPresent(Resouled.Buffs.DEMON) then
-        Resouled:RemoveActiveBuff(Resouled.Buffs.DEMON)
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, postGameEnd)
+Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.DEMON, true)

@@ -27,7 +27,6 @@ function terrifyingPhysiognomy:removeCallbacks()
 end
 
 function terrifyingPhysiognomy:postGameEnd()
-    Resouled:RemoveActiveBuff(Resouled.Buffs.TERRIFYING_PHYSIOGNOMY)
     terrifyingPhysiognomy:removeCallbacks()
 end
 
@@ -40,3 +39,5 @@ mod:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.LATE,
 
 mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, terrifyingPhysiognomy.removeCallbacks)
 mod:AddCallback(ModCallbacks.MC_POST_GAME_END, terrifyingPhysiognomy.postGameEnd)
+
+Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.TERRIFYING_PHYSIOGNOMY, true)

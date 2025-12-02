@@ -71,13 +71,6 @@ local function postPlayerInit()
 end
 mod:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.LATE, postPlayerInit)
 
-function famine:postGameEnd()
-    if Resouled:ActiveBuffPresent(Resouled.Buffs.FAMINE) then
-        Resouled:RemoveActiveBuff(Resouled.Buffs.FAMINE)
-        famine:removeCallbacks()
-    end
-end
-
 function famine:preGameExit()
     if callbacksActive then
         famine:removeCallbacks()
@@ -86,7 +79,6 @@ end
 
 function famine:addCallbacks()
     if not callbacksActive then
-        mod:AddCallback(ModCallbacks.MC_POST_GAME_END, famine.postGameEnd)
         mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, famine.preGameExit)
         callbacksActive = true
     end
@@ -94,8 +86,9 @@ end
 
 function famine:removeCallbacks()
     if callbacksActive then
-        mod:RemoveCallback(ModCallbacks.MC_POST_GAME_END, famine.postGameEnd)
         mod:RemoveCallback(ModCallbacks.MC_PRE_GAME_EXIT, famine.preGameExit)
         callbacksActive = false
     end
 end
+
+Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.FAMINE, true)

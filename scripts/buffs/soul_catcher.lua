@@ -22,11 +22,7 @@ function SoulCatcher:postGameEnd()
     if Resouled:GetPossessedSoulsNum() >= 30 then
         Resouled.AfterlifeShop:AddSpecialBuffToSpawn(Resouled.Buffs.SOUL_CATCHER)
     end
-
-    if Resouled:ActiveBuffPresent(Resouled.Buffs.SOUL_CATCHER) then
-        Resouled:RemoveActiveBuff(Resouled.Buffs.SOUL_CATCHER)
-        SoulCatcher:RemoveCallbacks()
-    end
+    SoulCatcher:RemoveCallbacks()
 end
 mod:AddCallback(ModCallbacks.MC_POST_GAME_END, SoulCatcher.postGameEnd)
 
@@ -57,3 +53,5 @@ end)
 mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, function()
     SoulCatcher:RemoveCallbacks()
 end)
+
+Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.SOUL_CATCHER, true)

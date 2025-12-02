@@ -8,9 +8,4 @@ local function onCacheEval(_, player)
 end
 Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACHE_FIREDELAY)
 
-local function postGameEnd()
-    if Resouled:ActiveBuffPresent(Resouled.Buffs.SADNESS) then
-        Resouled:RemoveActiveBuff(Resouled.Buffs.SADNESS)
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, postGameEnd)
+Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.SADNESS, true)

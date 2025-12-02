@@ -129,7 +129,7 @@ Resouled:RunAfterImports(function()
         for _, childBuffId in pairs(family.ChildBuffs) do
             local buff = Resouled:GetBuffById(childBuffId)
             if not buff then return end
-            if buff.Rarity == Resouled.BuffRarity.SPECIAL then
+            if buff.Rarity == Resouled.BuffRarity.SPECIAL or buff.Rarity == Resouled.BuffRarity.CURSED then
                 specialFamily = true
             end
         end
@@ -157,6 +157,33 @@ Resouled:RunAfterImports(function()
             if not buff then return end
 
             if buff.Rarity == Resouled.BuffRarity.SPECIAL then
+                specialFamily = true
+            end
+        end
+
+        if specialFamily then
+            sortedBuffFamilies[#sortedBuffFamilies+1] = family
+        end
+
+        i = i + 1
+    end
+
+    i = 0
+
+    while Resouled:GetBuffFamilyById(i) do
+        local family = Resouled:GetBuffFamilyById(i)
+
+        if not family then return end
+
+        local specialFamily = false
+
+        for _, childBuffId in pairs(family.ChildBuffs) do
+            local buff = Resouled:GetBuffById(childBuffId)
+            if not family then return end
+            
+            if not buff then return end
+
+            if buff.Rarity == Resouled.BuffRarity.CURSED then
                 specialFamily = true
             end
         end
@@ -411,7 +438,7 @@ local PAGES = {
                 if not save[key] then
                     FONTS.Size10:DrawStringScaled("???", descPos.X, descPos.Y, 1, 1, CONFIG.TextColor)
                 else
-                    local spaceBetweenDesc = FONTS.Size10:GetBaselineHeight() - 2
+                    local spaceBetweenDesc = FONTS.Size10:GetBaselineHeight() * (REPENTANCE_PLUS and 1.25 or 1)
                     for _, string in pairs(buffDescs[buff.Id]) do
                         FONTS.Size10:DrawStringScaled(string, descPos.X, descPos.Y, 1, 1, CONFIG.TextColor)
                         descPos.Y = descPos.Y + spaceBetweenDesc

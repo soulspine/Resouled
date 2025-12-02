@@ -21,6 +21,9 @@ Resouled.BuffFamilies = {
     SADNESS = 15,
     PESTILENCE = 16,
     FAMINE = 17,
+
+    RESSURECTION_DAY = 20,
+    LORD_OF_THE_FLIES = 21,
 }
 
 ---@enum ResouledBuff
@@ -66,6 +69,9 @@ Resouled.Buffs = {
     SADNESS = 32,
     PESTILENCE = 33,
     FAMINE = 34,
+
+    RESSURECTION_DAY = 41,
+    LORD_OF_THE_FLIES = 42,
 }
 
 ---@enum ResouledBuffRarity
@@ -104,12 +110,15 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.WAR, "War", "gfx_resouled/buff
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.DEATH, "Death", "gfx_resouled/buffs/death.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SOUL_CATCHER, "Soul Catcher", "gfx_resouled/buffs/soul_catcher.png")
 
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.RESSURECTION_DAY, "Ressurection Day", "gfx_resouled/buffs/placeholder_cursed.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.LORD_OF_THE_FLIES, "Lord of The Flies", "gfx_resouled/buffs/placeholder_cursed.png")
+
 -- REGISTERING BUFF RARITIES
 Resouled:RegisterBuffRarity(Resouled.BuffRarity.COMMON, "Common", 0.65, Color(117/255, 152/255, 161/255))
 Resouled:RegisterBuffRarity(Resouled.BuffRarity.RARE, "Rare", 0.25, Color(154/255, 113/255, 176/255))
 Resouled:RegisterBuffRarity(Resouled.BuffRarity.LEGENDARY, "Legendary", 0.1, Color(185/255, 170/255, 35/255))
 Resouled:RegisterBuffRarity(Resouled.BuffRarity.SPECIAL, "Special", 0, Color(1, 1, 1))
-Resouled:RegisterBuffRarity(Resouled.BuffRarity.CURSED, "Cursed", 0, Color(142/255, 84/255, 242/255))
+Resouled:RegisterBuffRarity(Resouled.BuffRarity.CURSED, "Cursed", 1, Color(142/255, 84/255, 242/255))
 
 -- REGISTERING BUFFS
 Resouled:RegisterBuff(Resouled.Buffs.CURSED_SKULL, "Cursed Skull", COMMON_BASE_PRICE, Resouled.BuffRarity.COMMON,
@@ -184,6 +193,8 @@ Resouled:RegisterBuff(Resouled.Buffs.SMALL_CAP, "Small Cap", COMMON_BASE_PRICE, 
 Resouled:RegisterBuff(Resouled.Buffs.MEDIUM_CAP, "Meduim Cap", RARE_BASE_PRICE, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.SMALL_CAP, false)
 Resouled:RegisterBuff(Resouled.Buffs.BIG_CAP, "Big Cap", LEGENDARY_BASE_PRICE, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.SMALL_CAP, false)
 
+Resouled:RegisterBuff(Resouled.Buffs.RESSURECTION_DAY, "Ressurection Day", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.RESSURECTION_DAY, false)
+Resouled:RegisterBuff(Resouled.Buffs.LORD_OF_THE_FLIES, "Lord of The Flies", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.LORD_OF_THE_FLIES, false)
 
 Resouled:Log("Loaded " .. tostring(#Resouled:GetBuffs()) .. " buffs")
 
@@ -226,3 +237,5 @@ include("scripts.buffs.strength")
 include("scripts.buffs.sadness")
 include("scripts.buffs.pestilence")
 include("scripts.buffs.famine")
+
+include("scripts.buffs.cursed.lord_of_the_flies")

@@ -24,7 +24,7 @@ local function entityTakeDMG(_, entity, amount, flags, source, countDown)
             local angle = npc.Velocity:Rotated(-src.Velocity:GetAngleDegrees()):GetAngleDegrees()%360
             if angle > 180 - COUNT_AS_FACE_AREA/2 and angle < 180 + COUNT_AS_FACE_AREA/2 then
                 local c = npc:GetColor()
-                npc:SetColor(Color(c.R - 0.25, c.G - 0.25, c.B - 0.25, c.A, c.RO + 0.75, c.GO + 0.75, c.BO + 0.75), 10, 1, true, true)
+                npc:SetColor(Color(c.R, c.G, c.B, c.A, c.RO + 0.25098, c.GO + 0.25098, c.BO + 0.501961), 15, 1, true, true)
                 return false
             end
         end

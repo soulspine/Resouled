@@ -1,5 +1,5 @@
 local UPDATES_BETWEEN_CHANCE_CHECK = 50
-local CHANCE_TO_SPAWN_LEG = 0.15
+local CHANCE_TO_SPAWN_LEG = 0.11
 
 local function curseActive()
     return Resouled:ActiveBuffPresent(Resouled.Buffs.MOTHERLY_LOVE) or Resouled:IsSpecialSeedEffectActive(Resouled.SpecialSeedEffects.EverythingIsCursed)

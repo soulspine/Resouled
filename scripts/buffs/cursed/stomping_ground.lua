@@ -32,8 +32,8 @@ end
 local function Earthquake()
     if not curseActive() or Game():IsPaused() then return end
 
+    local frames = Game():GetFrameCount()
     if quake.Time == -1 then
-        local frames = Game():GetFrameCount()
         if frames > 100 and frames % FREQUENCY == 0 and math.random() < CHANCE then
             quake.Gain = 1
             quake.Time = 0
@@ -47,6 +47,20 @@ local function Earthquake()
     if quake.Time == -1 then quake.Gain = 0 end
 
     if quake.Time > -1 then
+        if frames%25 + math.random(-5, 5) == 0 then
+            SFXManager():Play(SoundEffect.SOUND_POT_BREAK, 0.75, nil, nil, 0.4 + math.random()/4)
+        end
+
+        if frames % 30 == 0 then
+            SFXManager():Play(SoundEffect.SOUND_GROUND_TREMOR, 1.5, nil, nil, 0.4 + math.random()/4)
+        end
+
+        if frames % 25 == 0 and math.random() < 1/3 then
+            SFXManager():Play(SoundEffect.SOUND_WOOD_PLANK_BREAK, 1.5, nil, nil, 0.5 + math.random()/3)
+        end
+
+        
+
         if math.random() < 0.05 then
             local pos = Isaac.GetRandomPosition()
             local smoke = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.DARK_BALL_SMOKE_PARTICLE, Vector(pos.X, Isaac.WorldToScreen(Vector(0, -16)).Y), Vector(0, 10) + Vector(0, 10) * math.random(), nil, 0, Random()):ToEffect()
@@ -63,6 +77,7 @@ local function Earthquake()
 end
 
 local rng = RNG()
+
 
 ---@param en Entity
 ---@param offset Vector

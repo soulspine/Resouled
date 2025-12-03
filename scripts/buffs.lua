@@ -139,7 +139,7 @@ Resouled:RegisterBuffRarity(Resouled.BuffRarity.COMMON, "Common", 0.65, Color(11
 Resouled:RegisterBuffRarity(Resouled.BuffRarity.RARE, "Rare", 0.25, Color(154/255, 113/255, 176/255))
 Resouled:RegisterBuffRarity(Resouled.BuffRarity.LEGENDARY, "Legendary", 0.1, Color(185/255, 170/255, 35/255))
 Resouled:RegisterBuffRarity(Resouled.BuffRarity.SPECIAL, "Special", 0, Color(1, 1, 1))
-Resouled:RegisterBuffRarity(Resouled.BuffRarity.CURSED, "Cursed", 100, Color(108.9/255, 94/255, 198/255))
+Resouled:RegisterBuffRarity(Resouled.BuffRarity.CURSED, "Cursed", 0, Color(108.9/255, 94/255, 198/255))
 
 -- REGISTERING BUFFS
 Resouled:RegisterBuff(Resouled.Buffs.CURSED_SKULL, "Cursed Skull", COMMON_BASE_PRICE, Resouled.BuffRarity.COMMON,

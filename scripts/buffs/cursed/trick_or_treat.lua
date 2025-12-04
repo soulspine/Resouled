@@ -1,4 +1,4 @@
-local HEALTH_BOOST = 1.15
+local HEALTH_BOOST = 1.1125
 
 local function curseActive()
     return Resouled:ActiveBuffPresent(Resouled.Buffs.TRICK_OR_TREAT) or Resouled:IsSpecialSeedEffectActive(Resouled.SpecialSeedEffects.EverythingIsCursed)
@@ -50,3 +50,5 @@ local function prePlayerTakeDMG(_, player, damage, flags, source, iFrames)
     return false
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_PLAYER_TAKE_DMG, prePlayerTakeDMG)
+
+Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.TRICK_OR_TREAT)

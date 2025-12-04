@@ -1,5 +1,5 @@
-local REVIVE_CHANCE = 0.2
-local REVIVE_HEALTH = 0.5
+local REVIVE_CHANCE = 0.15
+local REVIVE_HEALTH = 0.35
 
 local function curseActive()
     return Resouled:ActiveBuffPresent(Resouled.Buffs.RESSURECTION_DAY) or Resouled:IsSpecialSeedEffectActive(Resouled.SpecialSeedEffects.EverythingIsCursed)

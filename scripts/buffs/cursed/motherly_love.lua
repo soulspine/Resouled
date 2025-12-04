@@ -1,5 +1,5 @@
-local UPDATES_BETWEEN_CHANCE_CHECK = 50
-local CHANCE_TO_SPAWN_LEG = 0.11
+local UPDATES_BETWEEN_CHANCE_CHECK = 70
+local CHANCE_TO_SPAWN_LEG = 0.105
 
 local function curseActive()
     return Resouled:ActiveBuffPresent(Resouled.Buffs.MOTHERLY_LOVE) or Resouled:IsSpecialSeedEffectActive(Resouled.SpecialSeedEffects.EverythingIsCursed)
@@ -10,6 +10,7 @@ local function onPlayerUpdate(_, player)
     if (not curseActive())
     or (player.FrameCount%UPDATES_BETWEEN_CHANCE_CHECK ~= 0)
     or (math.random() >= CHANCE_TO_SPAWN_LEG)
+    or (Game():GetFrameCount() < 100)
     then return end
 
     Game():Spawn(1000, 29, player.Position, Vector.Zero, player, 0, Random())

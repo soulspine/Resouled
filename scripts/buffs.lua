@@ -31,6 +31,8 @@ Resouled.BuffFamilies = {
     MOTHERLY_LOVE = 24,
     GREEDS_GAMBLE = 27,
     STOMPING_GROUND = 28,
+    TRICK_OR_TREAT = 29,
+    LIFE_OF_LUST = 30,
 }
 
 ---@enum ResouledBuff
@@ -86,6 +88,8 @@ Resouled.Buffs = {
     MOTHERLY_LOVE = 45,
     GREEDS_GAMBLE = 48,
     STOMPING_GROUND = 49,
+    TRICK_OR_TREAT = 50,
+    LIFE_OF_LUST = 51,
 }
 
 ---@enum ResouledBuffRarity
@@ -133,6 +137,8 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.DELIRIOUS, "Delirious", "gfx_r
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.MOTHERLY_LOVE, "Motherly Love", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.GREEDS_GAMBLE, "Greed's Gamble", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.STOMPING_GROUND, "Stomping Ground", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.TRICK_OR_TREAT, "Trick or Treat", "gfx_resouled/buffs/placeholder.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.LIFE_OF_LUST, "Life of Lust", "gfx_resouled/buffs/placeholder.png")
 
 -- REGISTERING BUFF RARITIES
 Resouled:RegisterBuffRarity(Resouled.BuffRarity.COMMON, "Common", 0.65, Color(117/255, 152/255, 161/255))
@@ -222,6 +228,8 @@ Resouled:RegisterBuff(Resouled.Buffs.PUTRIFIER, "Putrifier", 0, Resouled.BuffRar
 Resouled:RegisterBuff(Resouled.Buffs.CHITIN, "Chitin", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.CHITIN, false)
 Resouled:RegisterBuff(Resouled.Buffs.GREEDS_GAMBLE, "Greed's Gamble", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.GREEDS_GAMBLE, false)
 Resouled:RegisterBuff(Resouled.Buffs.STOMPING_GROUND, "Stomping Ground", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.STOMPING_GROUND, false)
+Resouled:RegisterBuff(Resouled.Buffs.TRICK_OR_TREAT, "Trick or Treat", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.TRICK_OR_TREAT, false)
+Resouled:RegisterBuff(Resouled.Buffs.LIFE_OF_LUST, "Life of Lust", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.LIFE_OF_LUST, false)
 
 Resouled:Log("Loaded " .. tostring(#Resouled:GetBuffs()) .. " buffs")
 
@@ -299,3 +307,4 @@ include("scripts.buffs.cursed.delirious")
 include("scripts.buffs.cursed.motherly_love")
 include("scripts.buffs.cursed.greeds_gamble")
 include("scripts.buffs.cursed.stomping_ground")
+include("scripts.buffs.cursed.trick_or_treat")

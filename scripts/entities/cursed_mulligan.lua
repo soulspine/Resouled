@@ -11,6 +11,8 @@ local FLY_TAIL_CONFIG = {
     Offset = Vector(0, -16),
 }
 
+local FLY_SPAWN_FREQUENCY = 130
+
 local CurseFlyConfig = {
     Type = Isaac.GetEntityTypeByName("Curse Fly"),
     Variant = Isaac.GetEntityVariantByName("Curse Fly"),
@@ -96,8 +98,6 @@ local ON_DEATH_SPAWNS = {
         Count = 1
     },
 }
-local ON_DEATH_CURSE_FLY_SPAWN_MIN_COUNT = 2
-local ON_DEATH_CURSE_FLY_SPAWN_MAX_COUNT = 5
 
 local ON_DEATH_FROM_POOL_SPAWN_MIN_COUNT = 1
 local ON_DEATH_FROM_POOL_SPAWN_MAX_COUNT = 2
@@ -106,17 +106,6 @@ local DEATH_POOL = WeightedOutcomePicker()
 
 for key, config in pairs(ON_DEATH_SPAWNS) do
     DEATH_POOL:AddOutcomeWeight(key, config.Weight * 100)
-end
-
----@param npc EntityNPC
-local function curseMulliganDeathEffect(npc)
-    local rng = RNG(npc.InitSeed)
-
-    local spawnCount = rng:RandomInt(ON_DEATH_CURSE_FLY_SPAWN_MIN_COUNT, ON_DEATH_CURSE_FLY_SPAWN_MAX_COUNT)
-
-    for _ = 1, spawnCount do
-        CurseFlyConfig.spawn(npc)
-    end
 end
 
 ---@param npc EntityNPC
@@ -136,14 +125,6 @@ local function curseMulliganCurseDeathEffect(npc)
         Resouled:NewSeed()
     end
 end
-
----@param npc EntityNPC
-local function onNpcDeath(_, npc)
-    if npc.Variant == VARIANT and npc.SubType == SUBTYPE then
-        curseMulliganDeathEffect(npc)
-    end
-end
-Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNpcDeath, ID)
 
 ---@param entity Entity
 ---@param amount number
@@ -257,7 +238,7 @@ local function onNpcUpdate(_, npc)
     elseif npc.Type == ID and npc.Variant == VARIANT and npc.SubType == SUBTYPE then
         local sprite = npc:GetSprite()
 
-        if npc.FrameCount % 100 == 0 then
+        if npc.FrameCount % FLY_SPAWN_FREQUENCY == 0 then
             sprite:PlayOverlay("ResouledSpewFly", true)
             npc.State = NpcState.STATE_ATTACK
         end

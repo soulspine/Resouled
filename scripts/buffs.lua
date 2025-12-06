@@ -34,6 +34,7 @@ Resouled.BuffFamilies = {
     TRICK_OR_TREAT = 29,
     LIFE_OF_LUST = 30,
     FATTYS_FEAST = 31,
+    KRAMPUS_CHRISTMAS = 32,
 }
 
 ---@enum ResouledBuff
@@ -91,7 +92,8 @@ Resouled.Buffs = {
     STOMPING_GROUND = 49,
     TRICK_OR_TREAT = 50,
     LIFE_OF_LUST = 51,
-    FATTYS_FEAST = 52
+    FATTYS_FEAST = 52,
+    KRAMPUS_CHRISTMAS = 53,
 }
 
 ---@enum ResouledBuffRarity
@@ -139,9 +141,10 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.DELIRIOUS, "Delirious", "gfx_r
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.MOTHERLY_LOVE, "Motherly Love", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.GREEDS_GAMBLE, "Greed's Gamble", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.STOMPING_GROUND, "Stomping Ground", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.TRICK_OR_TREAT, "Trick or Treat", "gfx_resouled/buffs/placeholder.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.LIFE_OF_LUST, "Life of Lust", "gfx_resouled/buffs/placeholder.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.FATTYS_FEAST, "Fatty's Feast", "gfx_resouled/buffs/placeholder.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.TRICK_OR_TREAT, "Trick or Treat", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.LIFE_OF_LUST, "Life of Lust", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.FATTYS_FEAST, "Fatty's Feast", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.KRAMPUS_CHRISTMAS, "Krampus Christmas", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
 
 -- REGISTERING BUFF RARITIES
 Resouled:RegisterBuffRarity(Resouled.BuffRarity.COMMON, "Common", 0.65, Color(117/255, 152/255, 161/255))
@@ -234,6 +237,7 @@ Resouled:RegisterBuff(Resouled.Buffs.STOMPING_GROUND, "Stomping Ground", -4, Res
 Resouled:RegisterBuff(Resouled.Buffs.TRICK_OR_TREAT, "Trick or Treat", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.TRICK_OR_TREAT, false)
 Resouled:RegisterBuff(Resouled.Buffs.LIFE_OF_LUST, "Life of Lust", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.LIFE_OF_LUST, false)
 Resouled:RegisterBuff(Resouled.Buffs.FATTYS_FEAST, "Fatty's Feast", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.FATTYS_FEAST, false)
+Resouled:RegisterBuff(Resouled.Buffs.KRAMPUS_CHRISTMAS, "Krampus Christmas", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.KRAMPUS_CHRISTMAS, false)
 
 Resouled:Log("Loaded " .. tostring(#Resouled:GetBuffs()) .. " buffs")
 
@@ -314,3 +318,4 @@ include("scripts.buffs.cursed.stomping_ground")
 include("scripts.buffs.cursed.trick_or_treat")
 include("scripts.buffs.cursed.life_of_lust")
 include("scripts.buffs.cursed.fatty's_feast")
+include("scripts.buffs.cursed.krampus_christmas")

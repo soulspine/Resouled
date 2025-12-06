@@ -22,7 +22,8 @@ local function preNewRoom(_, room, desc)
     if not curseActive() then return end
     local save = Resouled.SaveManager.GetRoomFloorSave()
     if save.Trick_or_Treat then return end
-    save.Trick_or_Treat = trickOrTreat(desc.AwardSeed)
+    local seed = math.max(desc.AwardSeed, 1)
+    save.Trick_or_Treat = trickOrTreat(seed)
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NEW_ROOM, preNewRoom)
 

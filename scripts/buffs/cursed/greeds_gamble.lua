@@ -14,3 +14,14 @@ local function onGetShopItemPrice(_, variant, subtype, shopItemId, price)
     end
 end
 Resouled:AddPriorityCallback(ModCallbacks.MC_GET_SHOP_ITEM_PRICE, CallbackPriority.LATE, onGetShopItemPrice)
+
+---@param slot EntitySlot
+---@param collider Entity
+local function preSlotCollision(_, slot, collider)
+    if not curseActive() or PlayerManager.AnyoneHasCollectible(CollectibleType.COLLECTIBLE_LUCKY_FOOT) then return end
+    local player = collider:ToPlayer()
+    if not player then return end
+
+    return false
+end
+Resouled:AddCallback(ModCallbacks.MC_PRE_SLOT_COLLISION, preSlotCollision)

@@ -67,7 +67,6 @@ if REPENTOGON and MinimapAPI then
     --    Resouled.EID = include("scripts.utility.resouled.eid_functions")
     --end
     
-    include("scripts.popup_notification")
     ---@type ResouledEID
     Resouled.EID = include("scripts.utility.resouled.eid")
     include("scripts.utility.resouled.misc")

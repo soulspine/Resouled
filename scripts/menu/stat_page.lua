@@ -708,6 +708,13 @@ local function renderPagesSidebar(renderPos)
     )
 end
 
+local popupSprite = Sprite()
+popupSprite:Load("gfx_resouled/menu/resouled_menu_popup.anm2", true)
+popupSprite:Play("Idle", true)
+popupSprite:ReplaceSpritesheet(2, "gfx/ui/buttons.png", true)
+popupSprite:ReplaceSpritesheet(3, "gfx/ui/buttons.png", true)
+local popupSpriteOffset = Vector(310, 20)
+
 local function menuRender()
     local saveObj = Resouled.StatTracker:GetSave()
     local menu = MenuManager.GetActiveMenu()
@@ -768,5 +775,13 @@ local function menuRender()
         Vector(renderPos.X + CONFIG.BackgroundSpriteSize.X / 2, renderPos.Y - CONFIG.BackgroundSpriteSize.Y/2 + CONFIG.HeaderLineOffset), CONFIG.LineColor, CONFIG.LineColor, CONFIG.LineThickness)
 
     renderPagesSidebar(renderPos)
+
+    
+    local device = Input.GetDeviceNameByIdx(0):lower()
+    if device:find("keyboard") then popupSprite:GetLayer("keyboard"):SetVisible(true) else popupSprite:GetLayer("keyboard"):SetVisible(false) end
+    if device:find("xbox") then popupSprite:GetLayer("xbox"):SetVisible(true) else popupSprite:GetLayer("xbox"):SetVisible(false) end
+    if device:find("playstation") then popupSprite:GetLayer("playstation"):SetVisible(true) else popupSprite:GetLayer("playstation"):SetVisible(false) end
+
+    popupSprite:Render(Isaac.WorldToMenuPosition(MainMenuType.GAME, popupSpriteOffset))
 end
 Resouled:AddCallback(ModCallbacks.MC_MAIN_MENU_RENDER, menuRender)

@@ -20,7 +20,7 @@ local CONFIG = {
         },
         {
             "Spawns two chests",
-            "Grants a Holy shield",
+            "Grants a Temporary Heart",
             "Spawns six coins"
         },
         {
@@ -137,8 +137,8 @@ local function proc(player, bitset, item, slot)
         end
     end
 
-    if bitset & (1 << 4) ~= 0 then -- spawns a holy shield
-        player:GetEffects():AddCollectibleEffect(CollectibleType.COLLECTIBLE_HOLY_MANTLE)
+    if bitset & (1 << 4) ~= 0 then -- grants a temporary heart container
+        Resouled.Player:Grant1RoomHeartContainer(player, false)
     end
 
     if bitset & (1 << 5) ~= 0 then -- spawn six coins
@@ -360,8 +360,6 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_ROOM_EXIT, removeContainerPreRoomExit)
 
 local font = Font()
 font:Load(CONFIG.FontPath)
-local background = Resouled:CreateLoadedSprite("gfx_resouled/ui/prototype_menu.anm2")
-background.Scale = CONFIG.BackgroundScale
 
 local buttons = Resouled:CreateLoadedSprite("gfx_resouled/ui/prototype_keys.anm2")
 local keycapParts = {
@@ -386,6 +384,9 @@ for _, optionList in ipairs(CONFIG.OptionStrings) do
         boxWidth = math.max(boxWidth, math.ceil(font:GetStringWidth(optionString) * CONFIG.TextScale.X / 2))
     end
 end
+
+local background = Resouled:CreateLoadedSprite("gfx_resouled/ui/prototype_menu.anm2")
+background.Scale = Vector(CONFIG.BackgroundScale.X * boxWidth / 50, CONFIG.BackgroundScale.Y) -- 50 is an arbitrary number that makes it look good based on text width
 
 ---@param player EntityPlayer
 ---@param offset Vector
@@ -544,8 +545,6 @@ local function postPlayerRender(_, player, offset)
                 CONFIG.TextScale.X, CONFIG.TextScale.Y / 2,
                 KColor(0, 0, 0, data.TextOpacity), rightTextWidth, true
             )
-
-            print(rightTextWidth, leftTextWidth)
         end
 
         local labelColor = CONFIG.LabelColor
@@ -651,10 +650,6 @@ local function onPassiveGetPostCollision(_, item, charge, firstTime, slot, varDa
 
     if #playerData.PrototypeQueue == 0 then
         playerData.PrototypeQueue = nil
-    end
-
-    for _, field in ipairs(playerData.Prototype) do
-        print(field.Time, field.Bitset)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_ADD_COLLECTIBLE, onPassiveGetPostCollision)

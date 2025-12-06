@@ -768,5 +768,14 @@ local function menuRender()
         Vector(renderPos.X + CONFIG.BackgroundSpriteSize.X / 2, renderPos.Y - CONFIG.BackgroundSpriteSize.Y/2 + CONFIG.HeaderLineOffset), CONFIG.LineColor, CONFIG.LineColor, CONFIG.LineThickness)
 
     renderPagesSidebar(renderPos)
+
+    local str = "Resouled Menu"
+    local textPos = Isaac.WorldToMenuPosition(MainMenuType.GAME, Vector(320, 80))
+    local x = 0
+    for i = 1, str:len() do
+        local c = str:sub(i, i)
+        FONTS.Size10:DrawString(c, textPos.X + x, textPos.Y - i, CONFIG.TextColor)
+        x = x + FONTS.Size10:GetStringWidth(c)
+    end
 end
 Resouled:AddCallback(ModCallbacks.MC_MAIN_MENU_RENDER, menuRender)

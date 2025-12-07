@@ -924,3 +924,18 @@ function Resouled:GetPhaseLevel(speed, offset)
     local maxAnimTime2 = speed * 2
     return math.abs((frame % maxAnimTime / maxAnimTime) - (frame % maxAnimTime2 / maxAnimTime2)) * 2
 end
+
+---@return WeightedOutcomePicker
+function Resouled:GetUnlockedTrikets()
+    local itemConfig = Isaac.GetItemConfig()
+    local T = WeightedOutcomePicker()
+
+    for i = 0, #itemConfig:GetTrinkets() do
+        local t = itemConfig:GetTrinket(i)
+        if t and t:IsAvailable() then
+            T:AddOutcomeWeight(i, 1)
+        end
+    end
+
+    return T
+end

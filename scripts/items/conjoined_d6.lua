@@ -60,12 +60,15 @@ local function onItemUse(_, collectibleType, rng, player, useFlags, activeSlot)
                 end
             end
         end)
+        local itemConfig = Isaac.GetItemConfig()
         for i = 1, #data.ResouledCD6NewItems do
-            local qualityDifference = math.abs(Isaac.GetItemConfig():GetCollectible(data.ResouledCD6NewItems[i]).Quality - Isaac.GetItemConfig():GetCollectible(data.ResouledCD6OldItems[i]).Quality)
-            if Isaac.GetItemConfig():GetCollectible(data.ResouledCD6NewItems[i]).Quality < Isaac.GetItemConfig():GetCollectible(data.ResouledCD6OldItems[i]).Quality then
+            local q1 = itemConfig:GetCollectible(data.ResouledCD6NewItems[i]).Quality
+            local q2 = itemConfig:GetCollectible(data.ResouledCD6OldItems[i]).Quality
+            local qualityDifference = math.abs(q1 - q2)
+            if q1 < q2 then
                 RunSave.ResouledCD6Multiplier[indexKey][formKey] = (RunSave.ResouledCD6Multiplier[indexKey][formKey] + ON_USE_MULTIPLIER_GAIN * qualityDifference)
             end
-            if Isaac.GetItemConfig():GetCollectible(data.ResouledCD6NewItems[i]).Quality > Isaac.GetItemConfig():GetCollectible(data.ResouledCD6OldItems[i]).Quality then
+            if q1 > q2 then
                 RunSave.ResouledCD6Multiplier[indexKey][formKey] = (RunSave.ResouledCD6Multiplier[indexKey][formKey] - ON_USE_MULTIPLIER_LOSS * qualityDifference)
             end
             player:AddCacheFlags(CacheFlag.CACHE_ALL)

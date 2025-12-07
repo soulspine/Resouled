@@ -3,13 +3,27 @@ local BLAST_MINER = Resouled.Enums.Items.BLAST_MINER
 local TNT_VARIANT = Isaac.GetEntityVariantByName("Blast Miner TNT")
 local TNT_SUBTYPE = Isaac.GetEntitySubTypeByName("Blast Miner TNT")
 local TNT_MEGA_SUBTYPE = Isaac.GetEntitySubTypeByName("Blast Miner TNT Mega")
+local TNT_GIGA_SUBTYPE = Isaac.GetEntitySubTypeByName("Blast Miner TNT Giga")
+
+---@param player EntityPlayer
+local function prePlaceBomb(_, player)
+    if player:HasCollectible(BLAST_MINER) then
+        player:GetData().Resouled_HasGigaBomb = player:GetNumGigaBombs() > 0
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_PRE_PLAYER_USE_BOMB, prePlaceBomb)
 
 ---@param player EntityPlayer
 ---@param bomb EntityBomb
 local function playerPlaceBomb(_, player, bomb)
     if player:HasCollectible(BLAST_MINER) then
+        local data = player:GetData()
         local subtype
-        if player:HasCollectible(CollectibleType.COLLECTIBLE_MR_MEGA) then
+        player:GetNumGigaBombs()
+        if (data.Resouled_HasGigaBomb and data.Resouled_HasGigaBomb == true) then
+            data.Resouled_HasGigaBomb = nil
+            subtype = TNT_GIGA_SUBTYPE
+        elseif player:HasCollectible(CollectibleType.COLLECTIBLE_MR_MEGA) then
             subtype = TNT_MEGA_SUBTYPE
         else
             subtype = TNT_SUBTYPE

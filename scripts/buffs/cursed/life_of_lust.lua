@@ -11,7 +11,11 @@ local function pair(npc)
     local posAdd = Vector(npc.Size/2, 0)
     npc.Position = npc.Position + posAdd
 
-    local other = Game():Spawn(npc.Type, npc.Variant, npc.Position - posAdd, npc.Velocity, npc.SpawnerEntity, npc.SubType, Random())
+    local other = Game():Spawn(npc.Type, npc.Variant, npc.Position - posAdd, npc.Velocity, npc.SpawnerEntity, npc.SubType, Random()):ToNPC()
+    other.GridCollisionClass = npc.GridCollisionClass
+    other.EntityCollisionClass = npc.EntityCollisionClass
+    other:GetSprite():Play(npc:GetSprite():GetAnimation())
+    other.State = npc.State
     other:GetData().Resouled_LifeOfLustSplit = true
 end
 

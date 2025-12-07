@@ -10,15 +10,16 @@ local DEFAULT_ITEM = CollectibleType.COLLECTIBLE_BREAKFAST
 ---@param data integer
 local function onActiveUse(_, type, rng, player, flags, slot, data)
     player:AnimateCollectible(CLASSIC_ROLLER, "UseItem", "PlayerPickupSparkle")
+    local itemConfig = Isaac.GetItemConfig()
     ---@param pickup EntityPickup
     Resouled.Iterators:IterateOverRoomPickups(function(pickup)
-        if pickup.Variant == PickupVariant.PICKUP_COLLECTIBLE and pickup.SubType ~= 0 and not Isaac.GetItemConfig():GetCollectible(pickup.SubType):HasTags(ItemConfig.TAG_QUEST) then
-            local targetQuality = Isaac.GetItemConfig():GetCollectible(pickup.SubType).Quality
+        if pickup.Variant == PickupVariant.PICKUP_COLLECTIBLE and pickup.SubType ~= 0 and not itemConfig:GetCollectible(pickup.SubType):HasTags(ItemConfig.TAG_QUEST) then
+            local targetQuality = itemConfig:GetCollectible(pickup.SubType).Quality
             local itemsFromCurrectPool = Game():GetItemPool():GetCollectiblesFromPool(Game():GetRoom():GetItemPool(Game():GetRoom():GetAwardSeed()))
             local validItems = {}
             for i = 1, #itemsFromCurrectPool do
                 local id = itemsFromCurrectPool[i].itemID
-                if  Isaac.GetItemConfig():GetCollectible(id) and Isaac.GetItemConfig():GetCollectible(id).Quality == targetQuality and Game():GetItemPool():CanSpawnCollectible(id, false) then
+                if  itemConfig:GetCollectible(id) and itemConfig:GetCollectible(id).Quality == targetQuality and Game():GetItemPool():CanSpawnCollectible(id, false) then
                     table.insert(validItems, id)
                 end
             end

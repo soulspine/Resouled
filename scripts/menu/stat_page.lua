@@ -424,14 +424,16 @@ local PAGES = {
                 end
                 FONTS.Size16:DrawStringScaled(nameString, namePos.X, namePos.Y, 1, 1, CONFIG.TextColor)
 
-                local familyString = buff.FamilyName
-                if not save[key] then
-                    familyString = "???"
+                if buff.Rarity ~= Resouled.BuffRarity.SPECIAL and buff.Rarity ~= Resouled.BuffRarity.CURSED then
+                    local familyString = buff.FamilyName
+                    if not save[key] then
+                        familyString = "???"
+                    end
+                    
+                    familyString = "''"..familyString.."''"
+                    
+                    FONTS.Size10:DrawStringScaled(familyString, renderPos.X + CONFIG.BackgroundSpriteSize.X/2 - FONTS.Size10:GetStringWidth(familyString) - CONFIG.BuffPage.BuffDescOffset, namePos.Y + 3, 1, 1, CONFIG.TextColor)
                 end
-
-                familyString = "''"..familyString.."''"
-
-                FONTS.Size10:DrawStringScaled(familyString, renderPos.X + CONFIG.BackgroundSpriteSize.X/2 - FONTS.Size10:GetStringWidth(familyString) - CONFIG.BuffPage.BuffDescOffset, namePos.Y + 3, 1, 1, CONFIG.TextColor)
 
                 local descPos = iconPos + Vector(-25 + CONFIG.BuffPage.BuffDescOffset, 20)
 

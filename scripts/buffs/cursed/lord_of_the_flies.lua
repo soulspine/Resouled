@@ -28,7 +28,7 @@ local function onNpcInit(_, npc)
 
     if (not curseActive()) or (npc.Type == 96 and npc.Variant == 0 and npc.SubType == 0) then return end
 
-    if npc:IsEnemy() and npc:IsActiveEnemy() and npc:IsVulnerableEnemy() and RNG(npc.InitSeed):RandomFloat() < getCurrentChance() then
+    if Resouled:IsValidEnemy(npc) and RNG(npc.InitSeed):RandomFloat() < getCurrentChance() then
         for _ = 1, getFlyNum(npc.InitSeed) do
             attachFly(npc)
         end

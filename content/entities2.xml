@@ -131,6 +131,7 @@
     <entity name="Buff Pedestal" id="5" variant="200" subtype="1" anm2path="buffs/buffs.anm2" collisionRadius="14" collisionMass="3" numGridCollisionPoints="12" friction="0" shadowSize="20" tags="noreroll"/>
     <entity name="Blast Miner TNT" id="5" variant="201" subtype="0" anm2path="blast_miner_tnt.anm2" collisionRadius="15" collisionMass="5" numGridCollisionPoints="12" friction="1" shadowSize="21" tags="noreroll"/>
     <entity name="Blast Miner TNT Mega" id="5" variant="201" subtype="1" anm2path="blast_miner_tnt_mega.anm2" collisionRadius="20" collisionMass="8" numGridCollisionPoints="12" friction="1" shadowSize="28" tags="noreroll"/>
+    <entity name="Blast Miner TNT Giga" id="5" variant="201" subtype="2" anm2path="blast_miner_tnt_giga.anm2" collisionRadius="45" collisionMass="14" numGridCollisionPoints="12" friction="1" shadowSize="28" tags="noreroll"/>
     <entity name="Magic Marker" id="5" variant="300" subtype="82492" anm2path="magic_marker.anm2" collisionRadius="12" collisionMass="3" friction="1" numGridCollisionPoints="24" shadowSize="16"/>
     <entity name="Soul" id="5" variant="444" subtype="0" anm2path="soul.anm2" collisionRadius="4" collisionMass="1" friction="1" numGridCollisionPoints="12" shadowSize="0"/>
     <entity name="Soul Statue Target" id="5" variant="444" subtype="1" anm2path="soul.anm2" collisionRadius="4" collisionMass="1" friction="1" numGridCollisionPoints="12" shadowSize="0"/>

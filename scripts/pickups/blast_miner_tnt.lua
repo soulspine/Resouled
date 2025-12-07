@@ -1,6 +1,7 @@
 local TNT_VARIANT = Isaac.GetEntityVariantByName("Blast Miner TNT")
 local TNT_SUBTYPE = Isaac.GetEntitySubTypeByName("Blast Miner TNT")
 local TNT_MEGA_SUBTYPE = Isaac.GetEntitySubTypeByName("Blast Miner TNT Mega")
+local TNT_GIGA_SUBTYPE = Isaac.GetEntitySubTypeByName("Blast Miner TNT Giga")
 
 local VELOCITY_MULTIPLIER = 0.7
 local BOBBY_BOMBS_VELOCITY_MULTIPLIER = 1.4
@@ -14,6 +15,7 @@ local EFFECT_GOLD_SUBTYPE = Isaac.GetEntitySubTypeByName("Wood Gold Particle")
 local subtypeWhitelist = {
     [TNT_SUBTYPE] = true,
     [TNT_MEGA_SUBTYPE] = true,
+    [TNT_GIGA_SUBTYPE] = true
 }
 
 local AMOUNT = 20

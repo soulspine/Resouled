@@ -74,6 +74,12 @@ local EXPLODE = function(tnt, flags)
     end
 end
 
+---@param tnt EntityPickup
+---@param flags TearFlags
+function Resouled:ExplodeBlastMinerTNTCrate(tnt, flags)
+    tnt:GetData().Explode = true
+end
+
 ---@param pickup EntityPickup
 local function postPickupInit(_, pickup)
     if subtypeWhitelist[pickup.SubType] then

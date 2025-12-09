@@ -89,7 +89,7 @@ end
 
 ---@return boolean
 function Resouled:SocialGoalsPresent()
-    return Resouled.SaveManager.GetFloorSave()["Social Goals"] ~= nil
+    return Resouled.SaveManager.GetRunSave()["Social Goals"] ~= nil
 end
 
 ---@param roomEventID  ResouledRoomEvent
@@ -244,7 +244,8 @@ local function postNewFloor()
 
     --if rng:PhantomInt(#Resouled:GetRoomEvents()) == Resouled.RoomEvents.SOCIAL_GOALS then
     if true then
-        Resouled.SaveManager.GetFloorSave()["Social Goals"] = {}
+        Resouled.SaveManager.GetRunSave()["Social Goals"] = {}
+        Resouled.SaveManager.Save()
 
         showRoomEventPopup(Resouled.RoomEvents.SOCIAL_GOALS)
 

@@ -10,30 +10,37 @@ local goalsPicker = WeightedOutcomePicker()
 ---@field Tasks ResouledSocialGoalTask[]
 ---@field Goal function
 
+---@return WeightedOutcomePicker
+local function cloneOutcomePicker()
+    local newPicker = WeightedOutcomePicker()
+    for _, config in ipairs(goalsPicker:GetOutcomes()) do
+        newPicker:AddOutcomeWeight(config.Value, config.Weight)
+    end
+    return newPicker
+end
+
 ---@param config ResouledSocialGoalConfig
 function Resouled:AddSocialGoal(config)
     table.insert(goals, config)
     goalsPicker:AddOutcomeWeight(#goals, 1)
 end
 
-local function getSocialGoals()
-    return Resouled.SaveManager.GetFloorSave()["Social Goals"]
-end
-
 local SOCIAL_GOALS = 3
 
 local callbacksApplied = false
+local activeCallbacks = {}
 
 ---@param save? table
 local function applySocialGoalsCallbacks(save)
     if not callbacksApplied then
+        save = save or Resouled.SaveManager.GetFloorSave()["Social Goals"] or {}
         
-        save = save or Resouled.SaveManager.GetFloorSave()["Social Goals"]
-        
-        ---@param config ResouledSocialGoalConfig
-        for _, config in pairs(save or {}) do
-            for _, taskConfig in pairs(config.Tasks or {}) do
+        for _, index in pairs(save) do
+            ---@type ResouledSocialGoalConfig
+            local config = goals[index]
+            for _, taskConfig in pairs(config and config.Tasks or {}) do
                 Resouled:AddCallback(taskConfig.Callback, taskConfig.Func)
+                table.insert(activeCallbacks, {Callback = taskConfig.Callback, Func = taskConfig.Func})
             end
         end
     end
@@ -41,17 +48,11 @@ local function applySocialGoalsCallbacks(save)
     callbacksApplied = true
 end
 
----@param save? table
-local function removeSocialGoalsCallbacks(save)
+local function removeSocialGoalsCallbacks()
     if callbacksApplied then
-        
-        save = save or Resouled.SaveManager.GetFloorSave()["Social Goals"]
-        
-        ---@param config ResouledSocialGoalConfig
-        for _, config in pairs(save or {}) do
-            for _, taskConfig in pairs(config.Tasks or {}) do
-                Resouled:RemoveCallback(taskConfig.Callback, taskConfig.Func)
-            end
+        for key, config in pairs(activeCallbacks) do
+            Resouled:RemoveCallback(config.Callback, config.Func)
+            activeCallbacks[key] = nil
         end
     end
 
@@ -65,21 +66,28 @@ local function postNewFloor()
 
     local rng = Game():GetLevel():GetDevilAngelRoomRNG()
 
+    local picker = cloneOutcomePicker()
+
     for _ = 1, SOCIAL_GOALS do
-        table.insert(goalsToAdd, goals[goalsPicker:PickOutcome(rng)])
+        local chosenGoal = picker:PickOutcome(rng)
+        table.insert(goalsToAdd, chosenGoal)
         rng:SetSeed(rng:GetSeed() + 219425)
+        picker:RemoveOutcome(chosenGoal)
     end
 
     Resouled.SaveManager.GetFloorSave()["Social Goals"] = goalsToAdd
+    Resouled.SaveManager.GetFloorSave()["Social Goals Saves"] = {}
+
 
     applySocialGoalsCallbacks()
 end
 Resouled:AddPriorityCallback(ModCallbacks.MC_POST_NEW_LEVEL, CallbackPriority.LATE, postNewFloor)
 
-local function preGameExit()
-    removeSocialGoalsCallbacks()
-end
-Resouled:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, preGameExit)
+Resouled:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, removeSocialGoalsCallbacks)
+Resouled:AddPriorityCallback(ModCallbacks.MC_POST_NEW_LEVEL, CallbackPriority.IMPORTANT, removeSocialGoalsCallbacks)
+Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, removeSocialGoalsCallbacks)
+Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, removeSocialGoalsCallbacks)
+Resouled:AddCallback(ModCallbacks.MC_MAIN_MENU_RENDER, removeSocialGoalsCallbacks)
 
 local function postUpdate()
     if Resouled:SocialGoalsPresent() and not callbacksApplied then
@@ -102,11 +110,15 @@ local function postHudRender()
 
     local sep = fnt:GetBaselineHeight() * textScale
 
-    ---@param config ResouledSocialGoalConfig
-    for _, config in ipairs(getSocialGoals() or {}) do
+    local save = Resouled.SaveManager.GetFloorSave()["Social Goals"] or {}
+
+    for _, index in ipairs(save) do
+        ---@type ResouledSocialGoalConfig
+        local config = goals[index]
+
         fnt:DrawStringScaled(config.DisplayText, pos.X, pos.Y, textScale, textScale, textColor)
         local progress = config.Goal()
-        fnt:DrawStringScaled(progress.Text, pos.X, pos.Y + sep, textScale, textScale, progress.Color)
+        fnt:DrawStringScaled("o   "..progress.Text, pos.X, pos.Y + sep, textScale, textScale, progress.Color)
         pos.Y = pos.Y + sep * 3
     end
 end

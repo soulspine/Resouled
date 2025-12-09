@@ -118,6 +118,9 @@ local filters = {
         end
         return false
     end,
+    DONT_APPEAR = function()
+        return false
+    end
 }
 
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.ALL_HALLOWS_EVE, "All Hallow's Eve", { filters.ENEMIES_PRESENT })
@@ -157,6 +160,7 @@ Resouled:RegisterRoomEvent(Resouled.RoomEvents.GUPPYS_PIECES, "Guppy's Pieces", 
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.THE_ISAAC_OF_ISAAC_ISAAC, "The Isaac Of Isaac: Reisaac",
     { filters.ENEMIES_PRESENT, filters.NO_BOSS_ROOM })
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.SPIDER_WEBS, "Spider Webs", {}, true)
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.SOCIAL_GOALS, "Social Goals", {filters.DONT_APPEAR}, true)
 
 Resouled:Log("Loaded " .. tostring(#Resouled:GetRoomEvents()) .. " room events.")
 

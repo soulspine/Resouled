@@ -34,6 +34,7 @@ Resouled.RoomEvents = {
     GUPPYS_PIECES = 32,
     THE_ISAAC_OF_ISAAC_ISAAC = 33,
     SPIDER_WEBS = 34,
+    SOCIAL_GOALS = 35
 }
 
 ---@return boolean
@@ -212,6 +213,7 @@ include("scripts.room_events.pity_for_the_poor")
 include("scripts.room_events.guppys_pieces")
 include("scripts.room_events.the_isaac_of_isaac_isaac")
 include("scripts.room_events.spider_webs")
+include("scripts.room_events.social_goals")
 
 Resouled.RoomEventDescriptions = {
     [Resouled.RoomEvents.ALL_HALLOWS_EVE] = "All enemies in the room become white champions when entering the room",

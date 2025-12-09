@@ -87,6 +87,11 @@ function Resouled:RoomEventPresent(roomEventID)
     return false
 end
 
+---@return boolean
+function Resouled:SocialGoalsPresent()
+    return Resouled.SaveManager.GetFloorSave()["Social Goals"] ~= nil
+end
+
 ---@param roomEventID  ResouledRoomEvent
 ---@return boolean
 local function checkRoomEventFilters(roomEventID)
@@ -207,6 +212,8 @@ local function initializeRoomEventifNotInitialized()
     end
 end
 
+local SAVE_ENTRY = "Room Events Seen"
+
 local function postNewFloor()
     local level = game:GetLevel()
     local stage = level:GetStage()
@@ -234,6 +241,23 @@ local function postNewFloor()
     rng:RandomInt(RUN_SAVE.RoomEvents.EventsToDistribute)
     
     RUN_SAVE.RoomEvents.EventsToDistribute = RUN_SAVE.RoomEvents.EventsToDistribute - roomEventsThisFloor
+
+    --if rng:PhantomInt(#Resouled:GetRoomEvents()) == Resouled.RoomEvents.SOCIAL_GOALS then
+    if true then
+        Resouled.SaveManager.GetFloorSave()["Social Goals"] = {}
+
+        showRoomEventPopup(Resouled.RoomEvents.SOCIAL_GOALS)
+
+        local key = tostring(Resouled.RoomEvents.SOCIAL_GOALS)
+
+        local statSave = Resouled.StatTracker:GetSave()
+        if not statSave[SAVE_ENTRY] then statSave[SAVE_ENTRY] = {} end
+        statSave = statSave[SAVE_ENTRY]
+        if not statSave[key] then statSave[key] = false end
+        statSave[key] = true
+
+        return
+    end
     
     local correctRooms = {}
     
@@ -273,8 +297,6 @@ local function postNewFloor()
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
-
-local SAVE_ENTRY = "Room Events Seen"
 
 local function postNewRoom()
     initializeRoomEventifNotInitialized()

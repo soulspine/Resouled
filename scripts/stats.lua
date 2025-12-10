@@ -155,3 +155,9 @@ Resouled.Stats.DontionMachine = {
     Variant = Isaac.GetEntityVariantByName("Afterlife Shop Donation Machine"),
     SubType = Isaac.GetEntitySubTypeByName("Afterlife Shop Donation Machine")
 }
+
+Resouled.Stats.Dummy = {
+    Type = Isaac.GetEntityTypeByName("ResouledDummy"),
+    Variant = Isaac.GetEntityVariantByName("ResouledDummy"),
+    SubType = Isaac.GetEntitySubTypeByName("ResouledDummy")
+}

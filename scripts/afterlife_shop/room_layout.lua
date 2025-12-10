@@ -87,7 +87,6 @@ local function mainShopLayout()
 
     local blacklist = {}
 
-    Resouled.AfterlifeShop:SetShopLevel(Resouled.AfterlifeShop.ShopLevels.Level5)
     local shopLevel = Resouled.AfterlifeShop:GetShopLevel()
     for i = 1, #buffPos[shopLevel] do
         spawnBuffPedestal(centerPos + buffPos[shopLevel][i], 10000 * i, blacklist)

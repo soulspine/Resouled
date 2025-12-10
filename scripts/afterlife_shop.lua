@@ -100,7 +100,7 @@ Resouled:AddPriorityCallback(ModCallbacks.MC_PRE_LEVEL_INIT, CallbackPriority.IM
 
 ---@param visible boolean
 function Resouled.AfterlifeShop:SetMapVisibility(visible)
-    MinimapAPI.Config.Disable = not visible
+    MinimapAPI.OverrideConfig.Disable = not visible
 end
 
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, function()

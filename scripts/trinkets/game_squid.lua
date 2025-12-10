@@ -45,7 +45,7 @@ local function onEntityDamage(_, entity, amount, flags, source, countdown)
     if data.Resouled__GameSquidCooldown then return end
 
     if not source or not source.Entity then return end
-    while source.Entity.Parent do
+    while source and source.Entity and source.Entity.Parent do
         source = EntityRef(source.Entity.Parent)
     end
 

@@ -91,26 +91,73 @@ local function postGameStarted()
 
         Game():GetHUD():SetVisible(false)
     else
+        Resouled.AfterlifeShop:SetMapVisibility(true)
         Resouled.AfterlifeShop.Goto.SpecialBuffs = {}
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, postGameStarted)
 
-local COMMAND = {
+local resouledDummy = Resouled.Stats.Dummy
+local removeFromSpawning = {
+    ["866.0.0"] = true,
+    ["866.0.1"] = true,
+    ["866.1.0"] = true
+}
+
+local function preEntitySpawn(_, type, variant, subtype, _, _, _, seed)
+    if Resouled.AfterlifeShop:IsAfterlifeShop() then
+        if removeFromSpawning[tostring(type).."."..tostring(variant).."."..tostring(subtype)] then
+            return {
+                resouledDummy.Type,
+                resouledDummy.Variant,
+                resouledDummy.SubType,
+                seed
+            }
+        end
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_PRE_ENTITY_SPAWN, preEntitySpawn)
+
+local COMMAND1 = {
     Name = "afterlife",
     Description = "Teleports you to Afterlife Shop",
 }
 
-Console.RegisterCommand(COMMAND.Name, COMMAND.Description, "", false, AutocompleteType.CUSTOM)
+Console.RegisterCommand(COMMAND1.Name, COMMAND1.Description, "", false, AutocompleteType.CUSTOM)
 
+local COMMAND2 = {
+    Name = "set_afterlife_shop_level",
+    Description = "Sets your afterlife shop level to whatever you want",
+}
+
+Console.RegisterCommand(COMMAND2.Name, COMMAND2.Description, "", false, AutocompleteType.CUSTOM)
+
+---@param paramsRaw string
 local function executeAfterlifeCommand(_, command, paramsRaw)
-    if command == COMMAND.Name then
+    if command == COMMAND1.Name then
         if Isaac.IsInGame() then
             Resouled.AfterlifeShop:SetAfterlifeShop()
             Game():End(Ending.CREDITS)
         else
             Resouled:LogError("You need to be in a run to use this command!")
         end
+    elseif command == COMMAND2.Name then
+        ---@diagnostic disable-next-line
+        Resouled.AfterlifeShop:SetShopLevel(tonumber(paramsRaw:sub(paramsRaw:len(), paramsRaw:len())))
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_EXECUTE_CMD, executeAfterlifeCommand)
+
+local command2AutoComplete = {}
+
+for x, y in pairs(Resouled.AfterlifeShop.ShopLevels) do
+    table.insert(command2AutoComplete, {x, y})
+end
+
+---@param command string
+local function consoleAutocomplete(_, command)
+    if command == COMMAND2.Name then
+        return command2AutoComplete
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_CONSOLE_AUTOCOMPLETE, consoleAutocomplete)

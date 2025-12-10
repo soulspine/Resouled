@@ -25,7 +25,7 @@ function Resouled:AddSocialGoal(config)
     goalsPicker:AddOutcomeWeight(#goals, 1)
 end
 
-local SOCIAL_GOALS = 3
+local SOCIAL_GOALS = 5
 
 local callbacksApplied = false
 local activeCallbacks = {}
@@ -99,7 +99,9 @@ Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, postUpdate)
 
 
 local fnt = Font()
-fnt:Load("font/pftempestasevencondensed.fnt")
+fnt:Load("font/teammeatfont10.fnt")
+local fnt2 = Font()
+fnt2:Load("font/teammeatfont20bold.fnt")
 local textColor = KColor(1, 1, 1, 1)
 local textScale = 0.5
 
@@ -112,14 +114,22 @@ local function postHudRender()
 
     local save = Resouled.SaveManager.GetFloorSave()["Social Goals"] or {}
 
+    local correctCount = 0
+
     for _, index in ipairs(save) do
         ---@type ResouledSocialGoalConfig
         local config = goals[index]
 
         fnt:DrawStringScaled(config.DisplayText, pos.X, pos.Y, textScale, textScale, textColor)
         local progress = config.Goal()
-        fnt:DrawStringScaled("o   "..progress.Text, pos.X, pos.Y + sep, textScale, textScale, progress.Color)
+        fnt:DrawStringScaled("o "..progress.Text, pos.X, pos.Y + sep, textScale, textScale, progress.Color)
         pos.Y = pos.Y + sep * 3
+
+        if progress.Color.Red == 0 and progress.Color.Green == 1 then
+            correctCount = correctCount + 1
+        end
     end
+
+    fnt2:DrawStringScaled(correctCount.."/".."4", 50, 50 - fnt2:GetBaselineHeight() * textScale, textScale, textScale, textColor)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, postHudRender)

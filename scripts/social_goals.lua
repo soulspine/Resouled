@@ -281,3 +281,176 @@ Resouled:AddSocialGoal(
         end
     }
 )
+---
+---
+---
+---
+---
+Resouled:AddSocialGoal(
+    {
+        DisplayText = "Use every pill you find",
+        Tasks = {
+            {
+                Callback = ModCallbacks.MC_POST_PICKUP_INIT,
+                ---@param pic EntityPickup
+                Func = function(_, pic)
+                    local save = Resouled.SaveManager.GetFloorSave()["Social Goals Saves"]
+                    if not save then save = {} end
+
+                    if not save["Use every pill you find"] then
+                        save["Use every pill you find"] = {
+                            ["Found"] = 0,
+                            ["Eaten"] = 0,
+                            ["PillsSpawned"] = {}
+                        }
+                    end
+
+                    if (pic.SpawnerEntity and Resouled:TryFindPlayerSpawner(pic.SpawnerEntity)) then
+                        save["Use every pill you find"]["PillsSpawned"][tostring(pic.InitSeed)] = true
+                        return
+                    end
+
+
+                    if pic.Variant ~= PickupVariant.PICKUP_PILL
+                    or (save["Use every pill you find"]["PillsSpawned"][tostring(pic.InitSeed)])
+                    then
+                        return
+                    end
+
+
+                    save["Use every pill you find"]["PillsSpawned"][tostring(pic.InitSeed)] = true
+
+                    save["Use every pill you find"]["Found"] = save["Use every pill you find"]["Found"] + 1
+                end
+            },
+            {
+                Callback = ModCallbacks.MC_USE_PILL,
+                Func = function()
+                    local save = Resouled.SaveManager.GetFloorSave()["Social Goals Saves"]
+                    if not save then save = {} end
+
+                    if not save["Use every pill you find"] then
+                        save["Use every pill you find"] = {
+                            ["Found"] = 0,
+                            ["Eaten"] = 0,
+                            ["PillsSpawned"] = {}
+                        }
+                    end
+
+                    save["Use every pill you find"]["Eaten"] = save["Use every pill you find"]["Eaten"] + 1
+                end
+            },
+            {
+                Callback = ModCallbacks.MC_USE_ITEM,
+                Func = function(_, itemID)
+                    if itemID ~= CollectibleType.COLLECTIBLE_MOMS_BOTTLE_OF_PILLS then
+                        return
+                    end
+
+                    local save = Resouled.SaveManager.GetFloorSave()["Social Goals Saves"]
+                    if not save then save = {} end
+
+                    if not save["Use every pill you find"] then
+                        save["Use every pill you find"] = {
+                            ["Found"] = 0,
+                            ["Eaten"] = 0,
+                            ["PillsSpawned"] = {}
+                        }
+                    end
+
+                    save["Use every pill you find"]["Found"] = save["Use every pill you find"]["Found"] + 1
+                end
+            }
+        },
+        Goal = function()
+            local x = Resouled.SaveManager.GetFloorSave()["Social Goals Saves"]["Use every pill you find"] or {}
+            local progress = (x["Eaten"] or 0)/(x["Found"] or 0)
+            return {Text = tostring(x["Eaten"] or 0).."/"..tostring(x["Found"] or 0), Color = ((progress >= 1 or ((x["Eaten"] or 0) == 0 and (x["Found"] or 0) == 0)) and colors.Complete) or ((progress == 0 or (x["Found"] or 0) == 0) and colors.NotComplete) or colors.InProgress}
+        end
+    }
+)
+---
+---
+---
+---
+---
+Resouled:AddSocialGoal(
+    {
+        DisplayText = "Don't use an active item",
+        Tasks = {
+            {
+                Callback = ModCallbacks.MC_USE_ITEM,
+                Func = function()
+                    local save = Resouled.SaveManager.GetFloorSave()["Social Goals Saves"]
+                    if not save then save = {} end
+
+                    if not save["Dont use an active item"] then
+                        save["Dont use an active item"] = true
+                    end
+                end
+            }
+        },
+        Goal = function()
+            local x = Resouled.SaveManager.GetFloorSave()["Social Goals Saves"]["Dont use an active item"] == nil and "Condition Met" or "Failed"
+            return {Text = x, Color = x == "Condition Met" and colors.ConditionMet or colors.NotComplete}
+        end
+    }
+)
+---
+---
+---
+---
+---
+Resouled:AddSocialGoal(
+    {
+        DisplayText = "Clear a room without moving",
+        Tasks = {
+            {
+                Callback = ModCallbacks.MC_POST_PLAYER_UPDATE,
+                ---@param player EntityPlayer
+                Func = function(_, player)
+                    local data = player:GetData()
+                    local input = player:GetMovementInput()
+                    if input.X ~= 0 or input.Y ~= 0 then
+                        data.Resouled_MovedThisRoom = true
+                    end
+                end
+            },
+            {
+                Callback = ModCallbacks.MC_POST_NEW_ROOM,
+                Func = function()
+                    Resouled.Iterators:IterateOverPlayers(function(player)
+                        local data = player:GetData()
+                        data.Resouled_MovedThisRoom = false
+                    end)
+                end
+            },
+            {
+                Callback = ModCallbacks.MC_POST_ROOM_TRIGGER_CLEAR,
+                Func = function()
+                    local moved = false
+                    Resouled.Iterators:IterateOverPlayers(function(player)
+                        local data = player:GetData()
+                        if data.Resouled_MovedThisRoom == true then
+                            moved = true
+                        end
+                    end)
+
+                    if moved == false then
+                        local save = Resouled.SaveManager.GetFloorSave()["Social Goals Saves"]
+                        if not save then save = {} end
+                        
+                        if not save["Clear a room without moving"] then
+                            save["Clear a room without moving"] = true
+                            return
+                        end
+                    end
+                end
+            }
+        },
+        Goal = function()
+            local x = Resouled.SaveManager.GetFloorSave()["Social Goals Saves"]["Clear a room without moving"] == nil and "Not Completed" or "Completed"
+            return {Text = x, Color = x == "Completed" and colors.Complete or colors.NotComplete}
+        end
+    }
+)

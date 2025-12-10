@@ -153,9 +153,9 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.WRATH, "Wrath", "gfx_resouled/
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.GLUTTONY, "Gluttony", "gfx_resouled/buffs/gluttony.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.GREED, "Greed", "gfx_resouled/buffs/greed.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.ENVY, "Envy", "gfx_resouled/buffs/envy.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SLOTH, "Sloth", "gfx_resouled/buffs/placeholder.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.LUST, "Lust", "gfx_resouled/buffs/placeholder.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.PRIDE, "Pride", "gfx_resouled/buffs/placeholder.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SLOTH, "Sloth", "gfx_resouled/buffs/sloth.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.LUST, "Lust", "gfx_resouled/buffs/lust.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.PRIDE, "Pride", "gfx_resouled/buffs/pride.png")
 
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.RESSURECTION_DAY, "Ressurection Day", "gfx_resouled/buffs/cursed/placeholder_cursed.png") -- Cursed
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.LORD_OF_THE_FLIES, "Lord of The Flies", "gfx_resouled/buffs/cursed/placeholder_cursed.png")

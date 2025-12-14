@@ -1,9 +1,19 @@
 local AUCTION_GAVEL = Isaac.GetItemIdByName("Auction Gavel")
 
-local ITEM_DISAPPEAR_EFFECT_OFFSET = Vector(0, -60)
+local effectOffsets = {
+    [1] = Vector(0, -60),
+    [2] = Vector(-30, -60),
+    [3] = Vector(30, -60)
+}
 
 local GAVEL_VARIANT = Isaac.GetEntityVariantByName("Gavel")
 local GAVEL_SUBTYPE = Isaac.GetEntitySubTypeByName("Gavel")
+
+local COLLECTIBLES_TO_NOT_REMOVE = {
+    [CollectibleType.COLLECTIBLE_CAR_BATTERY] = true,
+    [AUCTION_GAVEL] = true,
+    [CollectibleType.COLLECTIBLE_SCHOOLBAG] = true
+}
 
 ---@param collectibleHistory HistoryItem[]
 ---@return integer[]
@@ -13,39 +23,45 @@ local function getValidCollectibles(collectibleHistory)
     for i = 1, #collectibleHistory do
         local item = Isaac.GetItemConfig():GetCollectible(collectibleHistory[i]:GetItemID())
 
-        if item.Type == ItemType.ITEM_PASSIVE or item.Type == ItemType.ITEM_FAMILIAR then
-            table.insert(newTable, collectibleHistory[i]:GetItemID())
+        local id = collectibleHistory[i]:GetItemID()
+        if (item.Type == ItemType.ITEM_PASSIVE or item.Type == ItemType.ITEM_FAMILIAR) and not COLLECTIBLES_TO_NOT_REMOVE[id] then
+            table.insert(newTable, id)
         end
     end
     return newTable
 end
 
----@param rng RNG
----@param player EntityPlayer
-local function onActiveUse(_, _, rng, player)
+local function doItemEffect(player, rng, i)
     local validCollectibles = getValidCollectibles(player:GetHistory():GetCollectiblesHistory())
 
-    ::RollCollectible::
     Resouled:NewSeed()
     local collectibleIndexToRemove = validCollectibles[rng:RandomInt(#validCollectibles) + 1]
 
-    if collectibleIndexToRemove == AUCTION_GAVEL then
-        goto RollCollectible
+    if collectibleIndexToRemove then
+        player:RemoveCollectible(collectibleIndexToRemove)
+        
+        local RUN_SAVE = Resouled.SaveManager.GetRunSave(player)
+        table.insert(RUN_SAVE.Resouled_AuctionGavel, collectibleIndexToRemove)
+        
+        local effectPos = player.Position + effectOffsets[i] + player.SpriteOffset
+        local gavel = Game():Spawn(EntityType.ENTITY_EFFECT, GAVEL_VARIANT, effectPos, Vector.Zero, nil, GAVEL_SUBTYPE, rng:GetSeed())
+        gavel.DepthOffset = 1000
+        gavel:GetData().Resouled_DisappearItem = collectibleIndexToRemove
     end
+end
 
-    player:RemoveCollectible(collectibleIndexToRemove)
+---@param rng RNG
+---@param player EntityPlayer
+local function onActiveUse(_, _, rng, player)
+    local carBattery = player:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) and 1 or 0
+    local i = 1 + carBattery
 
     local RUN_SAVE = Resouled.SaveManager.GetRunSave(player)
-    if not RUN_SAVE.Resouled_AuctionGavel then
-        RUN_SAVE.Resouled_AuctionGavel = collectibleIndexToRemove
-    else
-        RUN_SAVE.Resouled_AuctionGavel = collectibleIndexToRemove
-    end
+    RUN_SAVE.Resouled_AuctionGavel = {}
 
-    local effectPos = player.Position + ITEM_DISAPPEAR_EFFECT_OFFSET + player.SpriteOffset
-    local gavel = Game():Spawn(EntityType.ENTITY_EFFECT, GAVEL_VARIANT, effectPos, Vector.Zero, nil, GAVEL_SUBTYPE, rng:GetSeed())
-    gavel.DepthOffset = 1000
-    gavel:GetData().Resouled_DisappearItem = collectibleIndexToRemove
+    for j = i, 1 + (carBattery * 2) do
+        doItemEffect(player, rng, j)
+    end
     return true
 end
 Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onActiveUse, AUCTION_GAVEL)
@@ -79,19 +95,30 @@ local function postPickupInit(_, pickup)
     local auctionGavelItem = nil
     ---@param player EntityPlayer
     Resouled.Iterators:IterateOverPlayers(function(player)
+
         local RUN_SAVE = Resouled.SaveManager.GetRunSave(player)
-        if not auctionGavelItem and RUN_SAVE.Resouled_AuctionGavel then
-            auctionGavelItem = RUN_SAVE.Resouled_AuctionGavel
-            RUN_SAVE.Resouled_AuctionGavel = nil
+
+        if not auctionGavelItem and RUN_SAVE.Resouled_AuctionGavel and pickup.SubType ~= RUN_SAVE.Resouled_AuctionGavel[1] then
+            auctionGavelItem = RUN_SAVE.Resouled_AuctionGavel[1]
+            RUN_SAVE.Resouled_AuctionGavel[1] = RUN_SAVE.Resouled_AuctionGavel[2]
+            RUN_SAVE.Resouled_AuctionGavel[2] = nil
         end
     end)
+
+    if not auctionGavelItem then return end
+
     local room = Game():GetRoom()
     local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(pickup)
-    if Game():GetRoom():GetType() == RoomType.ROOM_SHOP and room:IsFirstVisit() and auctionGavelItem then
+
+    if room:GetType() == RoomType.ROOM_SHOP and room:IsFirstVisit() then
+
         pickup:Morph(pickup.Type, pickup.Variant, auctionGavelItem, true)
         ROOM_SAVE.AuctionGavelPrice = 15
+
     end
+
     if ROOM_SAVE.AuctionGavelPrice then
+
         Resouled.Prices:FlatDecreaseShopPickupPrice(pickup, 0, ROOM_SAVE.AuctionGavelPrice)
     end
 end

@@ -242,7 +242,7 @@ local function postNewFloor()
     
     RUN_SAVE.RoomEvents.EventsToDistribute = RUN_SAVE.RoomEvents.EventsToDistribute - roomEventsThisFloor
 
-    if rng:PhantomInt(#Resouled:GetRoomEvents()) == Resouled.RoomEvents.SOCIAL_GOALS then
+    if rng:PhantomInt(#Resouled:GetRoomEvents()) + 1 == Resouled.RoomEvents.SOCIAL_GOALS then
     --if true then
         Resouled.SaveManager.GetRunSave()["Social Goals"] = {}
         Resouled.SaveManager.Save()

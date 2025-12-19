@@ -108,36 +108,59 @@ local function postPickupInit(_, pickup)
     if not auctionGavelItem then return end
 
     local room = Game():GetRoom()
-    local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(pickup)
+    local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave()
+
+    local key = tostring(pickup.ShopItemId)
 
     if room:GetType() == RoomType.ROOM_SHOP and room:IsFirstVisit() then
 
         pickup:Morph(pickup.Type, pickup.Variant, auctionGavelItem, true)
-        ROOM_SAVE.AuctionGavelPrice = 15
+
+        if not ROOM_SAVE.AuctionGavelPrice then
+            ROOM_SAVE.AuctionGavelPrice = {}
+        end
+
+        ROOM_SAVE.AuctionGavelPrice[key] = 15
 
     end
 
-    if ROOM_SAVE.AuctionGavelPrice then
+    if ROOM_SAVE.AuctionGavelPrice and ROOM_SAVE.AuctionGavelPrice[key] then
 
-        Resouled.Prices:FlatDecreaseShopPickupPrice(pickup, 0, ROOM_SAVE.AuctionGavelPrice)
+        Resouled.Prices:FlatDecreaseShopPickupPrice(pickup, 0, ROOM_SAVE.AuctionGavelPrice[key])
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, postPickupInit, PickupVariant.PICKUP_COLLECTIBLE)
 
 ---@param pickup EntityPickup
 local function onPickupUpdate(_, pickup)
-    local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(pickup)
-    if ROOM_SAVE.AuctionGavelPrice then
-        Resouled.Prices:FlatDecreaseShopPickupPrice(pickup, 0, ROOM_SAVE.AuctionGavelPrice)
+    local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave()
+    local key = tostring(pickup.ShopItemId)
+    if ROOM_SAVE.AuctionGavelPrice and ROOM_SAVE.AuctionGavelPrice[key] then
+        Resouled.Prices:FlatDecreaseShopPickupPrice(pickup, 0, ROOM_SAVE.AuctionGavelPrice[key])
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onPickupUpdate)
 
 ---@param pickup EntityPickup
-local function postPurchase(_, pickup)
-    local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(pickup)
-    if ROOM_SAVE.AuctionGavelPrice then
-        ROOM_SAVE.AuctionGavelPrice = nil
+---@param player EntityPlayer
+local function postPurchase(_, pickup, player)
+    local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave()
+    local key = tostring(pickup.ShopItemId)
+    if ROOM_SAVE.AuctionGavelPrice and ROOM_SAVE.AuctionGavelPrice[key] then
+        ROOM_SAVE.AuctionGavelPrice[key] = nil
+
+        local index = player:GetPlayerIndex()
+
+        ---@param familiar EntityFamiliar
+        Resouled.Iterators:IterateOverRoomFamiliars(function(familiar)
+            if familiar.Variant == FamiliarVariant.WISP and familiar.SubType == AUCTION_GAVEL then
+                local p = Resouled:TryFindPlayerSpawner(familiar)
+
+                if p and p:GetPlayerIndex() == index then
+                    familiar:Kill()
+                end
+            end
+        end)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_SHOP_PURCHASE, postPurchase)

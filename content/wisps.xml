@@ -1,0 +1,120 @@
+<wisps gfxroot="gfx_resouled/familiar/wisps/">
+	<!--
+		Book of Virtues
+		These are the default attributes for wisp familiars and will be used for any active item that doesn't provide custom attributes
+			hp: Base HP (default: 2)
+			damage: Base tear damage (default: 3)
+			stageDamage: Tear damage added for every stage
+			shotSpeed: Tear shot speed multiplier (default: 1)
+			fireDelay: Base delay between shots (default: 30)
+			tearFlags: Base tear flags (should be provided as a sequence of bit positions rather than a single number)
+				- For example "2 13" results in homing charming tears
+				- Those flags will always be applied to every shot
+				- Flag 0 (spectral) is implied and will always be set no matter what
+			tearFlags2: Chance based tear flags, same format as tearFlags
+			procChance: Determines the chance of tearFlags2 being applied to any fired tear (between 0 and 1)
+			flameColor: The color of the wisp's flame in "R G B A" format, with each component being in the 0-1 range
+			coreColor: The color of the wisp's core in "R G B A" format
+			tearColor: The color of the wisp's tears in "R G B A" format
+			tearVariant: The variant to use for the wisp's tears by default
+			tearVariant2: The variant to use for the wisp's tears when tearFlags2 procs
+			tearColor2: The color of the wisp's tears when tearFlags2 procs
+			flameGfx: Can be specified to set a custom spritesheet for the wisp's flame
+			coreGfx: Can be specified to set a custom spritesheet for the wisp's core
+			count: Amount of wisps to generate on item usage
+			priority: Overwrite priority on existing wisps
+			canShoot: Can this wisp shoot
+			
+		Tear flag reference:
+			0 : SPECTRAL
+			1 : PIERCING
+			2 : HOMING
+			3 : SLOW
+			4 : POISON
+			5 : FREEZE
+			6 : SPLIT
+			7 : GROW
+			8 : BOOMERANG
+			9 : PERSISTENT
+			10: WIGGLE
+			11: MULLIGAN
+			12: EXPLOSIVE
+			13: CHARM
+			14: CONFUSION
+			15: HP_DROP
+			16: ORBIT
+			17: WAIT
+			18: QUADSPLIT
+			19: BOUNCE
+			20: FEAR
+			21: SHRINK
+			22: BURN
+			23: ATTRACTOR
+			24: KNOCKBACK
+			25: PULSE
+			26: SPIRAL
+			27: FLAT
+			28: SAD_BOMB
+			29: BUTT_BOMB
+			30: SQUARE
+			31: GLOW
+			32: GISH
+			33: MYSTERIOUS_LIQUID_CREEP
+			34: SHIELDED
+			35: GLITTER_BOMB
+			36: SCATTER_BOMB
+			37: STICKY
+			38: CONTINUUM
+			39: LIGHT_FROM_HEAVEN
+			40: COIN_DROP
+			41: BLACK_HP_DROP
+			42: TRACTOR_BEAM
+			43: GODS_FLESH
+			44: GREED_COIN
+			45: CROSS_BOMB
+			46: BIG_SPIRAL
+			47: PERMANENT_CONFUSION
+			48: BOOGER
+			49: EGG
+			50: ACID
+			51: BONE
+			52: BELIAL
+			53: MIDAS
+			54: NEEDLE
+			55: JACOBS
+			56: HORN
+			57: LASER
+			58: POP
+			59: ABSORB
+			60: LASERSHOT
+			61: HYDROBOUNCE
+			62: BURSTSPLIT
+			63: CREEP_TRAIL
+			64: PUNCH
+			65: ICE
+			66: MAGNETIZE
+			67: BAIT
+			68: OCCULT
+			69: ORBIT_ADVANCED
+			70: ROCK
+			71: TURN_HORIZONTAL
+			72: BLOOD_BOMB
+			73: ECOLI
+	-->
+
+    <color name="resouled_flame_auction_gavel" r="320" g="300" b="60"/>
+	<color name="resouled_core_auction_gavel" r="300" g="290" b="10"/>
+	<color name="resouled_tear_auction_gavel" r="260" g="250" b="40" or="40" og="40"/>
+
+	<wisp
+        id="17"
+        hp="12"
+        layer="2"
+        damage="5"
+        tearScale="1"
+        flameColor="resouled_flame_auction_gavel"
+        coreColor="resouled_core_auction_gavel"
+        tearColor="resouled_tear_auction_gavel"
+    />
+        <!--coreGfx="auction_gavel.png"-->
+</wisps>

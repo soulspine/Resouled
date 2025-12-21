@@ -1,7 +1,7 @@
 local ITEM = Resouled.Enums.Items.THE_MONSTER
 
 local Monster = {
-    Sprite = Sprite(),
+    Sprite = Resouled:CreateLoadedSprite("gfx_resouled/the_monster.anm2"),
     HeadDirToAnimTranslation = { [Direction.LEFT] = "Left", [Direction.UP] = "Up", [Direction.RIGHT] = "Right", [Direction.DOWN] = "Down" },
     OffsetPerMonster = 13,
     AlphaWhenItemPickup = 0.16,
@@ -11,7 +11,7 @@ local Monster = {
 }
 
 local Chargebar = {
-    Sprite = Sprite(),
+    Sprite = Resouled:CreateLoadedSprite("gfx/chargebar.anm2", nil, { [0] = "gfx_resouled/ui/monster_chargebar.png" }),
     Offset = Vector(-30, -45),
     ChargeBase = 65,              -- updates
     ChargeReductionPerCopy = 0.2, -- x copies will result in (1-reduction) ^ (x-1) * base
@@ -39,9 +39,16 @@ local Chargebar = {
     },
 }
 
-Monster.Sprite:Load("gfx_resouled/the_monster.anm2", true)
-Chargebar.Sprite:Load("gfx_resouled/chargebar.anm2", true)
-Chargebar.Sprite:ReplaceSpritesheet(0, "gfx_resouled/ui/monster_chargebar.png", true)
+local Tongue = {
+    Sprite = Resouled:CreateLoadedSprite("gfx_resouled/effects/monster_tongue.anm2", "Idle"),
+    PointLength = 8,
+    PointCount = 128/8, -- sprite is 128x16 so 128 / 8 because each segment is 8 long
+    PlayerHeadOffset = Vector(0, -50),
+    Range = 200,
+    GrabRadius = 15,
+    EnemyCheckFrequency = 3
+}
+Tongue.Beam = Beam(Tongue.Sprite, 0, false, false)
 
 ---@param player EntityPlayer
 local function monstersRender(_, player)
@@ -80,7 +87,7 @@ local function monstersRender(_, player)
             Monster.Sprite.Color.A = math.min(1, Monster.AlphaWhenItemPickup * i)
         end
 
-        local pos = player.Position + player.SpriteOffset + player.PositionOffset + headLayer:GetPos()
+        local pos = player.Position + player.SpriteOffset + player.PositionOffset + headLayer:GetPos() + player:GetFlyingOffset()
 
         -- adapt to player shooting
         if playerSprite:GetOverlayAnimation():find("Head") and playerSprite:GetOverlayFrame() > 0 then
@@ -176,9 +183,14 @@ local function chargebarPlayerUpdate(_, player)
     if not Resouled:IsPlayerShooting(player) or playerAnimation:find("Item") or playerAnimation:find("Pickup") then
         if data.RESOULED__MONSTER_CHARGEBAR and data.RESOULED__MONSTER_CHARGEBAR.Remaining == 0 then
             -- shoot here
-
+            local dir = player:GetLastDirection()
+            data.RESOULED__MONSTER_TONGUE = {
+                TargetPosition = (dir + player:GetTearMovementInheritance(dir)/10):Normalized() * Tongue.Range + player.Position + Tongue.PlayerHeadOffset/2 * player.SpriteScale.Y,
+                Points = {},
+                VelocityMult = 1,
+            }
+            data.RESOULED__MONSTER_TONGUE.TargetAngle = data.RESOULED__MONSTER_TONGUE.TargetPosition:GetAngleDegrees()
         end
-
         data.RESOULED__MONSTER_CHARGEBAR = nil
         return
     end
@@ -197,83 +209,216 @@ end
 Resouled:AddCallback(ModCallbacks.MC_PRE_PLAYER_UPDATE, chargebarPlayerUpdate)
 
 
-local tongueSprite = Sprite()
-tongueSprite:Load("gfx_resouled/effects/monster_tongue.anm2", true)
-tongueSprite:Play("Idle", true)
-local tongueBeam = Beam(tongueSprite, 0, false, false)
-local POINT_LENGTH = 8
-local POINT_COUNT = 128/8
+-----------------------------------------------------------------------------------------
+---@param player EntityPlayer
+local function newTongueRender(_, player)
+    local data = player:GetData().RESOULED__MONSTER_TONGUE
+    if not data then return end
+    
+    local initPos = player.Position +
+    Tongue.PlayerHeadOffset * player.SpriteScale.Y
+    local endPos = data.TargetPosition
+    
+    if #data.Points == 0 then
+        for _ = 1, Tongue.PointCount do
+            table.insert(data.Points, {
+                Pos = initPos,
+                Vel = Vector.Zero
+            })
+        end
+        data.Points[#data.Points].Vel = (data.TargetPosition - initPos):Normalized() * 30
+    end
+    if not Game():IsPaused() then
+        
+        data.Points[1].Pos = initPos
 
-local points = {}
+        if data.GrabbedEnemy then
+            local enemy = data.GrabbedEnemy.Entity
+            if enemy:IsDead() or not enemy:IsActiveEnemy(false) or enemy.HitPoints <= 0 then
+                data.GrabbedEnemy = nil
+            end
+        end
+        
+        if Isaac.GetFrameCount()%Tongue.EnemyCheckFrequency == 0 and not data.GrabbedEnemy then
+            for _, entity in ipairs(Isaac.FindInRadius(data.Points[Tongue.PointCount].Pos, Tongue.GrabRadius, EntityPartition.ENEMY)) do
+                local npc = entity:ToNPC()
+                if npc and Resouled:IsValidEnemy(npc) then
+                    data.GrabbedEnemy = EntityRef(npc)
+                    for i = 2, #data.Points do
+                        local p = data.Points[i]
+                        p.Vel = p.Vel + (initPos - p.Pos):Normalized() * 5
+                    end
+                        
+                    if data.VelocityMult > 0 then
+                        data.VelocityMult = -data.VelocityMult
+                    end
+                    break
+                end
+            end
+        end
+    
+        if (initPos:Distance(endPos) < data.Points[Tongue.PointCount].Pos:Distance(initPos)) and data.VelocityMult > 0 then --Crossed max distance
+            data.VelocityMult = -data.VelocityMult
+        
+            for i = 2, #data.Points do
+                local p = data.Points[i]
+                p.Vel = p.Vel + (initPos - p.Pos):Normalized() * 5
+            end
+        end
+    
+        local segmentLength = Tongue.Range / (Tongue.PointCount - 1)
+        
+        if data.VelocityMult > 0 then --Extend
+            for i = 0, #data.Points - 2 do
+                local p1 = data.Points[#data.Points - i]
+                local p2 = data.Points[#data.Points - (i + 1)]
 
-local function postRender()
-    local pos1 = Isaac.WorldToScreen(Input.GetMousePosition(true))
-    local pos2 = Isaac.WorldToScreen(Isaac.GetPlayer().Position)
+                p1.Vel = p1.Vel + (data.TargetPosition - p1.Pos):Normalized()
+                if p1.Pos:Distance(p2.Pos) > segmentLength then
+                    p2.Vel = p2.Vel + (p1.Pos - p2.Pos):Normalized()
+                end
+                
+                p1.Pos = p1.Pos + p1.Vel
+                p1.Vel = p1.Vel * 0.95
+            end
 
-    local rotation = (pos2 - pos1):GetAngleDegrees()
+            for i = 1, #data.Points - 1 do
+                local p1 = data.Points[i]
+                local p2 = data.Points[i+1]
+    
+                local delta = p2.Pos - p1.Pos
+                local distance = delta:Length()/2
 
-    local startPos = Vector(0, 1)
-    local endPos = Vector((pos2 - pos1):Rotated(-rotation).X, 1)
+                if distance > segmentLength then
+                    p2.Pos = p2.Pos - delta * (distance - segmentLength) / distance * 0.05
+                end
+            end
+        else --Retract
+            for i = 1, #data.Points do
+                local p1 = data.Points[i]
+                local p2 = data.Points[i + 1]
 
-    if not points[1] then
-        for i = 1, POINT_COUNT do
-            points[i] = {
+                if p2 then
+                    if p2.Pos:Distance(initPos) > 0 then
+                        p2.Vel = p2.Vel + (initPos - p2.Pos):Normalized()
+                    end
+                end
+                p1.Pos = p1.Pos + p1.Vel
+                p1.Vel = p1.Vel * 0.95
+            end
+        
+            for i = 1, #data.Points - 1 do
+                local p1 = data.Points[i]
+                local p2 = data.Points[i+1]
+    
+                local delta = p2.Pos - p1.Pos
+                local distance = delta:Length()
+    
+                if distance > segmentLength then
+                    p2.Pos = p2.Pos - delta * (distance - segmentLength) / distance * 0.25
+                end
+            end
+        end
+
+        if data.GrabbedEnemy then
+            data.GrabbedEnemy.Entity.Position = data.Points[Tongue.PointCount].Pos
+        end
+    end
+
+    for i = 1, #data.Points - 1 do
+        local p1 = data.Points[i]
+        local p2 = data.Points[i + 1]
+
+        Tongue.Beam:Add(Isaac.WorldToScreen(p1.Pos), Tongue.PointLength * (i - 1))
+        Tongue.Beam:Add(Isaac.WorldToScreen(p2.Pos), Tongue.PointLength * i)
+    end
+    Tongue.Beam:Render(true)
+
+    if (data.Points[Tongue.PointCount].Pos:Distance(initPos) < Tongue.GrabRadius + 10 and data.VelocityMult < 0) then
+        player:GetData().RESOULED__MONSTER_TONGUE = nil
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, newTongueRender)
+
+---@param player EntityPlayer
+local function tongueRender(_, player)
+    local data = player:GetData().RESOULED__MONSTER_TONGUE
+    if not data then return end
+
+    local targetPos = Isaac.WorldToScreen(Input.GetMousePosition(true))
+    local playerPos = Isaac.WorldToScreen(player.Position +
+        Tongue.PlayerHeadOffset * player.SpriteScale.Y)
+
+    local rotation = (playerPos - targetPos):GetAngleDegrees()
+
+    local startPos = Vector(0, 100)
+    local endPos = Vector((playerPos - targetPos):Rotated(-rotation).X, 1)
+
+    if #data.Points == 0 then
+        for _ = 1, Tongue.PointCount do
+            table.insert(data.Points, {
                 Pos = startPos,
                 Vel = Vector.Zero
-            }
+            })
         end
     end
 
-    points[1].Pos = startPos
-    points[POINT_COUNT].Vel = (endPos - points[POINT_COUNT].Pos):Resized(points[POINT_COUNT].Pos:Distance(endPos)/10)
+    data.Points[1].Pos = startPos
+    data.Points[Tongue.PointCount].Vel = (endPos - data.Points[Tongue.PointCount].Pos):Resized(data.Points
+        [Tongue.PointCount].Pos:Distance(
+            endPos) / 10)
 
-    for i = 1, POINT_COUNT do
-        local point = points[i]
-        local otherPoint = points[i + 1]
+    for i = 1, Tongue.PointCount do
+        local point = data.Points[i]
+        local otherPoint = data.Points[i + 1]
         if i ~= 1 and otherPoint then
             if point.Pos.Y > 0 then
-                point.Vel = point.Vel + Vector(0, 1)
+                point.Vel = point.Vel - Vector(0, 1)
             end
 
-            if point.Pos:Distance(otherPoint.Pos) > POINT_LENGTH then
-                point.Vel = point.Vel + (otherPoint.Pos - point.Pos):Resized(point.Pos:Distance(otherPoint.Pos)/2)
+            if point.Pos:Distance(otherPoint.Pos) > Tongue.PointLength then
+                point.Vel = point.Vel + (otherPoint.Pos - point.Pos):Resized(point.Pos:Distance(otherPoint.Pos) / 2)
             end
         end
 
-        point.Pos = point.Pos + point.Vel/2
+        point.Pos = point.Pos + point.Vel / 2
         point.Vel = point.Vel * 0.975
     end
 
-    for i = 0, POINT_COUNT - 1 do
-        local point = points[POINT_COUNT - i]
-        local otherPoint = points[POINT_COUNT - (i + 1)]
+    for i = 0, Tongue.PointCount - 1 do
+        local point = data.Points[Tongue.PointCount - i]
+        local otherPoint = data.Points[Tongue.PointCount - (i + 1)]
         if i ~= 0 and otherPoint then
             if point.Pos.Y > 0 then
-                point.Vel = point.Vel + Vector(0, 1)
+                point.Vel = point.Vel - Vector(0, 1)
             end
 
-            if point.Pos:Distance(otherPoint.Pos) > POINT_LENGTH then
-                point.Vel = point.Vel + (otherPoint.Pos - point.Pos):Resized(point.Pos:Distance(otherPoint.Pos)/2)
+            if point.Pos:Distance(otherPoint.Pos) > Tongue.PointLength then
+                point.Vel = point.Vel + (otherPoint.Pos - point.Pos):Resized(point.Pos:Distance(otherPoint.Pos) / 2)
             end
         end
 
-        point.Pos = point.Pos + point.Vel/2
+        point.Pos = point.Pos + point.Vel / 2
         point.Vel = point.Vel * 0.975
     end
 
-    local yStep = pos2 - pos1
+    local yStep = playerPos - targetPos
 
-    for i = 1, POINT_COUNT - 1 do
-        local point = points[i]
-        local otherPoint = points[i + 1]
+    for i = 1, Tongue.PointCount - 1 do
+        local point = data.Points[i]
+        local otherPoint = data.Points[i + 1]
 
-        local renderPos1 = Vector(Vector(point.Pos.X, 0):Rotated(rotation).X, point.Pos.Y/5 + yStep.Y * (i - 1)/POINT_COUNT)
-        local renderPos2 = Vector(Vector(otherPoint.Pos.X, 0):Rotated(rotation).X, otherPoint.Pos.Y/5 + yStep.Y * i/POINT_COUNT)
-            
-        tongueBeam:Add(pos1 + renderPos1, POINT_LENGTH * (i - 1))
-        tongueBeam:Add(pos1 + renderPos2, POINT_LENGTH * i)
+        Isaac.DrawLine(startPos + point.Pos, startPos + otherPoint.Pos, KColor(1, 0, 0, 1), KColor(1, 0, 0, 1), 1)
+
+        local renderPos1 = Vector(Vector(point.Pos.X, 0):Rotated(rotation).X,
+            -point.Pos.Y + yStep.Y * (i - 1) / Tongue.PointCount)
+        local renderPos2 = Vector(Vector(otherPoint.Pos.X, 0):Rotated(rotation).X,
+            -otherPoint.Pos.Y + yStep.Y * i / Tongue.PointCount)
+
+        Tongue.Beam:Add(targetPos + renderPos1 + startPos, Tongue.PointLength * (i - 1))
+        Tongue.Beam:Add(targetPos + renderPos2 + startPos, Tongue.PointLength * i)
     end
 
-    tongueBeam:Render(true)
+    Tongue.Beam:Render(true)
 end
---Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, postRender)
+--Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, tongueRender)

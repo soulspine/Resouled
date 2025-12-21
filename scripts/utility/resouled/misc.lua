@@ -898,10 +898,17 @@ end
 
 ---@param path string
 ---@param animation? string Default animation if unspecified
+---@param layerReplaceData? table<integer, string> It should contain key-pair values representing layer:newSpritesheet, so for example 0:"gfx/chargebar.anm2"
 ---@return Sprite
-function Resouled:CreateLoadedSprite(path, animation)
+function Resouled:CreateLoadedSprite(path, animation, layerReplaceData)
     local sprite = Sprite()
+    if layerReplaceData then
+        for layer, anm2path in pairs(layerReplaceData) do
+            sprite:ReplaceSpritesheet(layer, anm2path)
+        end
+    end
     sprite:Load(path, true)
+
     sprite:Play(animation or sprite:GetDefaultAnimation(), true)
     return sprite
 end

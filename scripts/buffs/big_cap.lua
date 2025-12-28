@@ -36,4 +36,4 @@ Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, function(_, player, cacheFl
     end
 end)
 
-Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.BIG_CAP)
+Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.BIG_CAP, true)

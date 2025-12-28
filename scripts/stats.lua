@@ -161,3 +161,18 @@ Resouled.Stats.Dummy = {
     Variant = Isaac.GetEntityVariantByName("ResouledDummy"),
     SubType = Isaac.GetEntitySubTypeByName("ResouledDummy")
 }
+
+Resouled.Stats.WormTrinkets = {
+    ID_Key = {},
+    Sorted = {}
+}
+
+Resouled:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, function()
+    for i = 1, #itemConfig:GetTrinkets() do
+        local item = itemConfig:GetTrinket(i)
+        if item and item.Name:lower():find("worm") then
+            Resouled.Stats.WormTrinkets.ID_Key[i] = true
+            table.insert(Resouled.Stats.WormTrinkets.Sorted, i)
+        end
+    end
+end)

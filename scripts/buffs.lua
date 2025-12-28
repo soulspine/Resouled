@@ -10,6 +10,7 @@ Resouled.BuffFamilies = {
     BLUE_KING_CROWN = 7,
     SCARY_FACE = 18,
     SMALL_CAP = 19,
+    MAGGOT = 41,
 
     WAR = 8, --Special start from here
     DEATH = 9,
@@ -77,6 +78,9 @@ Resouled.Buffs = {
     SMALL_CAP = 38,
     MEDIUM_CAP = 39,
     BIG_CAP = 40,
+    MAGGOT = 62,
+    WORM = 63,
+    PROGLOTTID = 64,
 
     WAR = 25, -- Special start from here
     DEATH = 26,
@@ -136,6 +140,8 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.METEOR, "Meteor", "gfx_resoule
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.BLUE_KING_CROWN, "Blue King Crown", "gfx_resouled/buffs/blue_king_crown.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SCARY_FACE, "Scary Face", "gfx_resouled/buffs/scary_face.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SMALL_CAP, "Small Cap", "gfx_resouled/buffs/small_cap.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.MAGGOT, "Maggot", "gfx_resouled/buffs/maggot.png")
+
 
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.WAR, "War", "gfx_resouled/buffs/war.png") -- Special
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.FAMINE, "Famine", "gfx_resouled/buffs/famine.png")
@@ -270,6 +276,9 @@ Resouled:RegisterBuff(Resouled.Buffs.SLOTH, "Sloth", 0, Resouled.BuffRarity.SPEC
 Resouled:RegisterBuff(Resouled.Buffs.PRIDE, "Pride", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.PRIDE, false, Resouled.Souls.PRIDE)
 Resouled:RegisterBuff(Resouled.Buffs.ENVY, "Envy", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.ENVY, false, Resouled.Souls.ENVY)
 Resouled:RegisterBuff(Resouled.Buffs.DAY_OF_THE_DOODLER, "Day of The Doodler", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.DAY_OF_THE_DOODLER, false)
+Resouled:RegisterBuff(Resouled.Buffs.MAGGOT, "Maggot", COMMON_BASE_PRICE, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.MAGGOT, false)
+Resouled:RegisterBuff(Resouled.Buffs.WORM, "Worm", RARE_BASE_PRICE, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.MAGGOT, false)
+Resouled:RegisterBuff(Resouled.Buffs.PROGLOTTID, "Proglottid", LEGENDARY_BASE_PRICE, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.MAGGOT, false)
 
 
 Resouled:Log("Loaded " .. tostring(#Resouled:GetBuffs()) .. " buffs")
@@ -290,9 +299,7 @@ end
 local function postGameEnd(_, isGameOver)
     for _, buffId in ipairs(buffsToRemoveOnGameEnd) do
         if isGameOver and removeIfDeath[buffId] == false then else
-            if Resouled:ActiveBuffPresent(buffId) then
-                Resouled:RemoveActiveBuff(buffId)
-            end
+            Resouled:RemoveActiveBuff(buffId)
         end
     end
 end
@@ -331,6 +338,9 @@ include("scripts.buffs.the_sun")
 include("scripts.buffs.small_cap")
 include("scripts.buffs.medium_cap")
 include("scripts.buffs.big_cap")
+include("scripts.buffs.maggot")
+include("scripts.buffs.worm")
+include("scripts.buffs.proglottid")
 
 include("scripts.buffs.war")
 include("scripts.buffs.death")

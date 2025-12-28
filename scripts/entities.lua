@@ -8,7 +8,7 @@ local cursedEnemies = {}
 ---@param cSub integer
 ---@return boolean -- Returns false if there's already a morph registered under this id
 function Resouled:RegisterCursedEnemyMorph(id, var, sub, cId, cVar, cSub)
-    local config = {Id = cId, Var = cVar, Sub = cSub}
+    local config = { Id = cId, Var = cVar, Sub = cSub }
 
     if not sub then
         if not var then
@@ -20,7 +20,7 @@ function Resouled:RegisterCursedEnemyMorph(id, var, sub, cId, cVar, cSub)
                 return false
             end
         else
-            local key = tostring(id).."."..tostring(var)
+            local key = tostring(id) .. "." .. tostring(var)
             if not cursedEnemies[key] then
                 cursedEnemies[key] = config
                 return true
@@ -29,7 +29,7 @@ function Resouled:RegisterCursedEnemyMorph(id, var, sub, cId, cVar, cSub)
             end
         end
     else
-        local key = tostring(id).."."..tostring(var).."."..tostring(sub)
+        local key = tostring(id) .. "." .. tostring(var) .. "." .. tostring(sub)
         if not cursedEnemies[key] then
             cursedEnemies[key] = config
             return true
@@ -45,14 +45,14 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, function(_, npc)
     if not EverythingIsCursed and Resouled:ActiveBuffPresent(Resouled.Buffs.PUTRIFIER) then return end
     if Game():GetLevel():GetCurses() > 0 or EverythingIsCursed then
         local key1 = tostring(npc.Type)
-        local key2 = key1.."."..tostring(npc.Variant)
-        local key3 = key2.."."..tostring(npc.SubType)
-        
+        local key2 = key1 .. "." .. tostring(npc.Variant)
+        local key3 = key2 .. "." .. tostring(npc.SubType)
+
         if cursedEnemies[key1] or cursedEnemies[key2] or cursedEnemies[key3] then
-            
             local config = cursedEnemies[key3] or cursedEnemies[key2] or cursedEnemies[key1]
 
-            Resouled:TryEnemyMorph(npc, EverythingIsCursed and 1 or Resouled.Stats.CursedEnemyMorphChance(), config.Id, config.Var, config.Sub)
+            Resouled:TryEnemyMorph(npc, EverythingIsCursed and 1 or Resouled.Stats.CursedEnemyMorphChance(), config.Id,
+                config.Var, config.Sub)
         end
     end
 end)
@@ -84,6 +84,7 @@ include("scripts.entities.holy_psy_horf")
 include("scripts.entities.proglottid_egg")
 include("scripts.entities.isaac_enemy")
 include("scripts.entities.holy_squirt")
+include("scripts.entities.haunted_ghost")
 
 include("scripts.effects.stun_tentacle")
 

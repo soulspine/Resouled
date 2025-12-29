@@ -100,12 +100,12 @@ Resouled:AddPriorityCallback(ModCallbacks.MC_PRE_LEVEL_INIT, CallbackPriority.IM
 
 ---@param visible boolean
 function Resouled.AfterlifeShop:SetMapVisibility(visible)
-    MinimapAPI.Config.Disable = not visible
+    MinimapAPI.OverrideConfig.Disable = not visible
 end
 
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, function()
-    if not Resouled.AfterlifeShop:IsAfterlifeShop() then
-        Resouled.AfterlifeShop:SetMapVisibility(true)
+    if Resouled.AfterlifeShop:IsAfterlifeShop() then
+        Game():GetHUD():SetVisible(false)
     end
 end)
 
@@ -151,6 +151,5 @@ include("scripts.afterlife_shop.entering")
 include("scripts.afterlife_shop.music")
 include("scripts.afterlife_shop.casket")
 include("scripts.afterlife_shop.wise_skull")
---include("scripts.afterlife_shop.minimap")
 include("scripts.afterlife_shop.buff_descriptions")
 include("scripts.afterlife_shop.donation_machine")

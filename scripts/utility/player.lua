@@ -37,7 +37,6 @@ local function removeTemporaryContainerOnRoomExit(_, player, newLevel)
 
     if not data.Temporary_Heart_Container_Remove_Me_After_This_Room_Is_This_Name_Unique_Enough_Question_Mark then return end
     for _, _ in ipairs(data.Temporary_Heart_Container_Remove_Me_After_This_Room_Is_This_Name_Unique_Enough_Question_Mark) do
-        print("removeing")
         player:AddMaxHearts(-2)
     end
     data.Temporary_Heart_Container_Remove_Me_After_This_Room_Is_This_Name_Unique_Enough_Question_Mark = nil

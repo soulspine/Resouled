@@ -10,6 +10,7 @@ Resouled.BuffFamilies = {
     BLUE_KING_CROWN = 7,
     SCARY_FACE = 18,
     SMALL_CAP = 19,
+    MAGGOT = 41,
 
     WAR = 8, --Special start from here
     DEATH = 9,
@@ -23,6 +24,13 @@ Resouled.BuffFamilies = {
     FAMINE = 17,
     PUTRIFIER = 25,
     CHITIN = 26,
+    WRATH = 33,
+    GLUTTONY = 34,
+    GREED = 35,
+    SLOTH = 36,
+    PRIDE = 37,
+    LUST = 38,
+    ENVY = 39,
 
     RESSURECTION_DAY = 20,
     LORD_OF_THE_FLIES = 21,
@@ -35,6 +43,7 @@ Resouled.BuffFamilies = {
     LIFE_OF_LUST = 30,
     FATTYS_FEAST = 31,
     KRAMPUS_CHRISTMAS = 32,
+    DAY_OF_THE_DOODLER = 40,
 }
 
 ---@enum ResouledBuff
@@ -69,6 +78,9 @@ Resouled.Buffs = {
     SMALL_CAP = 38,
     MEDIUM_CAP = 39,
     BIG_CAP = 40,
+    MAGGOT = 62,
+    WORM = 63,
+    PROGLOTTID = 64,
 
     WAR = 25, -- Special start from here
     DEATH = 26,
@@ -82,6 +94,13 @@ Resouled.Buffs = {
     FAMINE = 34,
     PUTRIFIER = 46,
     CHITIN = 47,
+    WRATH = 54,
+    GLUTTONY = 55,
+    GREED = 56,
+    SLOTH = 57,
+    PRIDE = 58,
+    LUST = 59,
+    ENVY = 60,
 
     RESSURECTION_DAY = 41,
     LORD_OF_THE_FLIES = 42,
@@ -94,6 +113,7 @@ Resouled.Buffs = {
     LIFE_OF_LUST = 51,
     FATTYS_FEAST = 52,
     KRAMPUS_CHRISTMAS = 53,
+    DAY_OF_THE_DOODLER = 61,
 }
 
 ---@enum ResouledBuffRarity
@@ -120,6 +140,8 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.METEOR, "Meteor", "gfx_resoule
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.BLUE_KING_CROWN, "Blue King Crown", "gfx_resouled/buffs/blue_king_crown.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SCARY_FACE, "Scary Face", "gfx_resouled/buffs/scary_face.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SMALL_CAP, "Small Cap", "gfx_resouled/buffs/small_cap.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.MAGGOT, "Maggot", "gfx_resouled/buffs/maggot.png")
+
 
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.WAR, "War", "gfx_resouled/buffs/war.png") -- Special
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.FAMINE, "Famine", "gfx_resouled/buffs/famine.png")
@@ -133,11 +155,18 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.STRENGTH, "Strength", "gfx_res
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SADNESS, "Sadness", "gfx_resouled/buffs/sadness.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.PUTRIFIER, "Putrifier", "gfx_resouled/buffs/placeholder.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.CHITIN, "Chitin", "gfx_resouled/buffs/placeholder.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.WRATH, "Wrath", "gfx_resouled/buffs/wrath.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.GLUTTONY, "Gluttony", "gfx_resouled/buffs/gluttony.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.GREED, "Greed", "gfx_resouled/buffs/greed.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.ENVY, "Envy", "gfx_resouled/buffs/envy.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SLOTH, "Sloth", "gfx_resouled/buffs/sloth.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.LUST, "Lust", "gfx_resouled/buffs/lust.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.PRIDE, "Pride", "gfx_resouled/buffs/pride.png")
 
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.RESSURECTION_DAY, "Ressurection Day", "gfx_resouled/buffs/cursed/placeholder_cursed.png") -- Cursed
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.LORD_OF_THE_FLIES, "Lord of The Flies", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.MASQUERADE, "Masquerade", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.DELIRIOUS, "Delirious", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.DELIRIOUS, "Delirious", "gfx_resouled/buffs/cursed/delirious.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.MOTHERLY_LOVE, "Motherly Love", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.GREEDS_GAMBLE, "Greed's Gamble", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.STOMPING_GROUND, "Stomping Ground", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
@@ -145,6 +174,7 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.TRICK_OR_TREAT, "Trick or Trea
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.LIFE_OF_LUST, "Life of Lust", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.FATTYS_FEAST, "Fatty's Feast", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.KRAMPUS_CHRISTMAS, "Krampus Christmas", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.DAY_OF_THE_DOODLER, "Day of The Doodler", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
 
 -- REGISTERING BUFF RARITIES
 Resouled:RegisterBuffRarity(Resouled.BuffRarity.COMMON, "Common", 0.65, Color(117/255, 152/255, 161/255))
@@ -238,6 +268,18 @@ Resouled:RegisterBuff(Resouled.Buffs.TRICK_OR_TREAT, "Trick or Treat", -4, Resou
 Resouled:RegisterBuff(Resouled.Buffs.LIFE_OF_LUST, "Life of Lust", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.LIFE_OF_LUST, false)
 Resouled:RegisterBuff(Resouled.Buffs.FATTYS_FEAST, "Fatty's Feast", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.FATTYS_FEAST, false)
 Resouled:RegisterBuff(Resouled.Buffs.KRAMPUS_CHRISTMAS, "Krampus Christmas", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.KRAMPUS_CHRISTMAS, false)
+Resouled:RegisterBuff(Resouled.Buffs.WRATH, "Wrath", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.WRATH, false, Resouled.Souls.WRATH)
+Resouled:RegisterBuff(Resouled.Buffs.GLUTTONY, "Gluttony", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.GLUTTONY, false, Resouled.Souls.GLUTTONY)
+Resouled:RegisterBuff(Resouled.Buffs.GREED, "Greed", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.GREED, false, Resouled.Souls.GREED)
+Resouled:RegisterBuff(Resouled.Buffs.LUST, "Lust", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.LUST, false, Resouled.Souls.LUST)
+Resouled:RegisterBuff(Resouled.Buffs.SLOTH, "Sloth", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.SLOTH, false, Resouled.Souls.SLOTH)
+Resouled:RegisterBuff(Resouled.Buffs.PRIDE, "Pride", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.PRIDE, false, Resouled.Souls.PRIDE)
+Resouled:RegisterBuff(Resouled.Buffs.ENVY, "Envy", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.ENVY, false, Resouled.Souls.ENVY)
+Resouled:RegisterBuff(Resouled.Buffs.DAY_OF_THE_DOODLER, "Day of The Doodler", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.DAY_OF_THE_DOODLER, false)
+Resouled:RegisterBuff(Resouled.Buffs.MAGGOT, "Maggot", COMMON_BASE_PRICE, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.MAGGOT, false)
+Resouled:RegisterBuff(Resouled.Buffs.WORM, "Worm", RARE_BASE_PRICE, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.MAGGOT, false)
+Resouled:RegisterBuff(Resouled.Buffs.PROGLOTTID, "Proglottid", LEGENDARY_BASE_PRICE, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.MAGGOT, false)
+
 
 Resouled:Log("Loaded " .. tostring(#Resouled:GetBuffs()) .. " buffs")
 
@@ -257,9 +299,7 @@ end
 local function postGameEnd(_, isGameOver)
     for _, buffId in ipairs(buffsToRemoveOnGameEnd) do
         if isGameOver and removeIfDeath[buffId] == false then else
-            if Resouled:ActiveBuffPresent(buffId) then
-                Resouled:RemoveActiveBuff(buffId)
-            end
+            Resouled:RemoveActiveBuff(buffId)
         end
     end
 end
@@ -295,6 +335,12 @@ include("scripts.buffs.frightening_visage")
 include("scripts.buffs.terrifying_physiognomy")
 include("scripts.buffs.the_moon")
 include("scripts.buffs.the_sun")
+include("scripts.buffs.small_cap")
+include("scripts.buffs.medium_cap")
+include("scripts.buffs.big_cap")
+include("scripts.buffs.maggot")
+include("scripts.buffs.worm")
+include("scripts.buffs.proglottid")
 
 include("scripts.buffs.war")
 include("scripts.buffs.death")
@@ -307,6 +353,10 @@ include("scripts.buffs.sadness")
 include("scripts.buffs.pestilence")
 include("scripts.buffs.famine")
 include("scripts.buffs.chitin")
+include("scripts.buffs.wrath")
+include("scripts.buffs.gluttony")
+include("scripts.special_souls.the_bone")
+include("scripts.buffs.pride")
 
 include("scripts.buffs.cursed.lord_of_the_flies")
 include("scripts.buffs.cursed.masquerade")

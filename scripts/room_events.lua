@@ -34,6 +34,8 @@ Resouled.RoomEvents = {
     GUPPYS_PIECES = 32,
     THE_ISAAC_OF_ISAAC_ISAAC = 33,
     SPIDER_WEBS = 34,
+    SOCIAL_GOALS = 35,
+    EVERYTHING_MUST_GO = 36,
 }
 
 ---@return boolean
@@ -117,6 +119,9 @@ local filters = {
         end
         return false
     end,
+    DONT_APPEAR = function()
+        return false
+    end
 }
 
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.ALL_HALLOWS_EVE, "All Hallow's Eve", { filters.ENEMIES_PRESENT })
@@ -156,6 +161,8 @@ Resouled:RegisterRoomEvent(Resouled.RoomEvents.GUPPYS_PIECES, "Guppy's Pieces", 
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.THE_ISAAC_OF_ISAAC_ISAAC, "The Isaac Of Isaac: Reisaac",
     { filters.ENEMIES_PRESENT, filters.NO_BOSS_ROOM })
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.SPIDER_WEBS, "Spider Webs", {}, true)
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.SOCIAL_GOALS, "Social Goals", {filters.DONT_APPEAR}, true)
+Resouled:RegisterRoomEvent(Resouled.RoomEvents.EVERYTHING_MUST_GO, "Everything Must Go!", {filters.SHOP_ONLY})
 
 Resouled:Log("Loaded " .. tostring(#Resouled:GetRoomEvents()) .. " room events.")
 
@@ -212,6 +219,8 @@ include("scripts.room_events.pity_for_the_poor")
 include("scripts.room_events.guppys_pieces")
 include("scripts.room_events.the_isaac_of_isaac_isaac")
 include("scripts.room_events.spider_webs")
+include("scripts.room_events.social_goals")
+include("scripts.room_events.everything_must_go")
 
 Resouled.RoomEventDescriptions = {
     [Resouled.RoomEvents.ALL_HALLOWS_EVE] = "All enemies in the room become white champions when entering the room",

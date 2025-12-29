@@ -30,20 +30,11 @@ local CONFIG = {
         },
     },
     LabelButtonSpacing = 8,
-    MenuButtonActions = {
-        Confirm = {
-            Label = "Confirm",
-            Action = ButtonAction.ACTION_ITEM,
-            ControllerAnimation = "LT",
-            KeyboardButtonLabel = "SPACE"
-        },
-        Cancel = {
-            Label = "Cancel",
-            Action = ButtonAction.ACTION_DROP,
-            ControllerAnimation = "RT",
-            KeyboardButtonLabel = "CTRL"
-        },
+    MenuLabels = {
+        Confirm = "Confirm",
+        Cancel = "Cancel",
     },
+    MenuConfirmAction = ButtonAction.ACTION_ITEM,
     BackgroundScale = Vector(2.3, 1.75),
     BackgroundAnimations = {
         In = {
@@ -255,9 +246,9 @@ local function postPlayerUpdate(_, player)
 
     local slot = data.Slot
     local selections = data.Selections
-    local inputVector = player:GetMovementInput() + player:GetShootingInput()
+    local inputVector = Resouled.Player:IsUsingGamepad(player) and player:GetMovementInput() or player:GetShootingInput()
     local highlight = data.CurrentHighlight
-    local numOptions = #CONFIG.OptionStrings[highlight]
+    local numOptions = highlight < 0 and 0 or #CONFIG.OptionStrings[highlight]
     local numSelections = #selections
     local inputTolerance = 0.25
 
@@ -298,14 +289,8 @@ local function postPlayerUpdate(_, player)
         end
     end
 
-    -- cancel action
-    if Input.IsActionPressed(CONFIG.MenuButtonActions.Cancel.Action, player.ControllerIndex) then
-        data.Cancelled = true
-        return
-    end
-
     -- confirm action
-    if Input.IsActionPressed(CONFIG.MenuButtonActions.Confirm.Action, player.ControllerIndex) then
+    if data.CurrentHighlight == -1 and Input.IsActionPressed(CONFIG.MenuConfirmAction, player.ControllerIndex) then
         local allSelectionsMade = true
 
         for _, selection in ipairs(selections) do
@@ -317,8 +302,14 @@ local function postPlayerUpdate(_, player)
 
         if allSelectionsMade then
             data.Selected = true
-            return
         end
+        return
+    end
+
+    -- cancel action, last in selections
+    if data.CurrentHighlight == -2 and Input.IsActionPressed(CONFIG.MenuConfirmAction, player.ControllerIndex) then
+        data.Cancelled = true
+        return
     end
 
     if inputVector:Normalized():Length() < 0.3 then
@@ -337,16 +328,27 @@ local function postPlayerUpdate(_, player)
     if inputVector:Length() == 0 or data.InputCooldown then goto skipDirectional end
     data.InputCooldown = CONFIG.InputCooldown
 
-    if inputVector.Y <= -inputTolerance then     -- up
-        data.CurrentHighlight = ((highlight - 2) % numSelections) + 1
-    elseif inputVector.Y >= inputTolerance then  -- down
-        data.CurrentHighlight = (highlight % numSelections) + 1
-    elseif inputVector.X <= -inputTolerance then -- left
-        selections[highlight] = ((selections[highlight] - 2) % numOptions) + 1
-    elseif inputVector.X >= inputTolerance then  -- right
-        selections[highlight] = (selections[highlight] % numOptions) + 1
+    -- normal selections
+    if highlight > 0 then
+        if inputVector.Y <= -inputTolerance then -- up
+            print(highlight == 1 and -1 or (((highlight - 2) % numSelections) + 1))
+            data.CurrentHighlight = highlight == 1 and -1 or (((highlight - 2) % numSelections) + 1)
+        elseif inputVector.Y >= inputTolerance then  -- down
+            data.CurrentHighlight = highlight == #selections and -1 or ((highlight % numSelections) + 1)
+        elseif inputVector.X <= -inputTolerance then -- left
+            selections[highlight] = ((selections[highlight] - 2) % numOptions) + 1
+        elseif inputVector.X >= inputTolerance then  -- right
+            selections[highlight] = (selections[highlight] % numOptions) + 1
+        end
+    else                                                      -- confirm (-1) / cancel (-2)
+        if inputVector.Y <= -inputTolerance then              -- up
+            data.CurrentHighlight = #selections
+        elseif inputVector.Y >= inputTolerance then           -- down
+            data.CurrentHighlight = 1
+        elseif math.abs(inputVector.X) >= inputTolerance then -- left / right
+            data.CurrentHighlight = -(math.abs(highlight) % 2 + 1)
+        end
     end
-
     ::skipDirectional::
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, postPlayerUpdate)
@@ -360,22 +362,6 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_ROOM_EXIT, removeContainerPreRoomExit)
 
 local font = Font()
 font:Load(CONFIG.FontPath)
-
-local buttons = Resouled:CreateLoadedSprite("gfx_resouled/ui/prototype_keys.anm2")
-local keycapParts = {
-    Left = {
-        Width = 4,
-        Name = "KeycapLeft"
-    },
-    Right = {
-        Width = 4,
-        Name = "KeycapRight"
-    },
-    Middle = {
-        Width = 8,
-        Name = "KeycapMiddle"
-    }
-}
 
 local boxWidth = 0
 
@@ -486,80 +472,32 @@ local function postPlayerRender(_, player, offset)
         local leftButtonPos = Vector(textOnScreenPos.X - boxWidth / 2, buttonHeight)
         local rightButtonPos = Vector(textOnScreenPos.X + 1.5 * boxWidth, buttonHeight)
 
-        buttons.Color.A = data.TextOpacity
-
-        if Resouled.Player:IsUsingGamepad(player) then
-            buttons:Play(CONFIG.MenuButtonActions.Confirm.ControllerAnimation, true)
-            buttons:Render(leftButtonPos)
-
-            buttons:Play(CONFIG.MenuButtonActions.Cancel.ControllerAnimation, true)
-            buttons:Render(rightButtonPos)
-        else
-            -- single letter has width of 12 so this is the baseline for a scale 1 keycap
-            local leftTextWidth = math.ceil(font:GetStringWidth(CONFIG.MenuButtonActions.Confirm.KeyboardButtonLabel) *
-                CONFIG.TextScale.X)
-            buttons:Play(keycapParts.Left.Name, true)
-            buttons:Render(leftButtonPos)
-            local oneCharWidth = math.ceil(12 * CONFIG.TextScale.X)
-            local currentWidth = 0
-            if leftTextWidth > oneCharWidth then
-                buttons:Play(keycapParts.Middle.Name)
-                for _ = 1, math.floor(leftTextWidth / oneCharWidth) do
-                    buttons:Render(Vector(leftButtonPos.X + currentWidth, leftButtonPos.Y))
-                    currentWidth = currentWidth + keycapParts.Middle.Width
-                end
-                currentWidth = currentWidth - keycapParts.Middle.Width / 2
-            end
-            buttons:Play(keycapParts.Right.Name, true)
-            buttons:Render(Vector(leftButtonPos.X + currentWidth, leftButtonPos.Y))
-
-
-            font:DrawStringScaled(
-                CONFIG.MenuButtonActions.Confirm.KeyboardButtonLabel,
-                leftButtonPos.X, leftButtonPos.Y - keycapParts.Middle.Width / 2,
-                CONFIG.TextScale.X, CONFIG.TextScale.Y / 2,
-                KColor(0, 0, 0, data.TextOpacity), leftTextWidth, true
-            )
-
-
-            local rightTextWidth = math.ceil(font:GetStringWidth(CONFIG.MenuButtonActions.Cancel.KeyboardButtonLabel) *
-                CONFIG.TextScale.X)
-            buttons:Play(keycapParts.Right.Name, true)
-            buttons:Render(rightButtonPos)
-            local currentWidth = 0
-            if rightTextWidth > oneCharWidth then
-                buttons:Play(keycapParts.Middle.Name)
-                for _ = 1, math.floor(rightTextWidth / oneCharWidth) do
-                    buttons:Render(Vector(rightButtonPos.X - currentWidth, rightButtonPos.Y))
-                    currentWidth = currentWidth + keycapParts.Middle.Width
-                end
-                currentWidth = currentWidth - keycapParts.Middle.Width / 2
-            end
-            buttons:Play(keycapParts.Left.Name, true)
-            buttons:Render(Vector(rightButtonPos.X - currentWidth, rightButtonPos.Y))
-
-
-            font:DrawStringScaled(
-                CONFIG.MenuButtonActions.Cancel.KeyboardButtonLabel,
-                rightButtonPos.X - currentWidth, rightButtonPos.Y - keycapParts.Middle.Width / 2,
-                CONFIG.TextScale.X, CONFIG.TextScale.Y / 2,
-                KColor(0, 0, 0, data.TextOpacity), rightTextWidth, true
-            )
-        end
+        local leftWidth = font:GetStringWidth(CONFIG.MenuLabels.Confirm) * CONFIG.TextScale.X / 2 * 1.2
+        local rightWidth = font:GetStringWidth(CONFIG.MenuLabels.Cancel) * CONFIG.TextScale.X / 2 * 1.2
 
         local labelColor = CONFIG.LabelColor
         labelColor.Alpha = data.TextOpacity
 
+        if data.CurrentHighlight < 0 then
+            font:DrawStringScaled(
+                ">",
+                data.CurrentHighlight == -1 and (leftButtonPos.X - leftWidth) or (rightButtonPos.X - 2 * rightWidth),
+                leftButtonPos.Y,
+                CONFIG.TextScale.X, CONFIG.TextScale.Y,
+                labelColor, 0, false
+            )
+        end
+
         font:DrawStringScaled(
-            CONFIG.MenuButtonActions.Confirm.Label,
-            leftButtonPos.X - CONFIG.LabelButtonSpacing, textOnScreenPos.Y,
+            CONFIG.MenuLabels.Confirm,
+            leftButtonPos.X - CONFIG.LabelButtonSpacing, leftButtonPos.Y,
             CONFIG.TextScale.X, CONFIG.TextScale.Y,
             labelColor, 0, false
         )
 
         font:DrawStringScaled(
-            CONFIG.MenuButtonActions.Cancel.Label,
-            rightButtonPos.X + CONFIG.LabelButtonSpacing - boxWidth, textOnScreenPos.Y,
+            CONFIG.MenuLabels.Cancel,
+            rightButtonPos.X + CONFIG.LabelButtonSpacing - boxWidth, rightButtonPos.Y,
             CONFIG.TextScale.X, CONFIG.TextScale.Y,
             labelColor, boxWidth, false
         )

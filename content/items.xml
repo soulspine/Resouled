@@ -18,7 +18,7 @@
     <passive id="16" name="Unstable DNA" gfx="unstable_dna.png" description="Unstable genetics" quality="1" craftquality="1" tags="summonable"/>
     <active id="17" name="Auction Gavel" gfx="auction_gavel.png" description="A deal is a deal" quality="0" craftquality="0" chargetype="normal" maxcharges="0" shopprice="10"/>
     <familiar id="18" name="Black Proglottid" gfx="black_proglottid.png" description="" quality="2" craftquality="2" cache="familiars" tags="monstermanual"/>
-    <active id="19" name="Club" gfx="club.png" description="" quality="1" craftquality="1" tags="offensive" maxcharges="0" special="true"/>
+    <active id="19" name="Club" gfx="club.png" description="" quality="1" craftquality="1" tags="offensive" chargetype="special" special="true"/>
     <passive id="20" name="Blast Miner TNT!" gfx="blast_miner.png" description="Barrel blast +5 bombs" quality="1" craftquality="1" bombs="5"/>
     <familiar id="21" name="Co-Op Baby" gfx="co_op_baby.png" description="" quality="1" craftquality="1" cache="familiars" tags="monstermanual"/>
     <passive id="22" name="Cursed Soul" gfx="cursed_soul.png" description="Cursed suffering" quality="0" craftquality="0"/>

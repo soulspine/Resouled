@@ -898,10 +898,17 @@ end
 
 ---@param path string
 ---@param animation? string Default animation if unspecified
+---@param layerReplaceData? table<integer, string> It should contain key-pair values representing layer:newSpritesheet, so for example 0:"gfx/chargebar.anm2"
 ---@return Sprite
-function Resouled:CreateLoadedSprite(path, animation)
+function Resouled:CreateLoadedSprite(path, animation, layerReplaceData)
     local sprite = Sprite()
+    if layerReplaceData then
+        for layer, anm2path in pairs(layerReplaceData) do
+            sprite:ReplaceSpritesheet(layer, anm2path)
+        end
+    end
     sprite:Load(path, true)
+
     sprite:Play(animation or sprite:GetDefaultAnimation(), true)
     return sprite
 end
@@ -923,4 +930,19 @@ function Resouled:GetPhaseLevel(speed, offset)
     local maxAnimTime = speed
     local maxAnimTime2 = speed * 2
     return math.abs((frame % maxAnimTime / maxAnimTime) - (frame % maxAnimTime2 / maxAnimTime2)) * 2
+end
+
+---@return WeightedOutcomePicker
+function Resouled:GetUnlockedTrikets()
+    local itemConfig = Isaac.GetItemConfig()
+    local T = WeightedOutcomePicker()
+
+    for i = 0, #itemConfig:GetTrinkets() do
+        local t = itemConfig:GetTrinket(i)
+        if t and t:IsAvailable() then
+            T:AddOutcomeWeight(i, 1)
+        end
+    end
+
+    return T
 end

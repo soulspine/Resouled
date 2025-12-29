@@ -11,10 +11,18 @@
         <devolve id="217.0.0" weight="1" />
     </entity>
     <entity name="Holy Squirt" id="444" variant="1" subtype="0" anm2path="monsters/holy_squirt.anm2" baseHP="18" stageHP="7" collisionMass="30" collisionRadius="13" friction="1" numGridCollisionPoints="12" shadowSize="21" champion="0" collisionDamage="1" reroll="true">
-        
         <beastiary anim="Idle" tramsform="0,0,1"/>
         <devolve id="220.0.0" weight="1" />
     </entity>
+    <entity name="Cursed Mom's Hand" id="444" variant="2" subtype="0" anm2path="cursed_moms_hand.anm2" baseHP="20" boss="0" champion="0" collisionDamage="1" collisionMass="16" collisionRadius="40" friction="1" numGridCollisionPoints="12" portrait="81" shadowSize="42" stageHP="0">
+        <bestiary anim="Stunned" transform="0,0,1"/>
+        <gibs amount="8" blood="1" bone="1" eye="0" gut="0" large="0"/>
+        <preload-snd id="84"/>
+        <preload-snd id="2"/>
+        <preload-snd id="48"/>
+    	<devolve id="34.0.0" weight="1" />
+	</entity>
+    <entity name="Resouled Haunted Ghost" id="444" variant="3" subtype="0" anm2path="soul.anm2" baseHP="25" friction="1"/>
 
     <entity name="Cursed Gaper" id="10" variant="4" anm2path="cursed_gaper.anm2" baseHP="14" stageHP="3" collisionMass="5" collisionRadius="13" friction="1.2" numGridCollisionPoints="12" shadowSize="14" champion="0" collisionDamage="1" reroll="true">
         <beastiary anim="Idle" tramsform="0,0,1"/>
@@ -36,14 +44,6 @@
 		<bestiary transform="0,0,1" anim="Shake" overlay="Head" />
         <devolve id="248.0.0" weight="1" />
     </entity>
-    <entity anm2path="cursed_moms_hand.anm2" baseHP="20" boss="0" champion="0" collisionDamage="1" collisionMass="16" collisionRadius="40" friction="1" id="213" name="Cursed Mom's Hand" numGridCollisionPoints="12" portrait="81" shadowSize="42" stageHP="0" variant="1" subtype="0">
-        <bestiary anim="Stunned" transform="0,0,1"/>
-        <gibs amount="8" blood="1" bone="1" eye="0" gut="0" large="0"/>
-        <preload-snd id="84"/>
-        <preload-snd id="2"/>
-        <preload-snd id="48"/>
-    	<devolve id="34.0.0" weight="1" />
-	</entity>
     <entity anm2path="cursed_mulligan.anm2" baseHP="16" boss="0" champion="0" collisionDamage="0" collisionMass="6" collisionRadius="13" friction="1" id="16" name="Cursed Mulligan" numGridCollisionPoints="12" portrait="11" shadowSize="13" stageHP="2" variant="3" subtype="0">
         <bestiary anim="Idle" transform="0,0,1"/>
     	<devolve id="16.0.0" weight="1" />
@@ -67,7 +67,6 @@
 		<bestiary transform="0,0,1" anim="WalkVert" overlay="HeadIdle" />
         <gibs amount="6" blood="1" bone="1" eye="1" gut="1" large="0" />
     </entity>
-    <entity anm2path="monsters/hunter.anm2" name="Hunter" id="416" variant="0" collisionMass="999" collisionRadius="15" friction="0" numGridCollisionPoints="12" collisionDamage="1"/>
     <entity name="Holy Portal" id="418" variant="0" anm2path="holy_portal.anm2" collisionMass="999" collisionRadius="20" friction="0" numGridCollisionPoints="12" collisionDamage="0" champion="0" shadowSize="26"/>
     <entity name="Holy Brain" id="419" variant="0" anm2path="holy_brain.anm2" collisionMass="10" friction="1" collisionRadius="18" collisionDamage="1" champion="1" baseHP="30" numGridCollisionPoints="12" shadowSize="22"/>
     <entity name="Holy Psy Horf" id="420" variant="0" anm2path="holy_psy_horf.anm2" collisionMass="25" friction="1" collisionRadius="20" collisionDamage="1" champion="1" baseHP="45" numGridCollisionPoints="12" shadowSize="23"/>
@@ -88,8 +87,6 @@
 <!-- Effects-->
     <entity anm2path="effects/air_shockwave.anm2" name="Air Shockwave" id="1000" variant="200"/>
     <entity anm2path="spinjitzu.anm2" name="Tornado" id="1000" variant="200"/>
-    <entity anm2path="effects/curse_of_hunted_attack_claws.anm2" name="COTH attack claws" id="1000" variant="205"/>
-    <entity anm2path="effects/curse_of_hunted_attack_spear.anm2" name="COTH attack spear" id="1000" variant="206"/>
     <entity name="Paper Gore Particle" id="1000" variant="207" subtype="0" anm2path="paper_gore.anm2" friction="1"/>
     <entity name="Death Statue" id="1000" variant="208" anm2path="afterlife_statue.anm2"/>
     <entity name="Chain Particle" id="1000" variant="209" subtype="0" anm2path="chain_particle.anm2" friction="1"/>
@@ -131,6 +128,7 @@
     <entity name="Buff Pedestal" id="5" variant="200" subtype="1" anm2path="buffs/buffs.anm2" collisionRadius="14" collisionMass="3" numGridCollisionPoints="12" friction="0" shadowSize="20" tags="noreroll"/>
     <entity name="Blast Miner TNT" id="5" variant="201" subtype="0" anm2path="blast_miner_tnt.anm2" collisionRadius="15" collisionMass="5" numGridCollisionPoints="12" friction="1" shadowSize="21" tags="noreroll"/>
     <entity name="Blast Miner TNT Mega" id="5" variant="201" subtype="1" anm2path="blast_miner_tnt_mega.anm2" collisionRadius="20" collisionMass="8" numGridCollisionPoints="12" friction="1" shadowSize="28" tags="noreroll"/>
+    <entity name="Blast Miner TNT Giga" id="5" variant="201" subtype="2" anm2path="blast_miner_tnt_giga.anm2" collisionRadius="45" collisionMass="14" numGridCollisionPoints="12" friction="1" shadowSize="28" tags="noreroll"/>
     <entity name="Magic Marker" id="5" variant="300" subtype="82492" anm2path="magic_marker.anm2" collisionRadius="12" collisionMass="3" friction="1" numGridCollisionPoints="24" shadowSize="16"/>
     <entity name="Soul" id="5" variant="444" subtype="0" anm2path="soul.anm2" collisionRadius="4" collisionMass="1" friction="1" numGridCollisionPoints="12" shadowSize="0"/>
     <entity name="Soul Statue Target" id="5" variant="444" subtype="1" anm2path="soul.anm2" collisionRadius="4" collisionMass="1" friction="1" numGridCollisionPoints="12" shadowSize="0"/>

@@ -28,7 +28,7 @@ local function onEffectUpdate(_, effect)
             if data.Resouled_DisappearItem then
                 Resouled:SpawnItemDisappearEffect(data.Resouled_DisappearItem, effect.Position)
 
-                local randomNum = math.random(4) + 1
+                local randomNum = math.random(4)
 
                 if randomNum == 1 then
                     for _ = 1, 10 do

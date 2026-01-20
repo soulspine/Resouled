@@ -25,8 +25,8 @@ local registeredRoomEvents = {}
 
 ---@param roomEvent ResouledRoomEvent
 ---@param name string
----@param filters table
----@param noDespawn boolean | nil
+---@param filters table<function>
+---@param noDespawn? boolean default: false
 ---@return boolean
 function Resouled:RegisterRoomEvent(roomEvent, name, filters, noDespawn)
     local roomEventKey = tostring(roomEvent)
@@ -129,30 +129,30 @@ local function onRoomEventPopupRender()
     if X >= 0 then
         local len = popupFont:GetStringWidth(event.Name)
         local iconAlpha = math.max(math.min(math.log(math.max(X - 21, 0), X), 1), 0)
-        local scale = math.max(math.min(math.log(math.max(X - 20, 0), X/1.5), 1), 0)
-        local textAlpha1 = math.log(math.max(X - 60, 0), X/1.5)
+        local scale = math.max(math.min(math.log(math.max(X - 20, 0), X / 1.5), 1), 0)
+        local textAlpha1 = math.log(math.max(X - 60, 0), X / 1.5)
         if textAlpha1 == math.huge then
             textAlpha1 = 0
         end
         local textAlpha = math.max(math.min(textAlpha1, 1), 0)
-        
+
         popupSprite.Color.A = iconAlpha * MAX_POPUP_ALPHA
-        
-        local pos = Vector(Isaac.GetScreenWidth()/2, 25) - Vector(len/2 * math.max(scale, 0.0001), 0)
+
+        local pos = Vector(Isaac.GetScreenWidth() / 2, 25) - Vector(len / 2 * math.max(scale, 0.0001), 0)
         local otherPos = Vector(pos.X + (len * math.max(scale, 0.0001)), pos.Y)
-        
+
         popupSprite:Play("Start", true)
         popupSprite:Render(pos)
-        
+
         popupSprite:Play("Middle", true)
         popupSprite.Scale.X = (otherPos.X - pos.X)
         popupSprite:Render(pos)
-        
+
         popupSprite.Scale.X = 1
         popupSprite:Play("End", true)
         popupSprite:Render(otherPos)
-        
-        popupFont:DrawString(event.Name, pos.X, pos.Y - popupFont:GetBaselineHeight()/1.5, KColor(1, 1, 1, textAlpha))
+
+        popupFont:DrawString(event.Name, pos.X, pos.Y - popupFont:GetBaselineHeight() / 1.5, KColor(1, 1, 1, textAlpha))
     end
 
     X = math.min(X + gain, maxDisplayTime)
@@ -178,7 +178,8 @@ end
 ---@return ResouledRoomEvent
 local function chooseRandomRoomEvent(roomIndex)
     local roomEvents = Resouled:GetRoomEvents()
-    local seed = game:GetSeeds():GetStartSeed() + ((13 * 13 * Resouled.AccurateStats:GetCurrentChapter()) + roomIndex) * roomIndex
+    local seed = game:GetSeeds():GetStartSeed() +
+        ((13 * 13 * Resouled.AccurateStats:GetCurrentChapter()) + roomIndex) * roomIndex
     if seed == 0 then seed = Resouled:NewSeed() end
     local rng = RNG(seed)
     ::RollRoomEvent::
@@ -229,21 +230,21 @@ local function postNewFloor()
         RUN_SAVE.RoomEvents = {
             CurrentChapter = Resouled.AccurateStats:GetCurrentChapter(),
             EventsToDistribute = BASE_ROOM_EVENT_NUM_PER_FLOOR() +
-            Resouled.AccurateStats:GetCurrentChapter() * ROOM_EVENTS_TO_ADD_PER_CHAPTER(),
+                Resouled.AccurateStats:GetCurrentChapter() * ROOM_EVENTS_TO_ADD_PER_CHAPTER(),
             LastFloor = Resouled.AccurateStats:IsCurrentFloorLastFloorOfChapter(),
         }
     end
 
     local rng = RNG()
     rng:SetSeed(level:GetDevilAngelRoomRNG():GetSeed(), 7)
-    
+
     local roomEventsThisFloor = RUN_SAVE.RoomEvents.LastFloor and RUN_SAVE.RoomEvents.EventsToDistribute or
-    rng:RandomInt(RUN_SAVE.RoomEvents.EventsToDistribute)
-    
+        rng:RandomInt(RUN_SAVE.RoomEvents.EventsToDistribute)
+
     RUN_SAVE.RoomEvents.EventsToDistribute = RUN_SAVE.RoomEvents.EventsToDistribute - roomEventsThisFloor
 
     if rng:PhantomInt(#Resouled:GetRoomEvents()) + 1 == Resouled.RoomEvents.SOCIAL_GOALS then
-    --if true then
+        --if true then
         Resouled.SaveManager.GetRunSave()["Social Goals"] = {}
         Resouled.SaveManager.Save()
 
@@ -259,9 +260,9 @@ local function postNewFloor()
 
         return
     end
-    
+
     local correctRooms = {}
-    
+
     for y = 0, 13 do
         for x = 0, 13 do
             local room = level:GetRoomByIdx(13 * y + x)
@@ -270,11 +271,10 @@ local function postNewFloor()
             end
         end
     end
-    
+
     for i = 1, roomEventsThisFloor do
-        
         local seed = Resouled:NewSeed()
-        
+
         if i > 169 then
             break
         end
@@ -319,7 +319,8 @@ local function postNewRoom()
         if room:IsFirstVisit() then
             local save = Resouled.StatTracker:GetSave()
             if not save[Resouled.StatTracker.Fields.RoomEventsEncountered] then save[Resouled.StatTracker.Fields.RoomEventsEncountered] = 0 end
-            save[Resouled.StatTracker.Fields.RoomEventsEncountered] = save[Resouled.StatTracker.Fields.RoomEventsEncountered] + 1
+            save[Resouled.StatTracker.Fields.RoomEventsEncountered] = save
+                [Resouled.StatTracker.Fields.RoomEventsEncountered] + 1
         end
     end
 end

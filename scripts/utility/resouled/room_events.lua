@@ -112,65 +112,63 @@ popupFont:Load("font/upheaval.fnt")
 
 local popupSprite = Sprite()
 popupSprite:Load("gfx_resouled/ui/room_event_popup.anm2", true)
-local MAX_POPUP_ALPHA = 0.75
-
+popupSprite:Play("Idle", true)
+local popupYPos = 30
+local popupPos = Vector(0, popupYPos)
 local X = 0
-local gain = 1
-local maxDisplayTime = 150
+local popupStateTreshholds = {
+    [1] = 60,
+    [2] = 120,
+    [3] = 180
+}
 local event = Resouled:GetRoomEvent(1)
+local eventTextColor = KColor(0, 0, 0, 1)
+local popupSpriteWidth = 80
+local popupBoxWidth = 145
+local textOffset = -1
 
 local function isRoomEventPopupVisible()
-    return X > 0
+    return X >= 0
 end
 
 local function onRoomEventPopupRender()
     if RoomTransition.GetTransitionMode() == 4 or not event then return end
-
+    local len = popupFont:GetStringWidth(event.Name)
+    popupPos.X = Isaac.GetScreenWidth()
+    
     if X >= 0 then
-        local len = popupFont:GetStringWidth(event.Name)
-        local iconAlpha = math.max(math.min(math.log(math.max(X - 21, 0), X), 1), 0)
-        local scale = math.max(math.min(math.log(math.max(X - 20, 0), X / 1.5), 1), 0)
-        local textAlpha1 = math.log(math.max(X - 60, 0), X / 1.5)
-        if textAlpha1 == math.huge then
-            textAlpha1 = 0
+        
+        if X < popupStateTreshholds[1] then
+            local mult = (X / popupStateTreshholds[1])
+            popupPos.X = popupPos.X/2 * mult - popupSpriteWidth * (1 - mult)
+        elseif X >= popupStateTreshholds[1] and X < popupStateTreshholds[2] then
+            popupPos.X = popupPos.X/2
+        else
+            local mult = ((X - popupStateTreshholds[2]) / (popupStateTreshholds[3] - popupStateTreshholds[2]))
+            popupPos.X = popupPos.X/2 + popupPos.X/2 * mult + popupSpriteWidth * mult
         end
-        local textAlpha = math.max(math.min(textAlpha1, 1), 0)
-
-        popupSprite.Color.A = iconAlpha * MAX_POPUP_ALPHA
-
-        local pos = Vector(Isaac.GetScreenWidth() / 2, 25) - Vector(len / 2 * math.max(scale, 0.0001), 0)
-        local otherPos = Vector(pos.X + (len * math.max(scale, 0.0001)), pos.Y)
-
-        popupSprite:Play("Start", true)
-        popupSprite:Render(pos)
-
-        popupSprite:Play("Middle", true)
-        popupSprite.Scale.X = (otherPos.X - pos.X)
-        popupSprite:Render(pos)
-
-        popupSprite.Scale.X = 1
-        popupSprite:Play("End", true)
-        popupSprite:Render(otherPos)
-
-        popupFont:DrawString(event.Name, pos.X, pos.Y - popupFont:GetBaselineHeight() / 1.5, KColor(1, 1, 1, textAlpha))
-    end
-
-    X = math.min(X + gain, maxDisplayTime)
-
-    if X == maxDisplayTime and not Resouled:IsAnyonePressingAction(ButtonAction.ACTION_MAP) then
-        gain = -gain
+        
+        popupSprite:Render(popupPos)
+        
+        local scale = math.min(popupBoxWidth / len, 1)
+        popupFont:DrawStringScaled(event.Name, popupPos.X + textOffset, popupPos.Y - popupFont:GetBaselineHeight()/2 * scale, scale, scale, eventTextColor, math.floor(len/2 * scale))
+        
+        X = math.min(X + 1, popupStateTreshholds[3])
+        
+        if Resouled:IsAnyonePressingAction(ButtonAction.ACTION_MAP) then
+            X = math.min(X, popupStateTreshholds[2])
+        end
+        
+        if X == popupStateTreshholds[3] then
+            X = -1
+        end
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, onRoomEventPopupRender)
 
-Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, function()
-    gain = -math.abs(gain)
-end)
-
 ---@param roomEventId ResouledRoomEvent
 local function showRoomEventPopup(roomEventId)
     event = Resouled:GetRoomEvent(roomEventId)
-    gain = 1
     X = 0
 end
 

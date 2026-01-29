@@ -1,5 +1,5 @@
 <AnimatedActor>
-	<Info CreatedBy="Unknown" CreatedOn="7/3/2025 1:28:46 PM" Version="0" Fps="30"/>
+	<Info CreatedBy="Unknown" CreatedOn="1/29/2026 2:57:29 PM" Version="1" Fps="30"/>
 	<Content>
 		<Spritesheets>
 			<Spritesheet Path="effects\monster_tongue.png" Id="0"/>

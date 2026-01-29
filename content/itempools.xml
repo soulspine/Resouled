@@ -108,7 +108,7 @@ Tag descriptions:
     <Item Name="Wait What?" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
     <Item Name="Belly Jelly" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
   </Pool>
-  <Pool Name="stacyHeadPool">
+  <Pool Name="Resouled_stacyHeadPool">
     <Item Name="Cricket's Head" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
     <Item Name="Tammy's Head" Weight="1" DecreaseBy="1" RemoveOn="0.1" />
     <Item Name="Bob's Rotten Head" Weight="1" DecreaseBy="1" RemoveOn="0.1" />

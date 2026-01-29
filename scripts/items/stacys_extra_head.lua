@@ -1,9 +1,11 @@
 local CONFIG = {
-    Pool = Isaac.GetPoolIdByName("stacyHeadPool"),
+    Pool = Isaac.GetPoolIdByName("Resouled_stacyHeadPool"),
+    DefaultItem = CollectibleType.COLLECTIBLE_SAD_ONION,
 }
 
 local CONSTANTS = {
-    Item = Resouled.Enums.Items.STACYS_EXTRA_HEAD
+    Item = Resouled.Enums.Items.STACYS_EXTRA_HEAD,
+    TileMoveDistance = Vector(200, 0),
 }
 
 ---@param pickup EntityPickup
@@ -17,45 +19,47 @@ local function onPickupFirstUpdate(_, pickup)
         return
     end
 
-
     local g = Game()
     local roomSave = Resouled.SaveManager.GetRoomFloorSave()
     if roomSave.Stacy_Head_Proc_Done then return end
 
     roomSave.Stacy_Head_Proc_Done = true
 
+    local originalPos = pickup.Position
+    local originalGridIndex = room:GetGridIndex(originalPos)
+
+    local gridToTheLeftPos = room:GetGridPosition(originalGridIndex - 1)
+    local gridToTheRightPos = room:GetGridPosition(originalGridIndex + 1)
+
+    pickup.TargetPosition = room:FindFreePickupSpawnPosition(gridToTheLeftPos)
+    pickup:Update()
+
     local selectionId = pickup.OptionsPickupIndex == 0 and pickup:SetNewOptionsPickupIndex()
         or pickup.OptionsPickupIndex
-
-    local defaultItem = CollectibleType.COLLECTIBLE_SAD_ONION
 
     local newItem = g:GetItemPool():GetCollectible(
         CONFIG.Pool,
         nil,
         pickup.InitSeed,
-        defaultItem
+        CONFIG.DefaultItem
     )
 
-    local chest = g:Spawn(
+    g:Spawn(
         EntityType.ENTITY_PICKUP,
         PickupVariant.PICKUP_CHEST,
-        room:FindFreePickupSpawnPosition(pickup.Position),
+        room:FindFreePickupSpawnPosition(originalPos),
         Vector.Zero,
         nil,
         0,
         pickup.InitSeed
-    ):ToPickup()
+    )
 
-    if chest then
-        chest.OptionsPickupIndex = selectionId
-    end
-
-    if newItem == defaultItem then return end
+    if newItem == CONFIG.DefaultItem then return end
 
     local newPickup = g:Spawn(
         EntityType.ENTITY_PICKUP,
         PickupVariant.PICKUP_COLLECTIBLE,
-        room:FindFreePickupSpawnPosition(pickup.Position),
+        room:FindFreePickupSpawnPosition(gridToTheRightPos),
         Vector.Zero,
         nil,
         newItem,

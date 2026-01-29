@@ -40,7 +40,7 @@ local Chargebar = {
 }
 
 local Tongue = {
-    Sprite = Resouled:CreateLoadedSprite("gfx_resouled/effects/monster_tongue.anm2", "Idle"),
+    Sprite = Resouled:CreateLoadedSprite("gfx_resouled/effects/monster_tongue2.anm2", "Default"),
     PointLength = 8,
     PointCount = 128 / 8, -- sprite is 128x16 so 128 / 8 because each segment is 8 long
     PlayerHeadOffset = Vector(0, -50),

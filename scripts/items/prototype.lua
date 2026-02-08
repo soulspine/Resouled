@@ -1,13 +1,12 @@
 local CONFIG = {
     ItemName = "Prototype",
     FontPath = "font/teammeatfont16.fnt",
-    TextScale = Vector(0.5, 0.5),
     InitialPositionOffset = Vector(0, -32),
     BetweenRowsSpacing = 15,
     NotSelectedString = "Unselected",
     NotSelectedColor = KColor(1, 0, 0, 1),
     SelectedColor = KColor(0, 0, 0, 1),
-    HighlightColor = KColor(0.3, 0.3, 0.3, 1),
+    HighlightColor = KColor(-1, 0.6, 0.6, 1),
     LabelColor = KColor(0.5, 0.5, 0.5, 1),
     InputCooldown = 10, -- how many updates between input changes
     -- each option has a bitfield assinged to it representing the choice but they are hardcoded so adding new ones requires code changes
@@ -20,7 +19,7 @@ local CONFIG = {
         },
         {
             "Spawns two chests",
-            "Grants a Temporary Heart",
+            "Grants 1-Room Heart",
             "Spawns six coins"
         },
         {
@@ -29,21 +28,40 @@ local CONFIG = {
             "Loses 1-3 pickups"
         },
     },
-    LabelButtonSpacing = 8,
     MenuLabels = {
         Confirm = "Confirm",
         Cancel = "Cancel",
     },
+    MenuOffsets = {
+        ConfirmButton = Vector(15, 45),
+        CancelButton = Vector(-52, 55),
+        Rows = {
+            Vector(17, -32),
+            Vector(1, -4),
+            Vector(8, 20),
+        }
+    },
+    MenuScales = {
+        ConfirmButton = Vector(0.7, 0.7),
+        CancelButton = Vector(0.7, 0.7),
+        Rows = {
+            Vector(0.45, 0.45),
+            Vector(0.6, 0.6),
+            Vector(0.7, 0.7),
+        }
+    },
     MenuConfirmAction = ButtonAction.ACTION_ITEM,
-    BackgroundScale = Vector(2.3, 1.75),
+    BackgroundScale = Vector(2.05, 1.95),
+    BackgroundOffset = Vector(12, -10),
+    BackgroundRotation = 0,
     BackgroundAnimations = {
         In = {
             Name = "FoldIn",
-            FrameNum = 19
+            FrameNum = 14
         },
         Out = {
             Name = "FoldOut",
-            FrameNum = 19
+            FrameNum = 14
         }
     },
     MenuOpacityStep = 0.2
@@ -330,8 +348,7 @@ local function postPlayerUpdate(_, player)
 
     -- normal selections
     if highlight > 0 then
-        if inputVector.Y <= -inputTolerance then -- up
-            print(highlight == 1 and -1 or (((highlight - 2) % numSelections) + 1))
+        if inputVector.Y <= -inputTolerance then     -- up
             data.CurrentHighlight = highlight == 1 and -1 or (((highlight - 2) % numSelections) + 1)
         elseif inputVector.Y >= inputTolerance then  -- down
             data.CurrentHighlight = highlight == #selections and -1 or ((highlight % numSelections) + 1)
@@ -363,16 +380,10 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_ROOM_EXIT, removeContainerPreRoomExit)
 local font = Font()
 font:Load(CONFIG.FontPath)
 
-local boxWidth = 0
-
-for _, optionList in ipairs(CONFIG.OptionStrings) do
-    for _, optionString in ipairs(optionList) do
-        boxWidth = math.max(boxWidth, math.ceil(font:GetStringWidth(optionString) * CONFIG.TextScale.X / 2))
-    end
-end
-
 local background = Resouled:CreateLoadedSprite("gfx_resouled/ui/prototype_menu.anm2")
-background.Scale = Vector(CONFIG.BackgroundScale.X * boxWidth / 50, CONFIG.BackgroundScale.Y) -- 50 is an arbitrary number that makes it look good based on text width
+background.Scale = CONFIG.BackgroundScale
+background.Rotation = CONFIG.BackgroundRotation
+background.Offset = CONFIG.BackgroundOffset
 
 ---@param player EntityPlayer
 ---@param offset Vector
@@ -381,7 +392,7 @@ local function postPlayerRender(_, player, offset)
     if not data then return end
 
     local isaacPos = Isaac.WorldToScreen(player.Position)
-    local textOnScreenPos = isaacPos - Vector(boxWidth / 2, 0) + CONFIG.InitialPositionOffset
+    local textOnScreenPos = isaacPos + CONFIG.InitialPositionOffset
 
     if (data.Selected or data.Cancelled) and data.BgAnimation ~= CONFIG.BackgroundAnimations.In.Name then
         data.BgAnimation = CONFIG.BackgroundAnimations.In.Name
@@ -434,72 +445,79 @@ local function postPlayerRender(_, player, offset)
                 color = CONFIG.SelectedColor
             end
 
+            local rowPos = textOnScreenPos + CONFIG.MenuOffsets.Rows[i]
+            local rowScale = CONFIG.MenuScales.Rows[i]
+            local rowBoxWidth = math.floor(font:GetStringWidth(text) * rowScale.X)
+
             local highlightColor = CONFIG.HighlightColor
             highlightColor.Alpha = data.TextOpacity
 
+            -- Adjust rowPos.X to center the text
+            local centeredRowPosX = rowPos.X - rowBoxWidth / 2
+
             font:DrawStringScaled(text,
-                textOnScreenPos.X, textOnScreenPos.Y,
-                CONFIG.TextScale.X, CONFIG.TextScale.Y,
-                color, boxWidth, true
+                centeredRowPosX, rowPos.Y,
+                rowScale.X, rowScale.Y,
+                color, 0, false
             )
 
             color.Alpha = data.TextOpacity
 
             if i == data.CurrentHighlight then
-                local width = font:GetStringWidth(text) * CONFIG.TextScale.X / 2 * 1.2
-
+                -- Adjust arrow positions to be closer to the text
+                local arrowOffset = 10 -- Adjust this value to control the arrow distance from the text
                 font:DrawStringScaled(
                     "<",
-                    textOnScreenPos.X - width, textOnScreenPos.Y,
-                    CONFIG.TextScale.X, CONFIG.TextScale.Y,
-                    highlightColor, boxWidth, true
+                    centeredRowPosX - arrowOffset, rowPos.Y,
+                    rowScale.X, rowScale.Y,
+                    highlightColor, 0, false
                 )
                 font:DrawStringScaled(
                     ">",
-                    textOnScreenPos.X + width, textOnScreenPos.Y,
-                    CONFIG.TextScale.X, CONFIG.TextScale.Y,
-                    highlightColor, boxWidth, true
+                    centeredRowPosX + rowBoxWidth + arrowOffset - 4, rowPos.Y,
+                    rowScale.X, rowScale.Y,
+                    highlightColor, 0, false
                 )
             end
-
-            textOnScreenPos.Y = textOnScreenPos.Y + CONFIG.BetweenRowsSpacing
         end
 
-        textOnScreenPos.Y = textOnScreenPos.Y + CONFIG.BetweenRowsSpacing
+        -- somehow i got them mixed up, right is left and left is right
 
-        local buttonHeight = textOnScreenPos.Y - CONFIG.BetweenRowsSpacing / 2
+        local leftButtonPos = textOnScreenPos + CONFIG.MenuOffsets.ConfirmButton
+        local rightButtonPos = textOnScreenPos + CONFIG.MenuOffsets.CancelButton
 
-        local leftButtonPos = Vector(textOnScreenPos.X - boxWidth / 2, buttonHeight)
-        local rightButtonPos = Vector(textOnScreenPos.X + 1.5 * boxWidth, buttonHeight)
-
-        local leftWidth = font:GetStringWidth(CONFIG.MenuLabels.Confirm) * CONFIG.TextScale.X / 2 * 1.2
-        local rightWidth = font:GetStringWidth(CONFIG.MenuLabels.Cancel) * CONFIG.TextScale.X / 2 * 1.2
+        local leftWidth = font:GetStringWidth(CONFIG.MenuLabels.Confirm) * CONFIG.MenuScales.ConfirmButton.X / 2 *
+            CONFIG.MenuScales.ConfirmButton.X
+        local rightWidth = font:GetStringWidth(CONFIG.MenuLabels.Cancel) * CONFIG.MenuScales.CancelButton.X / 2 *
+            CONFIG.MenuScales.CancelButton.X
 
         local labelColor = CONFIG.LabelColor
         labelColor.Alpha = data.TextOpacity
 
         if data.CurrentHighlight < 0 then
+            local selectedButtonScale = data.CurrentHighlight == -1 and CONFIG.MenuScales.ConfirmButton or
+                CONFIG.MenuScales.CancelButton
             font:DrawStringScaled(
                 ">",
-                data.CurrentHighlight == -1 and (leftButtonPos.X - leftWidth) or (rightButtonPos.X - 2 * rightWidth),
-                leftButtonPos.Y,
-                CONFIG.TextScale.X, CONFIG.TextScale.Y,
+                data.CurrentHighlight == -1 and (leftButtonPos.X - leftWidth) or (rightButtonPos.X - rightWidth),
+                data.CurrentHighlight == -1 and leftButtonPos.Y or rightButtonPos.Y,
+                selectedButtonScale.X, selectedButtonScale.Y,
                 labelColor, 0, false
             )
         end
 
         font:DrawStringScaled(
             CONFIG.MenuLabels.Confirm,
-            leftButtonPos.X - CONFIG.LabelButtonSpacing, leftButtonPos.Y,
-            CONFIG.TextScale.X, CONFIG.TextScale.Y,
+            leftButtonPos.X, leftButtonPos.Y,
+            CONFIG.MenuScales.ConfirmButton.X, CONFIG.MenuScales.ConfirmButton.Y,
             labelColor, 0, false
         )
 
         font:DrawStringScaled(
             CONFIG.MenuLabels.Cancel,
-            rightButtonPos.X + CONFIG.LabelButtonSpacing - boxWidth, rightButtonPos.Y,
-            CONFIG.TextScale.X, CONFIG.TextScale.Y,
-            labelColor, boxWidth, false
+            rightButtonPos.X, rightButtonPos.Y,
+            CONFIG.MenuScales.CancelButton.X, CONFIG.MenuScales.CancelButton.Y,
+            labelColor, 0, false
         )
     end
 end

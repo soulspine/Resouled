@@ -85,6 +85,7 @@ include("scripts.entities.proglottid_egg")
 include("scripts.entities.isaac_enemy")
 include("scripts.entities.holy_squirt")
 include("scripts.entities.haunted_ghost")
+include("scripts.entities.doodler")
 
 include("scripts.effects.stun_tentacle")
 

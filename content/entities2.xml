@@ -23,6 +23,8 @@
     	<devolve id="34.0.0" weight="1" />
 	</entity>
     <entity name="Resouled Haunted Ghost" id="444" variant="3" subtype="0" anm2path="soul.anm2" baseHP="25" friction="1"/>
+    
+    <entity name="Resouled Doodler" id="444" variant="4" subtype="0" anm2path="doodler.anm2" baseHP="100" friction="1"/>
 
     <entity name="Cursed Gaper" id="10" variant="4" anm2path="cursed_gaper.anm2" baseHP="14" stageHP="3" collisionMass="5" collisionRadius="13" friction="1.2" numGridCollisionPoints="12" shadowSize="14" champion="0" collisionDamage="1" reroll="true">
         <beastiary anim="Idle" tramsform="0,0,1"/>

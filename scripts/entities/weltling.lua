@@ -11,23 +11,25 @@ local EMERGE_TRIGGER = "ResouledEmerge"
 local RETRACT_TRIGGER = "ResouledRetract"
 local SHOOT_TRIGGER = "ResouledShoot"
 
-local OUTSIDE_TIME = 75 -- 2.5 seconds
+local SHOOT_CHECK = 20
+local SHOOT_CHANCE = 1/4
 
-local TEAR_SPEED = 10
-local TEAR_COUNT = 2
-local TEAR_SPREAD = 10
-
+local TEAR_SPEED = 8
 local TEAR_PARAMS = ProjectileParams()
+TEAR_PARAMS.BulletFlags = (
+    ProjectileFlags.BOUNCE_FLOOR |
+    ProjectileFlags.ANY_HEIGHT_ENTITY_HIT
+)
+TEAR_PARAMS.FallingAccelModifier = 1
+TEAR_PARAMS.FallingSpeedModifier = -13
 TEAR_PARAMS.PositionOffset = Vector(0, -15)
-TEAR_PARAMS.Scale = 1.5
+TEAR_PARAMS.Scale = 2
 
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
     if npc.Variant == WELTLING_VARIANT and npc.SubType == WELTLING_SUBTYPE then
         local sprite = npc:GetSprite()
-        local data = npc:GetData()
         sprite:Play(EMERGE, true)
-        data.ResouledOutsideTime = OUTSIDE_TIME
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, WELTLING_TYPE)
@@ -36,35 +38,23 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, WELTLING_TYPE)
 local function onNpcUpdate(_, npc)
     if npc.Variant == WELTLING_VARIANT and npc.SubType == WELTLING_SUBTYPE then
         local sprite = npc:GetSprite()
-        local data = npc:GetData()
 
         npc:UpdateDirtColor(false)
         
-        if sprite:IsFinished(EMERGE) then
-            sprite:Play(IDLE, true)
-        end
-        
-        if data.ResouledOutsideTime == 0 then
-            data.ResouledOutsideTime = OUTSIDE_TIME
+        if npc.FrameCount % SHOOT_CHECK == 0 and math.random() < SHOOT_CHANCE then
             sprite:Play(SHOOT, true)
         end
 
-        if sprite:IsFinished(SHOOT) then
-            sprite:Play(RETRACT, true)
+        if sprite:IsFinished(EMERGE) then
+            sprite:Play(IDLE, true)
         end
 
-        if sprite:IsPlaying(IDLE) and data.ResouledOutsideTime > 0 then
-            data.ResouledOutsideTime = data.ResouledOutsideTime - 1
+        if sprite:IsFinished(SHOOT) then
+            sprite:Play(IDLE, true)
         end
 
         if sprite:IsFinished(RETRACT) then
-            ::RollPosition::
-            local newPos = Isaac.GetFreeNearPosition(Isaac.GetRandomPosition(), 1)
-            if newPos:Distance(npc:GetPlayerTarget().Position) < 100 then
-                goto RollPosition
-            end
-            npc.Position = newPos
-            sprite:Play(EMERGE, true)
+            sprite:Stop()
         end
 
         if sprite:IsEventTriggered(RETRACT_TRIGGER) then
@@ -76,14 +66,7 @@ local function onNpcUpdate(_, npc)
         end
 
         if sprite:IsEventTriggered(SHOOT_TRIGGER) then
-            for i = 1, TEAR_COUNT do
-                if i == 1 then
-                    npc:FireProjectiles(npc.Position, ((npc:GetPlayerTarget().Position - npc.Position):Normalized() * TEAR_SPEED):Rotated(TEAR_SPREAD), 0, TEAR_PARAMS)
-                end
-                if i == 2 then
-                    npc:FireProjectiles(npc.Position, ((npc:GetPlayerTarget().Position - npc.Position):Normalized() * TEAR_SPEED):Rotated(-TEAR_SPREAD), 0, TEAR_PARAMS)
-                end
-            end
+            npc:FireProjectiles(npc.Position, (npc:GetPlayerTarget().Position - npc.Position):Resized(TEAR_SPEED), 0, TEAR_PARAMS)
         end
 
         if npc.Position.X - npc:GetPlayerTarget().Position.X > 0 then

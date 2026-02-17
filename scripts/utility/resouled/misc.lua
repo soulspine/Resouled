@@ -576,16 +576,30 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_EFFECT_RENDER, function(_, effect)
     end
 end)
 
-local weight = 0.75
-local bounciness = 0.35
-local friction = 0.35
+local paperGoreWeight = 0.75
+local paperGoreBounciness = 0.35
+local paperGoreFriction = 0.35
 ---@param position Vector
 ---@param amount integer
-function Resouled:SpawnPaperGore(position, amount)
+---@param speedMult? number
+function Resouled:SpawnPaperGore(position, amount, speedMult)
+    speedMult = speedMult or 1
     for _ = 1, Resouled:GetRandomParticleCount(amount, amount) do
-        Resouled:SpawnPrettyParticles(Isaac.GetEntityVariantByName("Paper Gore Particle"),
-            Isaac.GetEntitySubTypeByName("Paper Gore Particle"), math.random(7, 15), math.random(8, 12), 15, 90, position,
-            15, nil, nil, weight, bounciness, friction, GridCollisionClass.COLLISION_SOLID)
+        Resouled:SpawnPrettyParticles(
+            Isaac.GetEntityVariantByName("Paper Gore Particle"),
+            Isaac.GetEntitySubTypeByName("Paper Gore Particle"),
+            math.random(7, 15) * speedMult,
+            math.random(8, 12) * speedMult,
+            15,
+            90,
+            position,
+            15,
+            nil,
+            nil,
+            paperGoreWeight,
+            paperGoreBounciness,
+            paperGoreFriction,
+            GridCollisionClass.COLLISION_SOLID)
     end
 end
 

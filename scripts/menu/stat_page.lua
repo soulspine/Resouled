@@ -725,24 +725,21 @@ local function menuRender()
     -- FOR NOW ASSUME KEYBOARD
     local inputLookup = CONFIG.ButtonActions.Keyboard
     
-    ---@diagnostic disable-next-line
-    if not IsaacReflourished or (IsaacReflourished and not IsaacReflourished.RunLogger.RecordsMenuOpen) then
-        -- handling menu page changing
-        if menu == MainMenuType.GAME and Resouled:HasAnyoneTriggeredAction(inputLookup.Enter) then
-            MenuManager.SetActiveMenu(CONFIG.CustomMenuType)
-            currentPageIdx = 1
-            currentSelectedBuff = 0
-            currentBuffPage = 1
-            currentSelectedOption = 1
-            currentRoomEventPage = 1
-            selectedShenaniganPage = 1
-
-            SFXManager():Play(SoundEffect.SOUND_BOOK_PAGE_TURN_12)
-        elseif menu == CONFIG.CustomMenuType and Resouled:HasAnyoneTriggeredAction(inputLookup.Leave) then
-            MenuManager.SetActiveMenu(MainMenuType.GAME)
-            SFXManager():Play(SoundEffect.SOUND_BOOK_PAGE_TURN_12)
-            Resouled.Save:ForceSave()
-        end
+    -- handling menu page changing
+    if menu == MainMenuType.GAME and Resouled:HasAnyoneTriggeredAction(inputLookup.Enter) then
+        MenuManager.SetActiveMenu(CONFIG.CustomMenuType)
+        currentPageIdx = 1
+        currentSelectedBuff = 0
+        currentBuffPage = 1
+        currentSelectedOption = 1
+        currentRoomEventPage = 1
+        selectedShenaniganPage = 1
+        SFXManager():Play(SoundEffect.SOUND_BOOK_PAGE_TURN_12)
+        
+    elseif menu == CONFIG.CustomMenuType and Resouled:HasAnyoneTriggeredAction(inputLookup.Leave) then
+        MenuManager.SetActiveMenu(MainMenuType.GAME)
+        SFXManager():Play(SoundEffect.SOUND_BOOK_PAGE_TURN_12)
+        Resouled.Save:ForceSave()
     end
 
     -- handling up / down

@@ -31,6 +31,7 @@ Resouled.BuffFamilies = {
     PRIDE = 37,
     LUST = 38,
     ENVY = 39,
+    CONQUEST = 42,
 
     RESSURECTION_DAY = 20,
     LORD_OF_THE_FLIES = 21,
@@ -101,6 +102,7 @@ Resouled.Buffs = {
     PRIDE = 58,
     LUST = 59,
     ENVY = 60,
+    CONQUEST = 65,
 
     RESSURECTION_DAY = 41,
     LORD_OF_THE_FLIES = 42,
@@ -142,7 +144,6 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SCARY_FACE, "Scary Face", "gfx
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SMALL_CAP, "Small Cap", "gfx_resouled/buffs/small_cap.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.MAGGOT, "Maggot", "gfx_resouled/buffs/maggot.png")
 
-
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.WAR, "War", "gfx_resouled/buffs/war.png") -- Special
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.FAMINE, "Famine", "gfx_resouled/buffs/famine.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.DEATH, "Death", "gfx_resouled/buffs/death.png")
@@ -162,6 +163,7 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.ENVY, "Envy", "gfx_resouled/bu
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SLOTH, "Sloth", "gfx_resouled/buffs/sloth.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.LUST, "Lust", "gfx_resouled/buffs/lust.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.PRIDE, "Pride", "gfx_resouled/buffs/pride.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.CONQUEST, "Conquest", "gfx_resouled/buffs/conquest.png")
 
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.RESSURECTION_DAY, "Ressurection Day", "gfx_resouled/buffs/cursed/placeholder_cursed.png") -- Cursed
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.LORD_OF_THE_FLIES, "Lord of The Flies", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
@@ -279,9 +281,7 @@ Resouled:RegisterBuff(Resouled.Buffs.DAY_OF_THE_DOODLER, "Day of The Doodler", -
 Resouled:RegisterBuff(Resouled.Buffs.MAGGOT, "Maggot", COMMON_BASE_PRICE, Resouled.BuffRarity.COMMON, Resouled.BuffFamilies.MAGGOT, false)
 Resouled:RegisterBuff(Resouled.Buffs.WORM, "Worm", RARE_BASE_PRICE, Resouled.BuffRarity.RARE, Resouled.BuffFamilies.MAGGOT, false)
 Resouled:RegisterBuff(Resouled.Buffs.PROGLOTTID, "Proglottid", LEGENDARY_BASE_PRICE, Resouled.BuffRarity.LEGENDARY, Resouled.BuffFamilies.MAGGOT, false)
-
-
-Resouled:Log("Loaded " .. tostring(#Resouled:GetBuffs()) .. " buffs")
+Resouled:RegisterBuff(Resouled.Buffs.CONQUEST, "Conquest", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.CONQUEST, false)
 
 
 
@@ -357,6 +357,7 @@ include("scripts.buffs.wrath")
 include("scripts.buffs.gluttony")
 include("scripts.special_souls.the_bone")
 include("scripts.buffs.pride")
+include("scripts.buffs.conquest")
 
 include("scripts.buffs.cursed.lord_of_the_flies")
 include("scripts.buffs.cursed.masquerade")

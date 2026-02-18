@@ -21,8 +21,13 @@ local function getRandomPaperEnemy()
     return paperEnemies[math.random(#paperEnemies)]
 end
 
+local CONFIG = {
+    MarkerMaxSpeedVectorLength = 6.5,
+}
+
 local CONST = {
     Ent = Resouled:GetEntityByName("Resouled Doodler"),
+    Marker = Resouled:GetEntityByName("Resouled Doodler Marker"),
     Anim = {
         Base = {
             Idle = {
@@ -72,6 +77,7 @@ local CONST = {
         Erase = "EraseBlankCanvas",
         SpawnBlankCanvas = "SpawnBlankCanvas",
         MarkerAttack = "PullOut",
+        MarkerOnly = "MARKERONLY"
     },
 
     MinWalkDistance = 250,
@@ -84,7 +90,7 @@ local CONST = {
 
     Attacks = {
         [1] = NpcState.STATE_ATTACK, --Spawn Blank Canvas
-        [2] = NpcState.STATE_ATTACK2 --Magic Marker (placeholder only aura rn)
+        [2] = NpcState.STATE_ATTACK2 --Magic Marker
     },
 
     AttackChecks = {
@@ -261,6 +267,18 @@ local function onDoodlerUpdate(_, doodler)
             doodler.I1 = 1
         end
 
+        if sprite:IsEventTriggered("MarkerThrow") then
+            game:Spawn(
+                CONST.Marker.Type,
+                CONST.Marker.Variant,
+                doodler.Position,
+                (doodler.Position - doodler:GetPlayerTarget().Position):Normalized() * 2,
+                doodler,
+                CONST.Marker.SubType,
+                Resouled:NewSeed()
+            )
+        end
+
         if sprite:IsFinished(attackAnim) then
             doodler.State = NpcState.STATE_MOVE
             doodler.I1 = 0
@@ -313,3 +331,28 @@ local function preNpcTakeDMG(_, en, am)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, preNpcTakeDMG, CONST.Ent.Type)
+
+--- MARKER INIT
+---@param npc EntityNPC
+Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, function(_, npc)
+    if not Resouled:MatchesEntityDesc(npc, CONST.Marker) then return end
+    npc:GetSprite():Play(CONST.Anim.MarkerOnly, true)
+    npc.Target = npc:GetPlayerTarget()
+end, CONST.Marker.Type)
+
+--- MARKER UPDATE
+---@param npc EntityNPC
+Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, function(_, npc)
+    if not Resouled:MatchesEntityDesc(npc, CONST.Marker) then return end
+    local velLen = npc.Velocity:Length()
+    npc.Velocity = (npc.Target.Position - npc.Position):Resized(math.min((velLen + 0.01) * 1.3,
+        CONFIG.MarkerMaxSpeedVectorLength))
+    npc:GetSprite().Rotation = npc.Velocity:GetAngleDegrees() + 90
+end, CONST.Marker.Type)
+
+--- MARKER DEATH
+---@param npc EntityNPC
+Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, function(_, npc)
+    if not Resouled:MatchesEntityDesc(npc, CONST.Marker) then return end
+    Resouled:CreatePaperAura(npc.Position)
+end, CONST.Marker.Type)

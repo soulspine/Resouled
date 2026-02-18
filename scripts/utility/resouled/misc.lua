@@ -576,13 +576,13 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_EFFECT_RENDER, function(_, effect)
     end
 end)
 
-local paperGoreWeight = 0.75
-local paperGoreBounciness = 0.35
-local paperGoreFriction = 0.35
 ---@param position Vector
 ---@param amount integer
----@param speedMult? number
-function Resouled:SpawnPaperGore(position, amount, speedMult)
+---@param speedMult? number default 1
+---@param weight? number default 0.75
+---@param bounciness? number default 0.35
+---@param friction? number default 0.35
+function Resouled:SpawnPaperGore(position, amount, speedMult, weight, bounciness, friction)
     speedMult = speedMult or 1
     for _ = 1, Resouled:GetRandomParticleCount(amount, amount) do
         Resouled:SpawnPrettyParticles(
@@ -596,9 +596,9 @@ function Resouled:SpawnPaperGore(position, amount, speedMult)
             15,
             nil,
             nil,
-            paperGoreWeight,
-            paperGoreBounciness,
-            paperGoreFriction,
+            weight or 0.75,
+            bounciness or 0.35,
+            friction or 0.35,
             GridCollisionClass.COLLISION_SOLID)
     end
 end
@@ -646,6 +646,8 @@ function Resouled:MakeSpriteFrameSave(sprite) -- Returns a frozen current frame 
         local layer = sprite:GetLayer(i)
         local fLayer = frame:GetLayer(i)
 
+        if not fLayer or not layer then goto continue end
+
         if layer:IsVisible() then
             if fLayer:GetSpritesheetPath() ~= layer:GetSpritesheetPath() then
                 frame:ReplaceSpritesheet(fLayer:GetLayerID(), layer:GetSpritesheetPath(), false)
@@ -664,6 +666,7 @@ function Resouled:MakeSpriteFrameSave(sprite) -- Returns a frozen current frame 
         else
             fLayer:SetVisible(layer:IsVisible())
         end
+        ::continue::
     end
 
     frame:LoadGraphics()

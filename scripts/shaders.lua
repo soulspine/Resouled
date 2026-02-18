@@ -20,7 +20,7 @@ function Resouled:GetPaperAuraPoints()
     if auraVisible then
         local points = {}
         for i = 1, sides do
-            table.insert(points, Vector(x, 0):Rotated(360/sides * i + rotation))
+            table.insert(points, Vector(x, 0):Rotated(360 / sides * i + rotation))
         end
         return points
     end
@@ -33,7 +33,7 @@ function Resouled:IsPaperAuraVisible()
 end
 
 ---@param pos Vector
----@param inGamePos? boolean --Default: true
+---@param inGamePos? boolean --Default: true | Whether position is treated as Game Coords, if false, it is treated Screen Coords
 function Resouled:IsPosInsidePaperAura(pos, inGamePos)
     inGamePos = inGamePos or true
     if inGamePos then
@@ -51,7 +51,7 @@ function Resouled:IsPosInsidePaperAura(pos, inGamePos)
         local lastIdx = i - 1
         if lastIdx == 0 then lastIdx = sides end
         local lastPos = points[lastIdx]
-        local nextPos = points[i%sides + 1]
+        local nextPos = points[i % sides + 1]
         local anchorToSidePos = sidePos:GetAngleDegrees()
 
         local lastPosDegrees = ((lastPos - sidePos):Rotated(-anchorToSidePos)):GetAngleDegrees()
@@ -80,47 +80,47 @@ Resouled:AddCallback(ModCallbacks.MC_GET_SHADER_PARAMS, function(_, shaderName)
     if shaderName == 'ResouledBlankCanvas' then
         if not auraVisible or PauseMenu.GetState() ~= PauseMenuStates.CLOSED then
             return {
-            AnchorPos = {
-                0,
-                0
-            },
-            Point1 = {
-                0,
-                0,
-            },
-            Point2 = {
-                0,
-                0,
-            },
-            Point3 = {
-                0,
-                0,
-            },
-            Point4 = {
-                0,
-                0,
-            },
-            Point5 = {
-                0,
-                0,
-            },
-            Point6 = {
-                0,
-                0,
-            },
-            Point7 = {
-                0,
-                0,
+                AnchorPos = {
+                    0,
+                    0
+                },
+                Point1 = {
+                    0,
+                    0,
+                },
+                Point2 = {
+                    0,
+                    0,
+                },
+                Point3 = {
+                    0,
+                    0,
+                },
+                Point4 = {
+                    0,
+                    0,
+                },
+                Point5 = {
+                    0,
+                    0,
+                },
+                Point6 = {
+                    0,
+                    0,
+                },
+                Point7 = {
+                    0,
+                    0,
+                }
             }
-        }
         end
 
         local points = {}
 
-        x = math.min(0.5 + x + x/2, maxAuraSize)
+        x = math.min(0.5 + x + x / 2, maxAuraSize)
 
         for i = 1, sides do
-            table.insert(points, Vector(x, 0):Rotated(360/sides * i + rotation))
+            table.insert(points, Vector(x, 0):Rotated(360 / sides * i + rotation))
         end
 
         return {

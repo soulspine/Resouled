@@ -1,5 +1,26 @@
 local game = Game()
 
+local paperEnemies = {}
+local paperEnemiesStringLookup = {}
+---@param id integer
+---@param var integer
+---@param sub integer
+function Resouled:RegisterPaperEnemy(id, var, sub)
+    table.insert(paperEnemies,
+        {
+            Id = id,
+            Var = var,
+            Sub = sub
+        }
+    )
+    paperEnemiesStringLookup[id.."."..var.."."..sub] = true
+end
+
+---@return table
+local function getRandomPaperEnemy()
+    return paperEnemies[math.random(#paperEnemies)]
+end
+
 local CONST = {
     Ent = Resouled:GetEntityByName("Resouled Doodler"),
     Anim = {
@@ -47,12 +68,39 @@ local CONST = {
                 Len = 1,
             },
         },
-        Death = "Death"
+        Death = "Death",
+        Erase = "EraseBlankCanvas",
+        SpawnBlankCanvas = "SpawnBlankCanvas"
     },
 
     MinWalkDistance = 250,
     MaxWalkDistance = 750,
     DistanceFromWallsToBlockWalkDir = 150,
+    ChanceToAttackWhenNearTargetPos = 1/1,
+    MinPaperEnemySpawnRadius = 20,
+    MaxPaperEnemySpawnRadius = 100,
+    TearEraseArea = 50,
+
+    Attacks = {
+        [1] = NpcState.STATE_ATTACK, --Spawn Blank Canvas
+        [2] = NpcState.STATE_ATTACK2 --Magic Marker (placeholder only aura rn)
+    },
+
+    AttackChecks = {
+        [1] = function()
+            local paperEnemyPresent = false
+            ---@param npc EntityNPC
+            Resouled.Iterators:IterateOverRoomNpcs(function(npc)
+                if not paperEnemyPresent and paperEnemiesStringLookup[npc.Type.."."..npc.Variant.."."..npc.SubType] then
+                    paperEnemyPresent = true
+                end
+            end)
+            return not paperEnemyPresent
+        end,
+        [2] = function()
+            return true
+        end
+    }
 }
 
 ---@param vel Vector
@@ -157,21 +205,49 @@ local function onDoodlerUpdate(_, doodler)
         if doodler.Position:Distance(data.TargetPos) < 50 then
             data.TargetPos = nil
 
-            --doodler.State = NpcState.STATE_IDLE
-            --data.WalkCooldown = 30
-        end
-    elseif doodler.State == NpcState.STATE_IDLE then
-        
-        if data.WalkCooldown then
-            data.WalkCooldown = data.WalkCooldown - 1
-
-            if data.WalkCooldown <= 0 then
-                data.WalkCooldown = nil
-                doodler.State = NpcState.STATE_MOVE
+            if math.random() < CONST.ChanceToAttackWhenNearTargetPos then
+                local attack = math.random(#CONST.Attacks)
+                if CONST.AttackChecks[attack]() == true then
+                    doodler.State = CONST.Attacks[attack]
+                end
             end
         end
+    elseif doodler.State == NpcState.STATE_ATTACK then
 
-        doodler.Velocity = doodler.Velocity * 0.75
+        if not sprite:IsPlaying(CONST.Anim.SpawnBlankCanvas) and doodler.I1 == 0 then
+            sprite:Play(CONST.Anim.SpawnBlankCanvas, true)
+            sprite:RemoveOverlay()
+            doodler.I1 = 1
+        end
+
+        if sprite:IsEventTriggered("SpawnBlankCanvas") then
+            local ids = getRandomPaperEnemy()
+            game:Spawn(
+                ids.Id,
+                ids.Var,
+                doodler.Position + Vector(math.random(CONST.MinPaperEnemySpawnRadius, CONST.MaxPaperEnemySpawnRadius), 0):Rotated(180 * math.random()),
+                Vector.Zero,
+                doodler,
+                ids.Sub,
+                Random()
+            )
+        end
+
+        if sprite:IsFinished(CONST.Anim.SpawnBlankCanvas) then
+            sprite:Play(CONST.Anim.Base.Idle.Name, true)
+            sprite:PlayOverlay(CONST.Anim.Overlay.HeadDown.Name, true)
+            doodler.State = NpcState.STATE_MOVE
+            doodler.I1 = 0
+        end
+    elseif doodler.State == NpcState.STATE_ATTACK2 then
+
+        local topLeft = room:GetTopLeftPos()
+
+        Resouled:CreatePaperAura(
+            topLeft + (room:GetBottomRightPos() - topLeft) * math.random()
+        )
+
+        doodler.State = NpcState.STATE_MOVE
 
     elseif doodler.State == NpcState.STATE_SUICIDE then
         
@@ -195,6 +271,21 @@ local function onDoodlerUpdate(_, doodler)
         doodler.Velocity = doodler.Velocity * 0.9
     end
 
+    if Resouled:IsPaperAuraVisible() then
+        
+        local tears = Isaac.FindInRadius(doodler.Position, CONST.TearEraseArea, EntityPartition.TEAR)
+
+        for _, en in ipairs(tears) do
+            
+            local tear = en:ToTear()
+            if tear and Resouled:IsPosInsidePaperAura(tear.Position) then
+               
+                tear:Kill()
+
+            end
+        end
+
+    end
 end
 Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onDoodlerUpdate, CONST.Ent.Type)
 
@@ -205,6 +296,6 @@ local function preNpcTakeDMG(_, en, am)
     local npc = en:ToNPC()
     if not npc then return end
     if npc.State == NpcState.STATE_SUICIDE then return false end -- STATE_SUICIDE because STATE_DEATH and STATE_DEATH_UNIQUE stopped npc updates
-    if am > npc.HitPoints then npc.State = NpcState.STATE_SUICIDE npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE return false end
+    if am > npc.HitPoints then npc.State = NpcState.STATE_SUICIDE npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE Resouled:HidePaperAura() return false end
 end
 Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, preNpcTakeDMG, CONST.Ent.Type)

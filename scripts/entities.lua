@@ -57,6 +57,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, function(_, npc)
     end
 end)
 
+include("scripts.entities.doodler")
 include("scripts.entities.cursed_gaper")
 include("scripts.entities.cursed_fatty")
 include("scripts.entities.cursed_keeper_head")
@@ -85,7 +86,6 @@ include("scripts.entities.proglottid_egg")
 include("scripts.entities.isaac_enemy")
 include("scripts.entities.holy_squirt")
 include("scripts.entities.haunted_ghost")
-include("scripts.entities.doodler")
 
 include("scripts.effects.stun_tentacle")
 

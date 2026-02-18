@@ -1,5 +1,6 @@
 local GAPER_TYPE = Isaac.GetEntityTypeByName("Blank Canvas Gaper")
 local GAPER_VARIANT = Isaac.GetEntityVariantByName("Blank Canvas Gaper")
+local GAPER_SUBTYPE = Isaac.GetEntitySubTypeByName("Blank Canvas Gaper")
 
 local IDLE = "Idle"
 local WALK = "Walk"
@@ -30,7 +31,7 @@ local BASE_DOODLE_SIZE = 0.85
 
 ---@param npc EntityNPC
 local function postNpcInit(_, npc)
-    if npc.Variant == GAPER_VARIANT then
+    if npc.Variant == GAPER_VARIANT and npc.SubType == GAPER_SUBTYPE then
         local sprite = npc:GetSprite()
         sprite:Play(IDLE, true)
         npc:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
@@ -43,7 +44,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, GAPER_TYPE)
 
 ---@param npc EntityNPC
 local function npcUpdate(_, npc)
-    if npc.Variant == GAPER_VARIANT then
+    if npc.Variant == GAPER_VARIANT and npc.SubType == GAPER_SUBTYPE then
         local sprite = npc:GetSprite()
 
         if npc.Velocity:LengthSquared() < 0.01 and not sprite:IsPlaying(IDLE) and not sprite:IsPlaying(FLIP) then
@@ -81,10 +82,12 @@ Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, npcUpdate, GAPER_TYPE)
 
 ---@param npc EntityNPC
 local function postNpcDeath(_, npc)
-    if npc.Variant == GAPER_VARIANT then
+    if npc.Variant == GAPER_VARIANT and npc.SubType == GAPER_SUBTYPE then
         local randomNum = math.random(1, 3)
         SFXManager():Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
         Resouled:SpawnPaperGore(npc.Position, GORE_PARTICLE_COUNT)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath, GAPER_TYPE)
+
+Resouled:RegisterPaperEnemy(GAPER_TYPE, GAPER_VARIANT, GAPER_SUBTYPE)

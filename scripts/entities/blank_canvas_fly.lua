@@ -1,5 +1,6 @@
 local FLY_TYPE = Isaac.GetEntityTypeByName("Blank Canvas Fly")
 local FLY_VARIANT = Isaac.GetEntityVariantByName("Blank Canvas Fly")
+local FLY_SUBTYPE = Isaac.GetEntitySubTypeByName("Blank Canvas Fly")
 
 local VELOCITY_MULTIPLIER = 0.75
 
@@ -23,7 +24,7 @@ local BASE_DOODLE_SIZE = 0.85
 
 ---@param npc EntityNPC
 local function postNpcInit(_, npc)
-    if npc.Variant == FLY_VARIANT then
+    if npc.Variant == FLY_VARIANT and npc.SubType == FLY_SUBTYPE then
         local sprite = npc:GetSprite()
         sprite:Play(IDLE, true)
         npc.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_WALLS
@@ -37,7 +38,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, FLY_TYPE)
 
 ---@param npc EntityNPC
 local function npcUpdate(_, npc)
-    if npc.Variant == FLY_VARIANT then
+    if npc.Variant == FLY_VARIANT and npc.SubType == FLY_SUBTYPE then
         npc.Pathfinder:MoveRandomly(false)
         
         npc.Velocity = (npc.Velocity + (npc:GetPlayerTarget().Position - npc.Position):Normalized()) * VELOCITY_MULTIPLIER
@@ -47,10 +48,12 @@ Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, npcUpdate, FLY_TYPE)
 
 ---@param npc EntityNPC
 local function postNpcDeath(_, npc)
-    if npc.Variant == FLY_VARIANT then
+    if npc.Variant == FLY_VARIANT and npc.SubType == FLY_SUBTYPE then
         local randomNum = math.random(1, 3)
         SFXManager():Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
         Resouled:SpawnPaperGore(npc.Position, GORE_PARTICLE_COUNT)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath, FLY_TYPE)
+
+Resouled:RegisterPaperEnemy(FLY_TYPE, FLY_VARIANT, FLY_SUBTYPE)

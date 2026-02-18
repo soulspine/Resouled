@@ -1,8 +1,10 @@
 local MULLIGAN_TYPE = Isaac.GetEntityTypeByName("Blank Canvas Mulligan")
 local MULLIGAN_VARIANT = Isaac.GetEntityVariantByName("Blank Canvas Mulligan")
+local MULLIGAN_SUBTYPE = Isaac.GetEntitySubTypeByName("Blank Canvas Mulligan")
 
 local FLY_TYPE = Isaac.GetEntityTypeByName("Blank Canvas Fly")
 local FLY_VARIANT = Isaac.GetEntityVariantByName("Blank Canvas Fly")
+local FLY_SUBTYPE = Isaac.GetEntitySubTypeByName("Blank Canvas Fly")
 
 local GORE_PARTICLE_COUNT = 15
 
@@ -35,7 +37,7 @@ local DEATH_FLY_COUNT = 5
 
 ---@param npc EntityNPC
 local function postNpcInit(_, npc)
-    if npc.Variant == MULLIGAN_VARIANT then
+    if npc.Variant == MULLIGAN_VARIANT and npc.SubType == MULLIGAN_SUBTYPE then
         local sprite = npc:GetSprite()
         sprite:Play(IDLE, true)
         npc:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
@@ -48,7 +50,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, MULLIGAN_TYPE)
 
 ---@param npc EntityNPC
 local function npcUpdate(_, npc)
-    if npc.Variant == MULLIGAN_VARIANT then
+    if npc.Variant == MULLIGAN_VARIANT and npc.SubType == MULLIGAN_SUBTYPE then
         local sprite = npc:GetSprite()
 
         if npc.Velocity:LengthSquared() < 0.01 and not sprite:IsPlaying(IDLE) and not sprite:IsPlaying(FLIP) then
@@ -86,9 +88,9 @@ Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, npcUpdate, MULLIGAN_TYPE)
 
 ---@param npc EntityNPC
 local function postNpcDeath(_, npc)
-    if npc.Variant == MULLIGAN_VARIANT then
+    if npc.Variant == MULLIGAN_VARIANT and npc.SubType == MULLIGAN_SUBTYPE then
         for i = 1, DEATH_FLY_COUNT do
-            Game():Spawn(FLY_TYPE, FLY_VARIANT, npc.Position + Vector(math.random(-2, 2), math.random(-2, 2)), Vector.Zero, nil, 0, npc.InitSeed)
+            Game():Spawn(FLY_TYPE, FLY_VARIANT, npc.Position + Vector(math.random(-2, 2), math.random(-2, 2)), Vector.Zero, nil, FLY_SUBTYPE, npc.InitSeed)
         end
         local randomNum = math.random(1, 3)
         SFXManager():Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
@@ -96,3 +98,5 @@ local function postNpcDeath(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath, MULLIGAN_TYPE)
+
+Resouled:RegisterPaperEnemy(MULLIGAN_TYPE, MULLIGAN_VARIANT, MULLIGAN_SUBTYPE)

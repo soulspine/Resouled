@@ -1,5 +1,6 @@
 local DIP_TYPE = Isaac.GetEntityTypeByName("Blank Canvas Dip")
 local DIP_VARIANT = Isaac.GetEntityVariantByName("Blank Canvas Dip")
+local DIP_SUBTYPE = Isaac.GetEntitySubTypeByName("Blank Canvas Dip")
 
 local GORE_PARTICLE_COUNT = 4
 
@@ -32,7 +33,7 @@ local DASH_SPEED = 15
 
 ---@param npc EntityNPC
 local function postNpcInit(_, npc)
-    if npc.Variant == DIP_VARIANT then
+    if npc.Variant == DIP_VARIANT and npc.SubType == DIP_SUBTYPE then
         local sprite = npc:GetSprite()
         local data = npc:GetData()
         sprite:Play(IDLE, true)
@@ -47,7 +48,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, DIP_TYPE)
 
 ---@param npc EntityNPC
 local function npcUpdate(_, npc)
-    if npc.Variant == DIP_VARIANT then
+    if npc.Variant == DIP_VARIANT and npc.SubType == DIP_SUBTYPE then
         local data = npc:GetData()
         local sprite = npc:GetSprite()
 
@@ -84,10 +85,12 @@ Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, npcUpdate, DIP_TYPE)
 
 ---@param npc EntityNPC
 local function postNpcDeath(_, npc)
-    if npc.Variant == DIP_VARIANT then
+    if npc.Variant == DIP_VARIANT and npc.SubType == DIP_SUBTYPE then
         local randomNum = math.random(1, 3)
         SFXManager():Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
         Resouled:SpawnPaperGore(npc.Position, GORE_PARTICLE_COUNT)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath, DIP_TYPE)
+
+Resouled:RegisterPaperEnemy(DIP_TYPE, DIP_VARIANT, DIP_SUBTYPE)

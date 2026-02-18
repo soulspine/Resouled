@@ -1,7 +1,7 @@
 local POOTER_TYPE = Isaac.GetEntityTypeByName("Blank Canvas Pooter")
 local POOTER_VARIANT = Isaac.GetEntityVariantByName("Blank Canvas Pooter")
+local POOTER_SUBTYPE = Isaac.GetEntitySubTypeByName("Blank Canvas Pooter")
 
-local GORE_VARIANT = Isaac.GetEntityVariantByName("Paper Gore Particle 1")
 local GORE_PARTICLE_COUNT = 6
 
 local IDLE = "Idle"
@@ -30,7 +30,7 @@ local PROJECTILE_SPEED = 10
 
 ---@param npc EntityNPC
 local function postNpcInit(_, npc)
-    if npc.Variant == POOTER_VARIANT then
+    if npc.Variant == POOTER_VARIANT and npc.SubType == POOTER_SUBTYPE then
         local sprite = npc:GetSprite()
         local data = npc:GetData()
         sprite:Play(IDLE, true)
@@ -45,7 +45,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, POOTER_TYPE)
 
 ---@param npc EntityNPC
 local function npcUpdate(_, npc)
-    if npc.Variant == POOTER_VARIANT then
+    if npc.Variant == POOTER_VARIANT and npc.SubType == POOTER_SUBTYPE then
         local data = npc:GetData()
         npc.Pathfinder:MoveRandomly(false)
         
@@ -67,10 +67,12 @@ Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, npcUpdate, POOTER_TYPE)
 
 ---@param npc EntityNPC
 local function postNpcDeath(_, npc)
-    if npc.Variant == POOTER_VARIANT then
+    if npc.Variant == POOTER_VARIANT and npc.SubType == POOTER_SUBTYPE then
         local randomNum = math.random(1, 3)
         SFXManager():Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
         Resouled:SpawnPaperGore(npc.Position, GORE_PARTICLE_COUNT)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath, POOTER_TYPE)
+
+Resouled:RegisterPaperEnemy(POOTER_TYPE, POOTER_VARIANT, POOTER_SUBTYPE)

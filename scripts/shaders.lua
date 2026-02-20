@@ -2,17 +2,24 @@ local auraVisible = false
 local x = 1
 local maxAuraSize = 0 --75
 local sides = 0
-local auraPos = Vector.Zero
+local auraPos = function() return Vector.Zero end
 local rotation = 0
+local auraTimeout = 0
 
----@param pos Vector
-function Resouled:CreatePaperAura(pos)
+local MIN_AURA_SIDES = 4
+local MAX_AURA_SIDES = 7
+
+---@param pos function
+---@param timeout integer
+---@param size integer Recommended: 75
+function Resouled:CreatePaperAura(pos, timeout, size)
     auraVisible = true
     x = 1
-    maxAuraSize = 75
-    sides = math.random(3, 7)
-    auraPos = Isaac.WorldToScreen(pos)
+    maxAuraSize = size
+    sides = math.random(MIN_AURA_SIDES, MAX_AURA_SIDES)
+    auraPos = pos
     rotation = math.random() * 360
+    auraTimeout = timeout
 end
 
 ---@return Vector[] | nil
@@ -32,14 +39,19 @@ function Resouled:IsPaperAuraVisible()
     return auraVisible
 end
 
+---@return Vector | nil
+function Resouled:GetPaperAuraPosition()
+    return auraPos and auraPos() or nil
+end
+
 ---@param pos Vector
 ---@param inGamePos? boolean --Default: true | Whether position is treated as Game Coords, if false, it is treated Screen Coords
 function Resouled:IsPosInsidePaperAura(pos, inGamePos)
     inGamePos = inGamePos or true
-    if inGamePos then
+    if inGamePos == true then
         pos = Isaac.WorldToScreen(pos)
     end
-    pos = pos - auraPos
+    pos = pos - Isaac.WorldToScreen(auraPos())
 
     local points = Resouled:GetPaperAuraPoints()
     if not points then return false end
@@ -67,18 +79,24 @@ function Resouled:IsPosInsidePaperAura(pos, inGamePos)
     return isInside
 end
 
-function Resouled:HidePaperAura()
-    auraVisible = false
-    x = 1
-    maxAuraSize = 0 --75
-    sides = 0
-    auraPos = Vector.Zero
-    rotation = 0
+---@param hideAnimation? boolean Default: True
+function Resouled:HidePaperAura(hideAnimation)
+    hideAnimation = hideAnimation or true
+
+    auraTimeout = 0
+    if not hideAnimation then
+        auraVisible = false
+        x = 1
+        maxAuraSize = 0
+        sides = 0
+        auraPos = function() return Vector.Zero end
+        rotation = 0
+    end
 end
 
 Resouled:AddCallback(ModCallbacks.MC_GET_SHADER_PARAMS, function(_, shaderName)
     if shaderName == 'ResouledBlankCanvas' then
-        if not auraVisible or PauseMenu.GetState() ~= PauseMenuStates.CLOSED then
+        if not auraVisible or x == 0 or PauseMenu.GetState() ~= PauseMenuStates.CLOSED then
             return {
                 AnchorPos = {
                     0,
@@ -117,16 +135,23 @@ Resouled:AddCallback(ModCallbacks.MC_GET_SHADER_PARAMS, function(_, shaderName)
 
         local points = {}
 
-        x = math.min(0.5 + x + x / 2, maxAuraSize)
+        x = math.max(math.min(x + (0.35 + x/3) * (auraTimeout > 0 and 1 or -1), maxAuraSize), 0)
 
         for i = 1, sides do
             table.insert(points, Vector(x, 0):Rotated(360 / sides * i + rotation))
         end
 
+        local pos = Isaac.WorldToScreen(auraPos())
+
+        if not Game():IsPaused() then
+            auraTimeout = math.max(auraTimeout - 1, 0)
+        end
+        auraVisible = x > 0
+
         return {
             AnchorPos = {
-                auraPos.X,
-                auraPos.Y
+                pos.X,
+                pos.Y
             },
             Point1 = {
                 points[1] and points[1].X or 0,

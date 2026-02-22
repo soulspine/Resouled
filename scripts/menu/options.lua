@@ -47,7 +47,7 @@ Resouled.Options = {
         Achievement = nil,
         Name = "Custom Particle Amount",
         DefaultValue = "Max",
-        StringOptions = {"Disabled", "Minimal", "Medium", "Max"},
+        StringOptions = {"Disabled", "Minimal", "Medium", "Max", "10x"},
         Type = types.OneClick
     },
     {
@@ -254,6 +254,7 @@ function Resouled:GetParticleCountModified()
     if modifier == "Minimal" then return 1/3 end
     if modifier == "Medium" then return 2/3 end
     if modifier == "Max" then return 1 end
+    if modifier == "10x" then return 10 end
     return 1
 end
 ---@param min integer

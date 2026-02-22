@@ -190,7 +190,6 @@ end
 ---@return Vector
 local function chooseTargetPos(pos)
     local auraVisible = Resouled:IsPaperAuraVisible()
-    local auraPos = Resouled:GetPaperAuraPosition()
     local distance = math.random(CONST.MinWalkDistance, CONST.MaxWalkDistance) * (auraVisible and CONFIG.AuraWalkDistanceMultiplier or 1)
     local room = game:GetRoom()
     local topLeft = room:GetTopLeftPos()

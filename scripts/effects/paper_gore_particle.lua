@@ -12,6 +12,9 @@ end, PARTICLE.Variant)
 
 ---@param effect EntityEffect
 Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, function(_, effect)
+    if effect.SubType ~= PARTICLE.SubType then return end
+
+
     local data = effect:GetData()
     if data.Resouled__PaperGoreTTL then
         data.Resouled__PaperGoreTTL = data.Resouled__PaperGoreTTL - 1
@@ -25,7 +28,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, function(_, effect)
         local currentOpacity = effect.Color.A
 
         if math.floor(100 * currentOpacity) ~= math.floor(100 * targetOpacity) then
-            effect.Color = Color(effect.Color.R, effect.Color.G, effect.Color.B, targetOpacity)
+            effect.Color = Color(1, 1, 1, targetOpacity)
         end
     end
 end, PARTICLE.Variant)

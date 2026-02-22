@@ -1,6 +1,8 @@
 ---@class ModReference
 Resouled = RegisterMod("Resouled", 1)
 
+if not include("dependencies") then while true do end end
+
 if REPENTOGON and MinimapAPI then
     local thingsToRunAfterImports = {}
 
@@ -109,7 +111,7 @@ if REPENTOGON and MinimapAPI then
 else -- REPENTOGON AND MINIMAPI NOT FOUND
     local messages = {
         "Please enable REPENTOGON script extender,",
-        "Install MiniMAPI: A Minimap API",
+        "Install MiniMAPI: A Minimap API,",
         "and restart your game to enable Resouled",
     }
     local initOffset = Vector(0, -50)

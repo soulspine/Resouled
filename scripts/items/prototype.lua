@@ -169,6 +169,38 @@ local function proc(player, bitset, item, slot)
             player:TakeDamage(1, 0, EntityRef(player), 10)
         end
     end
+
+    -- only passives
+    -- check if item got destroyed and remove the data field
+    if item == CONSTANTS.Items.Passive then
+        local runSave = Resouled.SaveManager.GetRunSave(player)
+        local data = runSave.Prototype
+        -- easy way, if 0 prototypes - remove the whole data field
+        if player:GetCollectibleNum(CONSTANTS.Items.Passive) == 0 then
+            runSave.Prototype = nil
+        else
+            -- otherwise we need to check if any of existing fields got removed
+            local itemHistory = player:GetHistory():GetCollectiblesHistory()
+
+            for i, container in ipairs(data) do
+                local found = false
+                for _, item in ipairs(itemHistory) do
+                    if item:GetTime() == container.Time and item:GetItemID() == CONSTANTS.Items.Passive then
+                        found = true
+                        break
+                    end
+
+                    if item:GetTime() > container.Time then
+                        break
+                    end
+                end
+
+                if not found then
+                    table.remove(data, i)
+                end
+            end
+        end
+    end
 end
 
 local function postGameStarted()
@@ -525,8 +557,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, postPlayerRender)
 
 ---@param pickup EntityPickup
 local function handlePassiveDataTransferUponDrop_FirstUpdate(_, pickup)
-    if pickup.FrameCount > 1 then return end
-    if pickup.SubType ~= CONSTANTS.Items.Passive then return end
+    if pickup.SubType ~= CONSTANTS.Items.Passive or pickup.FrameCount > 1 then return end
     local itemData = Resouled.SaveManager.GetRoomFloorSave(pickup).NoRerollSave
     Resouled.Iterators:IterateOverPlayers(function(player)
         local playerRunSave = Resouled.SaveManager.GetRunSave(player)
@@ -544,6 +575,7 @@ local function handlePassiveDataTransferUponDrop_FirstUpdate(_, pickup)
                 if item:GetTime() > time or found then break end
                 if item:GetTime() == time and item:GetItemID() == CONSTANTS.Items.Passive then
                     found = true
+                    break
                 end
             end
 

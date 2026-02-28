@@ -4,7 +4,7 @@ local HOLY_PSY_HORF_SUBTYPE = Isaac.GetEntitySubTypeByName("Holy Psy Horf")
 
 local ATTACK_COOLDOWN = 50
 
-local LASER_TIMEOUT = 22
+local LASER_TIMEOUT = 5
 
 ---@param npc EntityNPC
 local function postNpcInit(_, npc)
@@ -80,12 +80,13 @@ local function onNpcUpdate(_, npc)
         end
 
         if sprite:IsEventTriggered("Laser") then
-            data.Resouled_Laser = Game():Spawn(EntityType.ENTITY_LASER, LaserVariant.LIGHT_BEAM, npc.Position + Vector(0, 1) + Vector(0, -20), Vector.Zero, npc, 0, npc.InitSeed):ToLaser()
-            data.Resouled_Laser.PositionOffset = Vector(0, -20)
+            local toTargetVector = npc:GetPlayerTarget().Position - npc.Position - npc:GetPlayerTarget().Velocity * 10
+            data.Resouled_Laser = Game():Spawn(EntityType.ENTITY_LASER, LaserVariant.LIGHT_BEAM, npc.Position + Vector(0, 1) + toTargetVector:Resized(10), Vector.Zero, npc, 0, npc.InitSeed):ToLaser()
+            data.Resouled_Laser.PositionOffset = Vector(0, -40)
             data.Resouled_Laser.DepthOffset = npc.DepthOffset + 100
             data.Resouled_Laser:SetTimeout(LASER_TIMEOUT)
             data.Resouled_Laser:SetColor(Color(0.65, 0.65, 1, 0.75, 0.75, 0.75, 0.75), 99999, 10000, false, false)
-            data.Resouled_Laser.Angle = (npc:GetPlayerTarget().Position - npc.Position - npc:GetPlayerTarget().Velocity * 10):GetAngleDegrees()
+            data.Resouled_Laser.Angle = toTargetVector:GetAngleDegrees()
             data.Resouled_Laser:GetData().Resouled_DamagePlayer = true
         end
 

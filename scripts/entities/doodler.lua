@@ -21,24 +21,6 @@ local function getRandomPaperEnemy()
     return paperEnemies[math.random(#paperEnemies)]
 end
 
-local CONFIG = {
-    MarkerMaxSpeedVectorLength = 6.5,
-
-    AuraSizes = {
-        Small = 60,
-        Medium = 80,
-        Big = 100
-    },
-    AuraTimeouts = {
-        Short = 200,
-        Medium = 350,
-        Long = 500
-    },
-
-    EraseCooldown = 15,
-    AuraWalkDistanceMultiplier = 0.25
-}
-
 local CONST = {
     Ent = Resouled:GetEntityByName("Resouled Doodler"),
     Marker = Resouled:GetEntityByName("Resouled Doodler Marker"),
@@ -101,6 +83,25 @@ local CONST = {
     MinPaperEnemySpawnRadius = 20,
     MaxPaperEnemySpawnRadius = 100,
     TearEraseArea = 50,
+    MaxSimultaneousPaperEnemies = 3,
+}
+
+local CONFIG = {
+    MarkerMaxSpeedVectorLength = 6.5,
+
+    AuraSizes = {
+        Small = 60,
+        Medium = 80,
+        Big = 100
+    },
+    AuraTimeouts = {
+        Short = 200,
+        Medium = 350,
+        Long = 500
+    },
+
+    EraseCooldown = 15,
+    AuraWalkDistanceMultiplier = 0.25,
 
     Attacks = {
         [1] = NpcState.STATE_ATTACK, --Spawn Blank Canvas
@@ -109,17 +110,27 @@ local CONST = {
 
     AttackChecks = {
         [1] = function()
-            local paperEnemyPresent = false
+            local paperEnemyCount = 0
             ---@param npc EntityNPC
             Resouled.Iterators:IterateOverRoomNpcs(function(npc)
-                if not paperEnemyPresent and paperEnemiesStringLookup[npc.Type .. "." .. npc.Variant .. "." .. npc.SubType] then
-                    paperEnemyPresent = true
+                if paperEnemiesStringLookup[npc.Type .. "." .. npc.Variant .. "." .. npc.SubType] then
+                    paperEnemyCount = paperEnemyCount + 1
                 end
             end)
-            return not paperEnemyPresent
+            return paperEnemyCount <= CONST.MaxSimultaneousPaperEnemies
         end,
         [2] = function()
-            return not Resouled:IsPaperAuraVisible()
+            if Resouled:IsPaperAuraVisible() then return false end
+            
+            ---@param npc EntityNPC
+            Resouled.Iterators:IterateOverRoomNpcs(function(npc)
+                if Resouled:MatchesEntityDesc(npc, CONST.Marker) then
+                    ---@diagnostic disable-next-line
+                    return false
+                end
+            end)
+
+            return true
         end
     }
 }
@@ -281,6 +292,7 @@ local function onDoodlerUpdate(_, doodler)
     doodler.Velocity = doodler.Velocity * 0.9
 
     if doodler.State == NpcState.STATE_MOVE then
+        if data.TargetPos and not doodler.Pathfinder:HasPathToPos(data.TargetPos, false) then data.TargetPos = nil end
         if auraVisible and not Resouled:IsPosInsidePaperAura(doodler.Position) then
             local bodyAnim = getRunBodyAnimationFromVelocity(doodler.Velocity)
             local headAnim = getHeadAnimation()
@@ -315,18 +327,24 @@ local function onDoodlerUpdate(_, doodler)
                 data.TargetPos = nil
                 
                 if math.random() < CONST.ChanceToAttackWhenNearTargetPos then
-                    local attack = math.random(#CONST.Attacks)
-                    if CONST.AttackChecks[attack]() == true then
-                        doodler.State = CONST.Attacks[attack]
+                    local attack = math.random(#CONFIG.Attacks)
+                    if CONFIG.AttackChecks[attack]() == true then
+                        doodler.State = CONFIG.Attacks[attack]
                     end
                 end
             end
         end
     elseif doodler.State == NpcState.STATE_ATTACK then
-        if not sprite:IsPlaying(CONST.Anim.SpawnBlankCanvas) and doodler.I1 == 0 then
+        if sprite:IsFinished(CONST.Anim.SpawnBlankCanvas) then
+            sprite:Play(CONST.Anim.Base.Idle.Name, true)
+            sprite:PlayOverlay(CONST.Anim.Overlay.HeadDown.Name, true)
+            doodler.State = NpcState.STATE_MOVE
+            return
+        end
+
+        if not sprite:IsPlaying(CONST.Anim.SpawnBlankCanvas) then
             sprite:Play(CONST.Anim.SpawnBlankCanvas, true)
             sprite:RemoveOverlay()
-            doodler.I1 = 1
         end
 
         if sprite:IsEventTriggered("SpawnBlankCanvas") then
@@ -344,18 +362,16 @@ local function onDoodlerUpdate(_, doodler)
             )
         end
 
-        if sprite:IsFinished(CONST.Anim.SpawnBlankCanvas) then
-            sprite:Play(CONST.Anim.Base.Idle.Name, true)
-            sprite:PlayOverlay(CONST.Anim.Overlay.HeadDown.Name, true)
-            doodler.State = NpcState.STATE_MOVE
-            doodler.I1 = 0
-        end
     elseif doodler.State == NpcState.STATE_ATTACK2 then
         local attackAnim = CONST.Anim.MarkerAttack
-        if not sprite:IsPlaying(attackAnim) and doodler.I1 == 0 then
+
+        if sprite:IsFinished(attackAnim) then
+            doodler.State = NpcState.STATE_MOVE
+        end
+
+        if not sprite:IsPlaying(attackAnim) then
             sprite:RemoveOverlay()
             sprite:Play(attackAnim, true)
-            doodler.I1 = 1
         end
 
         if sprite:IsEventTriggered("MarkerThrow") then
@@ -370,10 +386,6 @@ local function onDoodlerUpdate(_, doodler)
             )
         end
 
-        if sprite:IsFinished(attackAnim) or (doodler.I1 == 1 and not sprite:IsPlaying(attackAnim)) then
-            doodler.State = NpcState.STATE_MOVE
-            doodler.I1 = 0
-        end
 
         doodler.Velocity = doodler.Velocity * 0.9
     elseif doodler.State == NpcState.STATE_SUICIDE then

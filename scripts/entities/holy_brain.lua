@@ -78,14 +78,14 @@ local function postEffectUpdate(_, effect)
         newColor.BO = newColor.BO + animTime
         effect.Color = newColor
 
-        ---@param player EntityPlayer
-        Resouled.Iterators:IterateOverPlayers(function(player)
-            if player.Position:Distance(effect.Position) < CREEP_PETRIFY_DISTANCE and player.ControlsCooldown == 0 then
+        for _, en in ipairs(Isaac.FindInRadius(effect.Position, CREEP_PETRIFY_DISTANCE, EntityPartition.PLAYER)) do
+            local player = en:ToPlayer()
+            if player and player.ControlsCooldown == 0 then
                 player:AddControlsCooldown(4)
                 player:SetMinDamageCooldown(6)
                 player:SetColor(PETRIFY_COLOR, 3, 1, false, true)
             end
-        end)
+        end
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, postEffectUpdate, EffectVariant.CREEP_RED)

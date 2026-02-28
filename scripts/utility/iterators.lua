@@ -157,4 +157,102 @@ function iteratorsModule:IterateOverGrid(callback)
     end
 end
 
+---@param pos Vector
+---@param radius number
+---@param callback fun(entity: Entity, ...: any)
+function iteratorsModule:IterateOverEntitiesInArea(pos, radius, callback, ...)
+    for _, en in ipairs(Isaac.FindInRadius(pos, radius)) do callback(en, ...) end
+end
+
+---@param pos Vector
+---@param radius number
+---@param callback fun(entity: EntityPlayer, ...: any)
+function iteratorsModule:IterateOverPlayersInArea(pos, radius, callback, ...)
+    for _, en in ipairs(Isaac.FindInRadius(pos, radius, EntityPartition.PLAYER)) do
+        local en2 = en:ToPlayer()
+        if en2 then callback(en2, ...) end
+    end
+end
+
+---@param pos Vector
+---@param radius number
+---@param callback fun(entity: EntityNPC, ...: any)
+function iteratorsModule:IterateOverNpcsInArea(pos, radius, callback, ...)
+    for _, en in ipairs(Isaac.FindInRadius(pos, radius, EntityPartition.ENEMY)) do
+        local en2 = en:ToNPC()
+        if en2 then callback(en2, ...) end
+    end
+end
+
+---@param pos Vector
+---@param radius number
+---@param callback fun(entity: EntityPickup, ...: any)
+function iteratorsModule:IterateOverPickupsInArea(pos, radius, callback, ...)
+    for _, en in ipairs(Isaac.FindInRadius(pos, radius, EntityPartition.PICKUP)) do
+        local en2 = en:ToPickup()
+        if en2 then callback(en2, ...) end
+    end
+end
+
+---@param pos Vector
+---@param radius number
+---@param callback fun(entity: EntityTear, ...: any)
+function iteratorsModule:IterateOverTearsInArea(pos, radius, callback, ...)
+    for _, en in ipairs(Isaac.FindInRadius(pos, radius, EntityPartition.TEAR)) do
+        local en2 = en:ToTear()
+        if en2 then callback(en2, ...) end
+    end
+end
+
+---@param pos Vector
+---@param radius number
+---@param callback fun(entity: EntityLaser, ...: any)
+function iteratorsModule:IterateOverLasersInArea(pos, radius, callback, ...)
+    for _, en in ipairs(Isaac.FindInRadius(pos, radius, EntityPartition.TEAR)) do
+        local en2 = en:ToLaser()
+        if en2 then callback(en2, ...) end
+    end
+end
+
+---@param pos Vector
+---@param radius number
+---@param callback fun(entity: EntityKnife, ...: any)
+function iteratorsModule:IterateOverKnivesInArea(pos, radius, callback, ...)
+    for _, en in ipairs(Isaac.FindInRadius(pos, radius, EntityPartition.TEAR)) do
+        local en2 = en:ToKnife()
+        if en2 then callback(en2, ...) end
+    end
+end
+
+---@param pos Vector
+---@param radius number
+---@param callback fun(entity: EntityBomb, ...: any)
+function iteratorsModule:IterateOverBombsInArea(pos, radius, callback, ...)
+    local x = ...
+    iteratorsModule:IterateOverEntitiesInArea(pos, radius, function(en)
+        local en2 = en:ToBomb()
+        if en2 then callback(en2, x) end
+    end)
+end
+
+---@param pos Vector
+---@param radius number
+---@param callback fun(entity: EntityEffect, ...: any)
+function iteratorsModule:IterateOverEffectsInArea(pos, radius, callback, ...)
+    for _, en in ipairs(Isaac.FindInRadius(pos, radius, EntityPartition.EFFECT)) do
+        local en2 = en:ToEffect()
+        if en2 then callback(en2, ...) end
+    end
+end
+
+---@param pos Vector
+---@param radius number
+---@param callback fun(entity: EntityProjectile, ...: any)
+function iteratorsModule:IterateOverProjectilesInArea(pos, radius, callback, ...)
+    for _, en in ipairs(Isaac.FindInRadius(pos, radius, EntityPartition.BULLET)) do
+        local en2 = en:ToProjectile()
+        if en2 then callback(en2, ...) end
+    end
+end
+
 return iteratorsModule

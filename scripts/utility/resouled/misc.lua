@@ -963,3 +963,21 @@ function Resouled:GetUnlockedTrikets()
 
     return T
 end
+
+---@param range1 number
+---@param range2 number
+---@param rng? RNG
+---@param phantom? boolean
+function Resouled:RandomFloatInRanges(range1, range2, rng, phantom)
+    local returnValue
+    if not rng then
+        returnValue = range1 + math.random() * (range2 - range1)
+    else
+        if not phantom then
+            returnValue = range1 + rng:RandomFloat() * (range2 - range1)
+        else
+            returnValue = range1 + rng:PhantomFloat() * (range2 - range1)
+        end
+    end
+    return returnValue
+end

@@ -5,20 +5,21 @@ if not include("dependencies") then while true do end end
 
 if REPENTOGON and MinimapAPI then
     local thingsToRunAfterImports = {}
-
+    
     include("scripts.callbacks")
-
+    
     --- Does not pass any parameters
     ---@param func function
     function Resouled:RunAfterImports(func)
         table.insert(thingsToRunAfterImports, func)
     end
-
+    
     -- ALL EXTERNAL IMPORTS
-
+    
     ---@type SaveManager
     Resouled.SaveManager = include("scripts.utility.save_manager")
     Resouled.SaveManager.Init(Resouled)
+    Resouled.SaveManager.Load(true)
 
     include("scripts.utility.status_effect_library")
 
@@ -57,6 +58,9 @@ if REPENTOGON and MinimapAPI then
 
     ---@type PlayerModule
     Resouled.Player = include("scripts.utility.player")
+
+    ---@type LiveConsoleModule
+    Resouled.LiveConsole = include("scripts.utility.live_console")
 
     include("scripts.utility.throwableitemlib").Init()
 

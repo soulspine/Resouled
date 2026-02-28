@@ -2,8 +2,8 @@
 -- cursed enemies morph chance
 
 Resouled.OptionColors = {
-    Positive = KColor(47/255/3, 27/255 * 3, 33/255/3, 1),
-    Negative = KColor(47/255 * 2, 27/255/2, 33/255/2, 1)
+    Positive = KColor(47 / 255 / 3, 27 / 255 * 3, 33 / 255 / 3, 1),
+    Negative = KColor(47 / 255 * 2, 27 / 255 / 2, 33 / 255 / 2, 1)
 }
 
 local types = {
@@ -47,28 +47,28 @@ Resouled.Options = {
         Achievement = nil,
         Name = "Custom Particle Amount",
         DefaultValue = "Max",
-        StringOptions = {"Disabled", "Minimal", "Medium", "Max", "10x"},
+        StringOptions = { "Disabled", "Minimal", "Medium", "Max", "10x" },
         Type = types.OneClick
     },
     {
         Achievement = nil,
         Name = "Buff Descriptions",
         DefaultValue = "Enabled",
-        StringOptions = {"Enabled", "Disabled"},
+        StringOptions = { "Enabled", "Disabled" },
         Type = types.OneClick
     },
     {
         Achievement = nil,
         Name = "Accurate Eternal Items",
         DefaultValue = "True",
-        StringOptions = {"True", "False"},
+        StringOptions = { "True", "False" },
         Type = types.OneClick
     },
     {
         Achievement = nil,
         Name = "Reset Mod Progress",
         DefaultValue = "Confirm",
-        StringOptions = {"Confirm", "Are you sure?"},
+        StringOptions = { "Confirm", "Are you sure?" },
         Type = types.OneClick,
         Color = Resouled.OptionColors.Negative,
         NotSelectedValue = "Confirm"
@@ -77,7 +77,7 @@ Resouled.Options = {
         Achievement = nil,
         Name = "Reset Settings To Default",
         DefaultValue = "Confirm",
-        StringOptions = {"Confirm", "Are you sure?"},
+        StringOptions = { "Confirm", "Are you sure?" },
         Type = types.OneClick,
         Color = Resouled.OptionColors.Negative,
         NotSelectedValue = "Confirm"
@@ -86,10 +86,18 @@ Resouled.Options = {
         Achievement = nil,
         Name = "Unlock All (Dev option, hide before uploading)",
         DefaultValue = "Confirm",
-        StringOptions = {"Confirm", "Are you sure?"},
+        StringOptions = { "Confirm", "Are you sure?" },
         Type = types.OneClick,
         Color = Resouled.OptionColors.Positive,
         NotSelectedValue = "Confirm"
+    },
+    {
+        Achievement = nil,
+        Name = "Dev mode",
+        DefaultValue = "Enabled",
+        StringOptions = { "Enabled", "Disabled" },
+        Type = types.Bool,
+        Color = Resouled.OptionColors.Positive,
     },
 }
 
@@ -142,15 +150,15 @@ local OPTION_EFFECTS = {
 local function loadOptions()
     if Resouled.SaveManager.IsLoaded() and not loadedSave then
         local save = Resouled.SaveManager.GetEntireSave()
-        
+
         if not save["ResouledOptions"] then save["ResouledOptions"] = {} end
         save = save["ResouledOptions"]
-        
-        
+
+
         for _, config in ipairs(Resouled.Options) do
             save[config.Name] = save[config.Name] or config.DefaultValue
         end
-        
+
         optionsSave = save
         loadedSave = true
         Isaac.RunCallback(Resouled.Callbacks.OptionsLoaded)
@@ -180,7 +188,7 @@ function Resouled:StepOptionValue(optionName, increment)
     end
 
     if not optionContainer then return false end
-    
+
 
     local value = Resouled:GetOptionValue(optionName)
     local valType = type(value)
@@ -197,7 +205,6 @@ function Resouled:StepOptionValue(optionName, increment)
     elseif valType == types.Bool then
         value = not value
     elseif valType == types.String then
-
         if OPTION_EFFECTS[optionContainer.Name] then
             OPTION_EFFECTS[optionContainer.Name]()
         end
@@ -205,8 +212,8 @@ function Resouled:StepOptionValue(optionName, increment)
         if optionContainer.StringOptions then
             for i, stringValue in ipairs(optionContainer.StringOptions) do
                 if stringValue == value then
-                    if OPTION_EFFECTS[optionContainer.Name.." "..value] then
-                        OPTION_EFFECTS[optionContainer.Name.." "..value]()
+                    if OPTION_EFFECTS[optionContainer.Name .. " " .. value] then
+                        OPTION_EFFECTS[optionContainer.Name .. " " .. value]()
                     end
                     value = optionContainer.StringOptions[((i - 1 + stepMod) % #optionContainer.StringOptions) + 1]
                     break
@@ -251,12 +258,13 @@ end
 function Resouled:GetParticleCountModified()
     local modifier = optionsSave["Custom Particle Amount"] or "Max"
     if modifier == "Disabled" then return 0 end
-    if modifier == "Minimal" then return 1/3 end
-    if modifier == "Medium" then return 2/3 end
+    if modifier == "Minimal" then return 1 / 3 end
+    if modifier == "Medium" then return 2 / 3 end
     if modifier == "Max" then return 1 end
     if modifier == "10x" then return 10 end
     return 1
 end
+
 ---@param min integer
 ---@param max integer
 ---@return integer

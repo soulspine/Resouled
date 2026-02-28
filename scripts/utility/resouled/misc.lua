@@ -198,7 +198,7 @@ end
 function Resouled:HasAnyonePressedButton(button)
     local id = 0
     while Input.GetDeviceNameByIdx(id) do
-        if Input.IsActionTriggered(button, id) then
+        if Input.IsButtonPressed(button, id) then
             return true
         end
         id = id + 1

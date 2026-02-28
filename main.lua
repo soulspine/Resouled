@@ -68,7 +68,7 @@ if REPENTOGON and MinimapAPI then
     --    ---@type ResouledEID
     --    Resouled.EID = include("scripts.utility.resouled.eid_functions")
     --end
-    
+
     ---@type ResouledEID
     Resouled.EID = include("scripts.utility.resouled.eid")
     include("scripts.utility.resouled.misc")
@@ -104,6 +104,7 @@ if REPENTOGON and MinimapAPI then
     include("scripts.starting_items")
     include("scripts.shenanigans")
     include("scripts.social_goals")
+    include("scripts.debugCommands")
 
     for _, func in ipairs(thingsToRunAfterImports) do
         func()

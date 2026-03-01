@@ -191,10 +191,20 @@ local function onNpcTakeDamage(_, entity, amount, damageFlags, source, countdown
     -- make ghost only take damage with spectral flag and if its not attached
     if (src and Resouled:MatchesEntityDesc(entity, CONST.Ent)) then
         if (data.Resouled__HauntedGhost.Attached)
-            or (src.TearFlags & TearFlags.TEAR_SPECTRAL == 0)
         then
-            return false
+            if (data.Resouled__HauntedGhostValidDamageTick) then
+                data.Resouled__HauntedGhostValidDamageTick = nil
+                return                                                 -- sustain the damage since its transferred
+            else
+                return false                                           -- negate it
+            end
+        else                                                           -- not attached
+            -- checking .l here because its a 128bit container, i need to extract the lower part
+            if ((src.TearFlags & TearFlags.TEAR_SPECTRAL).l == 0) then -- no spectral
+                return false
+            end
         end
+        print("non-attached damage", src.TearFlags & TearFlags.TEAR_SPECTRAL == 1)
     else -- other enemies, make damage get transferred to the ghost if its currently possessing that entity
         local npc = entity:ToNPC();
         if not (npc) then return; end
@@ -203,6 +213,7 @@ local function onNpcTakeDamage(_, entity, amount, damageFlags, source, countdown
         local ghost = data.Resouled__PossessedByHauntedGhost;
         if (not ghost) then return; end
 
+        ghost.Entity:GetData().Resouled__HauntedGhostValidDamageTick = true
         ghost.Entity:TakeDamage(
             amount * CONFIG.DamageTransferPercentage,
             damageFlags,
@@ -237,3 +248,13 @@ local function onNpcRender(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_RENDER, onNpcRender)
+
+---@param npc EntityNPC
+Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, function(_, npc)
+    local data = npc:GetData()
+    npc:SetSpeedMultiplier(1)
+    if not data.Resouled__PossessedByHauntedGhost then return end
+
+    npc:SetSpeedMultiplier(1.5)
+    print(npc:GetSpeedMultiplier())
+end)

@@ -12,9 +12,19 @@ local font = Font()
 font:Load("font/luaminioutlined.fnt")
 local baseLineHeight = font:GetBaselineHeight()/1.35
 local textColor = KColor(1, 1, 1, 0.5)
+local errorColor = KColor(1, 0.5, 0.5, 0.5)
+local typeColor = KColor(0.5, 0.5, 0.5, 0.5)
 
-local pos = Vector.Zero
+local errorChecks = {
+    "MC_",
+    "Stack Traceback:",
+    "/mods/",
+    "(x)",
+    "error"
+}
 
+local minBoxWidth = 50
+local minBoxHeight = 1
 local boxWidth = 150
 local boxHeight = baseLineHeight * linesToShow
 local topRightVector = Vector(boxWidth, 0)
@@ -22,6 +32,7 @@ local bottomLeftVector = Vector(0, boxHeight)
 local backgroundColor = KColor(0, 0, 0, 0.35)
 local backgroundVectorStart = Vector(0, boxHeight/2)
 local backgroundVectorEnd = Vector(boxWidth, boxHeight/2)
+local pos = Vector(Isaac.GetScreenWidth() - boxWidth, 0)
 
 ---@param width number
 ---@param lines integer
@@ -77,12 +88,25 @@ function liveConsoleModule:SetVisible(visible) consoleVisible = visible end
 
 local isMoving = false
 local lastMousePos = Isaac.WorldToScreen(Input.GetMousePosition(true))
+local visibilityChecked = false
 
 MOD:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, function()
+    if not visibilityChecked then
+        if Isaac.IsInGame() then
+            local key = MOD.Name.."_LiveConsoleEnabled"
+            local data = Isaac.GetPlayer():GetData()
+            local config = data[key]
+            if config then
+                consoleVisible = config.Visible
+                pos = config.Pos
+                data[key] = nil
+            end
+        end
+    end
     if not consoleVisible then return end
 
     Isaac.DrawLine(pos + backgroundVectorStart, pos + backgroundVectorEnd, backgroundColor, backgroundColor, boxHeight)
-
+    
     local history = Console.GetHistory()
     local historySorted = {}
 
@@ -91,8 +115,18 @@ MOD:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, function()
 
         local x = history[i]
         if x then
+            local color = textColor
+            if x:sub(1, 1) == '>' then color = typeColor end
+            
+            for _, check in ipairs(errorChecks) do
+                if x:find(check) or x:lower():find(check) then
+                    color = errorColor
+                    break
+                end
+            end
+
             for _, s in ipairs(alignText(x)) do
-                table.insert(historySorted, s)
+                table.insert(historySorted, {Str = s, Color = color})
             end
         end
 
@@ -102,7 +136,10 @@ MOD:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, function()
     i = linesToShow
     local size = #historySorted
     while i > 0 do
-        font:DrawString(historySorted[size - i + 1], pos.X + 1, pos.Y + baseLineHeight * (linesToShow - i) - baseLineHeight/2 - 1.5, textColor)
+        local conf = historySorted[size - i + 1]
+        if conf then
+            font:DrawString(conf.Str, pos.X + 1, pos.Y + baseLineHeight * (linesToShow - i) - baseLineHeight/2 - 1.5, conf.Color)
+        end
         i = i - 1
     end
 
@@ -125,10 +162,23 @@ MOD:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, function()
         isMoving = false
     end
     if Input.IsMouseBtnPressed(MouseButton.RIGHT) then
-        liveConsoleModule:SetDimensions(math.abs(currentMousePos.X - pos.X), math.abs(math.ceil((currentMousePos.Y - pos.Y))//baseLineHeight))
+        liveConsoleModule:SetDimensions(math.max(math.abs(currentMousePos.X - pos.X), minBoxWidth), math.max(math.abs(math.ceil((currentMousePos.Y - pos.Y))//baseLineHeight), minBoxHeight))
     end
     lastMousePos = currentMousePos
 
+end)
+
+---@param mod ModReference
+MOD:AddCallback(ModCallbacks.MC_PRE_MOD_UNLOAD, function(_, mod)
+    if mod.Name ~= MOD.Name then return end
+
+    if Isaac.IsInGame() then
+        local key = MOD.Name.."_LiveConsoleEnabled"
+        Isaac.GetPlayer():GetData()[key] = {
+            Visible = consoleVisible,
+            Pos = pos
+        }
+    end
 end)
 
 return liveConsoleModule

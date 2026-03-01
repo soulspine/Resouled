@@ -57,7 +57,11 @@ addCommand(Keyboard.KEY_BACKSPACE, "Backspace", "Luamod", function()
 end)
 
 addCommand(Keyboard.KEY_1, "1", "Toggle Debug 1", function()
-    Isaac.ExecuteCommand("debug 10")
+    Isaac.ExecuteCommand("debug 1")
+end)
+
+addCommand(Keyboard.KEY_2, "2", "Toggle Debug 2", function()
+    Isaac.ExecuteCommand("debug 2")
 end)
 
 addCommand(Keyboard.KEY_3, "3", "Toggle Debug 3", function()
@@ -110,6 +114,12 @@ addCommand(Keyboard.KEY_B, "B", "Godmode", function()
         player:AddCollectible(CollectibleType.COLLECTIBLE_MIND)
         player:AddCollectible(CollectibleType.COLLECTIBLE_BLACK_CANDLE)
         player:AddCollectible(CollectibleType.COLLECTIBLE_MERCURIUS)
+        player:AddCollectible(CollectibleType.COLLECTIBLE_POLAROID)
+        player:AddCollectible(CollectibleType.COLLECTIBLE_NEGATIVE)
+        player:AddCollectible(CollectibleType.COLLECTIBLE_KEY_PIECE_1)
+        player:AddCollectible(CollectibleType.COLLECTIBLE_KEY_PIECE_2)
+        player:AddCollectible(CollectibleType.COLLECTIBLE_KNIFE_PIECE_1)
+        player:AddCollectible(CollectibleType.COLLECTIBLE_KNIFE_PIECE_2)
         Isaac.ExecuteCommand("debug 10")
         Isaac.ExecuteCommand("debug 3")
     end)
@@ -135,9 +145,16 @@ addCommand(Keyboard.KEY_L, "L", "Open Doors", function()
     Resouled.Doors:ForceOpenDoors()
 end)
 
-addCommand(Keyboard.KEY_K, "K", "Toggle Live Console", function()
+addCommand(Keyboard.KEY_LEFT_BRACKET, "[", "Toggle Live Console", function()
     Resouled.LiveConsole:Toggle()
 end)
+
+addCommand(Keyboard.KEY_RIGHT_BRACKET, "]", "Clear Console", function()
+    Isaac.ExecuteCommand("clear")
+    print(Resouled:GetHour().." Console Cleared")
+    print(" ")
+end)
+
 
 addCommand(Keyboard.KEY_J, "J", "Equip Room Testing Loudout", function()
     local stage = Resouled.AccurateStats:GetCurrentChapter()
@@ -175,6 +192,15 @@ end)
 
 addCommand(Keyboard.KEY_H, "H", "Teleport To Boss Room", function()
     Isaac.GetPlayer():UseCard(Card.CARD_EMPEROR, UseFlag.USE_NOANIM | UseFlag.USE_NOANNOUNCER)
+end)
+
+addCommand(Keyboard.KEY_R, "R", "New Run", function()
+    Isaac.StartNewGame(
+        Isaac.GetPlayer():GetPlayerType(),
+        Isaac.GetChallenge(),
+        Game():GetChallengeParams():GetDifficulty(),
+        Random()
+    )
 end)
 
 

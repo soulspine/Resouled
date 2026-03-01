@@ -1,5 +1,6 @@
 ---@class ModReference
 Resouled = RegisterMod("Resouled", 1)
+Resouled.DevMode = true
 
 if not include("dependencies") then while true do end end
 
@@ -108,7 +109,11 @@ if REPENTOGON and MinimapAPI then
     include("scripts.starting_items")
     include("scripts.shenanigans")
     include("scripts.social_goals")
-    include("scripts.debugCommands")
+
+    if Resouled.DevMode == true then
+        Resouled.LiveConsole:SetVisible(true)
+        include("scripts.debugCommands")
+    end
 
     for _, func in ipairs(thingsToRunAfterImports) do
         func()

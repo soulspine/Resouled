@@ -14,92 +14,96 @@ local types = {
     String = "string"
 }
 
-Resouled.Options = {
-    {
-        Achievement = Resouled.Enums.Achievements.CursedEnemies,
-        Name = "Cursed Enemy Morph Chance",
-        DefaultValue = 10,
-        Type = types.Float,
-        Suffix = "%",
-        Step = 5,
-        Min = 5,
-        Max = 100,
-    },
-    {
+Resouled.Options = {}
+
+---@param option table
+local function addOption(option) table.insert(Resouled.Options, option) end
+addOption({
+    Achievement = Resouled.Enums.Achievements.CursedEnemies,
+    Name = "Cursed Enemy Morph Chance",
+    DefaultValue = 10,
+    Type = types.Float,
+    Suffix = "%",
+    Step = 5,
+    Min = 5,
+    Max = 100,
+})
+addOption({
+    Achievement = nil,
+    Name = "Room Events Per Chapter",
+    DefaultValue = 1,
+    Type = types.Integer,
+    Step = 1,
+    Min = 0,
+    Max = 169, --13 x 13 max grid
+})
+addOption({
+    Achievement = nil,
+    Name = "Base Room Event Num",
+    DefaultValue = 2,
+    Type = types.Integer,
+    Step = 1,
+    Min = 0,
+    Max = 169 --13 x 13 map grid
+})
+addOption({
+    Achievement = nil,
+    Name = "Custom Particle Amount",
+    DefaultValue = "Max",
+    StringOptions = { "Disabled", "Minimal", "Medium", "Max", "10x" },
+    Type = types.OneClick
+})
+addOption({
+    Achievement = nil,
+    Name = "Buff Descriptions",
+    DefaultValue = "Enabled",
+    StringOptions = { "Enabled", "Disabled" },
+    Type = types.OneClick
+})
+addOption({
+    Achievement = nil,
+    Name = "Accurate Eternal Items",
+    DefaultValue = "True",
+    StringOptions = { "True", "False" },
+    Type = types.OneClick
+})
+addOption({
+    Achievement = nil,
+    Name = "Reset Mod Progress",
+    DefaultValue = "Confirm",
+    StringOptions = { "Confirm", "Are you sure?" },
+    Type = types.OneClick,
+    Color = Resouled.OptionColors.Negative,
+    NotSelectedValue = "Confirm"
+})
+addOption({
+    Achievement = nil,
+    Name = "Reset Settings To Default",
+    DefaultValue = "Confirm",
+    StringOptions = { "Confirm", "Are you sure?" },
+    Type = types.OneClick,
+    Color = Resouled.OptionColors.Negative,
+    NotSelectedValue = "Confirm"
+})
+if Resouled.DevMode == true then
+    addOption({
         Achievement = nil,
-        Name = "Room Events Per Chapter",
-        DefaultValue = 1,
-        Type = types.Integer,
-        Step = 1,
-        Min = 0,
-        Max = 169, --13 x 13 max grid
-    },
-    {
-        Achievement = nil,
-        Name = "Base Room Event Num",
-        DefaultValue = 2,
-        Type = types.Integer,
-        Step = 1,
-        Min = 0,
-        Max = 169 --13 x 13 map grid
-    },
-    {
-        Achievement = nil,
-        Name = "Custom Particle Amount",
-        DefaultValue = "Max",
-        StringOptions = { "Disabled", "Minimal", "Medium", "Max", "10x" },
-        Type = types.OneClick
-    },
-    {
-        Achievement = nil,
-        Name = "Buff Descriptions",
-        DefaultValue = "Enabled",
-        StringOptions = { "Enabled", "Disabled" },
-        Type = types.OneClick
-    },
-    {
-        Achievement = nil,
-        Name = "Accurate Eternal Items",
-        DefaultValue = "True",
-        StringOptions = { "True", "False" },
-        Type = types.OneClick
-    },
-    {
-        Achievement = nil,
-        Name = "Reset Mod Progress",
-        DefaultValue = "Confirm",
-        StringOptions = { "Confirm", "Are you sure?" },
-        Type = types.OneClick,
-        Color = Resouled.OptionColors.Negative,
-        NotSelectedValue = "Confirm"
-    },
-    {
-        Achievement = nil,
-        Name = "Reset Settings To Default",
-        DefaultValue = "Confirm",
-        StringOptions = { "Confirm", "Are you sure?" },
-        Type = types.OneClick,
-        Color = Resouled.OptionColors.Negative,
-        NotSelectedValue = "Confirm"
-    },
-    {
-        Achievement = nil,
-        Name = "Unlock All (Dev option, hide before uploading)",
+        Name = "Unlock All (Dev option)",
         DefaultValue = "Confirm",
         StringOptions = { "Confirm", "Are you sure?" },
         Type = types.OneClick,
         Color = Resouled.OptionColors.Positive,
         NotSelectedValue = "Confirm"
-    },
-    {
+    })
+    addOption({
         Achievement = nil,
         Name = "Dev mode",
         DefaultValue = "Enabled",
         StringOptions = { "Enabled", "Disabled" },
         Type = types.Bool,
         Color = Resouled.OptionColors.Positive,
-    },
-}
+    })
+end
 
 local loadedSave = false
 local optionsSave

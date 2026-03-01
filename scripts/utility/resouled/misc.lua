@@ -981,3 +981,7 @@ function Resouled:RandomFloatInRanges(range1, range2, rng, phantom)
     end
     return returnValue
 end
+
+function Resouled:GetHour()
+    return os.date("%X")
+end

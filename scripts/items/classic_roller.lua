@@ -1,3 +1,6 @@
+local g = Game()
+local itemConfig = Isaac.GetItemConfig()
+
 local CLASSIC_ROLLER = Resouled.Enums.Items.CLASSIC_ROLLER
 
 local DEFAULT_ITEM = CollectibleType.COLLECTIBLE_BREAKFAST
@@ -9,29 +12,40 @@ local DEFAULT_ITEM = CollectibleType.COLLECTIBLE_BREAKFAST
 ---@param slot ActiveSlot
 ---@param data integer
 local function onActiveUse(_, type, rng, player, flags, slot, data)
+
     player:AnimateCollectible(CLASSIC_ROLLER, "UseItem", "PlayerPickupSparkle")
-    local itemConfig = Isaac.GetItemConfig()
+
+    local itemPool = g:GetItemPool()
+    local room = g:GetRoom()
+
     ---@param pickup EntityPickup
     Resouled.Iterators:IterateOverRoomPickups(function(pickup)
+
         if pickup.Variant == PickupVariant.PICKUP_COLLECTIBLE and pickup.SubType ~= 0 and not itemConfig:GetCollectible(pickup.SubType):HasTags(ItemConfig.TAG_QUEST) then
+
             local targetQuality = itemConfig:GetCollectible(pickup.SubType).Quality
-            local itemsFromCurrectPool = Game():GetItemPool():GetCollectiblesFromPool(Game():GetRoom():GetItemPool(Game():GetRoom():GetAwardSeed()))
+            local pool = math.max(room:GetItemPool(room:GetAwardSeed()), 0)
+            
+            local itemsFromCurrectPool = itemPool:GetCollectiblesFromPool(pool)
             local validItems = {}
+
             for i = 1, #itemsFromCurrectPool do
                 local id = itemsFromCurrectPool[i].itemID
-                if  itemConfig:GetCollectible(id) and itemConfig:GetCollectible(id).Quality == targetQuality and Game():GetItemPool():CanSpawnCollectible(id, false) then
+                local config = itemConfig:GetCollectible(id)
+                if config and config.Quality == targetQuality and itemPool:CanSpawnCollectible(id, false) then
                     table.insert(validItems, id)
                 end
             end
-            
+
             local newItemID = #validItems > 0 and validItems[rng:RandomInt(#validItems) + 1] or DEFAULT_ITEM
             
-            Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, pickup.Position, Vector.Zero, nil, 0, Resouled:NewSeed())
+            g:Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, pickup.Position, Vector.Zero, nil, 0, Resouled:NewSeed())
+
             if newItemID then
                 pickup:Morph(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, newItemID, true, true, false)
-                Game():GetItemPool():RemoveCollectible(newItemID)
-                Resouled:NewSeed()
+                itemPool:RemoveCollectible(newItemID)
             end
+
         end
     end)
 end

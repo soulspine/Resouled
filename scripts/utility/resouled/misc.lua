@@ -300,7 +300,7 @@ end
 function Resouled:ChooseItemFromPool(rng, pool, defaultItem)
     local game = Game()
     local DEFAULT_ITEM = defaultItem or CollectibleType.COLLECTIBLE_BREAKFAST
-    pool = pool or game:GetRoom():GetItemPool(game:GetRoom():GetAwardSeed())
+    pool = math.max((pool or game:GetRoom():GetItemPool(game:GetRoom():GetAwardSeed())), 0)
     local itemsFromTargetPool = game:GetItemPool():GetCollectiblesFromPool(pool)
     local validItems = {}
     for i = 1, #itemsFromTargetPool do

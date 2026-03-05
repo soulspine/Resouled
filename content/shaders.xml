@@ -23,6 +23,16 @@
             }
         ]]></fragment>
     </shader>
+
+
+
+
+
+
+
+
+
+
     <shader name="ResouledBlankCanvas">
         <parameters>
             <param name="AnchorPos" type="vec2"/>

@@ -28,9 +28,6 @@ GLOWING_DOOR_SPRITE:Play("Idle", true)
 local globalGlowingDoorPosition = Vector.Zero
 local globalGlowingDoorRotation = 0
 
-local BLACKOUT_SPRITE = Sprite()
-BLACKOUT_SPRITE:Load("gfx_resouled/effects/blackout.anm2", true)
-BLACKOUT_SPRITE:Play("Idle", true)
 local BLACKOUT_TRANSITION_TIME = 10
 
 -- if set to true, blackout will fade in and stay until its changed back to false and it starts to fade out
@@ -360,10 +357,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 
 local function onRender()
     if globalBlackoutIntensity or blackoutFadeIn then
-        local screenDimensions = Vector(Isaac.GetScreenWidth(), Isaac.GetScreenHeight())
-        BLACKOUT_SPRITE.Scale = screenDimensions / 16
-        BLACKOUT_SPRITE.Color = Color(0, 0, 0, globalBlackoutIntensity)
-        BLACKOUT_SPRITE:Render(screenDimensions / 2, Vector.Zero, Vector.Zero)
+        Resouled:OverlayScreen(KColor(0, 0, 0, globalBlackoutIntensity or 0))
 
         GLOWING_DOOR_SPRITE.Color = Color(1, 1, 1, globalBlackoutIntensity)
         GLOWING_DOOR_SPRITE.Scale = Vector(1.3, 1.3)

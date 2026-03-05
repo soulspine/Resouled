@@ -985,3 +985,15 @@ end
 function Resouled:GetHour()
     return os.date("%X")
 end
+
+local defaultScreenOverlayColor = KColor(0, 0, 0, 1)
+---@param color? KColor
+function Resouled:OverlayScreen(color)
+    color = color or defaultScreenOverlayColor
+    local y = Isaac.GetScreenHeight()/2
+
+    Isaac.DrawLine(
+        Vector(0, y), Vector(Isaac.GetScreenWidth(), y),
+        color, color, y * 2
+    )
+end

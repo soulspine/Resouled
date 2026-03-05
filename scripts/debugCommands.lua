@@ -203,6 +203,10 @@ addCommand(Keyboard.KEY_R, "R", "New Run", function()
     )
 end)
 
+addCommand(Keyboard.KEY_T, "T", "Shadow Fight", function()
+    Resouled.AfterlifeShop:TeleportToShadowBossfight()
+end)
+
 
 Console.RegisterCommand("resouledDebug", "Toggles resouled debug mode", "", false, AutocompleteType.NONE)
 

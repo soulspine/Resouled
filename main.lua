@@ -113,6 +113,7 @@ if REPENTOGON and MinimapAPI then
     if Resouled.DevMode == true then
         Resouled.LiveConsole:SetVisible(true)
         include("scripts.debugCommands")
+
     end
 
     for _, func in ipairs(thingsToRunAfterImports) do

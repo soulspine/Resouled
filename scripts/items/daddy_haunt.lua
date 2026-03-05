@@ -1,3 +1,5 @@
+local g = Game()
+
 local DADDY_HAUNT = Resouled.Enums.Items.DADDY_HAUNT
 local DADDY_HAUNT_VARIANT = Isaac.GetEntityVariantByName("Daddy Haunt")
 local DADDY_HAUNT_SUBTYPE = Isaac.GetEntitySubTypeByName("Daddy Haunt")
@@ -28,6 +30,26 @@ local ATTACK_DESCEND_FRAME_LENGTH = 4
 local EVENT_TRIGGER_RESOULED_SLAM = "ResouledSlam"
 local EVENT_TRIGGER_RESOULED_ASCEND = "ResouledAscend"
 local EVENT_TRIGGER_RESOULED_DESCEND = "ResouledDescend"
+
+local SLAM_EFFECT_SMOKE_AMOUNT = 16
+local MIN_SLAM_EFFECT_SMOKE_SPEED = 9
+local MAX_SLAM_EFFECT_SMOKE_SPEED = 18
+local SMOKE_COLOR = Color(1, 1, 1, 0.25, 0.35, 0.25, 0.25)
+local SMOKE_SPREAD_VECTOR = Vector(1, 0.5)
+
+---@param pos Vector
+local function doSlamEffect(pos)
+    local x = 360/SLAM_EFFECT_SMOKE_AMOUNT
+    local x2 = MAX_SLAM_EFFECT_SMOKE_SPEED - MIN_SLAM_EFFECT_SMOKE_SPEED
+    for i = 1, SLAM_EFFECT_SMOKE_AMOUNT do
+        local eff = g:Spawn(EntityType.ENTITY_EFFECT, EffectVariant.DARK_BALL_SMOKE_PARTICLE, pos, Vector.Zero, nil, 0, Resouled:NewSeed())
+        local x3 = math.random() * x2
+        local x4 = 1 + x3/x2
+        eff.SpriteScale = Vector(x4, x4)
+        eff.Velocity = Vector(MIN_SLAM_EFFECT_SMOKE_SPEED + x3, 0):Rotated(x * (i - 1)) * SMOKE_SPREAD_VECTOR
+        eff.Color = SMOKE_COLOR
+    end
+end
 
 ---@param player EntityPlayer
 ---@param cacheFlag CacheFlag
@@ -106,8 +128,7 @@ local function onFamiliarUpdate(_, familiar)
         end
 
         if sprite:IsEventTriggered(EVENT_TRIGGER_RESOULED_SLAM) then
-            Game():Spawn(EntityType.ENTITY_EFFECT, Isaac.GetEntityVariantByName("Air Shockwave"), familiar.Position,
-                Vector(0, 0), familiar, Isaac.GetEntitySubTypeByName("Air Shockwave"), 0)
+            doSlamEffect(familiar.Position)
             SFXManager():Play(SLAM_SFX, 1, 0, false, 1)
 
             ---@type EntityNPC[]

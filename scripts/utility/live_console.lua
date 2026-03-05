@@ -101,6 +101,7 @@ MOD:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, function()
                 pos = config.Pos
                 data[key] = nil
             end
+            visibilityChecked = true
         end
     end
     if not consoleVisible then return end

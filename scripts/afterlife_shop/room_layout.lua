@@ -249,7 +249,7 @@ end
 local fixConfig = Resouled.Stats.AfterlifeBackdropFix
 
 local function postNewRoom()
-    if Resouled.AfterlifeShop:IsAfterlifeShop() then
+    if Resouled.AfterlifeShop:IsAfterlifeShop() and not Resouled.AfterlifeShop.ShadowFight.Active then
         
         local level = game:GetLevel()
         local room = level:GetCurrentRoom()

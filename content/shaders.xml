@@ -1,38 +1,4 @@
 <shaders>
-    <shader name="HudHelperEmptyShader">
-        <vertex><![CDATA[
-            attribute vec3 Position;
-            attribute vec4 Color;
-            attribute vec2 TexCoord;
-            varying vec4 Color0;
-            varying vec2 TexCoord0;
-            uniform mat4 Transform;
-            void main(void) {
-                Color0 = Color;
-                TexCoord0 = TexCoord;
-                gl_Position = Transform * vec4(Position.xyz, 1.0);
-            }
-        ]]></vertex>
-        <fragment><![CDATA[
-            varying lowp vec4 Color0;
-            varying mediump vec2 TexCoord0;
-            uniform sampler2D Texture0;
-            void main(void) {
-                vec4 Color = Color0 * texture2D(Texture0, TexCoord0);
-                gl_FragColor = Color;
-            }
-        ]]></fragment>
-    </shader>
-
-
-
-
-
-
-
-
-
-
     <shader name="ResouledBlankCanvas">
         <parameters>
             <param name="AnchorPos" type="vec2"/>
@@ -249,6 +215,154 @@
                         Color.b = 0;
                     }
                 }
+
+                gl_FragColor = Color;
+            }
+        ]]></fragment>
+    </shader>
+
+
+
+
+
+    <shader name="ResouledAfterlifeFog">
+        <parameters>
+            <param name = "CenterPos" type="vec2"/>
+            <param name = "Radius" type = "float"/>
+            <param name = "Time" type = "float"/>
+            <param name = "Intensity" type = "float"/>
+            <param name = "CameraPos" type = "vec2"/>
+        </parameters>
+        <vertex><![CDATA[
+            attribute vec3 Position;
+            attribute vec4 Color;
+            attribute vec2 TexCoord;
+            attribute vec2 CenterPos;
+            attribute float Radius;
+            attribute float Time;
+            attribute vec2 CameraPos;
+
+            vec2 Pos = vec2(Position.xy);
+
+            varying vec4 Color0;
+            varying vec2 TexCoord0;
+            varying vec2 PosOut;
+            varying vec2 CenterPosOut;
+
+            varying float RadiusOut;
+            varying float TimeOut;
+            varying vec2 CameraPosOut;
+
+            uniform mat4 Transform;
+
+            void main(void) {
+                Color0 = Color;
+                TexCoord0 = TexCoord;
+
+                PosOut = Pos;
+                CenterPosOut = CenterPos;
+                RadiusOut = Radius;
+                TimeOut = Time;
+                CameraPosOut = CameraPos;
+
+                gl_Position = Transform * vec4(Position.xyz, 1.0);
+            }
+        ]]></vertex>
+        <fragment><![CDATA[
+            varying lowp vec4 Color0;
+            varying mediump vec2 TexCoord0;
+            uniform sampler2D Texture0;
+
+            varying vec2 PosOut;
+            varying vec2 CenterPosOut;
+            varying float RadiusOut;
+            varying float TimeOut;
+            varying vec2 CameraPosOut;
+
+            // Hash function for pseudo-random values
+            float hash(vec2 p) {
+                return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+            }
+
+            // Smooth value noise - creates blobby shapes
+            float vnoise(vec2 p) {
+                vec2 i = floor(p);
+                vec2 f = fract(p);
+                // Smooth interpolation curve
+                vec2 u = f * f * (3.0 - 2.0 * f);
+
+                // Sample 4 corners and interpolate
+                float a = hash(i);
+                float b = hash(i + vec2(1.0, 0.0));
+                float c = hash(i + vec2(0.0, 1.0));
+                float d = hash(i + vec2(1.0, 1.0));
+
+                return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+            }
+
+            // Layered noise for more organic blobs
+            float fbm(vec2 p) {
+                float value = 0.0;
+                float amplitude = 0.5;
+                for (int i = 0; i < 5; i++) {
+                    value += amplitude * vnoise(p);
+                    p *= 2.0;
+                    amplitude *= 0.5;
+                }
+                return value;
+            }
+
+            void main(void) {
+                vec4 Color = Color0 * texture2D(Texture0, TexCoord0);
+
+                // Layer stretch (x, y) - lower = larger/more stretched
+                vec2 layer1Scale = vec2(0.015, 0.03);
+                vec2 layer2Scale = vec2(0.025, 0.045);
+                vec2 layer3Scale = vec2(0.04, 0.065);
+
+                // Layer colors
+                vec3 baseFogColor = vec3(0.75, 0.75, 0.8);
+                vec3 layer1Color = vec3(0.45, 0.45, 0.52);
+                vec3 layer2Color = vec3(0.35, 0.38, 0.46);
+                vec3 layer3Color = vec3(0.85, 0.85, 0.9);
+
+                float dist = distance(PosOut, CenterPosOut);
+
+                // Original fade curve: 0 inside radius, ramps up outside
+                float mult = RadiusOut / max(dist, 0.001);
+                float x1 = 0.1 * min((dist - RadiusOut) / RadiusOut, 1.0);
+                float fogFactor = clamp(1.0 - mult + x1, 0.0, 1.0);
+
+                // World-space position for camera-dependent fog
+                vec2 worldPos = PosOut + CameraPosOut;
+
+                // Layer 1: large slow-moving blobs
+                vec2 coord1 = worldPos * layer1Scale + vec2(TimeOut * 0.08, TimeOut * 0.03);
+                float layer1 = fbm(coord1);
+
+                // Layer 2: medium blobs, different direction
+                vec2 coord2 = worldPos * layer2Scale + vec2(-TimeOut * 0.12, TimeOut * 0.06);
+                float layer2 = fbm(coord2 + 50.0);
+
+                // Layer 3: smaller, faster wisps
+                vec2 coord3 = worldPos * layer3Scale + vec2(TimeOut * 0.18, -TimeOut * 0.05);
+                float layer3 = fbm(coord3 + 120.0);
+
+                // Each layer contributes a different shade
+                float d1 = smoothstep(0.35, 0.65, layer1);
+                float d2 = smoothstep(0.4, 0.7, layer2);
+                float d3 = smoothstep(0.4, 0.65, layer3);
+
+                // Vary color per layer for depth
+                vec3 fogColor1 = mix(baseFogColor, layer1Color, d1 * 0.5);
+                vec3 fogColor2 = mix(baseFogColor, layer2Color, d2 * 0.4);
+                vec3 fogColor3 = mix(baseFogColor, layer3Color, d3 * 0.35);
+
+                // Combine layers
+                vec3 finalFogColor = fogColor1 * 0.4 + fogColor2 * 0.35 + fogColor3 * 0.25;
+
+                // Blend scene with fog color using the original fade curve
+                Color.rgb = mix(Color.rgb, finalFogColor, fogFactor);
 
                 gl_FragColor = Color;
             }

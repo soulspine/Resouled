@@ -36,7 +36,7 @@ local function RGBeffect(x, offset)
         end
     end
 
-    return KColor(r/255, g/255, b/255, x.Alpha)
+    return KColor(r / 255, g / 255, b / 255, x.Alpha)
 end
 
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, function()
@@ -151,7 +151,7 @@ end)
 
 addCommand(Keyboard.KEY_RIGHT_BRACKET, "]", "Clear Console", function()
     Isaac.ExecuteCommand("clear")
-    print(Resouled:GetHour().." Console Cleared")
+    print(Resouled:GetHour() .. " Console Cleared")
     print(" ")
 end)
 
@@ -162,7 +162,7 @@ addCommand(Keyboard.KEY_J, "J", "Equip Room Testing Loudout", function()
 
     local isAltPath = level:IsAltStage()
     local sadOnionFromDifficulty = level:GetCurrentRoomDesc().Data.Difficulty >= 15
-    
+
     Resouled.Iterators:IterateOverPlayers(function(p)
         if stage < 4 then
             if stage == 1 or (stage == 2 and not isAltPath) then
@@ -207,6 +207,10 @@ addCommand(Keyboard.KEY_T, "T", "Shadow Fight", function()
     Resouled.AfterlifeShop:TeleportToShadowBossfight()
 end)
 
+addCommand(Keyboard.KEY_ENTER, "Enter", "Reloadshaders", function()
+    Isaac.ExecuteCommand("reloadshaders")
+end)
+
 
 Console.RegisterCommand("resouledDebug", "Toggles resouled debug mode", "", false, AutocompleteType.NONE)
 
@@ -216,7 +220,7 @@ Resouled:AddCallback(ModCallbacks.MC_EXECUTE_CMD, function(_, name)
     print("Resouled Debug mode active: " .. tostring(debugMode))
 end)
 
-local textColor = KColor(1, 1 ,1 ,1)
+local textColor = KColor(1, 1, 1, 1)
 local currentTextColor = KColor(1, 1, 1, 1)
 Resouled:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, function()
     if not debugMode then return end
@@ -249,7 +253,8 @@ Resouled:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, function()
             currentTextColor.Green = 0.5 + 0.5 * textColor.Green
             currentTextColor.Blue = 0.5 + 0.5 * textColor.Blue
 
-            local text = "[ " .. command.BindText .. " ]: " .. command.Description .. (command.Cooldown == 0 and "" or " *")
+            local text = "[ " ..
+                command.BindText .. " ]: " .. command.Description .. (command.Cooldown == 0 and "" or " *")
             font:DrawStringScaled(
                 text,
                 pos.X,
@@ -259,7 +264,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, function()
                 currentTextColor
             )
             maxWidth = math.max(maxWidth, font:GetStringWidth(text))
-            textColor = RGBeffect(textColor, oneRGBeffectCycle/(#commandsSorted))
+            textColor = RGBeffect(textColor, oneRGBeffectCycle / (#commandsSorted))
 
             pos.Y = pos.Y + BIND_TEXT_STEP
 

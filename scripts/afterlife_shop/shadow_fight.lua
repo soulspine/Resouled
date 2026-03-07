@@ -115,7 +115,7 @@ end)
 
 local shadowProjectileConfig = {
     Scale = 0,
-    Color = Color(0, 0, 0, 0.85),
+    Color = Color(0.2, 0.2, 0.2, 0.1, 0.5, 0.5, 0.5),
     FallingAccel = -0.1,
     FallingSpeed = 0,
     
@@ -123,7 +123,7 @@ local shadowProjectileConfig = {
 }
 ---@return EntityProjectile | nil
 local function spawnShadowProjectile(pos, vel)
-    local p = g:Spawn(EntityType.ENTITY_PROJECTILE, ProjectileVariant.PROJECTILE_NORMAL, pos, Vector.Zero, nil, 0, Resouled:NewSeed()):ToProjectile()
+    local p = g:Spawn(EntityType.ENTITY_PROJECTILE, ProjectileVariant.PROJECTILE_TEAR, pos, Vector.Zero, nil, 0, Resouled:NewSeed()):ToProjectile()
     if not p then return nil end
     p.Velocity = vel
     p.Scale = shadowProjectileConfig.Scale

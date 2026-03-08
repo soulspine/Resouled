@@ -176,7 +176,7 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.TRICK_OR_TREAT, "Trick or Trea
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.LIFE_OF_LUST, "Life of Lust", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.FATTYS_FEAST, "Fatty's Feast", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.KRAMPUS_CHRISTMAS, "Krampus Christmas", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.DAY_OF_THE_DOODLER, "Day of The Doodler", "gfx_resouled/buffs/cursed/placeholder_cursed.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.DAY_OF_THE_DOODLER, "Day of The Doodler", "gfx_resouled/buffs/cursed/day_of_the_doodler.png")
 
 -- REGISTERING BUFF RARITIES
 Resouled:RegisterBuffRarity(Resouled.BuffRarity.COMMON, "Common", 0.65, Color(117/255, 152/255, 161/255))

@@ -10,6 +10,10 @@ local x = {
     {
         Name = "observing_cat",
         ReturnValue = "He's observing"
+    },
+    {
+        Name = "Iszak",
+        ReturnValue = "Iszak"
     }
 }
 

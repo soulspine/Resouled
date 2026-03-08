@@ -232,6 +232,11 @@
             <param name = "Time" type = "float"/>
             <param name = "CameraPos" type = "vec2"/>
             <param name = "Active" type = "float"/>
+            <param name = "Intensity" type = "float"/>
+            <param name = "MinIntensity" type = "float"/>
+            <param name = "FogColorR" type = "float"/>
+            <param name = "FogColorG" type = "float"/>
+            <param name = "FogColorB" type = "float"/>
         </parameters>
         <vertex><![CDATA[
             attribute vec3 Position;
@@ -242,6 +247,11 @@
             attribute float Time;
             attribute vec2 CameraPos;
             attribute float Active;
+            attribute float Intensity;
+            attribute float MinIntensity;
+            attribute float FogColorR;
+            attribute float FogColorG;
+            attribute float FogColorB;
 
             vec2 Pos = vec2(Position.xy);
 
@@ -254,6 +264,11 @@
             varying float RadiusOut;
             varying float TimeOut;
             varying vec2 CameraPosOut;
+            varying float IntensityOut;
+            varying float MinIntensityOut;
+            varying float FogColorROut;
+            varying float FogColorGOut;
+            varying float FogColorBOut;
 
             uniform mat4 Transform;
 
@@ -267,6 +282,11 @@
                 TimeOut = Time;
                 CameraPosOut = CameraPos;
                 ActiveOut = Active;
+                IntensityOut = Intensity;
+                MinIntensityOut = MinIntensity;
+                FogColorROut = FogColorR;
+                FogColorGOut = FogColorG;
+                FogColorBOut = FogColorB;
 
                 gl_Position = Transform * vec4(Position.xyz, 1.0);
             }
@@ -282,6 +302,11 @@
             varying float TimeOut;
             varying vec2 CameraPosOut;
             varying float ActiveOut;
+            varying float IntensityOut;
+            varying float MinIntensityOut;
+            varying float FogColorROut;
+            varying float FogColorGOut;
+            varying float FogColorBOut;
 
             // Hash function for pseudo-random values
             float hash(vec2 p) {
@@ -338,21 +363,21 @@
                 // Original fade curve: 0 inside radius, ramps up outside
                 float mult = RadiusOut / max(dist, 0.001);
                 float x1 = 0.1 * min((dist - RadiusOut) / RadiusOut, 1.0);
-                float fogFactor = clamp(1.0 - mult + x1, 0.0, 1.0);
+                float fogFactor = clamp(1.0 - mult + x1, MinIntensityOut, 1.0);
 
                 // World-space position for camera-dependent fog
                 vec2 worldPos = PosOut + CameraPosOut;
 
                 // Layer 1: large slow-moving blobs
-                vec2 coord1 = worldPos * layer1Scale + vec2(TimeOut * 0.08, TimeOut * 0.03);
+                vec2 coord1 = worldPos * layer1Scale + vec2(TimeOut * 0.16, cos(TimeOut * 0.03));
                 float layer1 = fbm(coord1);
 
                 // Layer 2: medium blobs, different direction
-                vec2 coord2 = worldPos * layer2Scale + vec2(-TimeOut * 0.12, TimeOut * 0.06);
+                vec2 coord2 = worldPos * layer2Scale + vec2(-TimeOut * 0.24, sin(TimeOut * 0.05));
                 float layer2 = fbm(coord2 + 50.0);
 
                 // Layer 3: smaller, faster wisps
-                vec2 coord3 = worldPos * layer3Scale + vec2(TimeOut * 0.18, -TimeOut * 0.05);
+                vec2 coord3 = worldPos * layer3Scale + vec2(TimeOut * 0.36, -TimeOut * 0.08);
                 float layer3 = fbm(coord3 + 120.0);
 
                 // Each layer contributes a different shade
@@ -366,7 +391,16 @@
                 vec3 fogColor3 = mix(baseFogColor, layer3Color, d3 * 0.35);
 
                 // Combine layers
-                vec3 finalFogColor = fogColor1 * 0.4 + fogColor2 * 0.35 + fogColor3 * 0.25;
+                vec3 finalFogColor = (fogColor1 * 0.4 + fogColor2 * 0.35 + fogColor3 * 0.25) * vec3(FogColorROut, FogColorGOut, FogColorBOut);
+
+
+
+                float minIntensity = MinIntensityOut + IntensityOut/10;
+                if (fogFactor < minIntensity) {
+                    fogFactor = minIntensity;
+                }
+                fogFactor = min(fogFactor + dist/1000, 1);
+                fogFactor *= IntensityOut;
 
                 // Blend scene with fog color using the original fade curve
                 Color.rgb = mix(Color.rgb, finalFogColor, fogFactor);

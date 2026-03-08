@@ -3,13 +3,16 @@ local g = Game()
 local config = {
     Name = "ResouledAfterlifeFog",
 
-    OriginalRadius = 150,
+    OriginalRadius = 200,
 
     CenterPos = Vector.Zero,
     Radius = 0,
     Time = 0,
     CameraPos = Vector.Zero,
-    Active = true
+    Active = true,
+    Intensity = 0.85,
+    MinIntensity = 0.1,
+    Color = Color(1, 1, 1)
 }
 
 Resouled:AddCallback(ModCallbacks.MC_GET_SHADER_PARAMS, function(_, shaderName)
@@ -20,7 +23,12 @@ Resouled:AddCallback(ModCallbacks.MC_GET_SHADER_PARAMS, function(_, shaderName)
             Radius = config.Radius,
             Time = config.Time,
             CameraPos = { config.CameraPos.X, config.CameraPos.Y },
-            Active = config.Active and 1 or 0
+            Active = config.Active and 1 or 0,
+            Intensity = config.Intensity,
+            MinIntensity = config.MinIntensity,
+            FogColorR = config.Color.R,
+            FogColorG = config.Color.G,
+            FogColorB = config.Color.B,
         }
     else
         return {
@@ -28,7 +36,12 @@ Resouled:AddCallback(ModCallbacks.MC_GET_SHADER_PARAMS, function(_, shaderName)
             Radius = 0,
             Time = 0,
             CameraPos = Vector.Zero,
-            Active = 0
+            Active = 0,
+            Intensity = 0,
+            MinIntensity = 0,
+            FogColorR = 0,
+            FogColorG = 0,
+            FogColorB = 0,
         }
     end
 end)
@@ -45,7 +58,7 @@ end)
 --[[
 Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, function()
     local center = g:GetRoom():GetCenterPos()
-    local radius = config.Radius * 1.5
+    local radius = config.Radius * 1.75
     ---@param player EntityPlayer
     Resouled.Iterators:IterateOverPlayers(function(player)
         local distance = player.Position:Distance(center) - player.Size

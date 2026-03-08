@@ -12,7 +12,8 @@ local config = {
     Active = true,
     Intensity = 0.85,
     MinIntensity = 0.1,
-    Color = Color(1, 1, 1)
+    Color = Color(1, 1, 1),
+    RadiusScale = Vector(1, 3),
 }
 
 Resouled:AddCallback(ModCallbacks.MC_GET_SHADER_PARAMS, function(_, shaderName)
@@ -29,6 +30,7 @@ Resouled:AddCallback(ModCallbacks.MC_GET_SHADER_PARAMS, function(_, shaderName)
             FogColorR = config.Color.R,
             FogColorG = config.Color.G,
             FogColorB = config.Color.B,
+            RadiusScale = { config.RadiusScale.X, config.RadiusScale.Y },
         }
     else
         return {
@@ -42,6 +44,7 @@ Resouled:AddCallback(ModCallbacks.MC_GET_SHADER_PARAMS, function(_, shaderName)
             FogColorR = 0,
             FogColorG = 0,
             FogColorB = 0,
+            RadiusScale = { 1, 1 },
         }
     end
 end)
@@ -67,4 +70,4 @@ Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, function()
         end
     end)
 end)
-]]--
+]] --

@@ -237,6 +237,7 @@
             <param name = "FogColorR" type = "float"/>
             <param name = "FogColorG" type = "float"/>
             <param name = "FogColorB" type = "float"/>
+            <param name = "RadiusScale" type = "vec2"/>
         </parameters>
         <vertex><![CDATA[
             attribute vec3 Position;
@@ -252,6 +253,7 @@
             attribute float FogColorR;
             attribute float FogColorG;
             attribute float FogColorB;
+            attribute vec2 RadiusScale;
 
             vec2 Pos = vec2(Position.xy);
 
@@ -269,6 +271,7 @@
             varying float FogColorROut;
             varying float FogColorGOut;
             varying float FogColorBOut;
+            varying vec2 RadiusScaleOut;
 
             uniform mat4 Transform;
 
@@ -287,6 +290,7 @@
                 FogColorROut = FogColorR;
                 FogColorGOut = FogColorG;
                 FogColorBOut = FogColorB;
+                RadiusScaleOut = RadiusScale;
 
                 gl_Position = Transform * vec4(Position.xyz, 1.0);
             }
@@ -307,6 +311,7 @@
             varying float FogColorROut;
             varying float FogColorGOut;
             varying float FogColorBOut;
+            varying vec2 RadiusScaleOut;
 
             // Hash function for pseudo-random values
             float hash(vec2 p) {
@@ -358,7 +363,9 @@
                 vec3 layer2Color = vec3(0.35, 0.38, 0.46);
                 vec3 layer3Color = vec3(0.85, 0.85, 0.9);
 
-                float dist = distance(PosOut, CenterPosOut);
+                // Elliptical distance: scale the offset from center
+                vec2 diff = (PosOut - CenterPosOut) * RadiusScaleOut;
+                float dist = length(diff);
 
                 // Original fade curve: 0 inside radius, ramps up outside
                 float mult = RadiusOut / max(dist, 0.001);

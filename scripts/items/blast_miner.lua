@@ -37,14 +37,22 @@ local function playerPlaceBomb(_, player, bomb)
         local tnt = Game():Spawn(EntityType.ENTITY_PICKUP, TNT_VARIANT, player.Position, Vector.Zero, player, subtype, bomb.InitSeed)
         tnt.Velocity = player.Velocity * 2
         bomb:Remove()
-        local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(tnt)
-        ROOM_SAVE.BlastMiner = {
-            GOLDEN = player:HasGoldenBomb(),
-            BOBBYBOMB = player:HasCollectible(CollectibleType.COLLECTIBLE_BOBBY_BOMB),
-            FLAGS = player:GetBombFlags(),
-            PLAYER = tostring(player:GetPlayerIndex())
+
+        local tntData = tnt:GetData()
+        ---@type BitSet128
+        ---@diagnostic disable-next-line
+        local flags = player:GetBombFlags()
+
+        tntData["BlastMiner"] = {
+            ["Golden"] = player:HasGoldenBomb(),
+            ["BobbyBomb"] = player:HasCollectible(CollectibleType.COLLECTIBLE_BOBBY_BOMB),
+            ["Flags"] = {
+                ["L"] = flags.l,
+                ["R"] = flags.h
+            },
+            ["Player"] = tostring(player:GetPlayerIndex())
         }
-        if ROOM_SAVE.BlastMiner.GOLDEN and tnt.SubType == TNT_SUBTYPE then
+        if tntData["BlastMiner"]["Golden"] and tnt.SubType == TNT_SUBTYPE then
             tnt:GetSprite():ReplaceSpritesheet(0, "gfx_resouled/pickups/bombs/blast_miner_crate_gold.png", true)
         end
         Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, tnt.Position, Vector.Zero, nil, 0, tnt.InitSeed)
@@ -59,9 +67,9 @@ local function onUseItem(_, _, _, player)
         ---@param pickup EntityPickup
         Resouled.Iterators:IterateOverRoomPickups(function(pickup)
             if pickup.Variant == TNT_VARIANT and tntSubtypes[pickup.SubType] then
-                local save = Resouled.SaveManager.GetRoomFloorSave(pickup)
-                if save.BlastMiner and save.BlastMiner.PLAYER == index then
-                    Resouled:ExplodeBlastMinerTNTCrate(pickup, save.BlastMiner.FLAGS)
+                local data = pickup:GetData()
+                if data["BlastMiner"] and data["BlastMiner"]["Player"] == index then
+                    Resouled:ExplodeBlastMinerTNTCrate(pickup, data["BlastMiner"]["Flags"])
                 end
             end
         end)

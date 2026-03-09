@@ -31,6 +31,7 @@ local MAX_SPEED_UPWARDS = 20
 ---@param tnt EntityPickup
 ---@param flags TearFlags
 local EXPLODE = function(tnt, flags)
+    local newFlags = BitSet128(flags["L"], flags["H"])
     local bomb = Game():Spawn(EntityType.ENTITY_BOMB, BombVariant.BOMB_NORMAL, tnt.Position, Vector.Zero, nil, 0,
         tnt.InitSeed):ToBomb()
     if not bomb then return end
@@ -39,7 +40,7 @@ local EXPLODE = function(tnt, flags)
         bomb.ExplosionDamage = 185 --MR. MEGA damage
     end
     local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(tnt)
-    bomb:AddTearFlags(flags)
+    bomb:AddTearFlags(newFlags)
     bomb:SetExplosionCountdown(0)
     bomb:Update()
     tnt:SetVarData(TNT_HP)
@@ -47,7 +48,8 @@ local EXPLODE = function(tnt, flags)
     tnt.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
     tnt.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
 
-    local golden = ROOM_SAVE.BlastMiner.GOLDEN
+    local data = tnt:GetData()
+    local golden = data["BlastMiner"]["Golden"]
     local subtype
     if tnt.SubType == TNT_SUBTYPE then
         if golden then
@@ -75,8 +77,7 @@ local EXPLODE = function(tnt, flags)
 end
 
 ---@param tnt EntityPickup
----@param flags TearFlags
-function Resouled:ExplodeBlastMinerTNTCrate(tnt, flags)
+function Resouled:ExplodeBlastMinerTNTCrate(tnt)
     tnt:GetData().Explode = true
 end
 
@@ -84,10 +85,12 @@ end
 local function postPickupInit(_, pickup)
     if subtypeWhitelist[pickup.SubType] then
         local sprite = pickup:GetSprite()
-        local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(pickup)
-        local ROOM_SAVE_POSITION = Resouled.SaveManager.GetRoomFloorSave(pickup.Position)
-        ROOM_SAVE.BlastMiner = ROOM_SAVE_POSITION.BlastMiner
-        if ROOM_SAVE.BlastMiner and ROOM_SAVE.BlastMiner.GOLDEN and pickup.SubType == TNT_SUBTYPE then
+        local data = pickup:GetData()
+        local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(pickup.Position)
+        if ROOM_SAVE["BlastMiner"] then
+            data["BlastMiner"] = ROOM_SAVE["BlastMiner"]
+        end
+        if data["BlastMiner"] and data["BlastMiner"]["Golden"] then
             sprite:ReplaceSpritesheet(0, "gfx_resouled/pickups/bombs/blast_miner_crate_gold.png", true)
         end
         sprite:Play("0", true)
@@ -97,30 +100,38 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, postPickupInit, TNT_VARIA
 
 ---@param pickup EntityPickup
 local function onPickupUpdate(_, pickup)
-    local sprite = pickup:GetSprite()
     if subtypeWhitelist[pickup.SubType] then
+        local sprite = pickup:GetSprite()
+        local data = pickup:GetData()
+
+        if pickup.FrameCount == 1 then
+            if data["BlastMiner"] and data["BlastMiner"]["Golden"] then
+                sprite:ReplaceSpritesheet(0, "gfx_resouled/pickups/bombs/blast_miner_crate_gold.png", true)
+            end
+        end
+
         local varData = pickup:GetVarData()
 
         if sprite:GetAnimation() ~= varData then
             sprite:Play(tostring(varData), true)
         end
 
-        local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(pickup)
-        if ROOM_SAVE.BlastMiner and pickup:GetVarData() < TNT_HP then
+        if data["BlastMiner"] and pickup:GetVarData() < TNT_HP then
+            local flags = data["BlastMiner"]["Flags"]
+
             if pickup.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_ALL then
                 pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
             end
             if pickup.GridCollisionClass ~= EntityGridCollisionClass.GRIDCOLL_GROUND then
                 pickup.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_GROUND
             end
-            local data = pickup:GetData()
 
             if data.Explode then
-                EXPLODE(pickup, ROOM_SAVE.BlastMiner.FLAGS)
+                EXPLODE(pickup, flags or TearFlags.TEAR_NORMAL)
                 return
             end
 
-            local bobbyBombPresent = ROOM_SAVE.BlastMiner.BOBBYBOMB
+            local bobbyBombPresent = data["BlastMiner"]["BobbyBomb"]
             ---@type EntityNPC | nil
             local nearestEnemy = nil
 
@@ -174,7 +185,7 @@ local function onPickupUpdate(_, pickup)
                     pickup.Velocity = (pickup.Velocity + (nearestEnemy.Position - pickup.Position):Normalized()) *
                         BOBBY_BOMBS_VELOCITY_MULTIPLIER
                 else
-                    EXPLODE(pickup, ROOM_SAVE.BlastMiner.FLAGS)
+                    EXPLODE(pickup, flags or TearFlags.TEAR_NORMAL)
                     nearestEnemy = nil
                     return
                 end
@@ -187,7 +198,7 @@ local function onPickupUpdate(_, pickup)
             end
 
             if varData >= TNT_HP then
-                EXPLODE(pickup, ROOM_SAVE.BlastMiner.FLAGS)
+                EXPLODE(pickup, flags or TearFlags.TEAR_NORMAL)
                 return
             end
         else
@@ -204,19 +215,18 @@ local function onPickupUpdate(_, pickup)
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_UPDATE, onPickupUpdate, TNT_VARIANT)
 
-local function preRoomLeave()
+local function saveTNTData()
     ---@param pickup EntityPickup
     Resouled.Iterators:IterateOverRoomPickups(function(pickup)
         if pickup.Variant == TNT_VARIANT and subtypeWhitelist[pickup.SubType] then
-            local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(pickup)
-            local ROOM_SAVE_POSITION = Resouled.SaveManager.GetRoomFloorSave(pickup.Position)
-            if ROOM_SAVE.BlastMiner then
-                ROOM_SAVE_POSITION.BlastMiner = ROOM_SAVE.BlastMiner
-            end
+            local data = pickup:GetData()
+            local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(pickup.Position)
+            ROOM_SAVE["BlastMiner"] = data["BlastMiner"]
         end
     end)
 end
-Resouled:AddCallback(ModCallbacks.MC_PRE_ROOM_EXIT, preRoomLeave)
+Resouled:AddCallback(ModCallbacks.MC_PRE_ROOM_EXIT, saveTNTData)
+Resouled:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, saveTNTData)
 
 
 local function getDir(angle)

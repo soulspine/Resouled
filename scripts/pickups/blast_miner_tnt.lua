@@ -1,3 +1,5 @@
+local g = Game()
+
 local TNT_VARIANT = Isaac.GetEntityVariantByName("Blast Miner TNT")
 local TNT_SUBTYPE = Isaac.GetEntitySubTypeByName("Blast Miner TNT")
 local TNT_MEGA_SUBTYPE = Isaac.GetEntitySubTypeByName("Blast Miner TNT Mega")
@@ -32,7 +34,7 @@ local MAX_SPEED_UPWARDS = 20
 ---@param flags TearFlags
 local EXPLODE = function(tnt, flags)
     local newFlags = BitSet128(flags["L"], flags["H"])
-    local bomb = Game():Spawn(EntityType.ENTITY_BOMB, BombVariant.BOMB_NORMAL, tnt.Position, Vector.Zero, nil, 0,
+    local bomb = g:Spawn(EntityType.ENTITY_BOMB, BombVariant.BOMB_NORMAL, tnt.Position, Vector.Zero, nil, 0,
         tnt.InitSeed):ToBomb()
     if not bomb then return end
 
@@ -49,7 +51,7 @@ local EXPLODE = function(tnt, flags)
     tnt.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
 
     local data = tnt:GetData()
-    local golden = data["BlastMiner"]["Golden"]
+    local golden = data["Resouled_BlastMiner"]["Golden"]
     local subtype
     if tnt.SubType == TNT_SUBTYPE then
         if golden then
@@ -87,10 +89,10 @@ local function postPickupInit(_, pickup)
         local sprite = pickup:GetSprite()
         local data = pickup:GetData()
         local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(pickup.Position)
-        if ROOM_SAVE["BlastMiner"] then
-            data["BlastMiner"] = ROOM_SAVE["BlastMiner"]
+        if ROOM_SAVE["Resouled_BlastMiner"] then
+            data["Resouled_BlastMiner"] = ROOM_SAVE["Resouled_BlastMiner"]
         end
-        if data["BlastMiner"] and data["BlastMiner"]["Golden"] then
+        if data["Resouled_BlastMiner"] and data["Resouled_BlastMiner"]["Golden"] then
             sprite:ReplaceSpritesheet(0, "gfx_resouled/pickups/bombs/blast_miner_crate_gold.png", true)
         end
         sprite:Play("0", true)
@@ -105,7 +107,7 @@ local function onPickupUpdate(_, pickup)
         local data = pickup:GetData()
 
         if pickup.FrameCount == 1 then
-            if data["BlastMiner"] and data["BlastMiner"]["Golden"] then
+            if data["Resouled_BlastMiner"] and data["Resouled_BlastMiner"]["Golden"] then
                 sprite:ReplaceSpritesheet(0, "gfx_resouled/pickups/bombs/blast_miner_crate_gold.png", true)
             end
         end
@@ -115,91 +117,116 @@ local function onPickupUpdate(_, pickup)
         if sprite:GetAnimation() ~= varData then
             sprite:Play(tostring(varData), true)
         end
-
-        if data["BlastMiner"] and pickup:GetVarData() < TNT_HP then
-            local flags = data["BlastMiner"]["Flags"]
-
-            if pickup.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_ALL then
-                pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
-            end
-            if pickup.GridCollisionClass ~= EntityGridCollisionClass.GRIDCOLL_GROUND then
-                pickup.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_GROUND
-            end
-
-            if data.Explode then
-                EXPLODE(pickup, flags or TearFlags.TEAR_NORMAL)
-                return
-            end
-
-            local bobbyBombPresent = data["BlastMiner"]["BobbyBomb"]
-            ---@type EntityNPC | nil
-            local nearestEnemy = nil
-
-            ---@param entity Entity
-            Resouled.Iterators:IterateOverRoomEntities(function(entity)
-                if bobbyBombPresent then
-                    local npc = entity:ToNPC()
-                    if npc and npc:IsEnemy() and npc:IsActiveEnemy() and npc:IsVulnerableEnemy() then
-                        if not nearestEnemy then
-                            nearestEnemy = npc
-                        elseif npc.Position:Distance(pickup.Position) < nearestEnemy.Position:Distance(pickup.Position) then
-                            nearestEnemy = npc
-                        end
-                    end
+        
+        if data["Resouled_BlastMiner"] and pickup:GetVarData() < TNT_HP then
+            local throwConfig = data.Resouled_TNTCrateThrown
+            if not throwConfig then
+                
+                local flags = data["Resouled_BlastMiner"]["Flags"]
+                
+                if pickup.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_ALL then
+                    pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
                 end
-
-                local tear = entity:ToTear()
-                if tear and tear.Position:Distance(pickup.Position) - tear.Size <= pickup.Size then
-                    tear:Die()
-                    pickup:SetVarData(pickup:GetVarData() + 1)
+                if pickup.GridCollisionClass ~= EntityGridCollisionClass.GRIDCOLL_GROUND then
+                    pickup.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_GROUND
                 end
-
-                local bomb = entity:ToBomb()
-                if bomb and bomb:GetExplosionCountdown() <= 0 and Resouled:IsInBombBlastRadius(pickup, bomb) then
-                    data.Explode = true
-                end
-
-                local knife = entity:ToKnife()
-                if knife and knife.Position:Distance(pickup.Position) - knife.Size <= pickup.Size then
-                    pickup:SetVarData(pickup:GetVarData() + 1)
-                end
-
-                local laser = entity:ToLaser()
-                if laser then
-                    local laserDamage = false
-                    local samples = laser:GetNonOptimizedSamples()
-                    for i = 0, #samples - 1 do
-                        local samplePos = samples:Get(i)
-                        if samplePos:Distance(pickup.Position) - laser.Size <= pickup.Size then
-                            laserDamage = true
-                        end
-                    end
-                    if laserDamage then
-                        pickup:SetVarData(pickup:GetVarData() + 1)
-                    end
-                end
-            end)
-
-            if nearestEnemy then
-                if pickup.Position:Distance(nearestEnemy.Position) > pickup.Size + nearestEnemy.Size then
-                    pickup.Velocity = (pickup.Velocity + (nearestEnemy.Position - pickup.Position):Normalized()) *
-                        BOBBY_BOMBS_VELOCITY_MULTIPLIER
-                else
+                
+                if data.Explode then
                     EXPLODE(pickup, flags or TearFlags.TEAR_NORMAL)
-                    nearestEnemy = nil
                     return
                 end
-            end
+                
+                local bobbyBombPresent = data["Resouled_BlastMiner"]["BobbyBomb"]
+                ---@type EntityNPC | nil
+                local nearestEnemy = nil
+                
+                ---@param entity Entity
+                Resouled.Iterators:IterateOverRoomEntities(function(entity)
+                    if bobbyBombPresent then
+                        local npc = entity:ToNPC()
+                        if npc and npc:IsEnemy() and npc:IsActiveEnemy() and npc:IsVulnerableEnemy() then
+                            if not nearestEnemy then
+                                nearestEnemy = npc
+                            elseif npc.Position:Distance(pickup.Position) < nearestEnemy.Position:Distance(pickup.Position) then
+                                nearestEnemy = npc
+                            end
+                        end
+                    end
+                    
+                    local tear = entity:ToTear()
+                    if tear and tear.Position:Distance(pickup.Position) - tear.Size <= pickup.Size then
+                        tear:Die()
+                        pickup:SetVarData(pickup:GetVarData() + 1)
+                    end
+                    
+                    local bomb = entity:ToBomb()
+                    if bomb and bomb:GetExplosionCountdown() <= 0 and Resouled:IsInBombBlastRadius(pickup, bomb) then
+                        data.Explode = true
+                    end
+                    
+                    local knife = entity:ToKnife()
+                    if knife and knife.Position:Distance(pickup.Position) - knife.Size <= pickup.Size then
+                        pickup:SetVarData(pickup:GetVarData() + 1)
+                    end
+                
+                    local laser = entity:ToLaser()
+                    if laser then
+                        local laserDamage = false
+                        local samples = laser:GetNonOptimizedSamples()
+                        for i = 0, #samples - 1 do
+                            local samplePos = samples:Get(i)
+                            if samplePos:Distance(pickup.Position) - laser.Size <= pickup.Size then
+                                laserDamage = true
+                            end
+                        end
+                        if laserDamage then
+                            pickup:SetVarData(pickup:GetVarData() + 1)
+                        end
+                    end
+                end)
+                
+                if nearestEnemy then
+                    if pickup.Position:Distance(nearestEnemy.Position) > pickup.Size + nearestEnemy.Size then
+                        pickup.Velocity = (pickup.Velocity + (nearestEnemy.Position - pickup.Position):Normalized()) *
+                        BOBBY_BOMBS_VELOCITY_MULTIPLIER
+                    else
+                        EXPLODE(pickup, flags or TearFlags.TEAR_NORMAL)
+                        nearestEnemy = nil
+                        return
+                    end
+                end
+                
+                varData = pickup:GetVarData()
+                
+                if sprite:GetAnimation() ~= varData then
+                    sprite:Play(tostring(varData), true)
+                end
+                
+                if varData >= TNT_HP then
+                    EXPLODE(pickup, flags or TearFlags.TEAR_NORMAL)
+                    return
+                end
+                
+                pickup.Velocity = pickup.Velocity * VELOCITY_MULTIPLIER
+            else
 
-            varData = pickup:GetVarData()
+                if pickup.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_NONE then
+                    pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
+                end
 
-            if sprite:GetAnimation() ~= varData then
-                sprite:Play(tostring(varData), true)
-            end
+                if pickup.GridCollisionClass ~= EntityGridCollisionClass.GRIDCOLL_PITSONLY then
+                    pickup.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_PITSONLY
+                end
 
-            if varData >= TNT_HP then
-                EXPLODE(pickup, flags or TearFlags.TEAR_NORMAL)
-                return
+                if throwConfig.Height.Y >= 0 then
+                    local newVarData = varData + 1
+                    pickup:SetVarData(newVarData)
+                    if newVarData == 3 then
+                        EXPLODE(pickup, data["Resouled_BlastMiner"]["Flags"])
+                    end
+                    data.Resouled_TNTCrateThrown = nil
+                end
+
             end
         else
             if pickup.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_NONE then
@@ -208,12 +235,29 @@ local function onPickupUpdate(_, pickup)
             if pickup.GridCollisionClass ~= EntityGridCollisionClass.GRIDCOLL_GROUND then
                 pickup.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_GROUND
             end
+
             pickup.Velocity = Vector.Zero
         end
-        pickup.Velocity = pickup.Velocity * VELOCITY_MULTIPLIER
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_UPDATE, onPickupUpdate, TNT_VARIANT)
+
+---@param pickup EntityPickup
+---@param offset Vector
+local function onPickupRender(_, pickup, offset)
+    if g:IsPaused() then return end
+    if not subtypeWhitelist[pickup.SubType] then return end
+
+    
+    local data = pickup:GetData()
+    if not data.Resouled_TNTCrateThrown then return end
+
+    data.Resouled_TNTCrateThrown.Height.Y = math.min(0, data.Resouled_TNTCrateThrown.Height.Y + data.Resouled_TNTCrateThrown.Speed)
+    data.Resouled_TNTCrateThrown.Speed = data.Resouled_TNTCrateThrown.Speed + data.Resouled_TNTCrateThrown.Accel
+
+    return offset + data.Resouled_TNTCrateThrown.Height
+end
+Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_RENDER, onPickupRender)
 
 local function saveTNTData()
     ---@param pickup EntityPickup
@@ -221,7 +265,7 @@ local function saveTNTData()
         if pickup.Variant == TNT_VARIANT and subtypeWhitelist[pickup.SubType] then
             local data = pickup:GetData()
             local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(pickup.Position)
-            ROOM_SAVE["BlastMiner"] = data["BlastMiner"]
+            ROOM_SAVE["Resouled_BlastMiner"] = data["Resouled_BlastMiner"]
         end
     end)
 end

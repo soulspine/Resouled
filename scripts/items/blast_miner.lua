@@ -13,6 +13,76 @@ local tntSubtypes = {
     [TNT_GIGA_SUBTYPE] = true
 }
 
+local TNT_THROW_SPEED = 10
+
+local saveKey = "PickedUpTNTCrate"
+
+local function makeSureCrateSpriteExistsInData(player)
+    local runSave = Resouled.SaveManager.GetRunSave(player)
+    if not runSave[saveKey] then return end
+
+    local data = player:GetData()
+    data.Resouled_PickedUpTNTCrate = Sprite()
+    data.Resouled_PickedUpTNTCrate:Load(runSave[saveKey]["Anm2Path"], false)
+    data.Resouled_PickedUpTNTCrate:ReplaceSpritesheet(0, runSave[saveKey]["Spritesheet"], false)
+    data.Resouled_PickedUpTNTCrate:LoadGraphics()
+    data.Resouled_PickedUpTNTCrate:Play(tostring(runSave[saveKey]["VarData"]), true)
+end
+
+local CRATE_RENDER_OFFSET = Vector(0.5, -17)
+
+---@param player EntityPlayer
+---@param velocity Vector
+local function throwPickedUpTNTCrate(player, velocity)
+    local runSave = Resouled.SaveManager.GetRunSave(player)
+    if not runSave[saveKey] then return end
+
+    local tnt = g:Spawn(EntityType.ENTITY_PICKUP, TNT_VARIANT, player.Position, velocity, player, runSave[saveKey]["SubType"], runSave[saveKey]["Seed"]):ToPickup()
+    if not tnt then return end
+
+    tnt:SetVarData(runSave[saveKey]["VarData"])
+    local data = tnt:GetData()
+    data.Resouled_TNTCrateThrown = {
+        Speed = -3,
+        Accel = 0.15,
+        Height = Vector(0, CRATE_RENDER_OFFSET.Y)
+    }
+    tnt.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
+    tnt.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
+    data["Resouled_BlastMiner"] = runSave[saveKey]["CrateData"]
+
+    runSave[saveKey] = nil
+    player:GetData().Resouled_PickedUpTNTCrate = nil
+end
+
+---@param player EntityPlayer
+---@param crate EntityPickup
+local function playerPickupTNTCrate(player, crate)
+    if player:GetHeldEntity() then return end
+    local data = player:GetData()
+
+    if data.Resouled_PickedUpTNTCrate then
+        throwPickedUpTNTCrate(player, Vector(TNT_THROW_SPEED, 0):Rotated(360 * math.random()))
+    end
+
+    local runSave = Resouled.SaveManager.GetRunSave(player)
+    if runSave[saveKey] then return end
+
+    local sprite = crate:GetSprite()
+    runSave[saveKey] = {
+        ["CrateData"] = crate:GetData()["Resouled_BlastMiner"],
+        ["Anm2Path"] = sprite:GetFilename(),
+        ["Spritesheet"] = crate:GetSprite():GetLayer(0):GetSpritesheetPath(),
+        ["VarData"] = crate:GetVarData(),
+        ["Seed"] = crate.InitSeed,
+        ["SubType"] = crate.SubType
+    }
+
+    makeSureCrateSpriteExistsInData(player)
+
+    crate:Remove()
+end
+
 ---@param player EntityPlayer
 local function prePlaceBomb(_, player)
     if player:HasCollectible(BLAST_MINER) then
@@ -36,7 +106,9 @@ local function playerPlaceBomb(_, player, bomb)
         else
             subtype = TNT_SUBTYPE
         end
-        local tnt = g:Spawn(EntityType.ENTITY_PICKUP, TNT_VARIANT, player.Position, Vector.Zero, player, subtype, bomb.InitSeed)
+        local tnt = g:Spawn(EntityType.ENTITY_PICKUP, TNT_VARIANT, player.Position, Vector.Zero, player, subtype, bomb.InitSeed):ToPickup()
+        if not tnt then return end
+
         tnt.Velocity = player.Velocity * 2
         bomb:Remove()
 
@@ -57,76 +129,16 @@ local function playerPlaceBomb(_, player, bomb)
         if tntData["Resouled_BlastMiner"]["Golden"] and tnt.SubType == TNT_SUBTYPE then
             tnt:GetSprite():ReplaceSpritesheet(0, "gfx_resouled/pickups/bombs/blast_miner_crate_gold.png", true)
         end
+
+        local spelunkersPack = Isaac.GetItemIdByName("Spelunker's Pack")
+        if spelunkersPack and player:HasCollectible(spelunkersPack) then
+            playerPickupTNTCrate(player, tnt)
+        end
+
         g:Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, tnt.Position, Vector.Zero, nil, 0, tnt.InitSeed)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_USE_BOMB, playerPlaceBomb)
-
-
-
-local saveKey = "PickedUpTNTCrate"
-
-local function makeSureCrateSpriteExistsInData(player)
-    local runSave = Resouled.SaveManager.GetRunSave(player)
-    if not runSave[saveKey] then return end
-
-    local data = player:GetData()
-    data.Resouled_PickedUpTNTCrate = Sprite()
-    data.Resouled_PickedUpTNTCrate:Load(runSave[saveKey]["Anm2Path"], false)
-    data.Resouled_PickedUpTNTCrate:ReplaceSpritesheet(0, runSave[saveKey]["Spritesheet"], false)
-    data.Resouled_PickedUpTNTCrate:LoadGraphics()
-    data.Resouled_PickedUpTNTCrate:Play(tostring(runSave[saveKey]["VarData"]), true)
-end
-
----@param player EntityPlayer
----@param crate EntityPickup
-local function playerPickupTNTCrate(player, crate)
-    local runSave = Resouled.SaveManager.GetRunSave(player)
-    if runSave[saveKey] then return end
-
-    local sprite = crate:GetSprite()
-    runSave[saveKey] = {
-        ["CrateData"] = crate:GetData()["Resouled_BlastMiner"],
-        ["Anm2Path"] = sprite:GetFilename(),
-        ["Spritesheet"] = crate:GetSprite():GetLayer(0):GetSpritesheetPath(),
-        ["VarData"] = crate:GetVarData(),
-        ["Seed"] = crate.InitSeed,
-        ["SubType"] = crate.SubType
-    }
-
-    makeSureCrateSpriteExistsInData(player)
-    local data = player:GetData()
-    
-    player:AnimatePickup(data.Resouled_PickedUpTNTCrate, true, tostring(runSave[saveKey]["VarData"]))
-
-    crate:Remove()
-end
-
-local CRATE_RENDER_OFFSET = Vector(0.5, -17)
-
----@param player EntityPlayer
----@param velocity Vector
-local function throwPickedUpTNTCrate(player, velocity)
-    local runSave = Resouled.SaveManager.GetRunSave(player)
-    if not runSave[saveKey] then return end
-
-    local tnt = g:Spawn(EntityType.ENTITY_PICKUP, TNT_VARIANT, player.Position, velocity, player, runSave[saveKey]["SubType"], runSave[saveKey]["Seed"]):ToPickup()
-    if not tnt then return end
-
-    tnt:SetVarData(runSave[saveKey]["VarData"])
-    local data = tnt:GetData()
-    data.Resouled_TNTCrateThrown = {
-        Speed = -3,
-        Accel = 0.15,
-        Height = Vector(0, CRATE_RENDER_OFFSET.Y)
-    }
-    tnt.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
-    tnt.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_PITSONLY
-    data["Resouled_BlastMiner"] = runSave[saveKey]["CrateData"]
-
-    runSave[saveKey] = nil
-    player:GetData().Resouled_PickedUpTNTCrate = nil
-end
 
 ---@param player EntityPlayer
 local function onPlayerUpdate(_, player)
@@ -135,8 +147,8 @@ local function onPlayerUpdate(_, player)
 
     local input = player:GetShootingInput()
     if input.X ~= 0 or input.Y ~= 0 or Resouled.AccurateStats:GetEffectiveHP(player) <= 0 then
-        local vel = input:Normalized():Resized(10)
-        throwPickedUpTNTCrate(player, vel)
+        local vel = input:Normalized():Resized(TNT_THROW_SPEED)
+        throwPickedUpTNTCrate(player, vel + player.Velocity)
     end
 
     player:SetShootingCooldown(5)
@@ -187,6 +199,7 @@ local function onPlayerRender(_, player)
         makeSureCrateSpriteExistsInData(player)
         goto CreateSprite
     end
+
     
     local renderPos = Isaac.WorldToScreen(player.Position + player:GetFlyingOffset() + player.SpriteOffset)
     sprite:RemoveOverlay()
@@ -196,7 +209,7 @@ local function onPlayerRender(_, player)
         
     sprite:Render(renderPos)
         
-    crateSprite:Render(renderPos + CRATE_RENDER_OFFSET)
+    crateSprite:Render(renderPos + CRATE_RENDER_OFFSET - player.Velocity/5)
 
     return false
 end
@@ -231,3 +244,12 @@ local function onUseItem(_, item, _, player)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onUseItem)
+
+---@param en Entity
+Resouled:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, function(_, en)
+    local player = en:ToPlayer()
+    if not player then return end
+    if player:GetData().Resouled_PickedUpTNTCrate then
+        throwPickedUpTNTCrate(player, Vector(TNT_THROW_SPEED, 0):Rotated(360 * math.random()))
+    end
+end, EntityType.ENTITY_PLAYER)

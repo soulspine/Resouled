@@ -30,6 +30,17 @@ local MAX_SPEED = 25
 local MIN_SPEED_UPWARDS = 10
 local MAX_SPEED_UPWARDS = 20
 
+local gridLandExplodeBlacklist = {
+    [GridEntityType.GRID_DECORATION] = true,
+    [GridEntityType.GRID_GRAVITY] = true,
+    [GridEntityType.GRID_PRESSURE_PLATE] = true,
+    [GridEntityType.GRID_SPIDERWEB] = true,
+    [GridEntityType.GRID_SPIKES] = true,
+    [GridEntityType.GRID_SPIKES_ONOFF] = true,
+    [GridEntityType.GRID_TRAPDOOR] = true,
+    [GridEntityType.GRID_TELEPORTER] = true
+}
+
 ---@param tnt EntityPickup
 ---@param flags TearFlags
 local EXPLODE = function(tnt, flags)
@@ -209,13 +220,18 @@ local function onPickupUpdate(_, pickup)
                 
                 pickup.Velocity = pickup.Velocity * VELOCITY_MULTIPLIER
             else
+                local room = g:GetRoom()
+
+                if not room:IsPositionInRoom(pickup.Position, 1) then
+                    pickup.Velocity = Vector.Zero
+                end
 
                 if pickup.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_NONE then
                     pickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
                 end
 
-                if pickup.GridCollisionClass ~= EntityGridCollisionClass.GRIDCOLL_PITSONLY then
-                    pickup.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_PITSONLY
+                if pickup.GridCollisionClass ~= EntityGridCollisionClass.GRIDCOLL_NONE then
+                    pickup.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
                 end
 
                 if throwConfig.Height.Y >= 0 then
@@ -223,7 +239,25 @@ local function onPickupUpdate(_, pickup)
                     pickup:SetVarData(newVarData)
                     if newVarData == 3 then
                         EXPLODE(pickup, data["Resouled_BlastMiner"]["Flags"])
+                        data.Resouled_TNTCrateThrown = nil
+                        return
                     end
+
+                    local grid = room:GetGridEntityFromPos(pickup.Position)
+                    if grid and not gridLandExplodeBlacklist[grid:GetType()] then
+                        EXPLODE(pickup, data["Resouled_BlastMiner"]["Flags"])
+                        data.Resouled_TNTCrateThrown = nil
+                        return
+                    end
+
+                    local npcs = Isaac.FindInRadius(pickup.Position, pickup.Size, EntityPartition.ENEMY)
+                    if #npcs > 0 then
+                        EXPLODE(pickup, data["Resouled_BlastMiner"]["Flags"])
+                        data.Resouled_TNTCrateThrown = nil
+                        return
+                    end
+
+
                     data.Resouled_TNTCrateThrown = nil
                 end
 
@@ -255,7 +289,7 @@ local function onPickupRender(_, pickup, offset)
     data.Resouled_TNTCrateThrown.Height.Y = math.min(0, data.Resouled_TNTCrateThrown.Height.Y + data.Resouled_TNTCrateThrown.Speed)
     data.Resouled_TNTCrateThrown.Speed = data.Resouled_TNTCrateThrown.Speed + data.Resouled_TNTCrateThrown.Accel
 
-    return offset + data.Resouled_TNTCrateThrown.Height
+    return offset + data.Resouled_TNTCrateThrown.Height - g:GetRoom():GetRenderScrollOffset()
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_RENDER, onPickupRender)
 

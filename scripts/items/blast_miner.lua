@@ -14,6 +14,7 @@ local tntSubtypes = {
 }
 
 local TNT_THROW_SPEED = 10
+local TNT_THROW_COOLDOWN = 5
 
 local saveKey = "PickedUpTNTCrate"
 
@@ -26,7 +27,8 @@ local function makeSureCrateSpriteExistsInData(player)
     data.Resouled_PickedUpTNTCrate:Load(runSave[saveKey]["Anm2Path"], false)
     data.Resouled_PickedUpTNTCrate:ReplaceSpritesheet(0, runSave[saveKey]["Spritesheet"], false)
     data.Resouled_PickedUpTNTCrate:LoadGraphics()
-    data.Resouled_PickedUpTNTCrate:Play(tostring(runSave[saveKey]["VarData"]), true)
+    local anim = tostring(runSave[saveKey]["VarData"]).."Pickup"
+    data.Resouled_PickedUpTNTCrate:Play(anim, true)
 end
 
 local CRATE_RENDER_OFFSET = Vector(0.5, -17)
@@ -53,6 +55,8 @@ local function throwPickedUpTNTCrate(player, velocity)
 
     runSave[saveKey] = nil
     player:GetData().Resouled_PickedUpTNTCrate = nil
+
+    player:AnimatePickup(Sprite(), nil, "HideItem")
 end
 
 ---@param player EntityPlayer
@@ -60,6 +64,8 @@ end
 local function playerPickupTNTCrate(player, crate)
     if player:GetHeldEntity() then return end
     local data = player:GetData()
+
+    data.Resouled_PickedUpTNTCrateThrowCooldown = TNT_THROW_COOLDOWN
 
     if data.Resouled_PickedUpTNTCrate then
         throwPickedUpTNTCrate(player, Vector(TNT_THROW_SPEED, 0):Rotated(360 * math.random()))
@@ -80,6 +86,8 @@ local function playerPickupTNTCrate(player, crate)
 
     makeSureCrateSpriteExistsInData(player)
 
+    player:AnimatePickup(data.Resouled_PickedUpTNTCrate, nil, "LiftItem")
+
     crate:Remove()
 end
 
@@ -92,158 +100,149 @@ end
 Resouled:AddCallback(ModCallbacks.MC_PRE_PLAYER_USE_BOMB, prePlaceBomb)
 
 ---@param player EntityPlayer
+---@return EntityPickup
+function Resouled:SpawnBlastMinerTNTCrate(player)
+    local data = player:GetData()
+    local subtype
+
+    if (data.Resouled_HasGigaBomb and data.Resouled_HasGigaBomb == true) then
+        data.Resouled_HasGigaBomb = nil
+        subtype = TNT_GIGA_SUBTYPE
+    elseif player:HasCollectible(CollectibleType.COLLECTIBLE_MR_MEGA) then
+        subtype = TNT_MEGA_SUBTYPE
+    else
+        subtype = TNT_SUBTYPE
+    end
+    local tnt = g:Spawn(EntityType.ENTITY_PICKUP, TNT_VARIANT, player.Position, Vector.Zero, player, subtype, Resouled:NewSeed()):ToPickup()
+    if not tnt then return end
+    tnt.Velocity = player.Velocity * 2
+
+    local tntData = tnt:GetData()
+    ---@type BitSet128
+    ---@diagnostic disable-next-line
+    local flags = player:GetBombFlags()
+    tntData["Resouled_BlastMiner"] = {
+        ["Golden"] = player:HasGoldenBomb(),
+        ["BobbyBomb"] = player:HasCollectible(CollectibleType.COLLECTIBLE_BOBBY_BOMB),
+        ["Flags"] = {
+            ["L"] = flags.l,
+            ["R"] = flags.h
+        },
+        ["Player"] = tostring(player:GetPlayerIndex())
+    }
+    if tntData["Resouled_BlastMiner"]["Golden"] and tnt.SubType == TNT_SUBTYPE then
+        tnt:GetSprite():ReplaceSpritesheet(0, "gfx_resouled/pickups/bombs/blast_miner_crate_gold.png", true)
+    end
+    g:Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, tnt.Position, Vector.Zero, nil, 0, tnt.InitSeed)
+
+    return tnt
+end
+
+---@param player EntityPlayer
 ---@param bomb EntityBomb
 local function playerPlaceBomb(_, player, bomb)
     if player:HasCollectible(BLAST_MINER) then
-        local data = player:GetData()
-        local subtype
-        player:GetNumGigaBombs()
-        if (data.Resouled_HasGigaBomb and data.Resouled_HasGigaBomb == true) then
-            data.Resouled_HasGigaBomb = nil
-            subtype = TNT_GIGA_SUBTYPE
-        elseif player:HasCollectible(CollectibleType.COLLECTIBLE_MR_MEGA) then
-            subtype = TNT_MEGA_SUBTYPE
-        else
-            subtype = TNT_SUBTYPE
-        end
-        local tnt = g:Spawn(EntityType.ENTITY_PICKUP, TNT_VARIANT, player.Position, Vector.Zero, player, subtype, bomb.InitSeed):ToPickup()
-        if not tnt then return end
 
-        tnt.Velocity = player.Velocity * 2
-        bomb:Remove()
-
-        local tntData = tnt:GetData()
-        ---@type BitSet128
-        ---@diagnostic disable-next-line
-        local flags = player:GetBombFlags()
-
-        tntData["Resouled_BlastMiner"] = {
-            ["Golden"] = player:HasGoldenBomb(),
-            ["BobbyBomb"] = player:HasCollectible(CollectibleType.COLLECTIBLE_BOBBY_BOMB),
-            ["Flags"] = {
-                ["L"] = flags.l,
-                ["R"] = flags.h
-            },
-            ["Player"] = tostring(player:GetPlayerIndex())
-        }
-        if tntData["Resouled_BlastMiner"]["Golden"] and tnt.SubType == TNT_SUBTYPE then
-            tnt:GetSprite():ReplaceSpritesheet(0, "gfx_resouled/pickups/bombs/blast_miner_crate_gold.png", true)
-        end
+        local tnt = Resouled:SpawnBlastMinerTNTCrate(player)
 
         local spelunkersPack = Isaac.GetItemIdByName("Spelunker's Pack")
         if spelunkersPack and player:HasCollectible(spelunkersPack) then
             playerPickupTNTCrate(player, tnt)
         end
 
-        g:Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, tnt.Position, Vector.Zero, nil, 0, tnt.InitSeed)
+        bomb:Remove()
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_USE_BOMB, playerPlaceBomb)
+
+---@param bomb EntityBomb
+local function drFetusOverride(_, bomb)
+    local player = bomb.SpawnerEntity and bomb.SpawnerEntity:ToPlayer()
+    if player then
+        
+        if player:HasCollectible(BLAST_MINER) then
+            
+            local tnt = Resouled:SpawnBlastMinerTNTCrate(player)
+
+            playerPickupTNTCrate(player, tnt)
+            throwPickedUpTNTCrate(player, bomb.Velocity)
+
+            bomb:Remove()
+        end
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_FIRE_BOMB, drFetusOverride)
 
 ---@param player EntityPlayer
 local function onPlayerUpdate(_, player)
     local runSave = Resouled.SaveManager.GetRunSave(player)
     if not runSave[saveKey] then return end
+    makeSureCrateSpriteExistsInData(player)
+    local data = player:GetData()
+    local sprite = player:GetSprite()
+
+    if not player:GetHeldSprite():GetFilename():lower():find("blast_miner")
+        or (not sprite:GetAnimation():lower():find("pickup") and player.FrameCount%2 == 0)
+    then
+        player:AnimatePickup(data.Resouled_PickedUpTNTCrate, nil, "LiftItem")
+    end
+
+    player:SetShootingCooldown(5)
+
+    if data.Resouled_PickedUpTNTCrateThrowCooldown then
+        data.Resouled_PickedUpTNTCrateThrowCooldown = math.max(0, data.Resouled_PickedUpTNTCrateThrowCooldown - 1)
+        if data.Resouled_PickedUpTNTCrateThrowCooldown == 0 then data.Resouled_PickedUpTNTCrateThrowCooldown = nil else return end
+    end
 
     local input = player:GetShootingInput()
     if input.X ~= 0 or input.Y ~= 0 or Resouled.AccurateStats:GetEffectiveHP(player) <= 0 then
         local vel = input:Normalized():Resized(TNT_THROW_SPEED)
         throwPickedUpTNTCrate(player, vel + player.Velocity)
     end
-
-    player:SetShootingCooldown(5)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, onPlayerUpdate)
 
----@param player EntityPlayer
----@return table
-local function getWalkAnimFromPlayer(player)
-    local vel = player.Velocity
-    if vel:LengthSquared() < 0.1 then
-        return {
-            Anim = "PickupWalkDown",
-            Frame = 1
-        }
-    end
+---@param pickup EntityPickup
+---@param collider Entity
+local function onCollision(_, pickup, collider)
+    if not tntSubtypes[pickup.SubType] then return end
+    local player = collider:ToPlayer()
+    if not player then return end
+    if not (player:HasCollectible(CollectibleType.COLLECTIBLE_DR_FETUS) and player:HasCollectible(BLAST_MINER)) then return end
 
-    local degrees = vel:GetAngleDegrees()%360
-    local anim
-
-    if degrees < 45 or degrees >= 315 then
-        anim = "PickupWalkRight"
-    elseif degrees >= 45 and degrees < 135 then
-        anim = "PickupWalkDown"
-    elseif degrees >= 135 and degrees < 225 then
-        anim = "PickupWalkLeft"
-    elseif degrees >= 225 and degrees < 315 then
-        anim = "PickupWalkUp"
-    end
-
-    return {
-        Anim = anim,
-        Frame = player.FrameCount%20 --20 is the walking anim length
-    }
+    playerPickupTNTCrate(player, pickup)
 end
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_COLLISION, onCollision, TNT_VARIANT)
 
 ---@param player EntityPlayer
-local function onPlayerRender(_, player)
-    local runSave = Resouled.SaveManager.GetRunSave(player)
-    if not runSave[saveKey] then return end
-    local sprite = player:GetSprite()
-    if sprite:IsPlaying("Pickup") then return end
-
-    ::CreateSprite::
-    ---@type Sprite
-    local crateSprite = player:GetData().Resouled_PickedUpTNTCrate
-    if not crateSprite then
-        makeSureCrateSpriteExistsInData(player)
-        goto CreateSprite
-    end
-
-    
-    local renderPos = Isaac.WorldToScreen(player.Position + player:GetFlyingOffset() + player.SpriteOffset)
-    sprite:RemoveOverlay()
-        
-    local anim = getWalkAnimFromPlayer(player)
-    sprite:SetFrame(anim.Anim, anim.Frame)
-        
-    sprite:Render(renderPos)
-        
-    crateSprite:Render(renderPos + CRATE_RENDER_OFFSET - player.Velocity/5)
-
-    return false
-end
-Resouled:AddCallback(ModCallbacks.MC_PRE_PLAYER_RENDER, onPlayerRender)
-
----@param item CollectibleType
----@param player EntityPlayer
-local function onUseItem(_, item, _, player)
+local function onUseItem(_, _, _, player)
     if not player:HasCollectible(BLAST_MINER) then return end
-    if item == CollectibleType.COLLECTIBLE_REMOTE_DETONATOR then
-        
-        local index = tostring(player:GetPlayerIndex())
-        ---@param pickup EntityPickup
-        Resouled.Iterators:IterateOverRoomPickups(function(pickup)
-            if pickup.Variant == TNT_VARIANT and tntSubtypes[pickup.SubType] then
-                local data = pickup:GetData()
-                if data["Resouled_BlastMiner"] and data["Resouled_BlastMiner"]["Player"] == index then
-                    Resouled:ExplodeBlastMinerTNTCrate(pickup)
-                end
+    
+    local index = tostring(player:GetPlayerIndex())
+    ---@param pickup EntityPickup
+    Resouled.Iterators:IterateOverRoomPickups(function(pickup)
+        if pickup.Variant == TNT_VARIANT and tntSubtypes[pickup.SubType] then
+            local data = pickup:GetData()
+            if data["Resouled_BlastMiner"] and data["Resouled_BlastMiner"]["Player"] == index then
+                Resouled:ExplodeBlastMinerTNTCrate(pickup)
             end
-        end)
-    elseif item == CollectibleType.COLLECTIBLE_MOMS_BRACELET then
-        
-        for _, en in ipairs(Isaac.FindInRadius(player.Position, 25, EntityPartition.PICKUP)) do
-            local pickup = en:ToPickup()
-            if pickup and pickup.Variant == TNT_VARIANT and tntSubtypes[pickup.SubType] and pickup:GetVarData() < 3 then
-                
-                playerPickupTNTCrate(player, pickup)
-                return
-            end
+        end
+    end)
+end
+Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onUseItem, CollectibleType.COLLECTIBLE_REMOTE_DETONATOR)
+
+---@param player EntityPlayer
+local function preUseItem(_, _, _, player)
+    for _, en in ipairs(Isaac.FindInRadius(player.Position, 25, EntityPartition.PICKUP)) do
+        local pickup = en:ToPickup()
+        if pickup and pickup.Variant == TNT_VARIANT and tntSubtypes[pickup.SubType] and pickup:GetVarData() < 3 then
+            
+            playerPickupTNTCrate(player, pickup)
+            return true
         end
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onUseItem)
+Resouled:AddCallback(ModCallbacks.MC_PRE_USE_ITEM, preUseItem, CollectibleType.COLLECTIBLE_MOMS_BRACELET)
 
 ---@param en Entity
 Resouled:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, function(_, en)

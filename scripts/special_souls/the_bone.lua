@@ -10,7 +10,7 @@ local function onActiveUse(_, type, rng, player)
     if not RUN_SAVE.ResouledForgottenSacrificed then
         if Isaac.GetPersistentGameData():Unlocked(Achievement.FORGOTTEN) then
             if player:GetPlayerType() == PlayerType.PLAYER_THESOUL then
-                local room = Game():GetRoom()
+                local room = Resouled.Game:GetRoom()
                 if room:GetType() == RoomType.ROOM_BOSSRUSH then
                     if player:GetSubPlayer():GetPlayerType() == PlayerType.PLAYER_THEFORGOTTEN then
                         ---@param entity Entity
@@ -22,7 +22,7 @@ local function onActiveUse(_, type, rng, player)
                                     RUN_SAVE.ResouledForgottenSacrificed = {}
                                     RUN_SAVE.ResouledForgottenSacrificed[tostring(player:GetPlayerIndex())] = 1
                                     Resouled:TrySpawnSoulPickup(Resouled.Souls.THE_BONE, entity.Position)
-                                    SFXManager():Play(SoundEffect.SOUND_BONE_SNAP)
+                                    Resouled.SfxM:Play(SoundEffect.SOUND_BONE_SNAP)
                                 end
                             end
                         end)

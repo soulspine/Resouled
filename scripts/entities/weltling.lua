@@ -82,7 +82,7 @@ Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onNpcUpdate, WELTLING_TYPE)
 local function onTearCollision(_, tear)
     if tear.SpawnerEntity then
         if tear.SpawnerEntity.Type == WELTLING_TYPE and tear.SpawnerEntity.Variant == WELTLING_VARIANT and tear.SpawnerEntity.SubType == WELTLING_SUBTYPE then
-            Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CREEP_RED, tear.Position, Vector.Zero, tear.SpawnerEntity, 0, tear.SpawnerEntity.InitSeed)
+            Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CREEP_RED, tear.Position, Vector.Zero, tear.SpawnerEntity, 0, tear.SpawnerEntity.InitSeed)
         end
     end
 end

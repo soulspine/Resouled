@@ -20,7 +20,7 @@ local function onPlayerDamage(_, entity, amount, flags, source, countdown)
             for _ = 1, greedCoins do
                 local spawnPos = Isaac.GetFreeNearPosition(player.Position, COIN_POSITION_STEP)
                 local spawnVel = Vector(spawnPos.X - player.Position.X, spawnPos.Y - player.Position.Y):Resized(COIN_SPAWN_VECTOR_SIZE)
-                local coin = Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, spawnPos, spawnVel, nil, CoinSubType.COIN_PENNY, Game():GetSeeds():GetStageSeed(Game():GetLevel():GetStage()))
+                local coin = Resouled.Game:Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, spawnPos, spawnVel, nil, CoinSubType.COIN_PENNY, Resouled.Game:GetSeeds():GetStageSeed(Resouled.Game:GetLevel():GetStage()))
                 coin:ToPickup().Timeout = COIN_TIMEOUT
             end
         end

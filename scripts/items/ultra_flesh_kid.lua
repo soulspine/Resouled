@@ -1,4 +1,4 @@
-local game = Game()
+local game = Resouled.Game
 
 local ULTRA_FLESH_KID = Resouled.Enums.Items.ULTRA_FLESH_KID
 

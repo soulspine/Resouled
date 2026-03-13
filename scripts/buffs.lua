@@ -358,6 +358,7 @@ include("scripts.buffs.gluttony")
 include("scripts.special_souls.the_bone")
 include("scripts.buffs.pride")
 include("scripts.buffs.conquest")
+include("scripts.buffs.sloth")
 
 include("scripts.buffs.cursed.lord_of_the_flies")
 include("scripts.buffs.cursed.masquerade")

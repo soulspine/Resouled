@@ -21,7 +21,7 @@ black:Play("Idle", true)
 ---@param isGameOver boolean
 local function postGameEnd(_, isGameOver)
     
-    local difficulty = Game().Difficulty
+    local difficulty = Resouled.Game.Difficulty
     
     if difficulty == Difficulty.DIFFICULTY_GREED then
         difficulty = Difficulty.DIFFICULTY_NORMAL
@@ -35,8 +35,8 @@ local function postGameEnd(_, isGameOver)
         Resouled.AfterlifeShop.Goto.Activate = true
         Resouled.AfterlifeShop.Goto.SoulNum = Resouled:GetPossessedSoulsNum()
         Resouled.AfterlifeShop.Goto.ReplaceMusic = true
-        Resouled.AfterlifeShop.Goto.PlayTime = Game().TimeCounter
-        Resouled.AfterlifeShop.Goto.Seed = Game():GetSeeds():GetStartSeed()
+        Resouled.AfterlifeShop.Goto.PlayTime = Resouled.Game.TimeCounter
+        Resouled.AfterlifeShop.Goto.Seed = Resouled.Game:GetSeeds():GetStartSeed()
     else
         Resouled.AfterlifeShop.Goto.SpecialBuffs = {}
     end
@@ -58,7 +58,7 @@ Resouled:AddCallback(ModCallbacks.MC_MAIN_MENU_RENDER, function()
 end)
 
 local function postNewLevel()
-    local level = Game():GetLevel()
+    local level = Resouled.Game:GetLevel()
     if not Resouled.AfterlifeShop:IsAfterlifeShop() and level:GetName() == "Afterlife" then
         level:SetName("")
     end
@@ -69,7 +69,7 @@ local function postGameStarted()
     if Resouled.AfterlifeShop.Goto.Activate then
         Resouled.AfterlifeShop:SetAfterlifeShop()
 
-        Game():GetLevel():SetStage(13, 1) -- Home (night)
+        Resouled.Game:GetLevel():SetStage(13, 1) -- Home (night)
         Isaac.ExecuteCommand("reseed")
 
         ---@param player EntityPlayer
@@ -77,19 +77,19 @@ local function postGameStarted()
             player:AnimateAppear()
         end)
 
-        Game():GetLevel():SetName("Afterlife")
+        Resouled.Game:GetLevel():SetName("Afterlife")
 
         Resouled:SetPossessedSoulsNum(Resouled.AfterlifeShop.Goto.SoulNum)
         Resouled.AfterlifeShop.Goto.SoulNum = nil
         
         Resouled.AfterlifeShop:SetMapVisibility(false)
         
-        Game().TimeCounter = Resouled.AfterlifeShop.Goto.PlayTime
+        Resouled.Game.TimeCounter = Resouled.AfterlifeShop.Goto.PlayTime
         Resouled.AfterlifeShop.Goto.PlayTime = nil
 
         Resouled.AfterlifeShop.Goto.Activate = false
 
-        Game():GetHUD():SetVisible(false)
+        Resouled.Game:GetHUD():SetVisible(false)
     else
         Resouled.AfterlifeShop:SetMapVisibility(true)
         Resouled.AfterlifeShop.Goto.SpecialBuffs = {}
@@ -137,7 +137,7 @@ local function executeAfterlifeCommand(_, command, paramsRaw)
     if command == COMMAND1.Name then
         if Isaac.IsInGame() then
             Resouled.AfterlifeShop:SetAfterlifeShop()
-            Game():End(Ending.CREDITS)
+            Resouled.Game:End(Ending.CREDITS)
         else
             Resouled:LogError("You need to be in a run to use this command!")
         end

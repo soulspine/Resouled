@@ -1,4 +1,4 @@
-local game = Game()
+local game = Resouled.Game
 
 local Door = {
     Type = Isaac.GetEntityTypeByName("ResouledDoor"),
@@ -161,7 +161,7 @@ local DOOR_OFFSET = Vector(0, 4)
 local function trySpawnDoor(doorSlot, position)
     local RunSave = Resouled.SaveManager.GetRunSave()
     local nearestRoom = Resouled:GetNearestRoomIndexAndDirectionFromPos(position)
-    local currentIndex = Game():GetLevel():GetCurrentRoomIndex()
+    local currentIndex = Resouled.Game:GetLevel():GetCurrentRoomIndex()
 
     if nearestRoom and RunSave.AfterlifeShop and RunSave.AfterlifeShop["LevelLayout"] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(nearestRoom.RoomIndex)] and RunSave.AfterlifeShop["LevelLayout"][makeLookupKey(nearestRoom.RoomIndex)] > 0 then
 
@@ -195,7 +195,7 @@ end
 local function spawnDoors()
     local RunSave = Resouled.SaveManager.GetRunSave()
     if RunSave.AfterlifeShop then
-        local room = Game():GetRoom()
+        local room = Resouled.Game:GetRoom()
         local doorsPos = getDoorsPositions()
         for i = 0, DoorSlot.NUM_DOOR_SLOTS do
             local door = room:GetDoor(i)

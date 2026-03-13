@@ -143,7 +143,7 @@ Resouled:AddCallback(ModCallbacks.MC_GET_SHADER_PARAMS, function(_, shaderName)
 
         local pos = Isaac.WorldToScreen(auraPos())
 
-        if not Game():IsPaused() then
+        if not Resouled.Game:IsPaused() then
             auraTimeout = math.max(auraTimeout - 1, 0)
         end
         auraVisible = x > 0

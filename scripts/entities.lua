@@ -43,7 +43,7 @@ end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, function(_, npc)
     local EverythingIsCursed = Resouled:IsSpecialSeedEffectActive(Resouled.SpecialSeedEffects.EverythingIsCursed)
     if not EverythingIsCursed and Resouled:ActiveBuffPresent(Resouled.Buffs.PUTRIFIER) then return end
-    if Game():GetLevel():GetCurses() > 0 or EverythingIsCursed then
+    if Resouled.Game:GetLevel():GetCurses() > 0 or EverythingIsCursed then
         local key1 = tostring(npc.Type)
         local key2 = key1 .. "." .. tostring(npc.Variant)
         local key3 = key2 .. "." .. tostring(npc.SubType)

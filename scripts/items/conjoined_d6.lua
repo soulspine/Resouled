@@ -60,7 +60,7 @@ local function onItemUse(_, collectibleType, rng, player, useFlags, activeSlot)
                 end
             end
         end)
-        local itemConfig = Isaac.GetItemConfig()
+        local itemConfig = Resouled.ItemConf
         for i = 1, #data.ResouledCD6NewItems do
             local q1 = itemConfig:GetCollectible(data.ResouledCD6NewItems[i]).Quality
             local q2 = itemConfig:GetCollectible(data.ResouledCD6OldItems[i]).Quality

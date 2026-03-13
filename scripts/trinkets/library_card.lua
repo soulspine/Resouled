@@ -10,7 +10,7 @@ local BLACKLISTED_STAGES = {
 }
 
 local function onNewFloor()
-    local game = Game()
+    local game = Resouled.Game
     local level = game:GetLevel()
     if not game:IsGreedMode() and not level:IsAscent() and not BLACKLISTED_STAGES[level:GetStage()] and PlayerManager.AnyoneHasTrinket(LIBRARY_CARD) then
         local roomConfigRoom = RoomConfigHolder.GetRoomByStageTypeAndVariant(StbType.SPECIAL_ROOMS, RoomType.ROOM_LIBRARY, 1, -1)
@@ -38,7 +38,7 @@ local function onNewFloor()
                             local door = currentRoom:GetDoor(i)
 
                             if door and door.TargetRoomIndex == newRoomDesc.SafeGridIndex then -- cant check if door state is closed because its not set yet, all doors are marked as closed at this point
-                                SFXManager():Stop(SoundEffect.SOUND_UNLOCK00) -- stop the sound because it still plays
+                                Resouled.SfxM:Stop(SoundEffect.SOUND_UNLOCK00) -- stop the sound because it still plays
                                 door:SetLocked(true)
                             end
                         end

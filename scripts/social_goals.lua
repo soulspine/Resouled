@@ -12,7 +12,7 @@ Resouled:AddSocialGoal(
             {
                 Callback = ModCallbacks.MC_POST_UPDATE,
                 Func = function()
-                    if Game():GetRoom():GetType() == RoomType.ROOM_BOSS then
+                    if Resouled.Game:GetRoom():GetType() == RoomType.ROOM_BOSS then
                         local save = Resouled.SaveManager.GetFloorSave()["Social Goals Saves"]
                         if not save then save = {} end
  
@@ -30,7 +30,7 @@ Resouled:AddSocialGoal(
             {
                 Callback = ModCallbacks.MC_POST_ENTITY_TAKE_DMG,
                 Func = function(_, en, _, _, source)
-                    if not Game():GetRoom():GetType() == RoomType.ROOM_BOSS then return end
+                    if not Resouled.Game:GetRoom():GetType() == RoomType.ROOM_BOSS then return end
                     ---@type EntityNPC | nil
                     local npc = en:ToNPC()
                     if npc and npc:IsBoss() and source and source.Entity and Resouled:TryFindPlayerSpawner(source.Entity) then
@@ -65,7 +65,7 @@ Resouled:AddSocialGoal(
             {
                 Callback = ModCallbacks.MC_POST_NEW_ROOM,
                 Func = function()
-                    local roomType = Game():GetRoom():GetType()
+                    local roomType = Resouled.Game:GetRoom():GetType()
 
                     if roomType == RoomType.ROOM_SHOP or roomType == RoomType.ROOM_TREASURE then
                         local save = Resouled.SaveManager.GetFloorSave()["Social Goals Saves"]
@@ -96,8 +96,8 @@ Resouled:AddSocialGoal(
             {
                 Callback = ModCallbacks.MC_PRE_ROOM_EXIT,
                 Func = function()
-                    local room = Game():GetRoom()
-                    local roomDesc = Game():GetLevel():GetCurrentRoomDesc()
+                    local room = Resouled.Game:GetRoom()
+                    local roomDesc = Resouled.Game:GetLevel():GetCurrentRoomDesc()
                     local save = Resouled.SaveManager.GetFloorSave()["Social Goals Saves"]
                     if not save then save = {} end
  
@@ -140,7 +140,7 @@ Resouled:AddSocialGoal(
                         
                     end
 
-                    local room = Game():GetRoom()
+                    local room = Resouled.Game:GetRoom()
 
                     ---@param player EntityPlayer
                     Resouled.Iterators:IterateOverPlayers(function(player)
@@ -222,7 +222,7 @@ Resouled:AddSocialGoal(
                         local save = Resouled.SaveManager.GetFloorSave()["Social Goals Saves"]
                         if not save then save = {} end
 
-                        local frameCount = Game():GetFrameCount()
+                        local frameCount = Resouled.Game:GetFrameCount()
                         if not save["Kill 2 enemies at the same time"] then
                             save["Kill 2 enemies at the same time"] = {
                                 ["Last Kill"] = 0,
@@ -262,7 +262,7 @@ Resouled:AddSocialGoal(
             {
                 Callback = ModCallbacks.MC_POST_NEW_ROOM,
                 Func = function()
-                    local roomType = Game():GetRoom():GetType()
+                    local roomType = Resouled.Game:GetRoom():GetType()
 
                     if roomType == RoomType.ROOM_ANGEL or roomType == RoomType.ROOM_DEVIL then
                         local save = Resouled.SaveManager.GetFloorSave()["Social Goals Saves"]

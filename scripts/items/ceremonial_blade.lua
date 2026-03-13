@@ -37,7 +37,7 @@ local ENEMY_KILL_WHITELISTED_PICKUPS = {
 
 ---@param spawner Entity
 local function spawnEffect(spawner)
-    local effect = Game():Spawn(EntityType.ENTITY_EFFECT, PICKUP_EFFECT_VARIANT, spawner.Position, Vector.Zero, spawner, 0, 0):ToEffect()
+    local effect = Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, PICKUP_EFFECT_VARIANT, spawner.Position, Vector.Zero, spawner, 0, 0):ToEffect()
     if effect then
         effect:SetTimeout(PICKUP_EFFECT_TIMEOUT)
         effect:GetSprite().Scale = PICKUP_EFFECT_SCALE
@@ -69,7 +69,7 @@ local function onNpcDeath(_, npc)
                         newPickupSeed = Random()
                     end
 
-                    local pickup = Game():Spawn(EntityType.ENTITY_PICKUP, ENEMY_KILL_WHITELISTED_PICKUPS[rng:RandomInt(#ENEMY_KILL_WHITELISTED_PICKUPS) + 1], npc.Position, Vector(math.random(-ENEMY_KILL_PICKUP_VELOCITY, ENEMY_KILL_PICKUP_VELOCITY), math.random(-ENEMY_KILL_PICKUP_VELOCITY, ENEMY_KILL_PICKUP_VELOCITY)), nil, 1, newPickupSeed):ToPickup()
+                    local pickup = Resouled.Game:Spawn(EntityType.ENTITY_PICKUP, ENEMY_KILL_WHITELISTED_PICKUPS[rng:RandomInt(#ENEMY_KILL_WHITELISTED_PICKUPS) + 1], npc.Position, Vector(math.random(-ENEMY_KILL_PICKUP_VELOCITY, ENEMY_KILL_PICKUP_VELOCITY), math.random(-ENEMY_KILL_PICKUP_VELOCITY, ENEMY_KILL_PICKUP_VELOCITY)), nil, 1, newPickupSeed):ToPickup()
                     if pickup then
                         spawnEffect(pickup)
                     end
@@ -82,7 +82,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNpcDeath)
 
 local function onRoomClear()
     if Resouled.Collectiblextension:CollectiblePresent(CEREMONIAL_BLADE) then
-        local room = Game():GetRoom()
+        local room = Resouled.Game:GetRoom()
         local roomRng = RNG()
         roomRng:SetSeed(room:GetAwardSeed(), 4) -- random 4 shift because why not
     
@@ -114,7 +114,7 @@ local function onRoomClear()
     
             local spawnPos = room:GetCenterPos()
     
-            local fadingPickup = Game():Spawn(EntityType.ENTITY_PICKUP, pickupToRemove, player0.Position, Vector(math.random(-ROOM_CLEAR_FADING_PICKUP_VELOCITY, ROOM_CLEAR_FADING_PICKUP_VELOCITY), math.random(-ROOM_CLEAR_FADING_PICKUP_VELOCITY,ROOM_CLEAR_FADING_PICKUP_VELOCITY)), nil, 1, Resouled:NewSeed()):ToPickup()
+            local fadingPickup = Resouled.Game:Spawn(EntityType.ENTITY_PICKUP, pickupToRemove, player0.Position, Vector(math.random(-ROOM_CLEAR_FADING_PICKUP_VELOCITY, ROOM_CLEAR_FADING_PICKUP_VELOCITY), math.random(-ROOM_CLEAR_FADING_PICKUP_VELOCITY,ROOM_CLEAR_FADING_PICKUP_VELOCITY)), nil, 1, Resouled:NewSeed()):ToPickup()
 
             if fadingPickup then
                 fadingPickup.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
@@ -122,7 +122,7 @@ local function onRoomClear()
                 fadingPickup:GetData().ResouledCeremonialBladeCancelCollision = true
             end
 
-            local pickup = Game():Spawn(EntityType.ENTITY_PICKUP, ROOM_CLEAR_WHITELISTED_PICKUPS[roomRng:RandomInt(#ROOM_CLEAR_WHITELISTED_PICKUPS) + 1], room:FindFreePickupSpawnPosition(spawnPos), Vector.Zero, nil, 0, Resouled:NewSeed()):ToPickup()
+            local pickup = Resouled.Game:Spawn(EntityType.ENTITY_PICKUP, ROOM_CLEAR_WHITELISTED_PICKUPS[roomRng:RandomInt(#ROOM_CLEAR_WHITELISTED_PICKUPS) + 1], room:FindFreePickupSpawnPosition(spawnPos), Vector.Zero, nil, 0, Resouled:NewSeed()):ToPickup()
             if pickup then
                 spawnEffect(pickup)
             end        

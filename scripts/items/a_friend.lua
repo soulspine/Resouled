@@ -56,7 +56,7 @@ Resouled.Familiar.FireRateHandler:RegisterFamiliar(FRIEND_VARIANT, FRIEND_SUBTYP
 local function onCacheEval(_, player, cacheFlag)
     player:CheckFamiliar(FRIEND_VARIANT,
         player:GetCollectibleNum(A_FRIEND) + player:GetEffects():GetCollectibleEffectNum(A_FRIEND),
-        player:GetCollectibleRNG(A_FRIEND), Isaac.GetItemConfig():GetCollectible(A_FRIEND))
+        player:GetCollectibleRNG(A_FRIEND), Resouled.ItemConf:GetCollectible(A_FRIEND))
 end
 Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACHE_FAMILIARS)
 
@@ -85,7 +85,7 @@ local function familiarUpdate(_, familiar)
         local data = familiar:GetData()
         local pathfinder = familiar:GetPathFinder()
         local squaredLength = familiar.Velocity:LengthSquared()
-        local room = Game():GetRoom()
+        local room = Resouled.Game:GetRoom()
 
         if familiar.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_ALL then
             familiar.EntityCollisionClass = EntityCollisionClass.ENTCOLL_ALL
@@ -499,9 +499,9 @@ local function familiarUpdate(_, familiar)
             if pathfinder:HasPathToPos(bombPos, true) then
                 pathfinder:FindGridPath(bombPos, WALK_SPEED, 1, true)
                 if familiar.Position:Distance(bombPos) < BOMB_PLACEMENT_RANGE then
-                    Game():Spawn(EntityType.ENTITY_BOMB, BombVariant.BOMB_NORMAL, bombPos, Vector.Zero, familiar, 0,
+                    Resouled.Game:Spawn(EntityType.ENTITY_BOMB, BombVariant.BOMB_NORMAL, bombPos, Vector.Zero, familiar, 0,
                         familiar.InitSeed)
-                    SFXManager():Play(SoundEffect.SOUND_FETUS_LAND)
+                    Resouled.SfxM:Play(SoundEffect.SOUND_FETUS_LAND)
                     data.Resouled_BombTarget = nil
                     data.Resouled_BombCooldown = BOMB_COOLDOWN
                 end

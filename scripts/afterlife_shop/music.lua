@@ -2,12 +2,12 @@ Resouled.IsInMainMenu = false
 
 local function postNewLevel()
     if Resouled.AfterlifeShop:IsAfterlifeShop() then
-        MusicManager():Fadein(Resouled.AfterlifeShop.Themes.Main, 1)
+        Resouled.SfxM:Fadein(Resouled.AfterlifeShop.Themes.Main, 1)
     end
 end
 Resouled:AddPriorityCallback(ModCallbacks.MC_POST_NEW_LEVEL, CallbackPriority.LATE, postNewLevel)
 
-local music = MusicManager()
+local music = Resouled.SfxM
 local function onUpdate()
     if Resouled.AfterlifeShop:IsAfterlifeShop() then
         local currentTrack = music:GetCurrentMusicID()

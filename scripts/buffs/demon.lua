@@ -4,7 +4,7 @@ local function onNpcDeath(_, npc)
         if npc:IsEnemy() and npc:IsActiveEnemy() then
             local randomFloat = math.random()
             if randomFloat < Resouled.Stats.DemonBuff.OnDeathChance then
-                Game():BombExplosionEffects(npc.Position, Resouled.Stats.DemonBuff.BigDamage)
+                Resouled.Game:BombExplosionEffects(npc.Position, Resouled.Stats.DemonBuff.BigDamage)
             end
         end
     end
@@ -18,7 +18,7 @@ local function entityTakeDMG(_, entity)
         if npc and npc:IsActiveEnemy() and npc:IsEnemy() and npc:IsBoss() then
             local randomFloat = math.random()
             if randomFloat < Resouled.Stats.DemonBuff.OnHitForBossChance then
-                Game():BombExplosionEffects(npc.Position, Resouled.Stats.DemonBuff.SmallDamage)
+                Resouled.Game:BombExplosionEffects(npc.Position, Resouled.Stats.DemonBuff.SmallDamage)
             end
         end
     end

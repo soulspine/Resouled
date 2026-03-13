@@ -103,7 +103,7 @@ addCommand(Keyboard.KEY_M, "M", "Kill all enemies in the room", function()
 end)
 
 addCommand(Keyboard.KEY_N, "N", "Respawn Room Enemies", function()
-    Game():GetRoom():RespawnEnemies()
+    Resouled.Game:GetRoom():RespawnEnemies()
 end)
 
 addCommand(Keyboard.KEY_B, "B", "Godmode", function()
@@ -138,7 +138,7 @@ addCommand(Keyboard.KEY_V, "V", "2 speed", function()
 end)
 
 addCommand(Keyboard.KEY_X, "X", "Spawn Dummy", function()
-    Game():Spawn(EntityType.ENTITY_DUMMY, 0, Game():GetRoom():GetCenterPos(), Vector.Zero, nil, 0, 1)
+    Resouled.Game:Spawn(EntityType.ENTITY_DUMMY, 0, Resouled.Game:GetRoom():GetCenterPos(), Vector.Zero, nil, 0, 1)
 end)
 
 addCommand(Keyboard.KEY_L, "L", "Open Doors", function()
@@ -158,7 +158,7 @@ end)
 
 addCommand(Keyboard.KEY_J, "J", "Equip Room Testing Loudout", function()
     local stage = Resouled.AccurateStats:GetCurrentChapter()
-    local level = Game():GetLevel()
+    local level = Resouled.Game:GetLevel()
 
     local isAltPath = level:IsAltStage()
     local sadOnionFromDifficulty = level:GetCurrentRoomDesc().Data.Difficulty >= 15
@@ -198,7 +198,7 @@ addCommand(Keyboard.KEY_R, "R", "New Run", function()
     Isaac.StartNewGame(
         Isaac.GetPlayer():GetPlayerType(),
         Isaac.GetChallenge(),
-        Game():GetChallengeParams():GetDifficulty(),
+        Resouled.Game:GetChallengeParams():GetDifficulty(),
         Random()
     )
 end)

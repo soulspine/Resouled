@@ -1,4 +1,4 @@
-local game = Game()
+local game = Resouled.Game
 
 
 local SoulLantern = {
@@ -8,12 +8,12 @@ local SoulLantern = {
 
 ---@param amount integer
 local function spawnSoulLantern(amount)
-    local room = Game():GetRoom()
+    local room = Resouled.Game:GetRoom()
     local topLeft = room:GetTopLeftPos()
     local bottomRight = room:GetBottomRightPos()
     for _ = 1, amount do
         local pos = Vector(math.random(topLeft.X, bottomRight.X), math.random(topLeft.Y, bottomRight.Y))
-        Game():Spawn(EntityType.ENTITY_EFFECT, SoulLantern.Variant, pos, Vector.Zero, nil, SoulLantern.SubType, room:GetAwardSeed())
+        Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, SoulLantern.Variant, pos, Vector.Zero, nil, SoulLantern.SubType, room:GetAwardSeed())
     end
 end
 
@@ -23,7 +23,7 @@ local function postNewRoom()
 
         room:SetBackdropType(Isaac.GetBackdropIdByName("Afterlife Shop"), 1)
 
-        if Resouled.AfterlifeShop:getRoomTypeFromIdx(Game():GetLevel():GetCurrentRoomIndex()) == Resouled.AfterlifeShop.RoomTypes.SoulSanctum then
+        if Resouled.AfterlifeShop:getRoomTypeFromIdx(Resouled.Game:GetLevel():GetCurrentRoomIndex()) == Resouled.AfterlifeShop.RoomTypes.SoulSanctum then
             spawnSoulLantern(math.random(10, 15))
         end
     end

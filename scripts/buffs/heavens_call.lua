@@ -13,7 +13,7 @@ end
 Resouled:AddCallback(ModCallbacks.MC_POST_PLANETARIUM_CALCULATE, postPlanetariumChance)
 
 local function onNewFloor()
-    local game = Game()
+    local game = Resouled.Game
     local level = game:GetLevel()
     if level:GetStage() == 1 and Resouled:ActiveBuffPresent(Resouled.Buffs.HEAVENS_CALL) then
         local roomConfigRoom = RoomConfigHolder.GetRoomByStageTypeAndVariant(StbType.SPECIAL_ROOMS, RoomType.ROOM_PLANETARIUM, 1)
@@ -45,7 +45,7 @@ local function postNewRoom()
         RUN_SAVE.Resouled_PlanetariumsVisited = 0
     end
 
-    if Game():GetRoom():GetType() == RoomType.ROOM_PLANETARIUM and Game():GetRoom():IsFirstVisit() then
+    if Resouled.Game:GetRoom():GetType() == RoomType.ROOM_PLANETARIUM and Resouled.Game:GetRoom():IsFirstVisit() then
         RUN_SAVE.Resouled_PlanetariumsVisited = RUN_SAVE.Resouled_PlanetariumsVisited + 1
     end
 end

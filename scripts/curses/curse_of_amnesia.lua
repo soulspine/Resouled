@@ -62,7 +62,7 @@ local function postNewRoom()
                     local randomFloat = math.random()
                     
                     if randomFloat < Resouled.Stats.CurseOfAmnesia.AppearChance then
-                        local pickup = Game():Spawn(EntityType.ENTITY_PICKUP, pickupSave.Variant, pickupSave.Position, Vector.Zero, nil, pickupSave.SubType, pickupSave.InitSeed)
+                        local pickup = Resouled.Game:Spawn(EntityType.ENTITY_PICKUP, pickupSave.Variant, pickupSave.Position, Vector.Zero, nil, pickupSave.SubType, pickupSave.InitSeed)
                         pickup:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
                         RoomSave.CurseOfAmnesia.Pickups[k] = nil
                     end

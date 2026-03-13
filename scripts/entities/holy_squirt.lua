@@ -40,7 +40,7 @@ local function onNpcInit(_, npc)
     npc.GridCollisionClass = CONFIG.GridCollisionClass
 
 
-    local trail = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.SPRITE_TRAIL, npc.Position, Vector.Zero, npc, 0,
+    local trail = Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, EffectVariant.SPRITE_TRAIL, npc.Position, Vector.Zero, npc, 0,
         Resouled:NewSeed()):ToEffect()
     if not trail then return end
     trail:FollowParent(npc)
@@ -94,7 +94,7 @@ local function onNpcUpdate(_, npc)
         npc.Velocity = velocity
 
         if Isaac.GetFrameCount() % CONFIG.ShitCooldown == 0 then
-            local creep = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CREEP_SLIPPERY_BROWN, npc.Position,
+            local creep = Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CREEP_SLIPPERY_BROWN, npc.Position,
                 Vector.Zero, npc, 0, Resouled:NewSeed()):ToEffect()
             if not creep then return end
             creep:Update()
@@ -109,7 +109,7 @@ local function onNpcDeath(_, npc)
     if not Resouled:MatchesEntityDesc(npc, ENTITY) then return end
     local dip = Resouled:GetEntityByName("Holy Dip")
     for _ = 1, CONFIG.OnDeathDipSpawnCount do
-        Game():Spawn(dip.Type, dip.Variant, npc.Position, Vector.Zero, npc, dip.SubType, Resouled:NewSeed())
+        Resouled.Game:Spawn(dip.Type, dip.Variant, npc.Position, Vector.Zero, npc, dip.SubType, Resouled:NewSeed())
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, onNpcDeath, ENTITY.Type)

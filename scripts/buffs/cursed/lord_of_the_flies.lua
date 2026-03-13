@@ -6,11 +6,11 @@ local function curseActive()
 end
 
 local getCurrentChance = function()
-    return BASE_CHANCE + (CHANCE_PER_FLOOR * (Game():GetLevel():GetStage() - 1))
+    return BASE_CHANCE + (CHANCE_PER_FLOOR * (Resouled.Game:GetLevel():GetStage() - 1))
 end
 
 local getMaxFlies = function()
-    return math.ceil(Game():GetLevel():GetStage()/6)
+    return math.ceil(Resouled.Game:GetLevel():GetStage()/6)
 end
 
 local getFlyNum = function(seed)
@@ -19,7 +19,7 @@ end
 
 ---@param en Entity
 local attachFly = function(en)
-    local fly = Game():Spawn(96, 0, en.Position, Vector.Zero, en, 0, Random())
+    local fly = Resouled.Game:Spawn(96, 0, en.Position, Vector.Zero, en, 0, Random())
     fly.Parent = en
 end
 

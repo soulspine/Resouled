@@ -27,7 +27,7 @@ local function onPickupUpdate(_, pickup)
         open = true
     end
 
-    local gridEntity = Game():GetRoom():GetGridEntityFromPos(pickup.Position)
+    local gridEntity = Resouled.Game:GetRoom():GetGridEntityFromPos(pickup.Position)
     if gridEntity then
         if gridEntity:GetType() == GridEntityType.GRID_SPIKES or gridEntity:GetType() == GridEntityType.GRID_ROCK_SPIKED or gridEntity:GetType() == GridEntityType.GRID_SPIKES_ONOFF then
             open = true

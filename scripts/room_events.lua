@@ -68,7 +68,7 @@ local filters = {
         return enemyPresent
     end,
     ROOM_NOT_CLEAR = function()
-        local room = Game():GetRoom()
+        local room = Resouled.Game:GetRoom()
         local clear = room:IsClear()
         if clear == true then
             return false
@@ -77,7 +77,7 @@ local filters = {
         end
     end,
     NO_BOSS_ROOM = function()
-        local room = Game():GetRoom()
+        local room = Resouled.Game:GetRoom()
         if room:GetType() == RoomType.ROOM_BOSS then
             return false
         end
@@ -87,7 +87,7 @@ local filters = {
         return PlayerManager.AnyoneIsPlayerType(PlayerType.PLAYER_THELOST_B)
     end,
     BOSS_ROOM_ONLY = function()
-        local room = Game():GetRoom()
+        local room = Resouled.Game:GetRoom()
         if room:GetType() == RoomType.ROOM_BOSS then
             return true
         end
@@ -107,14 +107,14 @@ local filters = {
         return itemPresent
     end,
     SHOP_ONLY = function()
-        local room = Game():GetRoom()
+        local room = Resouled.Game:GetRoom()
         if room:GetType() == RoomType.ROOM_SHOP then
             return true
         end
         return false
     end,
     TREASURE_ONLY = function()
-        local room = Game():GetRoom()
+        local room = Resouled.Game:GetRoom()
         if room:GetType() == RoomType.ROOM_TREASURE then
             return true
         end

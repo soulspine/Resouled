@@ -108,7 +108,7 @@ end
 ---@param player EntityPlayer
 ---@return EntityRef
 local function spawnClub(player)
-    local club = Game():Spawn(
+    local club = Resouled.Game:Spawn(
         EFFECTS.Club.Entity.Type,
         EFFECTS.Club.Entity.Variant,
         player.Position,
@@ -125,7 +125,7 @@ end
 ---@param player EntityPlayer
 ---@param left boolean
 local function spawnSwing(player, left, rotation)
-    local effect = Game():Spawn(
+    local effect = Resouled.Game:Spawn(
         EFFECTS.SwingEffect.Entity.Type,
         EFFECTS.SwingEffect.Entity.Variant,
         player.Position,
@@ -405,7 +405,7 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_UPDATE, onNpcUpdate)
 
 ---@param npc EntityNPC
 local function onNpcRender(_, npc)
-    if Game():IsPaused() then return end
+    if Resouled.Game:IsPaused() then return end
     local data = npc:GetData().Resouled__ClubKnockback
     if not data then return end
 
@@ -461,7 +461,7 @@ local function onNpcRender(_, npc)
         end
 
         -- instakill if lands on a pit
-        local currentGrid = Game():GetRoom():GetGridEntityFromPos(npc.Position)
+        local currentGrid = Resouled.Game:GetRoom():GetGridEntityFromPos(npc.Position)
         if not npc:IsFlying() and currentGrid and currentGrid:GetType() == GridEntityType.GRID_PIT then
             data.Perish = CONFIG.PitPerishDuration
             npc.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
@@ -469,7 +469,7 @@ local function onNpcRender(_, npc)
             data.Timeout = -1
             data:SetShadowSize(0)
         else
-            local landinEffect = Game():Spawn(
+            local landinEffect = Resouled.Game:Spawn(
                 CONFIG.LandingEffect.Type,
                 CONFIG.LandingEffect.Variant,
                 npc.Position,

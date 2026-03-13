@@ -13,7 +13,7 @@ local function npcDeath(_, npc)
         local npcs = Isaac.FindInRadius(npc.Position, BLAST_RADIUS, EntityPartition.ENEMY)
         for _, npc2 in pairs(npcs) do
             if npc2:IsEnemy() and npc2:IsActiveEnemy() and npc2:IsVulnerableEnemy() and not npc2:IsDead() and npc2.HitPoints > 0 then
-                Game():BombExplosionEffects(npc2.Position, EXPLOSION_DAMAGE)
+                Resouled.Game:BombExplosionEffects(npc2.Position, EXPLOSION_DAMAGE)
             end
         end
     end

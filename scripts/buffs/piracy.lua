@@ -3,7 +3,7 @@ local PIRACY_DISTANCE = 30
 
 ---@param pickup EntityPickup
 local function postPickupUpdate(_, pickup)
-    if pickup:IsShopItem() and Game():GetRoom():GetType() == RoomType.ROOM_SHOP then
+    if pickup:IsShopItem() and Resouled.Game:GetRoom():GetType() == RoomType.ROOM_SHOP then
         if Resouled:ActiveBuffPresent(Resouled.Buffs.PIRACY) then
             ---@param player EntityPlayer
             Resouled.Iterators:IterateOverPlayers(function(player)

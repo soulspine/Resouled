@@ -19,7 +19,7 @@ local ANIMATION_TRIGGER_PETRIFY = "Petrify"
 ---@param cacheFlag CacheFlag
 local function onCacheEval(_, player, cacheFlag)
     if cacheFlag & CacheFlag.CACHE_FAMILIARS then
-        player:CheckFamiliar(MAMA_HAUNT_VARIANT, player:GetCollectibleNum(MAMA_HAUNT) + player:GetEffects():GetCollectibleEffectNum(MAMA_HAUNT), player:GetCollectibleRNG(MAMA_HAUNT), Isaac.GetItemConfig():GetCollectible(MAMA_HAUNT), MAMA_HAUNT_SUBTYPE)
+        player:CheckFamiliar(MAMA_HAUNT_VARIANT, player:GetCollectibleNum(MAMA_HAUNT) + player:GetEffects():GetCollectibleEffectNum(MAMA_HAUNT), player:GetCollectibleRNG(MAMA_HAUNT), Resouled.ItemConf:GetCollectible(MAMA_HAUNT), MAMA_HAUNT_SUBTYPE)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval)
@@ -67,7 +67,7 @@ local function onFamiliarUpdate(_, familiar)
         if sprite:IsEventTriggered("Note") then
             local offset = sprite:GetNullFrame("NotePos"):GetPos()
 
-            local note = Game():Spawn(EntityType.ENTITY_EFFECT, Note.Variant, familiar.Position, Vector.Zero, nil, Note.SubType, familiar.InitSeed)
+            local note = Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, Note.Variant, familiar.Position, Vector.Zero, nil, Note.SubType, familiar.InitSeed)
 
             note.SpriteOffset = offset
         end

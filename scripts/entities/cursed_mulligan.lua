@@ -23,7 +23,7 @@ local CurseFlyConfig = {
         local enemiesIndexes = {}
         local enemies = WeightedOutcomePicker()
 
-        local room = Game():GetRoom()
+        local room = Resouled.Game:GetRoom()
         local maxDistance = room:GetBottomRightPos().X - room:GetTopLeftPos().X
 
         for _, entity in pairs(Isaac.GetRoomEntities()) do
@@ -46,7 +46,7 @@ local CurseFlyConfig = {
         return enemiesIndexes[enemies:PickOutcome(RNG(npc.InitSeed))]
     end,
     smoke = function(npc, size, alpha)
-        local smoke = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.DARK_BALL_SMOKE_PARTICLE, npc.Position, npc.Velocity/2, nil, 0, Random() + 1):ToEffect()
+        local smoke = Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, EffectVariant.DARK_BALL_SMOKE_PARTICLE, npc.Position, npc.Velocity/2, nil, 0, Random() + 1):ToEffect()
         smoke.Timeout = 100
         smoke.SpriteOffset = Vector(0, -16)
         smoke.Color = Color(1, 1, 1, alpha, 0.5, 0, 1)
@@ -63,7 +63,7 @@ CurseFlyConfig.spawn =
 ---@return EntityNPC
 function(npc)
     ---@type EntityNPC
-    local fly = Game():Spawn(CurseFlyConfig.Type, CurseFlyConfig.Variant, npc.Position, Vector.Zero, npc, CurseFlyConfig.SubType, Random() + 1):ToNPC()
+    local fly = Resouled.Game:Spawn(CurseFlyConfig.Type, CurseFlyConfig.Variant, npc.Position, Vector.Zero, npc, CurseFlyConfig.SubType, Random() + 1):ToNPC()
     CurseFlyConfig.smoke(fly, 2, 0.75)
     return fly
 end
@@ -117,7 +117,7 @@ local function curseMulliganCurseDeathEffect(npc)
     for _ = 1, spawnCount do
         local config = ON_DEATH_SPAWNS[DEATH_POOL:PickOutcome(rng)]
         for _ = 1, config.Count do
-            local spawn = Game():Spawn(config.T, config.V, npc.Position, Vector.Zero, npc, config.S, rng:GetSeed())
+            local spawn = Resouled.Game:Spawn(config.T, config.V, npc.Position, Vector.Zero, npc, config.S, rng:GetSeed())
             spawn:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
             spawn.Color = Color(1, 1, 1, 1, 0.125, 0, 0.25)
             spawn:GetData().Resouled_NoCursedMulliganTargetting = true
@@ -194,7 +194,7 @@ local function onNpcUpdate(_, npc)
 
         if sprite:IsEventTriggered("Flap") then
             CurseFlyConfig.smoke(npc, 1.25, 0.25)
-            SFXManager():Play(SoundEffect.SOUND_BIRD_FLAP, 0.25, nil, nil, 1.5)
+            Resouled.SfxM:Play(SoundEffect.SOUND_BIRD_FLAP, 0.25, nil, nil, 1.5)
         end
 
         local alpha = math.min(1, npc.Position:Distance(npc.Target.Position)/100, npc.FrameCount/15) * 1.5
@@ -222,7 +222,7 @@ local function onNpcUpdate(_, npc)
 
             CurseFlyConfig.smoke(npc, 3, 0.5)
 
-            local fly = Game():Spawn(EntityType.ENTITY_FLY, 0, npc.Target.Position + npc.Velocity:Resized(15), npc.Velocity, npc, 0, Random() + 1)
+            local fly = Resouled.Game:Spawn(EntityType.ENTITY_FLY, 0, npc.Target.Position + npc.Velocity:Resized(15), npc.Velocity, npc, 0, Random() + 1)
             fly:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
             fly.Velocity = npc.Velocity
 

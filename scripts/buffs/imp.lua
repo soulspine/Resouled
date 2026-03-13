@@ -1,4 +1,4 @@
-local game = Game()
+local game = Resouled.Game
 local itemsList = {}
 
 local collectiblesWhitelist = {
@@ -29,7 +29,7 @@ local collectiblesWhitelist = {
     [Isaac.GetItemIdByName("Blast Miner TNT!")] = true
 }
 
-local itemConfig = Isaac.GetItemConfig()
+local itemConfig = Resouled.ItemConf
 for i = 1, #itemConfig:GetCollectibles() do
     local item = itemConfig:GetCollectible(i)
     if item and game:GetItemPool():CanSpawnCollectible(i, false) and (item.AddBombs > 0 or collectiblesWhitelist[i] or item.Name:find("Bomb") or item.Name:find("Bombs")) then

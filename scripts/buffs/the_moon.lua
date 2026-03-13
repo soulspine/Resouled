@@ -22,11 +22,11 @@ local render = false
 
 ---@return integer
 local function getPhase()
-    return math.floor(Game():GetFrameCount() / CONFIG.PhaseDuration) % 8
+    return math.floor(Resouled.Game:GetFrameCount() / CONFIG.PhaseDuration) % 8
 end
 
 local function getPhaseProgression()
-    return Game():GetFrameCount() % CONFIG.PhaseDuration / CONFIG.PhaseDuration
+    return Resouled.Game:GetFrameCount() % CONFIG.PhaseDuration / CONFIG.PhaseDuration
 end
 
 ---@return number
@@ -47,7 +47,7 @@ local function onUpdate()
     render = true
 
     INDICATOR_SPRITE:SetFrame(getPhase())
-    if Game():GetFrameCount() % CONFIG.StatUpdateInterval == 0 then
+    if Resouled.Game:GetFrameCount() % CONFIG.StatUpdateInterval == 0 then
         Resouled.Iterators:IterateOverPlayers(function(player)
             ---@diagnostic disable-next-line: param-type-mismatch
             player:AddCacheFlags(CacheFlag.CACHE_DAMAGE | CacheFlag.CACHE_FIREDELAY, true)

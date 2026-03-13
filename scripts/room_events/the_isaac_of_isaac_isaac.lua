@@ -8,7 +8,7 @@ local function postNewRoom()
     if Resouled:RoomEventPresent(Resouled.RoomEvents.THE_ISAAC_OF_ISAAC_ISAAC) then
         ---@param npc EntityNPC
         Resouled.Iterators:IterateOverRoomNpcs(function(npc)
-            Game():Spawn(IsaacEnemy.Type, IsaacEnemy.Variant, npc.Position, Vector.Zero, nil, IsaacEnemy.SubType, npc.InitSeed)
+            Resouled.Game:Spawn(IsaacEnemy.Type, IsaacEnemy.Variant, npc.Position, Vector.Zero, nil, IsaacEnemy.SubType, npc.InitSeed)
 
             npc:Remove()
         end)

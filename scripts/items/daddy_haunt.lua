@@ -1,4 +1,4 @@
-local g = Game()
+local g = Resouled.Game
 
 local DADDY_HAUNT = Resouled.Enums.Items.DADDY_HAUNT
 local DADDY_HAUNT_VARIANT = Isaac.GetEntityVariantByName("Daddy Haunt")
@@ -79,7 +79,7 @@ local function onFamiliarUpdate(_, familiar)
     if familiar.SubType == DADDY_HAUNT_SUBTYPE then
         local sprite = familiar:GetSprite()
         local data = familiar:GetData()
-        local room = Game():GetRoom()
+        local room = Resouled.Game:GetRoom()
 
         sprite.Scale = SPRITE_SCALE
 
@@ -129,7 +129,7 @@ local function onFamiliarUpdate(_, familiar)
 
         if sprite:IsEventTriggered(EVENT_TRIGGER_RESOULED_SLAM) then
             doSlamEffect(familiar.Position)
-            SFXManager():Play(SLAM_SFX, 1, 0, false, 1)
+            Resouled.SfxM:Play(SLAM_SFX, 1, 0, false, 1)
 
             ---@type EntityNPC[]
             local npcs = Isaac.FindInRadius(familiar.Position, SLAM_EFFECT_RADIUS, EntityPartition.ENEMY)

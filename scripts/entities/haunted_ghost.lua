@@ -69,7 +69,7 @@ local function onGhostInit(_, npc)
     npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYEROBJECTS
     npc.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_WALLS
 
-    local trail = Game():Spawn(
+    local trail = Resouled.Game:Spawn(
         CONST.Trail.Type,
         CONST.Trail.Variant,
         npc.Position,

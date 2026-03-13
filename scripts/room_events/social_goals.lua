@@ -64,7 +64,7 @@ local function postNewFloor()
 
     local goalsToAdd = {}
 
-    local rng = Game():GetLevel():GetDevilAngelRoomRNG()
+    local rng = Resouled.Game:GetLevel():GetDevilAngelRoomRNG()
 
     local picker = cloneOutcomePicker()
 

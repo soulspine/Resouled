@@ -106,10 +106,10 @@ local function onTrinketUpdate(_, pickup)
             door:Open()
             door:SetVariant(DoorVariant.DOOR_UNLOCKED)
             pickup:Remove()
-            local sfx = SFXManager()
+            local sfx = Resouled.SfxM
             local trinketMult = Resouled.Collectiblextension:GetPotentialTrinketPickupMultiplier(pickup)
             if rng:RandomFloat() >= (CONFIG.AfterUseBreakChance) ^ trinketMult then
-                local newTrinket = Game():Spawn(
+                local newTrinket = Resouled.Game:Spawn(
                     EntityType.ENTITY_PICKUP,
                     PickupVariant.PICKUP_TRINKET,
                     door.Position,

@@ -31,7 +31,7 @@ local hitSounds = {
 
 local function playHitSound()
     local randomNum = math.random(3)
-    SFXManager():Play(hitSounds[randomNum])
+    Resouled.SfxM:Play(hitSounds[randomNum])
 end
 
 local PITCH = 3
@@ -52,7 +52,7 @@ end
 ---@param entity1 EntityRef
 ---@param entity2 EntityRef
 local function createBond(entity1, entity2)
-    SFXManager():Play(SoundEffect.SOUND_CHAIN_LOOP, nil, nil, nil, PITCH)
+    Resouled.SfxM:Play(SoundEffect.SOUND_CHAIN_LOOP, nil, nil, nil, PITCH)
 
     local data1 = entity1.Entity:GetData()
     local data2 = entity2.Entity:GetData()
@@ -101,7 +101,7 @@ local function destroyBond(entity)
     end
 
     spawnChainParticles(currentPos) spawnChainParticles(otherPos)
-    SFXManager():Play(SoundEffect.SOUND_CHAIN_BREAK, nil, nil, nil, PITCH)
+    Resouled.SfxM:Play(SoundEffect.SOUND_CHAIN_BREAK, nil, nil, nil, PITCH)
 
     data.ResouledSoulbond = nil
     other:GetData().ResouledSoulbond = nil

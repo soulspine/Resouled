@@ -34,11 +34,11 @@ local function postNpcCollision(_, npc, collider)
     local colliderNPC = collider:ToNPC()
     if colliderNPC and colliderNPC.Type == EntityType.ENTITY_GAPER then
         if npc.Variant == CURSED_GAPER_VARIANT and npc.SubType == CURSED_GAPER_SUBTYPE and colliderNPC.Variant ~= CURSED_GAPER_VARIANT then
-            local newGaper = Game():Spawn(CURSED_GAPER_TYPE, CURSED_GAPER_VARIANT, colliderNPC.Position, colliderNPC.Velocity, colliderNPC.SpawnerEntity, CURSED_GAPER_SUBTYPE, colliderNPC.InitSeed)
+            local newGaper = Resouled.Game:Spawn(CURSED_GAPER_TYPE, CURSED_GAPER_VARIANT, colliderNPC.Position, colliderNPC.Velocity, colliderNPC.SpawnerEntity, CURSED_GAPER_SUBTYPE, colliderNPC.InitSeed)
             newGaper:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
             newGaper.HitPoints = colliderNPC.HitPoints
             colliderNPC:Remove()
-            Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, newGaper.Position, Vector.Zero, nil, 0, newGaper.InitSeed)
+            Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, EffectVariant.POOF01, newGaper.Position, Vector.Zero, nil, 0, newGaper.InitSeed)
         end
     end
 end

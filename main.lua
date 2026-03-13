@@ -5,6 +5,11 @@ Resouled.DevMode = true
 if not include("dependencies") then while true do end end
 
 if REPENTOGON and MinimapAPI then
+    Resouled.Game = Game()
+    Resouled.SfxM = SFXManager()
+    Resouled.MusicM = MusicManager()
+    Resouled.ItemConf = Isaac.GetItemConfig()
+
     local thingsToRunAfterImports = {}
     
     include("scripts.callbacks")

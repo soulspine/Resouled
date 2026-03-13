@@ -1,4 +1,4 @@
-local g = Game()
+local g = Resouled.Game
 
 local BLAST_MINER = Resouled.Enums.Items.BLAST_MINER
 

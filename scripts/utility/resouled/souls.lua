@@ -1,4 +1,4 @@
-local game = Game()
+local game = Resouled.Game
 
 local Soul = Resouled.Stats.Soul
 
@@ -225,7 +225,7 @@ local function onSoulPickupCollision(_, pickup, collider, low)
 
             pickup:Remove()
 
-            if Resouled:IsSpecialSeedEffectActive(Resouled.SpecialSeedEffects.NoSoulChallenge) then Game():End(Ending.DIE) end
+            if Resouled:IsSpecialSeedEffectActive(Resouled.SpecialSeedEffects.NoSoulChallenge) then Resouled.Game:End(Ending.DIE) end
         end
     end
 end

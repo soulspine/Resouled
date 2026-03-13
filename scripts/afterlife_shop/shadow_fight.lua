@@ -1,4 +1,4 @@
-local g = Game()
+local g = Resouled.Game
 
 Resouled.AfterlifeShop.ShadowFight = {
 

@@ -49,7 +49,7 @@ local function onPlayerUpdate(_, player)
         local sprite = player:GetSprite()
         
         if sprite:IsPlaying(Casket.AnimIn) then
-            Game():FinishChallenge()
+            Resouled.Game:FinishChallenge()
             
             if sprite:IsEventTriggered("Poof") then
                 player:SetColor(Color(0, 0, 0, 0), 1000000, 10000000000, false, false)

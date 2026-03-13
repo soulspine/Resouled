@@ -66,7 +66,7 @@ Resouled.Stats.Soul = {
     TrailDepthOffset = -30,
 
     PlayPickupSound = function()
-        SFXManager():Play(Isaac.GetSoundIdByName("Soul Pickup "..tostring(math.random(4))))
+        Resouled.SfxM:Play(Isaac.GetSoundIdByName("Soul Pickup "..tostring(math.random(4))))
     end,
 
     Max = 99
@@ -102,7 +102,7 @@ Resouled.Stats.CurseOfAmnesia = {
 
 Resouled.Stats.GuppyItems = {}
 
-local itemConfig = Isaac.GetItemConfig()
+local itemConfig = Resouled.ItemConf
 for i = 1, #itemConfig:GetCollectibles() do
     local item = itemConfig:GetCollectible(i)
     if item and item:HasTags(ItemConfig.TAG_GUPPY) then

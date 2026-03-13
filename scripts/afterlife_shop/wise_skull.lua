@@ -126,7 +126,7 @@ end
 ---@param disappear boolean
 ---@param correctSkull boolean
 local function spawnSkull(color, position, seed, disappear, correctSkull)
-    local skull = Game():Spawn(EntityType.ENTITY_EFFECT, Shuffle.IDS_Chosen.Variant, position, Vector.Zero, nil, Shuffle.IDS_Chosen.SubType, seed)
+    local skull = Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, Shuffle.IDS_Chosen.Variant, position, Vector.Zero, nil, Shuffle.IDS_Chosen.SubType, seed)
 
     local sprite = skull:GetSprite()
 
@@ -151,7 +151,7 @@ local function spawnSkull(color, position, seed, disappear, correctSkull)
     end
 end
 
-local music = MusicManager()
+local music = Resouled.SfxM
 
 ---@param effect EntityEffect
 local function onEffectUpdate(_, effect)
@@ -309,7 +309,7 @@ local function onNpcCollision(_, npc, collider)
     if npc.Variant == WiseSkull.Variant and npc.SubType == WiseSkull.SubType then
         local player = collider:ToPlayer()
         if player then
-            Game():Spawn(EntityType.ENTITY_EFFECT, Shuffle.IDS.Variant, npc.Position, Vector.Zero, nil, Shuffle.IDS.SubType, npc.InitSeed)
+            Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, Shuffle.IDS.Variant, npc.Position, Vector.Zero, nil, Shuffle.IDS.SubType, npc.InitSeed)
             npc:Remove()
         end
     end

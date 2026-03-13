@@ -55,7 +55,7 @@ local function postNpcCollision(_, npc, collider)
         if player then
             player:TakeDamage(1, DamageFlag.DAMAGE_NO_MODIFIERS, EntityRef(npc.SpawnerEntity), 1)
             local randomNum = math.random(1, 3)
-            SFXManager():Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
+            Resouled.SfxM:Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
             Resouled:SpawnPaperGore(npc.Position, GORE_PARTICLE_COUNT + math.random(-1, 1))
             npc:Remove()
         end
@@ -67,7 +67,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_COLLISION, postNpcCollision, TEAR_
 local function postGridCollision(_, npc)
     if npc.Variant == TEAR_VARIANT and npc.SubType == TEAR_SUBTYPE then
         local randomNum = math.random(1, 3)
-        SFXManager():Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
+        Resouled.SfxM:Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
         Resouled:SpawnPaperGore(npc.Position, GORE_PARTICLE_COUNT + math.random(-1, 1))
         npc:Remove()
     end
@@ -78,7 +78,7 @@ Resouled:AddCallback(ModCallbacks.MC_NPC_GRID_COLLISION, postGridCollision, TEAR
 local function postNpcDeath(_, npc)
     if npc.Variant == TEAR_VARIANT and npc.SubType == TEAR_SUBTYPE then
         local randomNum = math.random(1, 3)
-        SFXManager():Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
+        Resouled.SfxM:Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
         Resouled:SpawnPaperGore(npc.Position, GORE_PARTICLE_COUNT)
     end
 end

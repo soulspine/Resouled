@@ -14,12 +14,12 @@ local ANIMATION_EVENT_ON = "SwitchOn"
 local ANIMATION_EVENT_OFF = "SwitchOff"
 
 local function isPitchBlack()
-    local roomDesc = Game():GetLevel():GetCurrentRoomDesc()
+    local roomDesc = Resouled.Game:GetLevel():GetCurrentRoomDesc()
     return roomDesc.Flags & RoomDescriptor.FLAG_PITCH_BLACK > 0
 end
 
 local function setPitchBlack(state)
-    local roomDesc = Game():GetLevel():GetCurrentRoomDesc()
+    local roomDesc = Resouled.Game:GetLevel():GetCurrentRoomDesc()
     if state then
         roomDesc.Flags = roomDesc.Flags | RoomDescriptor.FLAG_PITCH_BLACK
     else

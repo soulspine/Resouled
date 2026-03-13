@@ -22,8 +22,8 @@ addToClearPool(PickupVariant.PICKUP_BOMB, BombSubType.BOMB_GIGA)
 
 local function preSpawnCleanReward()
     if Resouled:RoomEventPresent(Resouled.RoomEvents.BLESSING_OF_GLUTTONY) then
-        local config = clearPool[RNG(Game():GetRoom():GetAwardSeed()):RandomInt(#clearPool) + 1]
-        Game():Spawn(EntityType.ENTITY_PICKUP, config[1], Isaac.GetFreeNearPosition(Game():GetRoom():GetCenterPos(), 0), Vector.Zero, nil, config[2], Game():GetRoom():GetAwardSeed())
+        local config = clearPool[RNG(Resouled.Game:GetRoom():GetAwardSeed()):RandomInt(#clearPool) + 1]
+        Resouled.Game:Spawn(EntityType.ENTITY_PICKUP, config[1], Isaac.GetFreeNearPosition(Resouled.Game:GetRoom():GetCenterPos(), 0), Vector.Zero, nil, config[2], Resouled.Game:GetRoom():GetAwardSeed())
         return true
     end
 end

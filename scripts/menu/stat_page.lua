@@ -455,19 +455,19 @@ local PAGES = {
             if enableInput then
                 if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENULEFT) then
                     currentSelectedBuff = currentSelectedBuff - 1
-                    SFXManager():Play(SoundEffect.SOUND_MENU_SCROLL)
+                    Resouled.SfxM:Play(SoundEffect.SOUND_MENU_SCROLL)
                 end
                 if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENURIGHT) then
                     currentSelectedBuff = currentSelectedBuff + 1
-                    SFXManager():Play(SoundEffect.SOUND_MENU_SCROLL)
+                    Resouled.SfxM:Play(SoundEffect.SOUND_MENU_SCROLL)
                 end
                 if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENUUP) then
                     currentSelectedBuff = currentSelectedBuff - CONFIG.BuffPage.BuffsPerLine
-                    SFXManager():Play(SoundEffect.SOUND_MENU_SCROLL)
+                    Resouled.SfxM:Play(SoundEffect.SOUND_MENU_SCROLL)
                 end
                 if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENUDOWN) then
                     currentSelectedBuff = currentSelectedBuff + CONFIG.BuffPage.BuffsPerLine
-                    SFXManager():Play(SoundEffect.SOUND_MENU_SCROLL)
+                    Resouled.SfxM:Play(SoundEffect.SOUND_MENU_SCROLL)
                 end
             end
 
@@ -527,11 +527,11 @@ local PAGES = {
             if enableInput then
                 if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENULEFT) then
                     currentRoomEventPage = ((currentRoomEventPage - 2) % #roomEvents) + 1
-                    SFXManager():Play(SoundEffect.SOUND_MENU_SCROLL)
+                    Resouled.SfxM:Play(SoundEffect.SOUND_MENU_SCROLL)
                 end
                 if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENURIGHT) then
                     currentRoomEventPage = (currentRoomEventPage % #roomEvents) + 1
-                    SFXManager():Play(SoundEffect.SOUND_MENU_SCROLL)
+                    Resouled.SfxM:Play(SoundEffect.SOUND_MENU_SCROLL)
                 end
             end
         end
@@ -586,16 +586,16 @@ local PAGES = {
 
                     Resouled.SaveManager.Save()
 
-                    SFXManager():Play(SoundEffect.SOUND_PLOP)
+                    Resouled.SfxM:Play(SoundEffect.SOUND_PLOP)
                 end
 
                 if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENUDOWN) then
                     selectedShenanigan = selectedShenanigan + 1
-                    SFXManager():Play(SoundEffect.SOUND_MENU_SCROLL)
+                    Resouled.SfxM:Play(SoundEffect.SOUND_MENU_SCROLL)
                 end
                 if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENUUP) then
                     selectedShenanigan = selectedShenanigan - 1
-                    SFXManager():Play(SoundEffect.SOUND_MENU_SCROLL)
+                    Resouled.SfxM:Play(SoundEffect.SOUND_MENU_SCROLL)
                 end
                 selectedShenanigan = math.max(math.min(#SHENANIGANS[selectedShenaniganPage].Options, selectedShenanigan), 1)
             end
@@ -648,20 +648,20 @@ local PAGES = {
             if enableInput then
                 if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENUDOWN) then
                     currentSelectedOption = math.min(currentSelectedOption + 1, #Resouled.Options)
-                    SFXManager():Play(SoundEffect.SOUND_MENU_SCROLL)
+                    Resouled.SfxM:Play(SoundEffect.SOUND_MENU_SCROLL)
                 end
                 if Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENUUP) then
                     currentSelectedOption = math.max(currentSelectedOption - 1, 1)
-                    SFXManager():Play(SoundEffect.SOUND_MENU_SCROLL)
+                    Resouled.SfxM:Play(SoundEffect.SOUND_MENU_SCROLL)
                 end
 
                 if (Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENULEFT)) then
                     Resouled:StepOptionValue(selectedOption, false)
-                    SFXManager():Play(SoundEffect.SOUND_PLOP)
+                    Resouled.SfxM:Play(SoundEffect.SOUND_PLOP)
                 end
                 if (Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MENURIGHT)) then
                     Resouled:StepOptionValue(selectedOption, true)
-                    SFXManager():Play(SoundEffect.SOUND_PLOP)
+                    Resouled.SfxM:Play(SoundEffect.SOUND_PLOP)
                 end
             end
         end
@@ -734,11 +734,11 @@ local function menuRender()
         currentSelectedOption = 1
         currentRoomEventPage = 1
         selectedShenaniganPage = 1
-        SFXManager():Play(SoundEffect.SOUND_BOOK_PAGE_TURN_12)
+        Resouled.SfxM:Play(SoundEffect.SOUND_BOOK_PAGE_TURN_12)
         
     elseif menu == CONFIG.CustomMenuType and Resouled:HasAnyoneTriggeredAction(inputLookup.Leave) then
         MenuManager.SetActiveMenu(MainMenuType.GAME)
-        SFXManager():Play(SoundEffect.SOUND_BOOK_PAGE_TURN_12)
+        Resouled.SfxM:Play(SoundEffect.SOUND_BOOK_PAGE_TURN_12)
         Resouled.Save:ForceSave()
     end
 
@@ -746,9 +746,9 @@ local function menuRender()
     if menu == CONFIG.CustomMenuType then
         if Resouled:HasAnyoneTriggeredAction(inputLookup.Up) then
             currentPageIdx = ((currentPageIdx - 2) % #PAGES) + 1
-            SFXManager():Play(SoundEffect.SOUND_CHARACTER_SELECT_LEFT)
+            Resouled.SfxM:Play(SoundEffect.SOUND_CHARACTER_SELECT_LEFT)
         elseif Resouled:HasAnyoneTriggeredAction(inputLookup.Down) then
-            SFXManager():Play(SoundEffect.SOUND_CHARACTER_SELECT_RIGHT)
+            Resouled.SfxM:Play(SoundEffect.SOUND_CHARACTER_SELECT_RIGHT)
             currentPageIdx = (currentPageIdx % #PAGES) + 1
         end
     end

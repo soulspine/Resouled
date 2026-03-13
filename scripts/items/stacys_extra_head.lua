@@ -12,14 +12,14 @@ local CONSTANTS = {
 local function onPickupFirstUpdate(_, pickup)
     if pickup.FrameCount ~= 1 then return end
 
-    local room = Game():GetRoom()
+    local room = Resouled.Game:GetRoom()
     if not (room:GetType() == RoomType.ROOM_BOSS or room:GetType() == RoomType.ROOM_BOSSRUSH) or
         not room:IsClear() or
         not PlayerManager.AnyoneHasCollectible(CONSTANTS.Item) then
         return
     end
 
-    local g = Game()
+    local g = Resouled.Game
     local roomSave = Resouled.SaveManager.GetRoomFloorSave()
     if roomSave.Stacy_Head_Proc_Done then return end
 

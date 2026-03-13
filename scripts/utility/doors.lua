@@ -99,7 +99,6 @@ end
 ---@return boolean | nil
 function doorsModule:WhatOpensDoorLock(door)
     if not door:IsOpen() and door:IsLocked() then
-        local sprite = door:GetSprite()
         local lockedAnim = door.LockedAnimation
         if door:IsTargetRoomArcade() or lockedAnim == "CoinClosed" then
             return false

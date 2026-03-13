@@ -1,4 +1,4 @@
-local game = Game()
+local game = Resouled.Game
 
 local BASE_ROOM_EVENT_NUM_PER_FLOOR = function()
     return Resouled:GetOptionValue("Base Room Event Num")

@@ -33,6 +33,52 @@ local BUFF_PEDESTAL_TYPE = Isaac.GetEntityTypeByName("Buff Pedestal")
 local BUFF_PEDESTAL_VARIANT = Isaac.GetEntityVariantByName("Buff Pedestal")
 local BUFF_PEDESTAL_SUBTYPE = Isaac.GetEntitySubTypeByName("Buff Pedestal")
 
+---@class ResouledBuffCallbackConfig
+---@field Function function
+---@field CallbackID ModCallbacks | string
+---@field Priority CallbackPriority | nil
+---@field CallbackParams any | nil
+
+local buffCallbackConfigs = {}
+---@param buffId ResouledBuff
+---@param config table (ResouledBuffCallbackConfig)
+function Resouled:AddBuffCallbackConfig(buffId, config)
+    for _, callback in ipairs(config) do callback.Priority = callback.Priority or CallbackPriority.DEFAULT end
+    local newConfig = {
+        Callbacks = config,
+        Active = false
+    }
+    buffCallbackConfigs[buffId] = newConfig
+end
+
+local function addBuffCallbacks()
+    for _, buffDesc in pairs(Resouled:GetBuffs()) do
+        if Resouled:ActiveBuffPresent(buffDesc.Id) then
+            local config = buffCallbackConfigs[buffDesc.Id]
+            if config and not config.Active then
+                ---@param callbackConfig ResouledBuffCallbackConfig
+                for _, callbackConfig in ipairs(config.Callbacks) do
+                    Resouled:AddPriorityCallback(callbackConfig.CallbackID, callbackConfig.Priority, callbackConfig.Function, callbackConfig.CallbackParams)
+                end
+                config.Active = true
+            end
+        end
+    end
+end
+
+local function removeBuffCallbacks()
+    for _, buffDesc in pairs(Resouled:GetBuffs()) do
+        local config = buffCallbackConfigs[buffDesc.Id]
+        if config and config.Active then
+            ---@param callbackConfig ResouledBuffCallbackConfig
+            for _, callbackConfig in ipairs(buffCallbackConfigs[buffDesc.Id]) do
+                ---@diagnostic disable-next-line
+                Resouled:RemoveCallback(callbackConfig.CallbackID, callbackConfig.Function)
+            end
+            config.Active = false
+        end
+    end
+end
 
 local function makeSureSavesExist()
     local FILE_SAVE = Resouled.SaveManager.GetPersistentSave()
@@ -53,7 +99,7 @@ end
 ---@param position? Vector
 ---@return EntityPickup | nil
 function Resouled:SpawnSetBuffPedestal(buffID, position)
-    local buff = Game():Spawn(BUFF_PEDESTAL_TYPE, BUFF_PEDESTAL_VARIANT, position or Game():GetRoom():GetCenterPos(), Vector.Zero, nil, BUFF_PEDESTAL_SUBTYPE, Game():GetRoom():GetSpawnSeed() + Isaac.GetFrameCount()):ToPickup()
+    local buff = Resouled.Game:Spawn(BUFF_PEDESTAL_TYPE, BUFF_PEDESTAL_VARIANT, position or Resouled.Game:GetRoom():GetCenterPos(), Vector.Zero, nil, BUFF_PEDESTAL_SUBTYPE, Resouled.Game:GetRoom():GetSpawnSeed() + Isaac.GetFrameCount()):ToPickup()
     if buff then
         buff:SetVarData(buffID)
         return buff
@@ -415,6 +461,16 @@ function Resouled:RemoveActiveBuff(buffID)
                 FILE_SAVE.Resouled_ActiveBuffs[key] = nil
             end
         end
+
+        local config = buffCallbackConfigs[buff.Id]
+        if config and config.Active then
+            ---@param callbackConfig ResouledBuffCallbackConfig
+            for _, callbackConfig in ipairs(buffCallbackConfigs[buff.Id]) do
+                ---@diagnostic disable-next-line
+                Resouled:RemoveCallback(callbackConfig.CallbackID, callbackConfig.Function)
+            end
+            config.Active = false
+        end
     else
         Resouled:LogError("Provided unregistered buff while removing active buffs. nil ID: "..tostring(buffID))
     end
@@ -446,7 +502,7 @@ end
 function Resouled:ActiveBuffPresent(buffID)
     local buff = Resouled:GetBuffById(buffID)
     local FILE_SAVE = Resouled.SaveManager.GetPersistentSave()
-    return (not Resouled.AfterlifeShop:IsAfterlifeShop()) and buff ~= nil and FILE_SAVE ~= nil and FILE_SAVE.Resouled_ActiveBuffs and FILE_SAVE.Resouled_ActiveBuffs[tostring(buffID)]
+    return ((not Resouled.AfterlifeShop:IsAfterlifeShop()) and buff ~= nil and FILE_SAVE ~= nil and FILE_SAVE.Resouled_ActiveBuffs and FILE_SAVE.Resouled_ActiveBuffs[tostring(buffID)])
 end
 
 function Resouled:ClearBuffSave()
@@ -514,8 +570,15 @@ local function postPlayerInit() --Appearently this is THE first callback when st
         RUN_SAVE.Resouled_AddedBuffs = true
         Resouled:ActivatePendingBuffs()
     end
+
+    removeBuffCallbacks()
+    addBuffCallbacks()
 end
 Resouled:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.IMPORTANT, postPlayerInit)
+Resouled:AddPriorityCallback(ModCallbacks.MC_POST_GAME_STARTED, CallbackPriority.IMPORTANT, addBuffCallbacks)
+
+Resouled:AddPriorityCallback(ModCallbacks.MC_PRE_GAME_EXIT, CallbackPriority.LATE, removeBuffCallbacks)
+Resouled:AddPriorityCallback(ModCallbacks.MC_POST_GAME_END, CallbackPriority.LATE, removeBuffCallbacks)
 
 local COMMAND_ADDBUFF = {
     Name = "addbuff",

@@ -13,7 +13,7 @@ local function placeBomb(_, player)
                 npc:TakeDamage(BASE_BOMB_DAMAGE, DamageFlag.DAMAGE_EXPLOSION, EntityRef(player), 0)
             end
         end
-        Game():BombExplosionEffects(player.Position, 0, TearFlags.TEAR_NORMAL)
+        Resouled.Game:BombExplosionEffects(player.Position, 0, TearFlags.TEAR_NORMAL)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_USE_BOMB, placeBomb)

@@ -115,6 +115,6 @@ local function onTearDeath(_, tear)
             EGG_PARTICLE_GRID_COLLISION
         )
     end
-    SFXManager():Play(EGG_HIT_SOUND, EGG_HIT_SOUND_VOLUME)
+    Resouled.SfxM:Play(EGG_HIT_SOUND, EGG_HIT_SOUND_VOLUME)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_TEAR_DEATH, onTearDeath, BLACK_PROGLOTTIDS_EGG.Variant)

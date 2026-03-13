@@ -16,11 +16,11 @@ local CONST = {
     LilGhost = Resouled:EntityDescConstructor(EntityType.ENTITY_EFFECT, EffectVariant.LIL_GHOST, 0, "Lil Ghost"),
 }
 
-local g = Game()
-local s = SFXManager()
+local g = Resouled.Game
+local s = Resouled.SfxM
 
-local g = Game()
-local s = SFXManager()
+local g = Resouled.Game
+local s = Resouled.SfxM
 
 -- handles spawning the ghost when room event is present
 local function onRoomEnter()
@@ -48,7 +48,7 @@ local function onUpdate()
     -- opening and closing doors
     if frameCount % CONFIG.DoorOpenTimer == 0 then
         if math.random() > CONFIG.LilGhostSpawnChance then
-            Game():Spawn(EntityType.ENTITY_EFFECT,
+            Resouled.Game:Spawn(EntityType.ENTITY_EFFECT,
                 EffectVariant.LIL_GHOST,
                 room:GetRandomPosition(67),
                 Vector.Zero,

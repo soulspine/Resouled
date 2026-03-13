@@ -44,7 +44,7 @@ end
 Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, playerTakeDamage, EntityType.ENTITY_PLAYER)
 
 local function postNewRoom()
-    if not Game():GetRoom():IsClear() then
+    if not Resouled.Game:GetRoom():IsClear() then
         ---@param player EntityPlayer
         Resouled.Iterators:IterateOverPlayers(function(player)
             local RUN_SAVE = Resouled.SaveManager.GetRunSave(player)

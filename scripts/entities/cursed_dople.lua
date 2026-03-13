@@ -16,8 +16,8 @@ local SHOOT = "Shoot"
 
 ---@param en EntityNPC
 local function bindPlayer(en, data)
-    for i = 0, Game():GetNumPlayers() - 1 do
-        local player = Game():GetPlayer(i)
+    for i = 0, Resouled.Game:GetNumPlayers() - 1 do
+        local player = Resouled.Game:GetPlayer(i)
         if player then
             local playerData = player:GetData()
             if not playerData.Resouled_CursedDopleBind then
@@ -113,11 +113,11 @@ local function shoot(en, input, data, sprite)
     if input.X == 0 and input.Y == 0 then return end
 
     if not sprite:GetOverlayAnimation():find(SHOOT) then
-        local tear = Game():Spawn(EntityType.ENTITY_TEAR, 0, en.Position, Vector.Zero, data.Resouled_CursedDopleBind.Entity, 0, Random()):ToTear()
+        local tear = Resouled.Game:Spawn(EntityType.ENTITY_TEAR, 0, en.Position, Vector.Zero, data.Resouled_CursedDopleBind.Entity, 0, Random()):ToTear()
         if not tear then return end
 
         tear.Color = CursedDople.TearColor
-        tear.CollisionDamage = CursedDople.BaseTearDamage + Game():GetLevel():GetStage() * CursedDople.TearDamagePerStage
+        tear.CollisionDamage = CursedDople.BaseTearDamage + Resouled.Game:GetLevel():GetStage() * CursedDople.TearDamagePerStage
         
         local angle = input:GetAngleDegrees()%360
         tear.Velocity = Vector(1, 0):Rotated(angle + angle%90) * CursedDople.TearSpeed + en.Velocity/5
@@ -251,7 +251,7 @@ local function preNpcUpdate(_, en)
 
         en.Velocity = en.Velocity * CursedDople.VelocityMultiplier
 
-        local room = Game():GetRoom()
+        local room = Resouled.Game:GetRoom()
         if room:IsClear() then
             die(en)
             return

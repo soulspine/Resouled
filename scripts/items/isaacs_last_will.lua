@@ -4,7 +4,7 @@ local itemBlacklist = {
     [ISAACS_LAST_WILL] = true,
 }
 
-local game = Game()
+local game = Resouled.Game
 
 ---@param integer integer
 local function makeLookupKey(integer)
@@ -72,7 +72,7 @@ local function postPlayerRevive(_, entity)
             if stageTime then
                 if item:GetTime() <= stageTime then
                     local itemID = item:GetItemID()
-                    local itemConfig = Isaac.GetItemConfig():GetCollectible(itemID)
+                    local itemConfig = Resouled.ItemConf:GetCollectible(itemID)
                     if not itemConfig:HasTags(ItemConfig.TAG_QUEST) and not itemBlacklist[itemID] then
                         player:RemoveCollectible(itemID)
                     end
@@ -90,7 +90,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_REVIVE, postPlayerRevive)
 local function playerDeathPostCheckRevives(_, player)
     if player:HasCollectible(ISAACS_LAST_WILL) then
         local RunSave = Resouled.SaveManager.GetRunSave(player)
-        local lastRoomIdx = Game():GetLevel():GetLastRoomDesc().GridIndex
+        local lastRoomIdx = Resouled.Game:GetLevel():GetLastRoomDesc().GridIndex
 
         local times = Resouled:GetTimesStagesHaveBeenEntered()
 
@@ -102,14 +102,14 @@ local function playerDeathPostCheckRevives(_, player)
 
         if nextStage <= LevelStage.NUM_STAGES or times[makeLookupKey(RunSave.IsaacsLastWill)] then
             player:Revive()
-            Game():StartRoomTransition(lastRoomIdx, Resouled:GetDirToRoomFromIdx(lastRoomIdx))
+            Resouled.Game:StartRoomTransition(lastRoomIdx, Resouled:GetDirToRoomFromIdx(lastRoomIdx))
         else
             local itemCount = 0
 
             local items = player:GetHistory():GetCollectiblesHistory()
             for _, item in ipairs(items) do
                 local itemID = item:GetItemID()
-                local itemConfig = Isaac.GetItemConfig():GetCollectible(itemID)
+                local itemConfig = Resouled.ItemConf:GetCollectible(itemID)
                 if not itemConfig:HasTags(ItemConfig.TAG_QUEST) and not itemBlacklist[itemID] then
                     itemCount = itemCount + 1
                     player:RemoveCollectible(itemID)
@@ -118,7 +118,7 @@ local function playerDeathPostCheckRevives(_, player)
 
             if itemCount > 0 then
                 player:Revive()
-                Game():StartRoomTransition(lastRoomIdx, Resouled:GetDirToRoomFromIdx(lastRoomIdx))
+                Resouled.Game:StartRoomTransition(lastRoomIdx, Resouled:GetDirToRoomFromIdx(lastRoomIdx))
             end
         end
     end

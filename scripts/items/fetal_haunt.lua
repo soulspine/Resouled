@@ -37,7 +37,7 @@ local function getRandomPositionNearEnemy(radius)
     local selectedCenter = validPositionCenters[math.random(#validPositionCenters)]
     local chosenPosition = selectedCenter + Vector(math.random(-radius, radius), math.random(-radius, radius))
 
-    if not Game():GetRoom():IsPositionInRoom(chosenPosition, 0) then
+    if not Resouled.Game:GetRoom():IsPositionInRoom(chosenPosition, 0) then
         goto reroll
     end
 

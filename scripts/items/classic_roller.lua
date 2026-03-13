@@ -1,5 +1,5 @@
-local g = Game()
-local itemConfig = Isaac.GetItemConfig()
+local g = Resouled.Game
+local itemConfig = Resouled.ItemConf
 
 local CLASSIC_ROLLER = Resouled.Enums.Items.CLASSIC_ROLLER
 

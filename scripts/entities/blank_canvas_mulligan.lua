@@ -78,7 +78,7 @@ local function npcUpdate(_, npc)
         end
 
         if sprite:IsEventTriggered(FLIP_START_TRIGGER) then
-            SFXManager():Play(FLIP_SFX, SFX_VOLUME)
+            Resouled.SfxM:Play(FLIP_SFX, SFX_VOLUME)
         end
 
         npc.Velocity = (npc.Velocity + (npc.Position - npc:GetPlayerTarget().Position):Normalized()) * VELOCITY_MULTIPLIER
@@ -90,10 +90,10 @@ Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, npcUpdate, MULLIGAN_TYPE)
 local function postNpcDeath(_, npc)
     if npc.Variant == MULLIGAN_VARIANT and npc.SubType == MULLIGAN_SUBTYPE then
         for i = 1, DEATH_FLY_COUNT do
-            Game():Spawn(FLY_TYPE, FLY_VARIANT, npc.Position + Vector(math.random(-2, 2), math.random(-2, 2)), Vector.Zero, nil, FLY_SUBTYPE, npc.InitSeed)
+            Resouled.Game:Spawn(FLY_TYPE, FLY_VARIANT, npc.Position + Vector(math.random(-2, 2), math.random(-2, 2)), Vector.Zero, nil, FLY_SUBTYPE, npc.InitSeed)
         end
         local randomNum = math.random(1, 3)
-        SFXManager():Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
+        Resouled.SfxM:Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
         Resouled:SpawnPaperGore(npc.Position, GORE_PARTICLE_COUNT)
     end
 end

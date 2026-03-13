@@ -1,4 +1,4 @@
-local game = Game()
+local game = Resouled.Game
 
 local DeathStatue = Resouled.Stats.DeathStatue
 local BuffPedestal = Resouled.Stats.BuffPedestal
@@ -25,7 +25,7 @@ local DecorationConfig = {
 ---@param blacklist? table
 local function spawnBuffPedestal(position, seed, blacklist)
     seed = game:GetSeeds():GetStartSeed() + seed
-    local pedestal = Game():Spawn(BuffPedestal.Type, BuffPedestal.Variant, position, Vector.Zero, nil, BuffPedestal.SubType, seed):ToPickup()
+    local pedestal = Resouled.Game:Spawn(BuffPedestal.Type, BuffPedestal.Variant, position, Vector.Zero, nil, BuffPedestal.SubType, seed):ToPickup()
     if not pedestal then return end
     local buff = Resouled:GetShopBuffRoll(seed, 0, blacklist) or 0
     blacklist[buff] = true
@@ -37,7 +37,7 @@ end
 ---@param buff ResouledBuff | integer
 local function spawnSetBuffPedestal(position, seed, buff)
     seed = game:GetSeeds():GetStartSeed() + seed
-    local pedestal = Game():Spawn(BuffPedestal.Type, BuffPedestal.Variant, position, Vector.Zero, nil, BuffPedestal.SubType, seed):ToPickup()
+    local pedestal = Resouled.Game:Spawn(BuffPedestal.Type, BuffPedestal.Variant, position, Vector.Zero, nil, BuffPedestal.SubType, seed):ToPickup()
     if not pedestal then return end
     pedestal:SetVarData(buff)
 end

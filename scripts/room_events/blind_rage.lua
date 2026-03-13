@@ -1,7 +1,7 @@
 local function postRoomClear()
     if Resouled:RoomEventPresent(Resouled.RoomEvents.BLIND_RAGE) then
-        if Game():GetLevel():GetNonCompleteRoomIndex() then 
-            Game():StartRoomTransition(Game():GetLevel():GetNonCompleteRoomIndex(), Direction.NO_DIRECTION, RoomTransitionAnim.TELEPORT)
+        if Resouled.Game:GetLevel():GetNonCompleteRoomIndex() then 
+            Resouled.Game:StartRoomTransition(Resouled.Game:GetLevel():GetNonCompleteRoomIndex(), Direction.NO_DIRECTION, RoomTransitionAnim.TELEPORT)
         end
     end
 end

@@ -1,4 +1,4 @@
-local g = Game()
+local g = Resouled.Game
 
 local TNT_VARIANT = Isaac.GetEntityVariantByName("Blast Miner TNT")
 local TNT_SUBTYPE = Isaac.GetEntitySubTypeByName("Blast Miner TNT")
@@ -20,7 +20,7 @@ local subtypeWhitelist = {
     [TNT_GIGA_SUBTYPE] = true
 }
 
-local AMOUNT = 20
+local AMOUNT = 10
 local START_OFFSET = 10
 local WEIGHT = 0.8
 local BOUNCINESS = 0.3
@@ -254,7 +254,13 @@ local function onPickupUpdate(_, pickup)
                 local room = g:GetRoom()
 
                 if not room:IsPositionInRoom(pickup.Position, 1) then
-                    pickup.Velocity = Vector.Zero
+                    local newVarData = varData + 1
+                    pickup:SetVarData(newVarData)
+                    if newVarData == 3 then
+                        EXPLODE(pickup, data["Resouled_BlastMiner"]["Flags"])
+                        data.Resouled_TNTCrateThrown = nil
+                        return
+                    end
                 end
 
                 if pickup.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_NONE then
@@ -286,7 +292,7 @@ local function onPickupUpdate(_, pickup)
                     end
 
                     local grid = room:GetGridEntityFromPos(pickup.Position)
-                    if grid and not gridLandExplodeBlacklist[grid:GetType()] then
+                    if grid and not gridLandExplodeBlacklist[grid:GetType()] and grid:Destroy(false) then
                         EXPLODE(pickup, data["Resouled_BlastMiner"]["Flags"])
                         data.Resouled_TNTCrateThrown = nil
                         return

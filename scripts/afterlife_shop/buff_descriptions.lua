@@ -331,7 +331,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, function()
 
         local buff = Resouled:GetBuffById(buffId)
         if buff then
-            if not Game():IsPauseMenuOpen() then
+            if not Resouled.Game:IsPauseMenuOpen() then
                 EntityEffect.CreateLight(entity.Position + Vector(0, -43), 0.4, 5, 6, glowColors[buff.Rarity])
                 entity:SetColor(glowColorsPedestal[buff.Rarity], 2, 1, true, true)
             end
@@ -339,7 +339,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_HUD_RENDER, function()
 
         descriptionBoxConfig.AppearTime = math.min(descriptionBoxConfig.AppearTime + 1, maxAppearTime)
 
-        if entity.Position.X <= Game():GetRoom():GetCenterPos().X then
+        if entity.Position.X <= Resouled.Game:GetRoom():GetCenterPos().X then
             descriptionBoxConfig.Side = "Left"
         else
             descriptionBoxConfig.Side = "Right"

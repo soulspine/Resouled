@@ -1,7 +1,7 @@
 local function preSpawnCleanReward()
-    local room = Game():GetRoom()
+    local room = Resouled.Game:GetRoom()
     if Resouled:ActiveBuffPresent(Resouled.Buffs.RELIC) and room:GetType() == RoomType.ROOM_BOSS then
-        Game():GetLevel():InitializeDevilAngelRoom(true, true)
+        Resouled.Game:GetLevel():InitializeDevilAngelRoom(true, true)
         room:TrySpawnDevilRoomDoor(true, true)
         Resouled:RemoveActiveBuff(Resouled.Buffs.RELIC)
     end

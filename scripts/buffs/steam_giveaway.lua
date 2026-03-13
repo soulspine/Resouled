@@ -1,5 +1,5 @@
 local function postNewRoom()
-    if Resouled:ActiveBuffPresent(Resouled.Buffs.STEAM_GIVEAWAY) and Game():GetRoom():GetType() == RoomType.ROOM_SHOP and Game():GetLevel():GetStage() == 1 then
+    if Resouled:ActiveBuffPresent(Resouled.Buffs.STEAM_GIVEAWAY) and Resouled.Game:GetRoom():GetType() == RoomType.ROOM_SHOP and Resouled.Game:GetLevel():GetStage() == 1 then
         ---@param entity Entity
         Resouled.Iterators:IterateOverRoomEntities(function(entity)
             local pickup = entity:ToPickup()

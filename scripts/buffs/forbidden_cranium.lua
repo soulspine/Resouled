@@ -10,7 +10,7 @@ local cursesToAdd = {
 local function postGameStart()
     if Resouled:ActiveBuffPresent(Resouled.Buffs.FORBIDDEN_CRANIUM) then
         for i = 1, #cursesToAdd do
-            Game():GetLevel():AddCurse(cursesToAdd[i], false)
+            Resouled.Game:GetLevel():AddCurse(cursesToAdd[i], false)
         end
     end
 end
@@ -18,7 +18,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, postGameStart)
 
 ---@param pickup EntityPickup
 local function postPickupInit(_, pickup)
-    if Game():GetRoom():GetType() == RoomType.ROOM_BOSS and Resouled:ActiveBuffPresent(Resouled.Buffs.FORBIDDEN_CRANIUM) then
+    if Resouled.Game:GetRoom():GetType() == RoomType.ROOM_BOSS and Resouled:ActiveBuffPresent(Resouled.Buffs.FORBIDDEN_CRANIUM) then
         pickup:AddCollectibleCycle(Resouled:GetRandomItemFromPool(ItemPoolType.POOL_DEVIL, RNG(pickup.InitSeed), 4))
 
         Resouled:RemoveActiveBuff(Resouled.Buffs.FORBIDDEN_CRANIUM)

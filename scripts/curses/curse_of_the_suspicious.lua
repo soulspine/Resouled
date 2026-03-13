@@ -24,7 +24,7 @@ local function entityTakeDmg(_, entity, amount, flags, source)
             local data = entity:GetData()
 
             if not data.ResouledCurseOfTheSuspiciousCooldown then
-                data.ResouledCurseOfTheSuspiciousCooldown = TEAR_COOLDOWN_PER_PLAYER + Game():GetNumPlayers()
+                data.ResouledCurseOfTheSuspiciousCooldown = TEAR_COOLDOWN_PER_PLAYER + Resouled.Game:GetNumPlayers()
             end
 
             if data.ResouledCurseOfTheSuspiciousCooldown > 0 then
@@ -37,8 +37,8 @@ local function entityTakeDmg(_, entity, amount, flags, source)
                     if entity.HitPoints > entity.MaxHitPoints then
                         entity.HitPoints = entity.MaxHitPoints
                     end
-                    data.ResouledCurseOfTheSuspiciousCooldown = TEAR_COOLDOWN_PER_PLAYER + Game():GetNumPlayers()
-                    SFXManager():Play(SoundEffect.SOUND_HOLY)
+                    data.ResouledCurseOfTheSuspiciousCooldown = TEAR_COOLDOWN_PER_PLAYER + Resouled.Game:GetNumPlayers()
+                    Resouled.SfxM:Play(SoundEffect.SOUND_HOLY)
                     return false
                 end
             end

@@ -1,16 +1,25 @@
 ---@param price integer
 local function onGetShopItemPrice(_, variant, subtype, shopId, price)
-    if Resouled:ActiveBuffPresent(Resouled.Buffs.STEAM_SALE) and Resouled.Game:GetRoom():GetType() == RoomType.ROOM_SHOP and Resouled.Game:GetLevel():GetStage() == 1 then
+    if Resouled.Game:GetRoom():GetType() == RoomType.ROOM_SHOP and Resouled.Game:GetLevel():GetStage() == 1 then
         return math.floor(price/2)
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_GET_SHOP_ITEM_PRICE, onGetShopItemPrice)
 
 local function postNewFloor()
-    if Resouled:ActiveBuffPresent(Resouled.Buffs.STEAM_SALE) then
-        if Resouled.Game:GetLevel():GetStage() ~= 1 then
-            Resouled:RemoveActiveBuff(Resouled.Buffs.STEAM_SALE)
-        end
+    if Resouled.Game:GetLevel():GetStage() ~= 1 then
+        Resouled:RemoveActiveBuff(Resouled.Buffs.STEAM_SALE)
+        Resouled:RemoveCallback(ModCallbacks.MC_GET_SHOP_ITEM_PRICE, onGetShopItemPrice)
+        Resouled:RemoveCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
+
+Resouled:AddBuffCallbackConfig(Resouled.Buffs.STEAM_SALE, {
+    {
+        CallbackID = ModCallbacks.MC_GET_SHOP_ITEM_PRICE,
+        Function = onGetShopItemPrice
+    },
+    {
+        CallbackID = ModCallbacks.MC_POST_NEW_LEVEL,
+        Function = postNewFloor
+    }
+})

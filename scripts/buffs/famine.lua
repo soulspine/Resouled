@@ -1,7 +1,3 @@
-local famine = {}
-local callbacksActive = false
-local mod = Resouled
-
 local itemBlacklist = {}
 
 ---@param itemID CollectibleType
@@ -45,7 +41,7 @@ blacklistItem(CollectibleType.COLLECTIBLE_MILK)
 blacklistItem(CollectibleType.COLLECTIBLE_GHOST_PEPPER)
 blacklistItem(CollectibleType.COLLECTIBLE_LEMON_MISHAP)
 
-mod:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, function()
+Resouled:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, function()
     local itemConfig = Resouled.ItemConf
     local items = itemConfig:GetCollectibles()
     for i = 1, #items - 1 do
@@ -56,39 +52,18 @@ mod:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, function()
     end
 end)
 
-function famine:removeItemsFromPools()
+local function removeItemsFromPools()
     local itemPool = Resouled.Game:GetItemPool()
     for itemID, _ in pairs(itemBlacklist) do
         itemPool:RemoveCollectible(itemID)
     end
 end
 
-local function postPlayerInit()
-    if Resouled:ActiveBuffPresent(Resouled.Buffs.FAMINE) and not callbacksActive then
-        famine:addCallbacks()
-        famine:removeItemsFromPools()
-    end
-end
-mod:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.LATE, postPlayerInit)
-
-function famine:preGameExit()
-    if callbacksActive then
-        famine:removeCallbacks()
-    end
-end
-
-function famine:addCallbacks()
-    if not callbacksActive then
-        mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, famine.preGameExit)
-        callbacksActive = true
-    end
-end
-
-function famine:removeCallbacks()
-    if callbacksActive then
-        mod:RemoveCallback(ModCallbacks.MC_PRE_GAME_EXIT, famine.preGameExit)
-        callbacksActive = false
-    end
-end
-
 Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.FAMINE, true)
+
+Resouled:AddBuffCallbackConfig(Resouled.Buffs.FAMINE, {
+    {
+        CallbackID = ModCallbacks.MC_POST_GAME_STARTED,
+        Function = removeItemsFromPools
+    }
+})

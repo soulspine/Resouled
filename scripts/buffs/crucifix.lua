@@ -1,20 +1,6 @@
 local QUALITY = 4
 
 ---@param pickup EntityPickup
-local function postPickupInit(_, pickup)
-    if Resouled.Game:GetRoom():GetType() == RoomType.ROOM_BOSS then
-        local ROOM_SAVE = Resouled.SaveManager.GetRoomSave(pickup)
-
-        local collectibleID = Resouled:GetRandomItemFromPool(ItemPoolType.POOL_ANGEL, RNG(pickup.InitSeed), QUALITY)
-
-        pickup:AddCollectibleCycle(collectibleID)
-        ROOM_SAVE.Resouled_CrucifixItemID = collectibleID
-
-        Resouled:RemoveActiveBuff(Resouled.Buffs.CRUCIFIX)
-    end
-end
-
----@param pickup EntityPickup
 ---@param collider Entity
 local function prePickupCollision(_, pickup, collider)
     local player = collider:ToPlayer()
@@ -29,6 +15,22 @@ local function prePickupCollision(_, pickup, collider)
                 end
             end
         end
+    end
+end
+
+---@param pickup EntityPickup
+local function postPickupInit(_, pickup)
+    if Resouled.Game:GetRoom():GetType() == RoomType.ROOM_BOSS then
+        local ROOM_SAVE = Resouled.SaveManager.GetRoomSave(pickup)
+
+        local collectibleID = Resouled:GetRandomItemFromPool(ItemPoolType.POOL_ANGEL, RNG(pickup.InitSeed), QUALITY)
+
+        pickup:AddCollectibleCycle(collectibleID)
+        ROOM_SAVE.Resouled_CrucifixItemID = collectibleID
+
+        Resouled:RemoveActiveBuff(Resouled.Buffs.CRUCIFIX)
+        Resouled:RemoveCallback(ModCallbacks.MC_POST_PICKUP_INIT, postPickupInit)
+        Resouled:RemoveCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, prePickupCollision)
     end
 end
 

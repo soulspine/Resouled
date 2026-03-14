@@ -8,6 +8,7 @@ local function postGameStarted()
         end
     end)
     Resouled:RemoveActiveBuff(Resouled.Buffs.CROSS)
+    Resouled:RemoveCallback(ModCallbacks.MC_POST_GAME_STARTED, postGameStarted)
 end
 
 Resouled:AddBuffCallbackConfig(Resouled.Buffs.CROSS, {

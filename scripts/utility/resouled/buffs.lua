@@ -41,7 +41,7 @@ local BUFF_PEDESTAL_SUBTYPE = Isaac.GetEntitySubTypeByName("Buff Pedestal")
 
 local buffCallbackConfigs = {}
 ---@param buffId ResouledBuff
----@param config table (ResouledBuffCallbackConfig)
+---@param config table (ResouledBuffCallbackConfig) CallbackID, Function, CallbackParams?, Priority?
 function Resouled:AddBuffCallbackConfig(buffId, config)
     for _, callback in ipairs(config) do callback.Priority = callback.Priority or CallbackPriority.DEFAULT end
     local newConfig = {

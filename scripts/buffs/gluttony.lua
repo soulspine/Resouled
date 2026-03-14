@@ -1,7 +1,6 @@
 ---@param entity Entity
 ---@param damage number
 local function postPlayerTakeDamage(_, entity, damage)
-    if not Resouled:ActiveBuffPresent(Resouled.Buffs.GLUTTONY) then return end
     local player = entity:ToPlayer()
     if player then
         local save = Resouled.SaveManager.GetRunSave(player)
@@ -9,10 +8,8 @@ local function postPlayerTakeDamage(_, entity, damage)
         save.GluttonyBuffCounter = save.GluttonyBuffCounter + damage
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_ENTITY_TAKE_DMG, postPlayerTakeDamage)
 
 local function postNewFloor()
-    if not Resouled:ActiveBuffPresent(Resouled.Buffs.GLUTTONY) then return end
     ---@param player EntityPlayer
     Resouled.Iterators:IterateOverPlayers(function(player)
         local save = Resouled.SaveManager.GetRunSave(player)
@@ -43,6 +40,16 @@ local function postNewFloor()
         end
     end)
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, postNewFloor)
 
 Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.GLUTTONY, true)
+
+Resouled:AddBuffCallbackConfig(Resouled.Buffs.GLUTTONY, {
+    {
+        CallbackID = ModCallbacks.MC_POST_ENTITY_TAKE_DMG,
+        Function = postPlayerTakeDamage
+    },
+    {
+        CallbackID = ModCallbacks.MC_POST_NEW_LEVEL,
+        Function = postNewFloor
+    }
+})

@@ -1,18 +1,25 @@
 local CURSE = LevelCurse.CURSE_OF_THE_UNKNOWN
 
 local function postGameStart()
-    if Resouled:ActiveBuffPresent(Resouled.Buffs.DEVILS_HEAD) then
-        Resouled.Game:GetLevel():AddCurse(CURSE, false)
-    end
+    Resouled.Game:GetLevel():AddCurse(CURSE, false)
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, postGameStart)
 
 local function preSpawnCleanReward()
     local room = Resouled.Game:GetRoom()
-    if Resouled:ActiveBuffPresent(Resouled.Buffs.DEVILS_HEAD) and room:GetType() == RoomType.ROOM_BOSS then
+    if room:GetType() == RoomType.ROOM_BOSS then
         Resouled.Game:GetLevel():InitializeDevilAngelRoom(false, true)
         room:TrySpawnDevilRoomDoor(true, true)
         Resouled:RemoveActiveBuff(Resouled.Buffs.DEVILS_HEAD)
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, preSpawnCleanReward)
+
+Resouled:AddBuffCallbackConfig(Resouled.Buffs.DEVILS_HEAD, {
+    {
+        CallbackID = ModCallbacks.MC_POST_GAME_STARTED,
+        Function = postGameStart
+    },
+    {
+        CallbackID = ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD,
+        Function = preSpawnCleanReward
+    }
+})

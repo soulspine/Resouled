@@ -23,6 +23,7 @@ local function postGameStart()
     end
     Resouled.Game:Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_TRINKET, room:GetCenterPos(), Vector.Zero, nil, 0, room:GetSpawnSeed())
     Resouled:RemoveActiveBuff(Resouled.Buffs.CURSED_SKULL)
+    Resouled:RemoveCallback(ModCallbacks.MC_POST_GAME_STARTED, postGameStart)
 end
 
 Resouled:AddBuffCallbackConfig(Resouled.Buffs.CURSED_SKULL, {

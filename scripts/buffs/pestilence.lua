@@ -1,8 +1,4 @@
-local pestilence = {}
-local mod = Resouled
-local callbacksActive = false
-
-pestilence.CharmChance = 0.5
+local charmChance = 0.5
 
 local enemiesWhitelist = {}
 
@@ -34,48 +30,18 @@ whitelistEnemy(EntityType.ENTITY_ADULT_LEECH, 0, 0)
 whitelistEnemy(EntityType.ENTITY_SMALL_LEECH, 0, 0)
 
 ---@param npc EntityNPC
-function pestilence:onNpcInit(npc)
-    if RNG(npc.InitSeed):RandomFloat() < pestilence.CharmChance and enemiesWhitelist[makeLookupKey(npc.Type, npc.Variant, npc.SubType)] then
+local function onNpcInit(npc)
+    if RNG(npc.InitSeed):RandomFloat() < charmChance and enemiesWhitelist[makeLookupKey(npc.Type, npc.Variant, npc.SubType)] then
         npc:AddCharmed(EntityRef(nil), -1)
         npc:AddEntityFlags(EntityFlag.FLAG_PERSISTENT)
     end
 end
 
-function pestilence:onGameEnd()
-    pestilence:removeCallbacks()
-end
-
-function pestilence:preGameExit()
-    pestilence:removeCallbacks()
-end
-
-
-function pestilence:addCallbacks()
-    if not callbacksActive then
-        mod:AddCallback(ModCallbacks.MC_POST_NPC_INIT, pestilence.onNpcInit)
-        mod:AddCallback(ModCallbacks.MC_POST_GAME_END, pestilence.onGameEnd)
-        mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, pestilence.preGameExit)
-        callbacksActive = true
-    end
-end
-
-function pestilence:removeCallbacks()
-    if callbacksActive then
-        mod:RemoveCallback(ModCallbacks.MC_POST_NPC_INIT, pestilence.onNpcInit)
-        mod:RemoveCallback(ModCallbacks.MC_POST_GAME_END, pestilence.onGameEnd)
-        mod:RemoveCallback(ModCallbacks.MC_PRE_GAME_EXIT, pestilence.preGameExit)
-        callbacksActive = false
-    end
-end
-
-
-local function postPlayerInit()
-    if Resouled:ActiveBuffPresent(Resouled.Buffs.PESTILENCE) then
-        pestilence:addCallbacks()
-    else
-        pestilence:removeCallbacks()
-    end
-end
-mod:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.LATE, postPlayerInit)
-
 Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.PESTILENCE, true)
+
+Resouled:AddBuffCallbackConfig(Resouled.Buffs.PESTILENCE, {
+    {
+        CallbackID = ModCallbacks.MC_POST_NPC_INIT,
+        Function = onNpcInit
+    }
+})

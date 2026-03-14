@@ -8,20 +8,30 @@ local cursesToAdd = {
 }
 
 local function postGameStart()
-    if Resouled:ActiveBuffPresent(Resouled.Buffs.FORBIDDEN_CRANIUM) then
-        for i = 1, #cursesToAdd do
-            Resouled.Game:GetLevel():AddCurse(cursesToAdd[i], false)
-        end
+    for i = 1, #cursesToAdd do
+        Resouled.Game:GetLevel():AddCurse(cursesToAdd[i], false)
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, postGameStart)
 
 ---@param pickup EntityPickup
 local function postPickupInit(_, pickup)
-    if Resouled.Game:GetRoom():GetType() == RoomType.ROOM_BOSS and Resouled:ActiveBuffPresent(Resouled.Buffs.FORBIDDEN_CRANIUM) then
+    if Resouled.Game:GetRoom():GetType() == RoomType.ROOM_BOSS then
         pickup:AddCollectibleCycle(Resouled:GetRandomItemFromPool(ItemPoolType.POOL_DEVIL, RNG(pickup.InitSeed), 4))
 
         Resouled:RemoveActiveBuff(Resouled.Buffs.FORBIDDEN_CRANIUM)
+        Resouled:RemoveCallback(ModCallbacks.MC_POST_GAME_STARTED, postGameStart)
+        Resouled:RemoveCallback(ModCallbacks.MC_POST_PICKUP_INIT, postPickupInit)
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, postPickupInit, PickupVariant.PICKUP_COLLECTIBLE)
+
+Resouled:AddBuffCallbackConfig(Resouled.Buffs.FORBIDDEN_CRANIUM, {
+    {
+        CallbackID = ModCallbacks.MC_POST_GAME_STARTED,
+        Function = postGameStart
+    },
+    {
+        CallbackID = ModCallbacks.MC_POST_PICKUP_INIT,
+        Function = postPickupInit,
+        CallbackParams = PickupVariant.PICKUP_COLLECTIBLE
+    }
+})

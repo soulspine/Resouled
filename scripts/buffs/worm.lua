@@ -1,6 +1,4 @@
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, function()
-    if not Resouled:ActiveBuffPresent(Resouled.Buffs.WORM) then return end
-
     Resouled:GiveAllPlayersRandomWormTrinkets()
 end)
 
@@ -13,18 +11,18 @@ end
 local morphChance = 0.3
 
 ---@param pic EntityPickup
-Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, function(_, pic)
+local function onPickupInit(_, pic)
     local rng = RNG(pic.InitSeed)
-    if not Resouled:ActiveBuffPresent(Resouled.Buffs.WORM) or pic.Variant ~= PickupVariant.PICKUP_TRINKET or rng:PhantomFloat() >= morphChance then return end
+    if pic.Variant ~= PickupVariant.PICKUP_TRINKET or rng:PhantomFloat() >= morphChance then return end
 
     pic:Morph(pic.Type, pic.Variant, getRandomWormTrinket(rng))
-end)
+end
 
 ---@param pic EntityPickup
 ---@param collider Entity
-Resouled:AddPriorityCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, CallbackPriority.LATE, function(_, pic, collider)
+local function prePickupCollision(_, pic, collider)
     local player = collider:ToPlayer()
-    if not Resouled:ActiveBuffPresent(Resouled.Buffs.WORM) or not player or pic.Variant ~= PickupVariant.PICKUP_TRINKET or not Resouled.Stats.WormTrinkets.ID_Key[pic.SubType] then return end
+    if not player or pic.Variant ~= PickupVariant.PICKUP_TRINKET or not Resouled.Stats.WormTrinkets.ID_Key[pic.SubType] then return end
 
     for i = 0, player:GetMaxTrinkets() - 1 do
         local trinket = player:GetTrinket(i)
@@ -33,6 +31,18 @@ Resouled:AddPriorityCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, CallbackPrior
             player:TryRemoveTrinket(trinket)
         end
     end
-end)
+end
 
 Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.WORM, true)
+
+Resouled:AddBuffCallbackConfig(Resouled.Buffs.WORM, {
+    {
+        CallbackID = ModCallbacks.MC_POST_PICKUP_INIT,
+        Function = onPickupInit
+    },
+    {
+        CallbackID = ModCallbacks.MC_PRE_PICKUP_COLLISION,
+        Function = prePickupCollision,
+        Priority = CallbackPriority.LATE
+    }
+})

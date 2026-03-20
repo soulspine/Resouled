@@ -90,6 +90,9 @@ local function postGameStarted()
         Resouled.AfterlifeShop.Goto.Activate = false
 
         Resouled.Game:GetHUD():SetVisible(false)
+
+        local fileSave = Resouled.SaveManager.GetPersistentSave()
+        if fileSave then fileSave.FirstAfterlifeVisit = true end
     else
         Resouled.AfterlifeShop:SetMapVisibility(true)
         Resouled.AfterlifeShop.Goto.SpecialBuffs = {}

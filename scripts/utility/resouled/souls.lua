@@ -51,7 +51,8 @@ end
 ---@return boolean
 local function canSpawnSoul()
     local save = getThisFloorSoulsCollected()
-    return save < SOUL_LIMIT
+    local fileSave = Resouled.SaveManager.GetPersistentSave()
+    return save < SOUL_LIMIT and (fileSave ~= nil and fileSave.FirstAfterlifeVisit ~= nil)
 end
 
 local function resetSoulsCollected()

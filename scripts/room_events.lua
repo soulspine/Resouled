@@ -167,8 +167,6 @@ Resouled:RegisterRoomEvent(Resouled.RoomEvents.EVERYTHING_MUST_GO, "Everything M
 Resouled:RegisterRoomEvent(Resouled.RoomEvents.HAUNTED, "Haunted!",
     { filters.ENEMIES_PRESENT, filters.NO_BOSS_ROOM }, true)
 
-Resouled:Log("Loaded " .. tostring(#Resouled:GetRoomEvents()) .. " room events.")
-
 ---@param npc EntityNPC
 ---@param championType ChampionColor
 ---@param balanceHealth? boolean

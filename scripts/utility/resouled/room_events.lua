@@ -177,12 +177,11 @@ end
 local function chooseRandomRoomEvent(roomIndex)
     local roomEvents = Resouled:GetRoomEvents()
     local seed = game:GetSeeds():GetStartSeed() +
-        ((13 * 13 * Resouled.AccurateStats:GetCurrentChapter()) + roomIndex) * roomIndex
-    if seed == 0 then seed = Resouled:NewSeed() end
+        ((492525 * Resouled.AccurateStats:GetCurrentChapter()) + roomIndex * 6767) * (roomIndex + 1) + 1
+    
     local rng = RNG(seed)
     ::RollRoomEvent::
 
-    seed = Resouled:NewSeed()
     local randomNum = rng:RandomInt(#roomEvents) + 1
 
     if checkRoomEventFilters(randomNum) == false then
@@ -270,9 +269,9 @@ local function postNewFloor()
         end
     end
 
+    local seeds = Resouled.Game:GetSeeds()
+    local seed = seeds:GetStageSeed(stage) + seeds:GetStartSeed()
     for i = 1, roomEventsThisFloor do
-        local seed = Resouled:NewSeed()
-
         if i > 169 then
             break
         end
@@ -282,7 +281,7 @@ local function postNewFloor()
         end
 
         rng:SetSeed(seed)
-        seed = Resouled:NewSeed()
+        seed = seed + 2105024
 
         local randomRoomIndex = rng:RandomInt(#correctRooms) + 1
         local roomGridIndex = correctRooms[randomRoomIndex]
@@ -322,7 +321,7 @@ local function postNewRoom()
         end
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)
+Resouled:AddPriorityCallback(ModCallbacks.MC_POST_NEW_ROOM, CallbackPriority.IMPORTANT, postNewRoom)
 
 local function preRoomExit()
     initializeRoomEventifNotInitialized()
@@ -335,7 +334,7 @@ local function preRoomExit()
         end
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_PRE_ROOM_EXIT, preRoomExit)
+Resouled:AddPriorityCallback(ModCallbacks.MC_PRE_ROOM_EXIT, CallbackPriority.LATE, preRoomExit)
 
 local function postUpdate()
     if not isRoomEventPopupVisible() and Resouled:HasAnyoneTriggeredAction(ButtonAction.ACTION_MAP) then

@@ -3,19 +3,28 @@ local buffPedestalConfig = Resouled.Stats.BuffPedestal
 local restockMachineConfig = Resouled.Stats.RerollMachine
 
 local REROLL_CHANCE = 0.5
-local COLLISION_RADIUS = 25
+local COLLISION_RADIUS = 15
 
 ---@param eff EntityEffect
 local function onEffectInit(_, eff)
     if eff.SubType == restockMachineConfig.SubType then
         eff:GetSprite():Play("Idle", true)
+        eff.Color.A = 0
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, onEffectInit, restockMachineConfig.Variant)
 
+local lightColor = Color(1, 0, 0)
 ---@param eff EntityEffect
 local function onUpdate(_, eff)
     if eff.SubType == restockMachineConfig.SubType then
+        local sprite = eff:GetSprite()
+        sprite.Color.A = 0.25 +  math.min(math.max(100 - Isaac.GetPlayer().Position:Distance(eff.Position), 0), 100)/100 * 0.75
+        lightColor.A = sprite.Color.A
+        local colorMult = 0.5 + lightColor.A/2
+        sprite.Color.R = colorMult
+        lightColor.R = colorMult
+        EntityEffect.CreateLight(eff.Position, lightColor.A * 2, 1, 6, lightColor)
         if Resouled:GetPossessedSoulsNum() <= 0 then return end
         if eff.FrameCount % 2 == 0 then
             local save = Resouled.SaveManager.GetRoomSave()

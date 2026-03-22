@@ -45,7 +45,6 @@ local function postPickupIint(_, pickup)
         Resouled:RemoveCallback(ModCallbacks.MC_POST_PICKUP_INIT, postPickupIint)
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, postPickupIint, PickupVariant.PICKUP_COLLECTIBLE)
 
 Resouled:AddBuffCallbackConfig(Resouled.Buffs.IMP, {
     {

@@ -12,8 +12,12 @@ local x = {
         ReturnValue = "He's observing"
     },
     {
-        Name = "Iszak",
-        ReturnValue = "Iszak"
+        Name = "john_resouled",
+        ReturnValue = "John Resouled"
+    },
+    {
+        Name = "i_have_a_hole_in_my_shoes",
+        ReturnValue = "I have a hole in my shoes"
     }
 }
 

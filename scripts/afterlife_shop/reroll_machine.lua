@@ -1,39 +1,37 @@
 local buffPedestalConfig = Resouled.Stats.BuffPedestal
 
-local restockMachineConfig = Resouled.Stats.RerollMachine
+local rerollMachineConfig = Resouled.Stats.RerollMachine
+local altar = rerollMachineConfig.Altar
+local floorSign = rerollMachineConfig.FloorSign
 
 local REROLL_CHANCE = 0.5
-local COLLISION_RADIUS = 15
+local HITBOX_MULT = Vector(1, 0.6)
 
----@param eff EntityEffect
-local function onEffectInit(_, eff)
-    if eff.SubType == restockMachineConfig.SubType then
-        eff:GetSprite():Play("Idle", true)
-        eff.Color.A = 0
+---@param pic EntityPickup
+local function onPickupInit(_, pic)
+    if pic.SubType == altar.SubType then
+        pic.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
+        pic:GetSprite():Play("Idle", true)
+        pic:GetData().Resouled_BuffRerollMachineSpawnPos = pic.Position
+        Resouled.Game:Spawn(floorSign.Type, floorSign.Variant, pic.Position, Vector.Zero, pic, floorSign.SubType, 1)
+        pic.SizeMulti = HITBOX_MULT
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, onEffectInit, restockMachineConfig.Variant)
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onPickupInit, altar.Variant)
 
-local lightColor = Color(1, 0, 0)
----@param eff EntityEffect
-local function onUpdate(_, eff)
-    if eff.SubType == restockMachineConfig.SubType then
-        local sprite = eff:GetSprite()
-        sprite.Color.A = 0.25 +  math.min(math.max(100 - Isaac.GetPlayer().Position:Distance(eff.Position), 0), 100)/100 * 0.75
-        lightColor.A = sprite.Color.A
-        local colorMult = 0.5 + lightColor.A/2
-        sprite.Color.R = colorMult
-        lightColor.R = colorMult
-        EntityEffect.CreateLight(eff.Position, lightColor.A * 2, 1, 6, lightColor)
+---@param pic EntityPickup
+local function onPickupUpdate(_, pic)
+    if pic.SubType == altar.SubType then
+        local data = pic:GetData()
+        pic.Velocity = Vector.Zero
+        pic.Position = data.Resouled_BuffRerollMachineSpawnPos
         if Resouled:GetPossessedSoulsNum() <= 0 then return end
-        if eff.FrameCount % 2 == 0 then
+        if pic.FrameCount % 2 == 0 then
             local save = Resouled.SaveManager.GetRoomSave()
             if not save.RollCount then save.RollCount = 0 end
-            local data = eff:GetData()
-            local players = Isaac.FindInRadius(eff.Position, COLLISION_RADIUS, EntityPartition.PLAYER)
-            if #players > 0 then
+            --[[
                 if not data.Resouled_AfterlifeShopRerollMachineActiveCooldown then
-    
+                    
                     if math.random() < REROLL_CHANCE then
                         local rolledBuffs = {}
                         
@@ -56,17 +54,40 @@ local function onUpdate(_, eff)
                         
                         save.RollCount = save.RollCount + 1
                     end
-
+                    
                     Resouled:SetPossessedSoulsNum(Resouled:GetPossessedSoulsNum() - 1)
-
+                    
                     data.Resouled_AfterlifeShopRerollMachineActiveCooldown = true
                 end
-            else
-                if data.Resouled_AfterlifeShopRerollMachineActiveCooldown then
-                    data.Resouled_AfterlifeShopRerollMachineActiveCooldown = nil
-                end
-            end
+            ]]--
         end
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, onUpdate, restockMachineConfig.Variant)
+Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onPickupUpdate, altar.Variant)
+
+local pentagramColor = Color()
+
+---@param eff EntityEffect
+local function postEffectInit(_, eff)
+    if eff.SubType ~= floorSign.SubType then return end
+    eff:GetSprite():Play("Idle")
+    eff.Color.A = 0
+    eff.DepthOffset = -100
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, postEffectInit, floorSign.Variant)
+
+---@param eff EntityEffect
+local function postEffectUpdate(_, eff)
+    if eff.SubType ~= floorSign.SubType then return end
+    local layer = eff:GetSprite():GetLayer("layer")
+    if layer then
+        pentagramColor.A = 0.25 +  math.min(math.max(100 - Isaac.GetPlayer().Position:Distance(eff.Position), 0), 100)/100 * 0.75
+        local colorMult = 0.5 + pentagramColor.A/2
+        pentagramColor.R = colorMult
+        pentagramColor.G = colorMult
+        pentagramColor.B = colorMult
+        layer:SetColor(pentagramColor)
+        EntityEffect.CreateLight(eff.Position, pentagramColor.A * 2, 1, 6, pentagramColor)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_UPDATE, postEffectUpdate, floorSign.Variant)

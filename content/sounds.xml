@@ -68,4 +68,13 @@
     <sound name="Soulbond3">
         <sample weight="1" path="soulbond_3.wav"/>
     </sound>
+
+    <sound name = "Weltling Spit">
+        <sample weight = "1" path = "welting_spit_1.wav"/>
+        <sample weight = "1" path = "welting_spit_2.wav"/>
+    </sound>
+    <sound name = "Weltling Squawk">
+        <sample weight = "1" path = "welting_squawk_1.wav"/>
+        <sample weight = "1" path = "welting_squawk_2.wav"/>
+    </sound>
 </sounds>

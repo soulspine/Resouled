@@ -12,7 +12,7 @@ local RETRACT_TRIGGER = "ResouledRetract"
 local SHOOT_TRIGGER = "ResouledShoot"
 
 local SHOOT_CHECK = 20
-local SHOOT_CHANCE = 1/4
+local SHOOT_CHANCE = 1/3
 
 local TEAR_SPEED = 8
 local TEAR_PARAMS = ProjectileParams()
@@ -24,6 +24,13 @@ TEAR_PARAMS.FallingAccelModifier = 1
 TEAR_PARAMS.FallingSpeedModifier = -13
 TEAR_PARAMS.PositionOffset = Vector(0, -15)
 TEAR_PARAMS.Scale = 2
+
+local Sounds = {
+    Spit = Isaac.GetSoundIdByName("Weltling Spit"),
+    Squawk = Isaac.GetSoundIdByName("Weltling Squawk")
+}
+
+local SQUAWK_CHANCE = 0.005
 
 ---@param npc EntityNPC
 local function onNpcInit(_, npc)
@@ -67,12 +74,17 @@ local function onNpcUpdate(_, npc)
 
         if sprite:IsEventTriggered(SHOOT_TRIGGER) then
             npc:FireProjectiles(npc.Position, (npc:GetPlayerTarget().Position - npc.Position):Resized(TEAR_SPEED), 0, TEAR_PARAMS)
+            Resouled.SfxM:Play(Sounds.Spit)
         end
 
         if npc.Position.X - npc:GetPlayerTarget().Position.X > 0 then
             sprite:GetLayer(0):SetFlipX(true)
         else
             sprite:GetLayer(0):SetFlipX(false)
+        end
+
+        if math.random() < SQUAWK_CHANCE then
+            Resouled.SfxM:Play(Sounds.Squawk)
         end
     end
 end

@@ -1,7 +1,3 @@
-Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, function()
-    Resouled:GiveAllPlayersRandomWormTrinkets()
-end)
-
 ---@param rng RNG
 ---@return TrinketType
 local function getRandomWormTrinket(rng)
@@ -44,5 +40,9 @@ Resouled:AddBuffCallbackConfig(Resouled.Buffs.WORM, {
         CallbackID = ModCallbacks.MC_PRE_PICKUP_COLLISION,
         Function = prePickupCollision,
         Priority = CallbackPriority.LATE
+    },
+    {
+        CallbackID = ModCallbacks.MC_POST_GAME_STARTED,
+        Function = Resouled.GiveAllPlayersRandomWormTrinkets
     }
 })

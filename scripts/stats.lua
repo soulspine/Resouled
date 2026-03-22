@@ -145,9 +145,16 @@ Resouled.Stats.AfterlifeBackdropFix = {
 }
 
 Resouled.Stats.RerollMachine = {
-    Type = EntityType.ENTITY_EFFECT,
-    Variant = Isaac.GetEntityVariantByName("Afterlife Shop Reroll Machine"),
-    SubType = Isaac.GetEntitySubTypeByName("Afterlife Shop Reroll Machine")
+    Altar = {
+        Type = EntityType.ENTITY_PICKUP,
+        Variant = Isaac.GetEntityVariantByName("Buff Reroll Machine Altar"),
+        SubType = Isaac.GetEntitySubTypeByName("Buff Reroll Machine Altar")
+    },
+    FloorSign = {
+        Type = EntityType.ENTITY_EFFECT,
+        Variant = Isaac.GetEntityVariantByName("Buff Reroll Machine Floor Sign"),
+        SubType = Isaac.GetEntitySubTypeByName("Buff Reroll Machine Floor Sign")
+    }
 }
 
 Resouled.Stats.DontionMachine = {

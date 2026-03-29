@@ -174,7 +174,7 @@ local function onFamiliarUpdate(_, familiar)
             -- just spawning the tear sometimes made its velocity funky so i just shoot a normal tear to copy its stats
             local shotTear = familiar:FireProjectile(velocity)
             local egg = EGGS[familiar.SubType]
-            Game():Spawn(
+            Resouled.Game:Spawn(
                 egg.Type,
                 egg.Variant,
                 shotTear.Position,
@@ -247,7 +247,7 @@ local function onEntityKill(_, entity)
     if not (blackEffect or whiteEffect or pinkEffect or redEffect) then return end
 
     if blackEffect then
-        local effect = Game():Spawn(EntityType.ENTITY_EFFECT, BLACK_ON_KILL_EFFECT_VARIANT, entity.Position, Vector.Zero,
+        local effect = Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, BLACK_ON_KILL_EFFECT_VARIANT, entity.Position, Vector.Zero,
             blackEffect.Source.Entity, BLACK_ON_KILL_EFFECT_SUBTYPE, Resouled:NewSeed()):ToEffect()
         if not effect then return end
 
@@ -259,7 +259,7 @@ local function onEntityKill(_, entity)
     end
 
     if whiteEffect then
-        local effect = Game():Spawn(EntityType.ENTITY_EFFECT, WHITE_ON_KILL_EFFECT_EXPLOSION_VARIANT, entity.Position,
+        local effect = Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, WHITE_ON_KILL_EFFECT_EXPLOSION_VARIANT, entity.Position,
             Vector.Zero, whiteEffect.Source.Entity, WHITE_ON_KILL_EFFECT_EXPLOSION_SUBTYPE, Resouled:NewSeed())
         if not effect then return end
 
@@ -272,17 +272,17 @@ local function onEntityKill(_, entity)
             if not ghostSpawnPositions then return end
 
             for _, position in ipairs(ghostSpawnPositions) do
-                Game():Spawn(EntityType.ENTITY_EFFECT, WHITE_ON_KILL_EFFECT_GHOST_VARIANT, position, Vector.Zero,
+                Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, WHITE_ON_KILL_EFFECT_GHOST_VARIANT, position, Vector.Zero,
                     entity,
                     WHITE_ON_KILL_EFFECT_GHOST_SUBTYPE, Resouled:NewSeed()):ToEffect()
             end
         end
-        SFXManager():Play(WHITE_ON_KILL_EFFECT_EXPLOSION_SFX, WHITE_ON_KILL_EFFECT_EXPLOSION_SFX_VOLUME)
+        Resouled.SfxM:Play(WHITE_ON_KILL_EFFECT_EXPLOSION_SFX, WHITE_ON_KILL_EFFECT_EXPLOSION_SFX_VOLUME)
         StatusEffectLibrary:RemoveStatusEffect(entity, STATUS_EFFECTS[ENTITIES.WHITE.SubType])
     end
 
     if pinkEffect then
-        local newNpc = Game():Spawn(entity.Type, entity.Variant, entity.Position, Vector.Zero, pinkEffect.Source.Entity,
+        local newNpc = Resouled.Game:Spawn(entity.Type, entity.Variant, entity.Position, Vector.Zero, pinkEffect.Source.Entity,
             entity.SubType, Resouled:NewSeed()):ToNPC()
         if not newNpc then return end
 
@@ -293,14 +293,14 @@ local function onEntityKill(_, entity)
     end
 
     if redEffect then
-        Game():Spawn(EntityType.ENTITY_EFFECT, RED_ON_KILL_EFFECT_EXPLOSION_VARIANT, entity.Position, Vector.Zero,
+        Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, RED_ON_KILL_EFFECT_EXPLOSION_VARIANT, entity.Position, Vector.Zero,
             redEffect.Source.Entity, RED_ON_KILL_EFFECT_EXPLOSION_SUBTYPE, Resouled:NewSeed())
 
         for _, entity in ipairs(Isaac.FindInRadius(entity.Position, RED_ON_KILL_EFFECT_EXPLOSION_RADIUS, EntityPartition.ENEMY)) do
             entity:AddBaited(redEffect.Source, RED_ON_KILL_EFFECT_EXPLOSION_BAITED_DURATION)
         end
 
-        SFXManager():Play(RED_ON_KILL_EFFECT_EXPLOSION_SFX, RED_ON_KILL_EFFECT_EXPLOSION_SFX_VOLUME)
+        Resouled.SfxM:Play(RED_ON_KILL_EFFECT_EXPLOSION_SFX, RED_ON_KILL_EFFECT_EXPLOSION_SFX_VOLUME)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, onEntityKill)
@@ -339,7 +339,7 @@ local function creepUpdate(_, effect)
 
         if #validTargets > 0 then
             local target = validTargets[math.random(#validTargets)]
-            Game():Spawn(ENTITIES.STUN_TENTACLE.Type, ENTITIES.STUN_TENTACLE.Variant, target.Position, Vector.Zero,
+            Resouled.Game:Spawn(ENTITIES.STUN_TENTACLE.Type, ENTITIES.STUN_TENTACLE.Variant, target.Position, Vector.Zero,
                 effect,
                 ENTITIES.STUN_TENTACLE.SubType, Resouled:NewSeed())
             setCreepTentacleCooldown(effect)

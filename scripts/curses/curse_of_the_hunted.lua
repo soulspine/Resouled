@@ -13,7 +13,7 @@ MinimapAPI:AddMapFlag(
 local CHANCE = 0.125
 
 local function postNewRoom()
-    local room = Game():GetRoom()
+    local room = Resouled.Game:GetRoom()
     if not Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_THE_HUNTED) or not room:IsClear() or room:GetType() == RoomType.ROOM_BOSS then return end
 
     if math.random() < CHANCE then

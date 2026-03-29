@@ -44,7 +44,7 @@ local function postNewRoom()
 
                     local rng = RNG()
 
-                    rng:SetSeed(Game():GetRoom():GetSpawnSeed())
+                    rng:SetSeed(Resouled.Game:GetRoom():GetSpawnSeed())
 
                     ---@param familiar EntityFamiliar
                     Resouled.Iterators:IterateOverRoomFamiliars(function(familiar)
@@ -63,7 +63,7 @@ local function postNewRoom()
                                     
                                     local chosenPickup = PICKUP_SPAWNING_TRANSLATOR[rng:RandomInt(#PICKUP_SPAWNING_TRANSLATOR) + 1]
                                         
-                                    Game():Spawn(EntityType.ENTITY_PICKUP, chosenPickup, pickupSpawnPos, Vector.Zero, nil, 0, rng:GetSeed())
+                                    Resouled.Game:Spawn(EntityType.ENTITY_PICKUP, chosenPickup, pickupSpawnPos, Vector.Zero, nil, 0, rng:GetSeed())
                                 end
                             end
                         end

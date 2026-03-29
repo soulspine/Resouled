@@ -33,7 +33,7 @@ local TARGET = "gfx/grid/door_01_normaldoor.png"
 local fix = false
 
 local function fixDoors()
-    local room = Game():GetRoom()
+    local room = Resouled.Game:GetRoom()
     for i = 0, DoorSlot.NUM_DOOR_SLOTS - 1 do
         local door = room:GetDoor(i)
     
@@ -72,14 +72,14 @@ local function fixGrid()
 end
 
 local function fixSounds()
-    if SFXManager():IsPlaying(SoundEffect.SOUND_CHOIR_UNLOCK) then
-        SFXManager():Stop(SoundEffect.SOUND_CHOIR_UNLOCK)
-        SFXManager():Play(SoundEffect.SOUND_SATAN_ROOM_APPEAR)
+    if Resouled.SfxM:IsPlaying(SoundEffect.SOUND_CHOIR_UNLOCK) then
+        Resouled.SfxM:Stop(SoundEffect.SOUND_CHOIR_UNLOCK)
+        Resouled.SfxM:Play(SoundEffect.SOUND_SATAN_ROOM_APPEAR)
     end
 end
 
 local function replaceDealWithKrampus()
-    local level = Game():GetLevel()
+    local level = Resouled.Game:GetLevel()
     
     level:InitializeDevilAngelRoom(false, false)
 
@@ -100,9 +100,9 @@ end
 
 local function postNewRoom()
     if not curseActive() then return end
-    local room = Game():GetLevel():GetCurrentRoomDesc()
+    local room = Resouled.Game:GetLevel():GetCurrentRoomDesc()
     local save = Resouled.SaveManager.GetRoomFloorSave(nil, nil, room.ListIndex)
-    local room1 = Game():GetRoom()
+    local room1 = Resouled.Game:GetRoom()
 
     if save.Krampus_Christmas then
         room1:SetBackdropType(BackdropType.SHEOL, 1)
@@ -118,7 +118,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, postNewRoom)
 
 local function clearAward()
     if not curseActive() then return end
-    if Game():GetLevel():GetCurrentRoomDesc().Data.Type == RoomType.ROOM_BOSS and fix then
+    if Resouled.Game:GetLevel():GetCurrentRoomDesc().Data.Type == RoomType.ROOM_BOSS and fix then
         fixDoors()
 
         fixSounds()
@@ -130,8 +130,8 @@ Resouled:AddCallback(ModCallbacks.MC_POST_ROOM_TRIGGER_CLEAR, clearAward)
 
 local function preClearAward()
     if not curseActive() then return end
-    if Game():GetLevel():GetCurrentRoomDesc().Data.Type == RoomType.ROOM_BOSS then
-        if Game():GetLevel():GetDevilAngelRoomRNG():PhantomFloat() < CHANCE then
+    if Resouled.Game:GetLevel():GetCurrentRoomDesc().Data.Type == RoomType.ROOM_BOSS then
+        if Resouled.Game:GetLevel():GetDevilAngelRoomRNG():PhantomFloat() < CHANCE then
             replaceDealWithKrampus()
         end
     end

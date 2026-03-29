@@ -54,13 +54,13 @@ local function onActiveUse(_, itemId, rng, player, useFlags, activeSlot, customV
         ShowAnim = true,
     }
 
-    local game = Game()
+    local game = Resouled.Game
 
     -- we use global save to prevent multiple players from using it at the same time
     local runSave = Resouled.SaveManager.GetRunSave(nil, true)
 
     if runSave.SleightOfHand              -- this is here to prevent player from spamming it between time frame of glowing hourglass teleport and charge adjustment
-        or not Game():GetRoom():IsClear() -- if there are enemies alive, we cannot use it
+        or not Resouled.Game:GetRoom():IsClear() -- if there are enemies alive, we cannot use it
     then
         returnTable.ShowAnim = false
         return returnTable
@@ -69,7 +69,7 @@ local function onActiveUse(_, itemId, rng, player, useFlags, activeSlot, customV
     local door = Resouled.Doors:GetClosestDoor(player.Position)
 
     if door then
-        SFXManager():Play(SFX_USE)
+        Resouled.SfxM:Play(SFX_USE)
         local doorSprite = door:GetSprite()
         local level = game:GetLevel()
         local targetRoomDesc = level:GetRoomByIdx(door.TargetRoomIndex)
@@ -131,7 +131,7 @@ local function onActiveUse(_, itemId, rng, player, useFlags, activeSlot, customV
         level:RemoveCurses(runSave.SleightOfHand.Curses)
 
         blackoutFadeIn = true
-        globalGlowingDoorPosition = Game():GetRoom():WorldToScreenPosition(door.Position)
+        globalGlowingDoorPosition = Resouled.Game:GetRoom():WorldToScreenPosition(door.Position)
         globalGlowingDoorRotation = door:GetSprite().Rotation
     end
 
@@ -171,10 +171,10 @@ local function onUpdate()
         globalBlockInputs = runSave.SleightOfHand.PlayerIndex
     end
 
-    local player = runSave.SleightOfHand and Game():GetPlayer(runSave.SleightOfHand.PlayerIndex) or nil
+    local player = runSave.SleightOfHand and Resouled.Game:GetPlayer(runSave.SleightOfHand.PlayerIndex) or nil
     if player then
         local sprite = player:GetSprite()
-        local game = Game()
+        local game = Resouled.Game
         local room = game:GetRoom()
 
         if not runSave.SleightOfHand.RestorationPerformed then
@@ -195,8 +195,8 @@ local function onUpdate()
                     player:UseActiveItem(CollectibleType.COLLECTIBLE_GLOWING_HOUR_GLASS)
                 end
                 -- REMOVE GLOWING HOURGLASS SFX
-                if SFXManager():IsPlaying(SFX_GLOWING_HOURGLASS_TELEPORT) then
-                    SFXManager():Stop(SFX_GLOWING_HOURGLASS_TELEPORT)
+                if Resouled.SfxM:IsPlaying(SFX_GLOWING_HOURGLASS_TELEPORT) then
+                    Resouled.SfxM:Stop(SFX_GLOWING_HOURGLASS_TELEPORT)
                 end
 
                 if sprite:GetAnimation() == ANIMATION_TELEPORT_UP then
@@ -328,7 +328,7 @@ local function onUpdate()
                     end
                     -- we remove the pickup from the list
                     table.remove(runSave.SleightOfHand.Pickups, 1)
-                    SFXManager():Play(SFX_PICKUP_ANIM)
+                    Resouled.SfxM:Play(SFX_PICKUP_ANIM)
                 else
                     -- if the list is empty we remove the sleight of hand data
                     runSave.SleightOfHand = nil

@@ -136,7 +136,7 @@ local function onPlayerUpdate(_, player)
         local aimDirection = player:GetAimDirection()
         local activeSlot = data.ResouledBagOfTrash.ActiveSlot
         local itemDesc = player:GetActiveItemDesc(activeSlot)
-        local game = Game()
+        local game = Resouled.Game
         local room = game:GetRoom()
 
         if itemDesc.Item ~= BAG_O_TRASH then
@@ -148,9 +148,9 @@ local function onPlayerUpdate(_, player)
         if not data.ResouledBagOfTrash.Swung and aimDirection:Length() > 0 then -- handling swings
             data.ResouledBagOfTrash.Swung = true
             player:AnimateCollectible(BAG_O_TRASH, ANIMATION_PLAYER_HIDE_ITEM, ANIMATION_PICKUP_PLAYER_PICKUP)
-            SFXManager():Play(SFX_SWING)
+            Resouled.SfxM:Play(SFX_SWING)
             local hitboxOffset = KNIFE_HITBOX_OFFSET * aimDirection
-            local knife = Game():Spawn(EntityType.ENTITY_KNIFE, KNIFE_VARIANT, player.Position + hitboxOffset,
+            local knife = Resouled.Game:Spawn(EntityType.ENTITY_KNIFE, KNIFE_VARIANT, player.Position + hitboxOffset,
                 Vector.Zero, player, 0, Resouled:NewSeed()):ToKnife()
             if knife then
                 knife.SizeMulti = KNIFE_HITBOX_SCALE
@@ -234,7 +234,7 @@ local function onKnifeUpdate(_, knife)
                 end
 
                 if weight ~= 0 and player:GetNumCoins() >= price and price >= 0 then
-                    local effect = Game():Spawn(EntityType.ENTITY_EFFECT, VFX_PICKUP_VARIANT, entity.Position,
+                    local effect = Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, VFX_PICKUP_VARIANT, entity.Position,
                         Vector.Zero, nil, 0, Resouled:NewSeed())
                     effect:GetSprite().Scale = VFX_PICKUP_SCALE
                     entity:Remove()

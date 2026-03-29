@@ -10,7 +10,7 @@ local function onGetShopItemPrice(_, variant, subtype, shopItemId, price) --Pre 
             local itemsList = player:GetHistory():GetCollectiblesHistory()
             for i = 1, #itemsList do
                 local item = itemsList[i]:GetItemID()
-                local quality = Isaac.GetItemConfig():GetCollectible(item).Quality
+                local quality = Resouled.ItemConf:GetCollectible(item).Quality
                 if quality >= 3 then
                     priceToRaise = priceToRaise + 1
                 end

@@ -13,7 +13,7 @@ local function onActiveUse(_, type, rng, player, flags, slot, data)
     player:AnimateCollectible(type, "UseItem", "PlayerPickupSparkle")
     local itemDesc = player:GetActiveItemDesc(slot)
     for _ = 1, itemDesc.VarData do
-        Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, Isaac.GetFreeNearPosition(player.Position, 0), Vector.Zero, nil, CoinSubType.COIN_PENNY, Resouled:NewSeed())
+        Resouled.Game:Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, Isaac.GetFreeNearPosition(player.Position, 0), Vector.Zero, nil, CoinSubType.COIN_PENNY, Resouled:NewSeed())
     end
 
     if itemDesc.VarData < MAX_CHARGE then

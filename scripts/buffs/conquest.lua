@@ -1,8 +1,8 @@
-Resouled:AddCallback(ModCallbacks.MC_POST_ROOM_TRIGGER_CLEAR, function()
-    if not Resouled:ActiveBuffPresent(Resouled.Buffs.CONQUEST) or Game():GetRoom():GetType() ~= RoomType.ROOM_BOSS then return end
+local function postTriggerRoomClear()
+    if Resouled.Game:GetRoom():GetType() ~= RoomType.ROOM_BOSS then return end
 
     Resouled.SaveManager.GetRunSave().ConquestBuff = true
-end)
+end
 
 ---@param wisp EntityFamiliar
 local function hideWisp(wisp)
@@ -16,9 +16,7 @@ local function hideWisp(wisp)
 end
 
 ---@param player EntityPlayer
-Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, function(_, player)
-    if not Resouled:ActiveBuffPresent(Resouled.Buffs.CONQUEST) then return end
-
+local function onPlayerUpdate(_, player)
     local save = Resouled.SaveManager.GetRunSave()
     local idx = tostring(player:GetPlayerIndex())
     if (not save.ConquestBuffWisps or not save.ConquestBuffWisps[idx]) and Resouled.SaveManager.GetRunSave().ConquestBuff then
@@ -31,18 +29,17 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, function(_, player)
         end
         save.ConquestBuffWisps[idx] = EntityRef(wisp)
     end
-end)
+end
 
-Resouled:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, function()
+local function preGameExit()
     Resouled.Iterators:IterateOverRoomFamiliars(function(fam)
         if fam:GetSprite():GetFilename() == "gfx/bullshit.nothing" then
             fam:Kill()
         end
     end)
-end)
+end
 
-Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, function()
-    if not Resouled:ActiveBuffPresent(Resouled.Buffs.CONQUEST) then return end
+local function postNewLevel()
     local save = Resouled.SaveManager.GetRunSave()
     save.ConquestBuff = nil
     save.ConquestBuffWisps = nil
@@ -52,6 +49,25 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, function()
             fam:Kill()
         end
     end)
-end)
+end
+
+Resouled:AddBuffCallbackConfig(Resouled.Buffs.CONQUEST, {
+    {
+        CallbackID = ModCallbacks.MC_POST_NEW_LEVEL,
+        Function = postNewLevel
+    },
+    {
+        CallbackID = ModCallbacks.MC_PRE_GAME_EXIT,
+        Function = preGameExit
+    },
+    {
+        CallbackID = ModCallbacks.MC_POST_PLAYER_TRIGGER_ROOM_CLEAR,
+        Function = postTriggerRoomClear
+    },
+    {
+        CallbackID = ModCallbacks.MC_POST_PLAYER_UPDATE,
+        Function = onPlayerUpdate
+    }
+})
 
 Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.CONQUEST, true)

@@ -27,7 +27,7 @@ local STAT_UP_VALUES = {
 local OMNI_CACHE_FLAG = CacheFlag.CACHE_SPEED | CacheFlag.CACHE_FIREDELAY | CacheFlag.CACHE_DAMAGE | CacheFlag.CACHE_RANGE | CacheFlag.CACHE_SHOTSPEED | CacheFlag.CACHE_LUCK
 
 local function postNewRoom()
-    local room = Game():GetRoom()
+    local room = Resouled.Game:GetRoom()
     if room:IsFirstVisit() then
         Resouled.Iterators:IterateOverPlayers(function(player)
             --local sprite = player:GetSprite() -- SLIGH COLOR CHANGES WITH PILLS

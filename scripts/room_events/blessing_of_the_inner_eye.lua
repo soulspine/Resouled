@@ -1,6 +1,6 @@
 ---@param index integer
 local function revealRoomsAround(index)
-    local level = Game():GetLevel()
+    local level = Resouled.Game:GetLevel()
     local roomDir = Vector(1, 0)
 
     for i = 1, 8 do
@@ -19,7 +19,7 @@ end
 
 local function postNewRoom()
     if Resouled:RoomEventPresent(Resouled.RoomEvents.BLESSING_OF_INNER_EYE) then
-        local level = Game():GetLevel()
+        local level = Resouled.Game:GetLevel()
         local currentIndex = level:GetCurrentRoomIndex()
 
         for i = Direction.LEFT, Direction.DOWN do

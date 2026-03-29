@@ -60,7 +60,7 @@ local function onItemGet(_, itempool, decrease, seed)
     local rng = RNG(seed, 43)
     if rng:RandomFloat() > CONFIG.ItemReplaceChance then return end
 
-    local chosenItem = Game():GetItemPool():GetCollectible(CONFIG.ItemPool, true, rng:GetSeed(), defaultItem)
+    local chosenItem = Resouled.Game:GetItemPool():GetCollectible(CONFIG.ItemPool, true, rng:GetSeed(), defaultItem)
     if chosenItem ~= defaultItem then
         return chosenItem
     end

@@ -13,7 +13,7 @@ end
 ---@param config RoomConfigRoom
 ---@param seed integer
 local function prePlaceRoom(_, slot, config, seed)
-    local stage = Game():GetLevel():GetStage()
+    local stage = Resouled.Game:GetLevel():GetStage()
 
     if (not curseActive())
     or (STAGES_BLACKLIST[stage])

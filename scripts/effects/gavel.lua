@@ -22,7 +22,7 @@ local function onEffectUpdate(_, effect)
             effect:Remove()
         end
         if sprite:IsEventTriggered("ResouledHit") then
-            SFXManager():Play(SOUND_ID)
+            Resouled.SfxM:Play(SOUND_ID)
 
             local data = effect:GetData()
             if data.Resouled_DisappearItem then
@@ -32,19 +32,19 @@ local function onEffectUpdate(_, effect)
 
                 if randomNum == 1 then
                     for _ = 1, 10 do
-                        Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, effect.Position, Vector(math.random(MIN_VELOCITY, MAX_VELOCITY), 0):Rotated(math.random(0, 360)), nil, CoinSubType.COIN_PENNY, Resouled:NewSeed())
+                        Resouled.Game:Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, effect.Position, Vector(math.random(MIN_VELOCITY, MAX_VELOCITY), 0):Rotated(math.random(0, 360)), nil, CoinSubType.COIN_PENNY, Resouled:NewSeed())
                     end
                 elseif randomNum == 2 then
                     for _ = 1, 2 do
-                        Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, effect.Position, Vector(math.random(MIN_VELOCITY, MAX_VELOCITY), 0):Rotated(math.random(0, 360)), nil, CoinSubType.COIN_NICKEL, Resouled:NewSeed())
+                        Resouled.Game:Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, effect.Position, Vector(math.random(MIN_VELOCITY, MAX_VELOCITY), 0):Rotated(math.random(0, 360)), nil, CoinSubType.COIN_NICKEL, Resouled:NewSeed())
                     end
                 elseif randomNum == 3 then
-                    Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, effect.Position, Vector(math.random(MIN_VELOCITY, MAX_VELOCITY), 0):Rotated(math.random(0, 360)), nil, CoinSubType.COIN_NICKEL, Resouled:NewSeed())
+                    Resouled.Game:Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, effect.Position, Vector(math.random(MIN_VELOCITY, MAX_VELOCITY), 0):Rotated(math.random(0, 360)), nil, CoinSubType.COIN_NICKEL, Resouled:NewSeed())
                     for _ = 1, 5 do
-                        Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, effect.Position, Vector(math.random(MIN_VELOCITY, MAX_VELOCITY), 0):Rotated(math.random(0, 360)), nil, CoinSubType.COIN_PENNY, Resouled:NewSeed())
+                        Resouled.Game:Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, effect.Position, Vector(math.random(MIN_VELOCITY, MAX_VELOCITY), 0):Rotated(math.random(0, 360)), nil, CoinSubType.COIN_PENNY, Resouled:NewSeed())
                     end
                 elseif randomNum == 4 then
-                    Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, effect.Position, Vector(math.random(MIN_VELOCITY, MAX_VELOCITY), 0):Rotated(math.random(0, 360)), nil, CoinSubType.COIN_DIME, Resouled:NewSeed())
+                    Resouled.Game:Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COIN, effect.Position, Vector(math.random(MIN_VELOCITY, MAX_VELOCITY), 0):Rotated(math.random(0, 360)), nil, CoinSubType.COIN_DIME, Resouled:NewSeed())
                 end
             end
         end

@@ -7,12 +7,12 @@ function Resouled:CustomCursePresent(curse)
     end
 
     local curseShifted = 1 << (curse - 1)
-    return Game():GetLevel():GetCurses() & curseShifted == curseShifted
+    return Resouled.Game:GetLevel():GetCurses() & curseShifted == curseShifted
 end
 
 ---@param curses? LevelCurse
 function Resouled:GetCursesNum(curses)
-    curses = curses or Game():GetLevel():GetCurses()
+    curses = curses or Resouled.Game:GetLevel():GetCurses()
     local curseCount = 0
     for i = 0, 31 do
         if (curses & (1 << i)) ~= 0 then

@@ -386,6 +386,3 @@ Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BEAST, 20, nil, Resouled.Sou
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BEAST, 30, nil, Resouled.Souls.ULTRA_WAR, 1)
 
 Resouled:AddNewBasicSoulSpawnRule(EntityType.ENTITY_BEAST, 40, nil, Resouled.Souls.ULTRA_DEATH, 1)
-
-
-Resouled:Log("Loaded", Resouled:GetNumBasicSoulSpawnRules(), "basic soul spawn rules.")

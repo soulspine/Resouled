@@ -1,4 +1,4 @@
-local game = Game()
+local game = Resouled.Game
 
 local paperEnemies = {}
 local paperEnemiesStringLookup = {}

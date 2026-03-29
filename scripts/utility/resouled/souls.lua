@@ -1,4 +1,4 @@
-local game = Game()
+local game = Resouled.Game
 
 local Soul = Resouled.Stats.Soul
 
@@ -51,7 +51,8 @@ end
 ---@return boolean
 local function canSpawnSoul()
     local save = getThisFloorSoulsCollected()
-    return save < SOUL_LIMIT
+    local fileSave = Resouled.SaveManager.GetPersistentSave()
+    return save < SOUL_LIMIT and (fileSave ~= nil and fileSave.FirstAfterlifeVisit ~= nil)
 end
 
 local function resetSoulsCollected()
@@ -225,7 +226,7 @@ local function onSoulPickupCollision(_, pickup, collider, low)
 
             pickup:Remove()
 
-            if Resouled:IsSpecialSeedEffectActive(Resouled.SpecialSeedEffects.NoSoulChallenge) then Game():End(Ending.DIE) end
+            if Resouled:IsSpecialSeedEffectActive(Resouled.SpecialSeedEffects.NoSoulChallenge) then Resouled.Game:End(Ending.DIE) end
         end
     end
 end

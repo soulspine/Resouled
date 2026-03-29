@@ -72,7 +72,7 @@ local function npcUpdate(_, npc)
         end
 
         if sprite:IsEventTriggered(FLIP_START_TRIGGER) then
-            SFXManager():Play(FLIP_SFX, SFX_VOLUME)
+            Resouled.SfxM:Play(FLIP_SFX, SFX_VOLUME)
         end
 
         npc.Velocity = (npc.Velocity + (npc:GetPlayerTarget().Position - npc.Position):Normalized()) * VELOCITY_MULTIPLIER
@@ -84,7 +84,7 @@ Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, npcUpdate, GAPER_TYPE)
 local function postNpcDeath(_, npc)
     if npc.Variant == GAPER_VARIANT and npc.SubType == GAPER_SUBTYPE then
         local randomNum = math.random(1, 3)
-        SFXManager():Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
+        Resouled.SfxM:Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
         Resouled:SpawnPaperGore(npc.Position, GORE_PARTICLE_COUNT)
     end
 end

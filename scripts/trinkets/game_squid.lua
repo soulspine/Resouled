@@ -60,7 +60,7 @@ local function onEntityDamage(_, entity, amount, flags, source, countdown)
     if rng:RandomFloat() > applyChance then return end
 
     data.Resouled__GameSquidCooldown = cooldown
-    Game():Spawn(TENTACLE.Type, TENTACLE.Variant, npc.Position, Vector.Zero, player, TENTACLE.SubType, Resouled:NewSeed())
+    Resouled.Game:Spawn(TENTACLE.Type, TENTACLE.Variant, npc.Position, Vector.Zero, player, TENTACLE.SubType, Resouled:NewSeed())
 end
 Resouled:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, onEntityDamage)
 

@@ -155,7 +155,7 @@ local function chargebarRender(_, player)
 
         if animLength > 0 then
             if (currentAnimation == Chargebar.Animations.StartCharged.Name or currentAnimation == Chargebar.Animations.Charged.Name)
-                and Game():GetFrameCount() % 2 ~= 0 then -- slow down 2 times because it's too fast otherwise
+                and Resouled.Game:GetFrameCount() % 2 ~= 0 then -- slow down 2 times because it's too fast otherwise
                 goto dont_increment_frame
             end
 
@@ -237,7 +237,7 @@ local function newTongueRender(_, player)
         end
         data.Points[#data.Points].Vel = (data.TargetPosition - initPos):Normalized() * 30 * data.VelocityMult
     end
-    if not Game():IsPaused() then
+    if not Resouled.Game:IsPaused() then
         data.Points[1].Pos = initPos
 
         if data.GrabbedEnemy then

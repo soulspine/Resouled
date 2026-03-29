@@ -3,18 +3,18 @@ local GLITCH = Resouled.Enums.Items.GLITCH
 local MORPH_COOLDOWN = 25
 local ITEM_COUNT = 3
 local DEFAULT_COLLECTIBLE = CollectibleType.COLLECTIBLE_SAD_ONION
-local GLITCH_GFX = Isaac.GetItemConfig():GetCollectible(GLITCH).GfxFileName
+local GLITCH_GFX = Resouled.ItemConf:GetCollectible(GLITCH).GfxFileName
 
 local PICKUP_SFX = SoundEffect.SOUND_EDEN_GLITCH
 
 local function rollItemChoicesWithGfx(count)
     local items = {}
 
-    local pool = Game():GetItemPool()
+    local pool = Resouled.Game:GetItemPool()
     for _ = 1, count do
         ::reroll::
         local itemId = Resouled:ChooseItemFromPool(Isaac.GetPlayer():GetCollectibleRNG(GLITCH), nil, DEFAULT_COLLECTIBLE)
-        local item = Isaac.GetItemConfig():GetCollectible(itemId)
+        local item = Resouled.ItemConf:GetCollectible(itemId)
         if item.ID > 0 then -- tmtrainder (negative id) items cannot be blacklisted
             pool:AddRoomBlacklist(item.ID)
         end
@@ -192,7 +192,7 @@ local function onPickupCollision(_, pickup, collider)
             })
 
             player:AnimateCollectible(GLITCH)
-            SFXManager():Play(PICKUP_SFX)
+            Resouled.SfxM:Play(PICKUP_SFX)
             pickup:Remove()
         end
     end

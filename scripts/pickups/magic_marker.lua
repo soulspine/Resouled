@@ -24,7 +24,7 @@ local function onCardUse(_, _, player)
         end
     end)
     if chestCount < 1 then
-        Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_REDCHEST, Isaac.GetFreeNearPosition(player.Position, 0), Vector.Zero, nil, 0, player.InitSeed)
+        Resouled.Game:Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_REDCHEST, Isaac.GetFreeNearPosition(player.Position, 0), Vector.Zero, nil, 0, player.InitSeed)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_USE_CARD, onCardUse, MAGIC_MARKER)

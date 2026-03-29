@@ -73,7 +73,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, PORTAL_DESC.Typ
 ---@param portal Entity
 ---@param entityDesc ResouledEntityDesc
 local function spawnHolyEnemy(portal, entityDesc)
-    local spawnedEntity = Game():Spawn(
+    local spawnedEntity = Resouled.Game:Spawn(
         entityDesc.Type,
         entityDesc.Variant,
         portal.Position + Vector(0, 1),
@@ -84,7 +84,7 @@ local function spawnHolyEnemy(portal, entityDesc)
     )
     spawnedEntity:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
     spawnedEntity:SetColor(Color(1, 0, 1, 0, 1, 0, 1), 20, 9999, true, true)
-    SFXManager():Play(Isaac.GetSoundIdByName(SPAWN_SFX .. tostring(math.random(1, 3))), SPAWN_SFX_VOLUME)
+    Resouled.SfxM:Play(Isaac.GetSoundIdByName(SPAWN_SFX .. tostring(math.random(1, 3))), SPAWN_SFX_VOLUME)
     portal:SetColor(Color(1, 1, 1, 1, 0.25, 0.1, 0.25), 15, 1, true, true)
 end
 

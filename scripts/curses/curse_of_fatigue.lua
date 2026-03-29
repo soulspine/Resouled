@@ -80,12 +80,12 @@ local function preClearReward()
                 end
             end)
             
-            if SFXManager():IsPlaying(SoundEffect.SOUND_BEEP) then
-                SFXManager():Stop(SoundEffect.SOUND_BEEP)
+            if Resouled.SfxM:IsPlaying(SoundEffect.SOUND_BEEP) then
+                Resouled.SfxM:Stop(SoundEffect.SOUND_BEEP)
             end
             
-            if SFXManager():IsPlaying(SoundEffect.SOUND_BATTERYCHARGE) then
-                SFXManager():Stop(SoundEffect.SOUND_BATTERYCHARGE)
+            if Resouled.SfxM:IsPlaying(SoundEffect.SOUND_BATTERYCHARGE) then
+                Resouled.SfxM:Stop(SoundEffect.SOUND_BATTERYCHARGE)
             end
 
             FLOOR_SAVE.ResouledCurseOfFatigue = 0

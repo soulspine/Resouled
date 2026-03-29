@@ -15,18 +15,24 @@ local ZODIAC_SIGNS = {
 
 ---@param pickup EntityPickup
 local function postPickupInit(_, pickup)
-    if Resouled:ActiveBuffPresent(Resouled.Buffs.ZODIAC_SIGN) then
-        local zodiacSign = false
-        for i = 1, #ZODIAC_SIGNS do
-            if ZODIAC_SIGNS[i] == pickup.SubType then
-                zodiacSign = true
-            end
-        end
-        if not zodiacSign then
-            local randomInt = RNG(pickup.InitSeed):RandomInt(12) + 1
-            pickup:Morph(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, ZODIAC_SIGNS[randomInt], false, true, false)
-            Resouled:RemoveActiveBuff(Resouled.Buffs.ZODIAC_SIGN)
+    local zodiacSign = false
+    for i = 1, #ZODIAC_SIGNS do
+        if ZODIAC_SIGNS[i] == pickup.SubType then
+            zodiacSign = true
         end
     end
+    if not zodiacSign then
+        local randomInt = RNG(pickup.InitSeed):RandomInt(12) + 1
+        pickup:Morph(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, ZODIAC_SIGNS[randomInt], false, true, false)
+        Resouled:RemoveActiveBuff(Resouled.Buffs.ZODIAC_SIGN)
+        Resouled:RemoveCallback(ModCallbacks.MC_POST_PICKUP_INIT, postPickupInit)
+    end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, postPickupInit, PickupVariant.PICKUP_COLLECTIBLE)
+
+Resouled:AddBuffCallbackConfig(Resouled.Buffs.ZODIAC_SIGN, {
+    {
+        CallbackID = ModCallbacks.MC_POST_PICKUP_INIT,
+        Function = postPickupInit,
+        CallbackParams = PickupVariant.PICKUP_COLLECTIBLE
+    }
+})

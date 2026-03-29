@@ -21,7 +21,7 @@ local function getValidCollectibles(collectibleHistory)
     local newTable = {}
 
     for i = 1, #collectibleHistory do
-        local item = Isaac.GetItemConfig():GetCollectible(collectibleHistory[i]:GetItemID())
+        local item = Resouled.ItemConf:GetCollectible(collectibleHistory[i]:GetItemID())
 
         local id = collectibleHistory[i]:GetItemID()
         if (item.Type == ItemType.ITEM_PASSIVE or item.Type == ItemType.ITEM_FAMILIAR) and not COLLECTIBLES_TO_NOT_REMOVE[id] then
@@ -44,7 +44,7 @@ local function doItemEffect(player, rng, i)
         table.insert(RUN_SAVE.Resouled_AuctionGavel, collectibleIndexToRemove)
         
         local effectPos = player.Position + effectOffsets[i] + player.SpriteOffset
-        local gavel = Game():Spawn(EntityType.ENTITY_EFFECT, GAVEL_VARIANT, effectPos, Vector.Zero, nil, GAVEL_SUBTYPE, rng:GetSeed())
+        local gavel = Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, GAVEL_VARIANT, effectPos, Vector.Zero, nil, GAVEL_SUBTYPE, rng:GetSeed())
         gavel.DepthOffset = 1000
         gavel:GetData().Resouled_DisappearItem = collectibleIndexToRemove
     end
@@ -74,7 +74,7 @@ local function preUseCollectible(_, _, _, player)
 
     local i = 1
     while i <= #collectibles do
-        local item = Isaac.GetItemConfig():GetCollectible(collectibles[i]:GetItemID())
+        local item = Resouled.ItemConf:GetCollectible(collectibles[i]:GetItemID())
 
 
         if item.Type == ItemType.ITEM_PASSIVE or item.Type == ItemType.ITEM_FAMILIAR then
@@ -107,7 +107,7 @@ local function postPickupInit(_, pickup)
 
     if not auctionGavelItem then return end
 
-    local room = Game():GetRoom()
+    local room = Resouled.Game:GetRoom()
     local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave()
 
     local key = tostring(pickup.ShopItemId)

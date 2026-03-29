@@ -1,6 +1,6 @@
 local function postNewRoom()
     if Resouled:RoomEventPresent(Resouled.RoomEvents.BUM_BO_IS_LOOSE) then
-        local bumbo = Game():Spawn(EntityType.ENTITY_FAMILIAR, FamiliarVariant.BUMBO, Isaac.GetFreeNearPosition(Game():GetRoom():GetCenterPos(), 0), Vector.Zero, nil, 0, Game():GetRoom():GetAwardSeed())
+        local bumbo = Resouled.Game:Spawn(EntityType.ENTITY_FAMILIAR, FamiliarVariant.BUMBO, Isaac.GetFreeNearPosition(Resouled.Game:GetRoom():GetCenterPos(), 0), Vector.Zero, nil, 0, Resouled.Game:GetRoom():GetAwardSeed())
         bumbo:GetData().Resouled_BumBoDelete = true
     end
 end

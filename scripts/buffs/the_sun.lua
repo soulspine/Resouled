@@ -1,12 +1,10 @@
 ---@param player EntityPlayer
 local function prePlayerDeath(_, player)
-    if Resouled:ActiveBuffPresent(Resouled.Buffs.THE_SUN) then
-        Resouled:RemoveActiveBuff(Resouled.Buffs.THE_SUN)
-        player:GetData().Resouled_TheSunBuffRevive = true
-        return false
-    end
+    Resouled:RemoveActiveBuff(Resouled.Buffs.THE_SUN)
+    Resouled:RemoveCallback(ModCallbacks.MC_PRE_TRIGGER_PLAYER_DEATH, prePlayerDeath)
+    player:GetData().Resouled_TheSunBuffRevive = true
+    return false
 end
-Resouled:AddPriorityCallback(ModCallbacks.MC_PRE_TRIGGER_PLAYER_DEATH, CallbackPriority.IMPORTANT, prePlayerDeath)
 
 ---@param player EntityPlayer
 local function postPlayerRevive(_, player)
@@ -15,6 +13,19 @@ local function postPlayerRevive(_, player)
         player:UseCard(Card.CARD_SUN, UseFlag.USE_NOANIM | UseFlag.USE_NOANNOUNCER | UseFlag.USE_NOHUD)
 
         data.Resouled_TheSunBuffRevive = nil
+
+        Resouled:RemoveCallback(ModCallbacks.MC_POST_PLAYER_REVIVE, postPlayerRevive)
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_REVIVE, postPlayerRevive)
+
+Resouled:AddBuffCallbackConfig(Resouled.Buffs.THE_SUN, {
+    {
+        CallbackID = ModCallbacks.MC_PRE_TRIGGER_PLAYER_DEATH,
+        Function = prePlayerDeath,
+        Priority = CallbackPriority.IMPORTANT
+    },
+    {
+        CallbackID = ModCallbacks.MC_POST_PLAYER_REVIVE,
+        Function = postPlayerRevive
+    }
+})

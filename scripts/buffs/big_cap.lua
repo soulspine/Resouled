@@ -2,9 +2,7 @@ local multiplier = 1.1
 
 ---@param player EntityPlayer
 ---@param cacheFlag CacheFlag
-Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, function(_, player, cacheFlag)
-    if not Resouled:ActiveBuffPresent(Resouled.Buffs.BIG_CAP) then return end
-
+local function onCacheEval(_, player, cacheFlag)
     if cacheFlag & CacheFlag.CACHE_SPEED ~= 0 then
 
         player.MoveSpeed = player.MoveSpeed * multiplier
@@ -34,6 +32,13 @@ Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, function(_, player, cacheFl
         player.SpriteScale = player.SpriteScale * Vector(multiplier, multiplier)
 
     end
-end)
+end
+
+Resouled:AddBuffCallbackConfig(Resouled.Buffs.BIG_CAP, {
+    {
+        CallbackID = ModCallbacks.MC_EVALUATE_CACHE,
+        Function = onCacheEval
+    }
+})
 
 Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.BIG_CAP, true)

@@ -70,8 +70,8 @@ end
 ---@param position Vector
 ---@param spawner? Entity @Entity that spawned the item
 function Resouled:SpawnChaosItemOfQuality(quality, rng, position, spawner)
-    local itemConfig = Isaac.GetItemConfig()
-    local itemPool = Game():GetItemPool()
+    local itemConfig = Resouled.ItemConf
+    local itemPool = Resouled.Game:GetItemPool()
     local validItems = {}
 
     for i = 1, #itemConfig:GetCollectibles() do
@@ -97,7 +97,7 @@ function Resouled:SpawnChaosItemOfQuality(quality, rng, position, spawner)
             goto reroll
         end
 
-        local entity = Game():Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE,
+        local entity = Resouled.Game:Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE,
             Isaac.GetFreeNearPosition(position, 60), Vector.Zero, spawner, randomItem, rng:GetSeed())
         rng:Next()
         return entity
@@ -112,13 +112,13 @@ end
 ---@param defaultItem? CollectibleType @Item that will spawn if pool is exhausted, defaults to CollectibleType.COLLECTIBLE_BREAKFAST
 ---@return EntityPickup | nil @Item that was spawned or `nil` if no item was spawned
 function Resouled:SpawnItemFromPool(pool, rng, position, spawner, defaultItem)
-    local game = Game()
+    local game = Resouled.Game
     local DEFAULT_ITEM = defaultItem or CollectibleType.COLLECTIBLE_BREAKFAST
-    local itemsFromTargetPool = Game():GetItemPool():GetCollectiblesFromPool(pool)
+    local itemsFromTargetPool = Resouled.Game:GetItemPool():GetCollectiblesFromPool(pool)
     local validItems = {}
     for i = 1, #itemsFromTargetPool do
         local id = itemsFromTargetPool[i].itemID
-        if not Isaac.GetItemConfig():GetCollectible(id):HasTags(ItemConfig.TAG_QUEST) and Game():GetItemPool():CanSpawnCollectible(id, false) then
+        if not Resouled.ItemConf:GetCollectible(id):HasTags(ItemConfig.TAG_QUEST) and Resouled.Game:GetItemPool():CanSpawnCollectible(id, false) then
             table.insert(validItems, id)
         end
     end
@@ -231,7 +231,7 @@ end
 ---@param spriteOffset? Vector
 ---@param spawner Entity
 function Resouled:SpawnPaperTear(position, velocity, spriteOffset, spawner)
-    local tear = Game():Spawn(Isaac.GetEntityTypeByName("Blank Canvas Tear"),
+    local tear = Resouled.Game:Spawn(Isaac.GetEntityTypeByName("Blank Canvas Tear"),
         Isaac.GetEntityVariantByName("Blank Canvas Tear"), position, velocity, spawner,
         Isaac.GetEntitySubTypeByName("Blank Canvas Tear"), spawner.InitSeed)
     if spriteOffset then
@@ -298,14 +298,14 @@ end
 ---@param defaultItem? CollectibleType @Item that will be chosen if pool is exhausted, defaults to CollectibleType.COLLECTIBLE_BREAKFAST
 ---@return CollectibleType
 function Resouled:ChooseItemFromPool(rng, pool, defaultItem)
-    local game = Game()
+    local game = Resouled.Game
     local DEFAULT_ITEM = defaultItem or CollectibleType.COLLECTIBLE_BREAKFAST
     pool = math.max((pool or game:GetRoom():GetItemPool(game:GetRoom():GetAwardSeed())), 0)
     local itemsFromTargetPool = game:GetItemPool():GetCollectiblesFromPool(pool)
     local validItems = {}
     for i = 1, #itemsFromTargetPool do
         local id = itemsFromTargetPool[i].itemID
-        if not Isaac.GetItemConfig():GetCollectible(id):HasTags(ItemConfig.TAG_QUEST) and game:GetItemPool():CanSpawnCollectible(id, false) then
+        if not Resouled.ItemConf:GetCollectible(id):HasTags(ItemConfig.TAG_QUEST) and game:GetItemPool():CanSpawnCollectible(id, false) then
             table.insert(validItems, id)
         end
     end
@@ -320,13 +320,13 @@ end
 ---@param quality? integer
 ---@return integer
 function Resouled:GetRandomItemFromPool(pool, rng, quality)
-    local itemsFromTargetPool = Game():GetItemPool():GetCollectiblesFromPool(pool)
+    local itemsFromTargetPool = Resouled.Game:GetItemPool():GetCollectiblesFromPool(pool)
     local validItems = {}
     for i = 1, #itemsFromTargetPool do
         local id = itemsFromTargetPool[i].itemID
-        if not Isaac.GetItemConfig():GetCollectible(id):HasTags(ItemConfig.TAG_QUEST) and Game():GetItemPool():CanSpawnCollectible(id, false) then
+        if not Resouled.ItemConf:GetCollectible(id):HasTags(ItemConfig.TAG_QUEST) and Resouled.Game:GetItemPool():CanSpawnCollectible(id, false) then
             if quality then
-                if Isaac.GetItemConfig():GetCollectible(id).Quality == quality then
+                if Resouled.ItemConf:GetCollectible(id).Quality == quality then
                     table.insert(validItems, id)
                 else
                 end
@@ -371,9 +371,9 @@ end
 ---@param item CollectibleType
 ---@param position Vector
 function Resouled:SpawnItemDisappearEffect(item, position)
-    local effect = Game():Spawn(EntityType.ENTITY_EFFECT, Isaac.GetEntityVariantByName("Disappear"), position,
-        Vector.Zero, nil, Isaac.GetEntitySubTypeByName("Disappear"), Game():GetRoom():GetAwardSeed())
-    effect:GetSprite():ReplaceSpritesheet(0, Isaac.GetItemConfig():GetCollectible(item).GfxFileName, true)
+    local effect = Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, Isaac.GetEntityVariantByName("Disappear"), position,
+        Vector.Zero, nil, Isaac.GetEntitySubTypeByName("Disappear"), Resouled.Game:GetRoom():GetAwardSeed())
+    effect:GetSprite():ReplaceSpritesheet(0, Resouled.ItemConf:GetCollectible(item).GfxFileName, true)
 end
 
 ---@param entity Entity
@@ -423,7 +423,7 @@ function Resouled:TryFindNearestEnemyByFindInRadius(entity, step) -- Tries to fi
 
     local x = 0
     local nearestEnemy = nil
-    local bottomRightPos = Game():GetRoom():GetBottomRightPos()
+    local bottomRightPos = Resouled.Game:GetRoom():GetBottomRightPos()
     local highestX = math.abs(bottomRightPos.X) + math.abs(bottomRightPos.Y)
 
     while x <= highestX and not nearestEnemy do
@@ -500,8 +500,8 @@ function Resouled:SpawnPrettyParticles(
     gridCollision)
     ---@type EntityEffect
     ---@diagnostic disable-next-line: assign-type-mismatch
-    local particle = Game():Spawn(EntityType.ENTITY_EFFECT, variant, position, Vector.Zero, nil, subtype or 0,
-        Game():GetRoom():GetAwardSeed()):ToEffect()
+    local particle = Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, variant, position, Vector.Zero, nil, subtype or 0,
+        Resouled.Game:GetRoom():GetAwardSeed()):ToEffect()
     local data = particle:GetData()
 
     particle.GridCollisionClass = gridCollision
@@ -554,7 +554,7 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_EFFECT_RENDER, function(_, effect)
         local height = data.Resouled_SpecialParticle.Height
         local fallSpeed = data.Resouled_SpecialParticle.FallSpeed
 
-        if not Game():IsPaused() then
+        if not Resouled.Game:IsPaused() then
             if height > 0 then
                 height = height + fallSpeed
 
@@ -618,8 +618,8 @@ end
 ---@param maxSpread integer
 ---@param spriteOffset Vector
 function Resouled:SpawnSparkleEffect(position, velocity, maxSpread, spriteOffset)
-    local sparkle = Game():Spawn(EntityType.ENTITY_EFFECT, Isaac.GetEntityVariantByName("Ball Sparkle"), position,
-        Vector.Zero, nil, Isaac.GetEntitySubTypeByName("Ball Sparkle"), Game():GetRoom():GetAwardSeed())
+    local sparkle = Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, Isaac.GetEntityVariantByName("Ball Sparkle"), position,
+        Vector.Zero, nil, Isaac.GetEntitySubTypeByName("Ball Sparkle"), Resouled.Game:GetRoom():GetAwardSeed())
     sparkle.Velocity = velocity:Rotated(math.random(-maxSpread, maxSpread))
     sparkle.SpriteOffset = spriteOffset
 end
@@ -693,9 +693,9 @@ end
 ---@param position Vector
 ---@return table | nil
 function Resouled:GetNearestRoomIndexAndDirectionFromPos(position)
-    local ColRow = Resouled:GetRoomColumnAndRowFromIdx(Game():GetLevel():GetCurrentRoomIndex())
+    local ColRow = Resouled:GetRoomColumnAndRowFromIdx(Resouled.Game:GetLevel():GetCurrentRoomIndex())
 
-    local room = Game():GetRoom()
+    local room = Resouled.Game:GetRoom()
     local centerPos = room:GetCenterPos()
     local topLeftPos = room:GetTopLeftPos()
     local bottomRightPos = room:GetBottomRightPos()
@@ -763,7 +763,7 @@ end
 ---@param index integer
 ---@return Direction
 function Resouled:GetDirToRoomFromIdx(index)
-    local currentIdx = Game():GetLevel():GetCurrentRoomIndex()
+    local currentIdx = Resouled.Game:GetLevel():GetCurrentRoomIndex()
 
     local currentColRow = Resouled:GetRoomColumnAndRowFromIdx(currentIdx)
     local idxColRow = Resouled:GetRoomColumnAndRowFromIdx(index)
@@ -951,7 +951,7 @@ end
 
 ---@return WeightedOutcomePicker
 function Resouled:GetUnlockedTrikets()
-    local itemConfig = Isaac.GetItemConfig()
+    local itemConfig = Resouled.ItemConf
     local T = WeightedOutcomePicker()
 
     for i = 0, #itemConfig:GetTrinkets() do

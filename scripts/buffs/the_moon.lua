@@ -18,15 +18,13 @@ local PHASES = {
     WaningCrescent = 7,
 }
 
-local render = false
-
 ---@return integer
 local function getPhase()
-    return math.floor(Game():GetFrameCount() / CONFIG.PhaseDuration) % 8
+    return math.floor(Resouled.Game:GetFrameCount() / CONFIG.PhaseDuration) % 8
 end
 
 local function getPhaseProgression()
-    return Game():GetFrameCount() % CONFIG.PhaseDuration / CONFIG.PhaseDuration
+    return Resouled.Game:GetFrameCount() % CONFIG.PhaseDuration / CONFIG.PhaseDuration
 end
 
 ---@return number
@@ -40,33 +38,23 @@ local function getBrightSideLevel()
 end
 
 local function onUpdate()
-    if not Resouled:ActiveBuffPresent(Resouled.Buffs.THE_MOON) then
-        render = false
-        return
-    end
-    render = true
-
     INDICATOR_SPRITE:SetFrame(getPhase())
-    if Game():GetFrameCount() % CONFIG.StatUpdateInterval == 0 then
+    if Resouled.Game:GetFrameCount() % CONFIG.StatUpdateInterval == 0 then
         Resouled.Iterators:IterateOverPlayers(function(player)
             ---@diagnostic disable-next-line: param-type-mismatch
             player:AddCacheFlags(CacheFlag.CACHE_DAMAGE | CacheFlag.CACHE_FIREDELAY, true)
         end)
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
 
 ---@param player EntityPlayer
 local function onRender(_, player)
-    if not render then return end
     INDICATOR_SPRITE:Render(Isaac.WorldToScreen(player.Position + player.SpriteOffset + CONFIG.MoonIconOffset + player:GetFlyingOffset()))
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_RENDER, onRender)
 
 ---@param player EntityPlayer
 ---@param cacheFlag CacheFlag
 local function onCacheEval(_, player, cacheFlag)
-    if not Resouled:ActiveBuffPresent(Resouled.Buffs.THE_MOON) then return end
     if cacheFlag & CacheFlag.CACHE_FIREDELAY ~= 0 then
         Resouled.AccurateStats:AddTears(player, Resouled.AccurateStats:GetFireRate(player) * CONFIG.MaxGainMult * getBrightSideLevel()
         )
@@ -76,7 +64,20 @@ local function onCacheEval(_, player, cacheFlag)
         player.Damage = player.Damage * (1 + CONFIG.MaxGainMult * getDarkSideLevel())
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACHE_FIREDELAY)
-Resouled:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, onCacheEval, CacheFlag.CACHE_DAMAGE)
 
 Resouled:AddBuffToRemoveOnRunEnd(Resouled.Buffs.THE_MOON, true)
+
+Resouled:AddBuffCallbackConfig(Resouled.Buffs.THE_MOON, {
+    {
+        CallbackID = ModCallbacks.MC_POST_UPDATE,
+        Function = onUpdate
+    },
+    {
+        CallbackID = ModCallbacks.MC_POST_PLAYER_RENDER,
+        Function = onRender
+    },
+    {
+        CallbackID = ModCallbacks.MC_EVALUATE_CACHE,
+        Function = onCacheEval
+    }
+})

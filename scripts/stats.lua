@@ -66,7 +66,7 @@ Resouled.Stats.Soul = {
     TrailDepthOffset = -30,
 
     PlayPickupSound = function()
-        SFXManager():Play(Isaac.GetSoundIdByName("Soul Pickup "..tostring(math.random(4))))
+        Resouled.SfxM:Play(Isaac.GetSoundIdByName("Soul Pickup "..tostring(math.random(4))))
     end,
 
     Max = 99
@@ -102,7 +102,7 @@ Resouled.Stats.CurseOfAmnesia = {
 
 Resouled.Stats.GuppyItems = {}
 
-local itemConfig = Isaac.GetItemConfig()
+local itemConfig = Resouled.ItemConf
 for i = 1, #itemConfig:GetCollectibles() do
     local item = itemConfig:GetCollectible(i)
     if item and item:HasTags(ItemConfig.TAG_GUPPY) then
@@ -145,9 +145,16 @@ Resouled.Stats.AfterlifeBackdropFix = {
 }
 
 Resouled.Stats.RerollMachine = {
-    Type = EntityType.ENTITY_EFFECT,
-    Variant = Isaac.GetEntityVariantByName("Afterlife Shop Reroll Machine"),
-    SubType = Isaac.GetEntitySubTypeByName("Afterlife Shop Reroll Machine")
+    Altar = {
+        Type = EntityType.ENTITY_PICKUP,
+        Variant = Isaac.GetEntityVariantByName("Buff Reroll Machine Altar"),
+        SubType = Isaac.GetEntitySubTypeByName("Buff Reroll Machine Altar")
+    },
+    FloorSign = {
+        Type = EntityType.ENTITY_EFFECT,
+        Variant = Isaac.GetEntityVariantByName("Buff Reroll Machine Floor Sign"),
+        SubType = Isaac.GetEntitySubTypeByName("Buff Reroll Machine Floor Sign")
+    }
 }
 
 Resouled.Stats.DontionMachine = {

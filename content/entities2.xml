@@ -89,7 +89,6 @@
 
 <!-- Effects-->
     <entity anm2path="effects/air_shockwave.anm2" name="Air Shockwave" id="1000" variant="200"/>
-    <entity anm2path="spinjitzu.anm2" name="Tornado" id="1000" variant="200"/>
     <entity name="Paper Gore Particle" id="1000" variant="207" subtype="0" anm2path="paper_gore.anm2" friction="1"/>
     <entity name="Death Statue" id="1000" variant="208" anm2path="afterlife_statue.anm2"/>
     <entity name="Chain Particle" id="1000" variant="209" subtype="0" anm2path="chain_particle.anm2" friction="1"/>
@@ -112,7 +111,7 @@
     <entity name="Afterlife Backdrop Decoration" id="1000" variant="445" subtype="0" anm2path="misc/afterlife_backdrop_decoration.anm2" friction="1"/>
     <entity name="Mini Nuke" id="1000" variant="446" subtype="0" anm2path="mini_nuke.anm2" friction="1"/>
     <entity name="Afterlife Backdrop Fix" id="1000" variant="447" subtype="0" anm2path="backdrop/afterlife_backdrop_fix.anm2" friction="1"/>
-    <entity name="Afterlife Shop Reroll Machine" id="1000" variant="448" subtype="0" anm2path="misc/afterlife_restock_machine.anm2" friction="1"/>
+    <entity name="Buff Reroll Machine Floor Sign" id="1000" variant="448" subtype="0" anm2path="misc/reroll_machine_floor_sign.anm2" friction="1"/>
 
 <!-- Familiars-->
     <entity name="A Friend" id="3" variant="244" subtype="0" anm2path="a_friend.anm2" collisionMass="5" collisionRadius="10" friction="1" numGridCollisionPoints="12" shadowSize="16" tags="cansacrifice"/>
@@ -138,6 +137,7 @@
     <entity name="Afterlife Shop Donation Machine" id="5" variant="444" subtype="2" anm2path="misc/urn.anm2" collisionRadius="16" collisionMass="3" friction="0" numGridCollisionPoints="12" shadowSize="16"/>
     <entity name="Casket" id="5" variant="444" subtype="3" anm2path="misc/casket.anm2" collisionRadius="20" collisionMass="99999" friction="0.1" numGridCollisionPoints="12" shadowSize="0"/>
     <entity name="Light Switch" id="5" variant="444" subtype="4" anm2path="lightswitch.anm2" friction="1"/>
+    <entity name="Buff Reroll Machine Altar" id="5" variant="444" subtype="2" anm2path="misc/reroll_machine_altar.anm2" friction="1" shadowSize = "19" collisionMass = "999" collisionRadius = "20"/>
 
 <!-- Misc-->
     <entity name="ResouledDummy" id="999" variant="0" subtype="0"/>

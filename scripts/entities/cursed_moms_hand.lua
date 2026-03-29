@@ -55,7 +55,7 @@ local function onNpcInit(_, npc)
     npc:SetShadowSize(0)
     npc.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
     npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
-    SFXManager():Play(CONFIG.SpawnSfx.SFX, CONFIG.SpawnSfx.Volume)
+    Resouled.SfxM:Play(CONFIG.SpawnSfx.SFX, CONFIG.SpawnSfx.Volume)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onNpcInit, CONST.Entity.Type)
 
@@ -125,7 +125,7 @@ local function onNpcUpdate(_, npc)
         if sprite:IsFinished() then
             local validRoomSafeGridIndexes = {}
 
-            local game = Game()
+            local game = Resouled.Game
             local level = game:GetLevel()
             local currentRoomSafeIndex = level:GetCurrentRoomDesc()
                 .SafeGridIndex -- i get it here to exclude it from possible destination rooms

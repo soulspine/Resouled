@@ -1,4 +1,4 @@
-local g = Game()
+local g = Resouled.Game
 
 local TNT_VARIANT = Isaac.GetEntityVariantByName("Blast Miner TNT")
 local TNT_SUBTYPE = Isaac.GetEntitySubTypeByName("Blast Miner TNT")
@@ -20,7 +20,7 @@ local subtypeWhitelist = {
     [TNT_GIGA_SUBTYPE] = true
 }
 
-local AMOUNT = 20
+local AMOUNT = 10
 local START_OFFSET = 10
 local WEIGHT = 0.8
 local BOUNCINESS = 0.3
@@ -29,6 +29,8 @@ local MIN_SPEED = 17
 local MAX_SPEED = 25
 local MIN_SPEED_UPWARDS = 10
 local MAX_SPEED_UPWARDS = 20
+
+local EXPLOSION_RADIUS = 87
 
 local gridLandExplodeBlacklist = {
     [GridEntityType.GRID_DECORATION] = true,
@@ -45,15 +47,29 @@ local gridLandExplodeBlacklist = {
 ---@param flags TearFlags
 local EXPLODE = function(tnt, flags)
     local newFlags = BitSet128(flags["L"], flags["H"])
-    local bomb = g:Spawn(EntityType.ENTITY_BOMB, BombVariant.BOMB_NORMAL, tnt.Position, Vector.Zero, nil, 0,
+    local bomb = g:Spawn(EntityType.ENTITY_BOMB, BombVariant.BOMB_NORMAL, tnt.Position, Vector.Zero, tnt.SpawnerEntity, 0,
         tnt.InitSeed):ToBomb()
     if not bomb then return end
 
     if tnt.SubType == TNT_MEGA_SUBTYPE then
         bomb.ExplosionDamage = 185 --MR. MEGA damage
     end
-    local ROOM_SAVE = Resouled.SaveManager.GetRoomFloorSave(tnt)
+
     bomb:AddTearFlags(newFlags)
+    for _, en in ipairs(Isaac.FindInRadius(bomb.Position, EXPLOSION_RADIUS * bomb.RadiusMultiplier, EntityPartition.ENEMY)) do
+        local npc = en:ToNPC()
+        if npc and npc:IsVulnerableEnemy() and npc:IsActiveEnemy() then
+            npc:TakeDamage(bomb.ExplosionDamage, DamageFlag.DAMAGE_NO_MODIFIERS, EntityRef(bomb), 0)
+        end
+    end
+    for _, en in ipairs(Isaac.FindInRadius(bomb.Position, EXPLOSION_RADIUS, EntityPartition.PLAYER)) do
+        local player = en:ToPlayer()
+        if player then
+            player:TakeDamage(1, DamageFlag.DAMAGE_EXPLOSION, EntityRef(tnt.SpawnerEntity), 30)
+        end
+    end
+    g:BombExplosionEffects(bomb.Position, 0, nil, nil, nil, bomb.RadiusMultiplier)
+    bomb.ExplosionDamage = 0
     bomb:SetExplosionCountdown(0)
     bomb:Update()
     tnt:SetVarData(TNT_HP)
@@ -74,13 +90,13 @@ local EXPLODE = function(tnt, flags)
 
     if tnt.Velocity:LengthSquared() < 0.01 then
         for _ = 1, Resouled:GetRandomParticleCount(AMOUNT, AMOUNT) do
-            Resouled:SpawnPrettyParticles(EFFECT_VARIANT, EFFECT_SUBTYPE, math.random(MIN_SPEED, MAX_SPEED),
+            Resouled:SpawnPrettyParticles(EFFECT_VARIANT, subtype, math.random(MIN_SPEED, MAX_SPEED),
                 math.random(MIN_SPEED_UPWARDS, MAX_SPEED_UPWARDS), -25, 90, tnt.Position, START_OFFSET, nil, nil, WEIGHT,
                 BOUNCINESS, FRICTION, GridCollisionClass.COLLISION_SOLID)
         end
     else
         for _ = 1, Resouled:GetRandomParticleCount(AMOUNT, AMOUNT) do
-            Resouled:SpawnPrettyParticles(EFFECT_VARIANT, EFFECT_SUBTYPE,
+            Resouled:SpawnPrettyParticles(EFFECT_VARIANT, subtype,
                 math.random(MIN_SPEED, MAX_SPEED) + tnt.Velocity:Length(),
                 math.random(MIN_SPEED_UPWARDS, MAX_SPEED_UPWARDS), -25, 90, tnt.Position, START_OFFSET,
                 tnt.Velocity:GetAngleDegrees(), 45 - math.floor(tnt.Velocity:Length() / 2), WEIGHT, BOUNCINESS, FRICTION,
@@ -217,13 +233,34 @@ local function onPickupUpdate(_, pickup)
                     EXPLODE(pickup, flags or TearFlags.TEAR_NORMAL)
                     return
                 end
+
+                local player = pickup.SpawnerEntity and pickup.SpawnerEntity:ToPlayer() or nil
+                if player then
+                    if player:HasCollectible(CollectibleType.COLLECTIBLE_DR_FETUS) then
+                        local npcs = Isaac.FindInRadius(pickup.Position, pickup.Size, EntityPartition.ENEMY)
+                        for _, en in ipairs(npcs) do
+                            local npc = en:ToNPC()
+                            if npc and Resouled:IsValidEnemy(npc) then
+                                EXPLODE(pickup, flags)
+                                data.Resouled_TNTCrateThrown = nil
+                                return
+                            end
+                        end
+                    end
+                end
                 
                 pickup.Velocity = pickup.Velocity * VELOCITY_MULTIPLIER
             else
                 local room = g:GetRoom()
 
                 if not room:IsPositionInRoom(pickup.Position, 1) then
-                    pickup.Velocity = Vector.Zero
+                    local newVarData = varData + 1
+                    pickup:SetVarData(newVarData)
+                    if newVarData == 3 then
+                        EXPLODE(pickup, data["Resouled_BlastMiner"]["Flags"])
+                        data.Resouled_TNTCrateThrown = nil
+                        return
+                    end
                 end
 
                 if pickup.EntityCollisionClass ~= EntityCollisionClass.ENTCOLL_NONE then
@@ -232,6 +269,17 @@ local function onPickupUpdate(_, pickup)
 
                 if pickup.GridCollisionClass ~= EntityGridCollisionClass.GRIDCOLL_NONE then
                     pickup.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
+                end
+
+                
+                local npcs = Isaac.FindInRadius(pickup.Position, pickup.Size, EntityPartition.ENEMY)
+                for _, en in ipairs(npcs) do
+                    local npc = en:ToNPC()
+                    if npc and Resouled:IsValidEnemy(npc) then
+                        EXPLODE(pickup, data["Resouled_BlastMiner"]["Flags"])
+                        data.Resouled_TNTCrateThrown = nil
+                        return
+                    end
                 end
 
                 if throwConfig.Height.Y >= 0 then
@@ -244,19 +292,21 @@ local function onPickupUpdate(_, pickup)
                     end
 
                     local grid = room:GetGridEntityFromPos(pickup.Position)
-                    if grid and not gridLandExplodeBlacklist[grid:GetType()] then
+                    if grid and not gridLandExplodeBlacklist[grid:GetType()] and grid:Destroy(false) then
                         EXPLODE(pickup, data["Resouled_BlastMiner"]["Flags"])
                         data.Resouled_TNTCrateThrown = nil
                         return
                     end
 
-                    local npcs = Isaac.FindInRadius(pickup.Position, pickup.Size, EntityPartition.ENEMY)
-                    if #npcs > 0 then
-                        EXPLODE(pickup, data["Resouled_BlastMiner"]["Flags"])
-                        data.Resouled_TNTCrateThrown = nil
-                        return
+                    local pickups = Isaac.FindInRadius(pickup.Position, pickup.Size, EntityPartition.PICKUP)
+                    for _, en in ipairs(pickups) do
+                        local pickup2 = en:ToPickup()
+                        if pickup2 and pickup2.Variant == TNT_VARIANT and subtypeWhitelist[pickup2.SubType] then
+                            EXPLODE(pickup, data["Resouled_BlastMiner"]["Flags"])
+                            data.Resouled_TNTCrateThrown = nil
+                            return
+                        end
                     end
-
 
                     data.Resouled_TNTCrateThrown = nil
                 end

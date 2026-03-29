@@ -10,8 +10,8 @@ local renderWeb = nil
 local webPos = Vector.Zero
 
 local function onRoomEnter()
-    local room = Game():GetRoom()
-    local rng = RNG(Game():GetRoom():GetSpawnSeed(), 21)
+    local room = Resouled.Game:GetRoom()
+    local rng = RNG(Resouled.Game:GetRoom():GetSpawnSeed(), 21)
     if not Resouled:RoomEventPresent(Resouled.RoomEvents.SPIDER_WEBS) then
         renderWeb = false
         return

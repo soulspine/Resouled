@@ -80,7 +80,7 @@ local CONSTANTS = {
 ---@param item CollectibleType
 ---@param slot? ActiveSlot
 local function proc(player, bitset, item, slot)
-    local game = Game()
+    local game = Resouled.Game
     local rng = player:GetCollectibleRNG(item)
 
     -- this is up here because if you dont have pickups it wont work
@@ -204,7 +204,7 @@ local function proc(player, bitset, item, slot)
 end
 
 local function postGameStarted()
-    local itemConfig = Isaac.GetItemConfig()
+    local itemConfig = Resouled.ItemConf
     itemConfig:GetCollectible(CONSTANTS.Items.Active).Name = CONFIG.ItemName
     itemConfig:GetCollectible(CONSTANTS.Items.Passive).Name = CONFIG.ItemName
     itemConfig:GetCollectible(CONSTANTS.Items.Dummy).Name = CONFIG.ItemName
@@ -254,7 +254,7 @@ end
 Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onDummyActiveUse, CONSTANTS.Items.Dummy)
 
 local function procPostNewRoom()
-    if not Game():GetRoom():IsFirstVisit() then return end
+    if not Resouled.Game:GetRoom():IsFirstVisit() then return end
     Resouled.Iterators:IterateOverPlayers(function(player)
         local data = Resouled.SaveManager.GetRunSave(player).Prototype
         if not data then return end
@@ -439,7 +439,7 @@ local function postPlayerRender(_, player, offset)
         background:SetFrame(data.BgFrame)
     end
 
-    if Game():IsPaused() then goto noFrameAdvance end
+    if Resouled.Game:IsPaused() then goto noFrameAdvance end
 
     if data.BgAnimation == CONFIG.BackgroundAnimations.Out.Name then
         if data.BgFrame < CONFIG.BackgroundAnimations.Out.FrameNum - 1 then

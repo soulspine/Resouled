@@ -22,7 +22,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_EFFECT_INIT, onEffectInit, SoulLantern
 
 ---@param effect EntityEffect
 local function onEffectRender(_, effect)
-    if not Game():IsPaused() then
+    if not Resouled.Game:IsPaused() then
         if effect.SubType == SoulLantern.SubType then
             local data = effect:GetData()
             

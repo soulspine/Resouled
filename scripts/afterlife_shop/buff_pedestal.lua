@@ -124,7 +124,7 @@ local function postPickupCollision(_, pickup, collider)
             
             Resouled:AddPendingBuff(pickup:GetVarData())
             
-            SFXManager():Play(Isaac.GetSoundIdByName("Buff"..tostring(Resouled:GetBuffById(pickup:GetVarData()).Rarity)), PICKUP_VOLUME)
+            Resouled.SfxM:Play(Isaac.GetSoundIdByName("Buff"..tostring(Resouled:GetBuffById(pickup:GetVarData()).Rarity)), PICKUP_VOLUME)
             
             pickup:SetVarData(0)
 
@@ -133,7 +133,7 @@ local function postPickupCollision(_, pickup, collider)
             save[Resouled.StatTracker.Fields.BuffsPickedUp] = save[Resouled.StatTracker.Fields.BuffsPickedUp] + 1
             
             for i = 1, price do
-                Game():Spawn(EntityType.ENTITY_PICKUP, Soul.Variant, player.Position, Vector.Zero, nil, Soul.SubTypeStatue, player.InitSeed + i)
+                Resouled.Game:Spawn(EntityType.ENTITY_PICKUP, Soul.Variant, player.Position, Vector.Zero, nil, Soul.SubTypeStatue, player.InitSeed + i)
             end
         end
     end

@@ -21,7 +21,7 @@ local DEFAULT_ENTITY_COLLISION_CLASS = EntityCollisionClass.ENTCOLL_ALL
 ---@param velocity Vector
 ---@param rotation number
 local function createSmoke(pos, velocity, rotation, alpha, size)
-    local smoke = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.DARK_BALL_SMOKE_PARTICLE, pos, velocity:Rotated(rotation), nil, 0, Random() + 1):ToEffect()
+    local smoke = Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, EffectVariant.DARK_BALL_SMOKE_PARTICLE, pos, velocity:Rotated(rotation), nil, 0, Random() + 1):ToEffect()
     smoke.Timeout = 100
     smoke.SpriteOffset = Vector(0, -16)
     smoke.Color = Color(1, 1, 1, alpha, 0.5, 0, 1)
@@ -48,7 +48,7 @@ local function onNpcUpdate(_, npc)
 
         if sprite:IsEventTriggered("ResouledShoot")  then
             npc:FireProjectiles(npc.Position, (player.Position - npc.Position):Resized(PROJECTILE_SPEED), 0, PROJECTILE_PARAMS)
-            SFXManager():Play(SoundEffect.SOUND_WORM_SPIT, nil, nil, nil, 1.25)
+            Resouled.SfxM:Play(SoundEffect.SOUND_WORM_SPIT, nil, nil, nil, 1.25)
         end
         
         if sprite:IsFinished("Shoot") then
@@ -57,7 +57,7 @@ local function onNpcUpdate(_, npc)
 
         if player.Position:Distance(npc.Position) >= DISTANCE_TO_TELEPORT and not sprite:IsPlaying("TeleportUp") and not sprite:IsPlaying("TeleportDown") then
             npc.State = NpcState.STATE_SPECIAL
-            SFXManager():Play(SoundEffect.SOUND_HELL_PORTAL2, 0.75)
+            Resouled.SfxM:Play(SoundEffect.SOUND_HELL_PORTAL2, 0.75)
             sprite:Play("TeleportUp", true)
         end
 

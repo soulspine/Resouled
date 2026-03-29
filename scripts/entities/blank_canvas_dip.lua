@@ -77,7 +77,7 @@ local function npcUpdate(_, npc)
         end
 
         if sprite:IsEventTriggered(FLIP_START_TRIGGER) then
-            SFXManager():Play(FLIP_SFX, SFX_VOLUME)
+            Resouled.SfxM:Play(FLIP_SFX, SFX_VOLUME)
         end
     end
 end
@@ -87,7 +87,7 @@ Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, npcUpdate, DIP_TYPE)
 local function postNpcDeath(_, npc)
     if npc.Variant == DIP_VARIANT and npc.SubType == DIP_SUBTYPE then
         local randomNum = math.random(1, 3)
-        SFXManager():Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
+        Resouled.SfxM:Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
         Resouled:SpawnPaperGore(npc.Position, GORE_PARTICLE_COUNT)
     end
 end

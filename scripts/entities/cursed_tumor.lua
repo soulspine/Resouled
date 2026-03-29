@@ -76,7 +76,7 @@ local function onNpcUpdate(_, npc)
             sprite:Play(shootingAnimation, true)
             fireTearsCircle(npc, TEAR_AMOUNT, (data.Resouled_CursedTumor%2 * (360/TEAR_AMOUNT))/2, TEAR_SPEED)
             data.Resouled_CursedTumor = data.Resouled_CursedTumor + 1
-            SFXManager():Play(SoundEffect.SOUND_WHEEZY_COUGH)
+            Resouled.SfxM:Play(SoundEffect.SOUND_WHEEZY_COUGH)
         end
     end
 end

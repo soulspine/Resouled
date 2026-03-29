@@ -1,9 +1,9 @@
-local game = Game()
+local game = Resouled.Game
 
 local DeathStatue = Resouled.Stats.DeathStatue
 local BuffPedestal = Resouled.Stats.BuffPedestal
 local WiseSkull = Resouled.Stats.WiseSkull
-local RestockMachine = Resouled.Stats.RerollMachine
+local RestockMachine = Resouled.Stats.RerollMachine.Altar
 local DonoMachine = Resouled.Stats.DontionMachine
 
 local ShopLevels = Resouled.AfterlifeShop.ShopLevels
@@ -25,7 +25,7 @@ local DecorationConfig = {
 ---@param blacklist? table
 local function spawnBuffPedestal(position, seed, blacklist)
     seed = game:GetSeeds():GetStartSeed() + seed
-    local pedestal = Game():Spawn(BuffPedestal.Type, BuffPedestal.Variant, position, Vector.Zero, nil, BuffPedestal.SubType, seed):ToPickup()
+    local pedestal = Resouled.Game:Spawn(BuffPedestal.Type, BuffPedestal.Variant, position, Vector.Zero, nil, BuffPedestal.SubType, seed):ToPickup()
     if not pedestal then return end
     local buff = Resouled:GetShopBuffRoll(seed, 0, blacklist) or 0
     blacklist[buff] = true
@@ -37,7 +37,7 @@ end
 ---@param buff ResouledBuff | integer
 local function spawnSetBuffPedestal(position, seed, buff)
     seed = game:GetSeeds():GetStartSeed() + seed
-    local pedestal = Game():Spawn(BuffPedestal.Type, BuffPedestal.Variant, position, Vector.Zero, nil, BuffPedestal.SubType, seed):ToPickup()
+    local pedestal = Resouled.Game:Spawn(BuffPedestal.Type, BuffPedestal.Variant, position, Vector.Zero, nil, BuffPedestal.SubType, seed):ToPickup()
     if not pedestal then return end
     pedestal:SetVarData(buff)
 end
@@ -93,6 +93,10 @@ local function mainShopLayout()
     end
 
     game:Spawn(DonoMachine.Type, DonoMachine.Variant, Vector(bottomRight.X - 48, topLeft.Y + 48), Vector.Zero, nil, DonoMachine.SubType, Random())
+
+    if Resouled.AfterlifeShop:GetShopLevel() >= ShopLevels.Level3 then
+        game:Spawn(RestockMachine.Type, RestockMachine.Variant, Vector(bottomRight.X - 64, bottomRight.Y - 64), Vector.Zero, nil, RestockMachine.SubType, Random())
+    end
 end
 
 local specialBuffPos = {
@@ -176,9 +180,6 @@ local function mainShopAlwaysLayout()
         (topLeft.Y + bottomRight.Y)/3
     )
     game:Spawn(EntityType.ENTITY_EFFECT, DeathStatue.Variant, statuePos, Vector.Zero, nil, DeathStatue.SubType, Random() + 1)
-    if Resouled.AfterlifeShop:GetShopLevel() >= ShopLevels.Level3 then
-        game:Spawn(EntityType.ENTITY_EFFECT, RestockMachine.Variant, Vector(bottomRight.X - 64, bottomRight.Y - 64), Vector.Zero, nil, RestockMachine.SubType, Random())
-    end
 end
 
 local layoutAlwaysOnEnter = {

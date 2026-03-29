@@ -38,7 +38,7 @@ local function onNpcUpdate(_, npc)
     local dirVector = (playerTarget.Position - npc.Position)
     local sprite = npc:GetSprite()
     local pathfinder = npc.Pathfinder
-    local room = Game():GetRoom()
+    local room = Resouled.Game:GetRoom()
     local seesPlayer = room:CheckLine(npc.Position, playerTarget.Position, LineCheckMode.EXPLOSION)
     if npc.Variant == COIL_VARIANT and npc.SubType == COIL_SUBTYPE then -- COIL
         if seesPlayer then
@@ -81,7 +81,7 @@ Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onNpcUpdate, COIL)
 ---@param npc EntityNPC
 local function postNpcDeath(_, npc)
     if npc.Variant == COIL_VARIANT and npc.SubType == COIL_SUBTYPE then
-        local fetus = Game():Spawn(COIL, COIL_VARIANT, npc.Position, Vector.Zero, npc, COIL_FETUS_SUBTYPE, npc.InitSeed):ToNPC()
+        local fetus = Resouled.Game:Spawn(COIL, COIL_VARIANT, npc.Position, Vector.Zero, npc, COIL_FETUS_SUBTYPE, npc.InitSeed):ToNPC()
         if npc:IsChampion() then
             fetus:MakeChampion(npc.InitSeed, npc:GetChampionColorIdx(), true)
         end

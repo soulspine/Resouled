@@ -34,8 +34,8 @@ local IsaacEnemy = {
     ShootCooldown = 40,
     ShootField = 20
 }
-local game = Game()
-local sfx = SFXManager()
+local game = Resouled.Game
+local sfx = Resouled.SfxM
 
 local SpritesheetPath = "gfx_resouled/characters/costumes/character_001_isaac.png"
 

@@ -34,7 +34,7 @@ local function onPickupCollision(_, pickup, collider, low)
     if pickup.Type == QUAD_COIN_TYPE and pickup.Variant == QUAD_COIN_VARIANT and pickup.SubType == QUAD_COIN_SUBTYPE then
         if collider.Type == EntityType.ENTITY_PLAYER then
             collider:ToPlayer():AddCoins(3)
-            SFXManager():Play(SoundEffect.SOUND_PENNYPICKUP, 1, 0, false, 1)
+            Resouled.SfxM:Play(SoundEffect.SOUND_PENNYPICKUP, 1, 0, false, 1)
         end
     end
 end

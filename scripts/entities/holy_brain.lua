@@ -30,7 +30,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, HOLY_BRAIN_TYPE
 local function onNpcUpdate(_, npc)
     if npc.Variant == HOLY_BRAIN_VARIANT and npc.SubType == HOLY_BRAIN_SUBTYPE then
         local data = npc:GetData()
-        local room = Game():GetRoom()
+        local room = Resouled.Game:GetRoom()
         if not data.TargetPos then
             data.TargetPos = room:GetRandomPosition(0)
         end
@@ -47,7 +47,7 @@ local function onNpcUpdate(_, npc)
 
         local randomNum = math.random()
         if randomNum < CREEP_SPAWN_CHANCE then
-            local creep = Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CREEP_RED, npc.Position, Vector.Zero, npc, 0, npc.InitSeed)
+            local creep = Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CREEP_RED, npc.Position, Vector.Zero, npc, 0, npc.InitSeed)
             creep.Color = CREEP_COLOR
             creep:Update()
             creep:GetData().Resouled_Petrify = true
@@ -61,7 +61,7 @@ local function postEffectUpdate(_, effect)
     local data = effect:GetData()
     if data.Resouled_Petrify then
 
-        local frameCount = Game():GetFrameCount()
+        local frameCount = Resouled.Game:GetFrameCount()
 
         local maxAnimTime = BLINK_SPEED
         local maxAnimTime2 = BLINK_SPEED * 2
@@ -95,7 +95,7 @@ local function postNpcDeath(_, npc)
     if npc.Variant == HOLY_BRAIN_VARIANT and npc.SubType == HOLY_BRAIN_SUBTYPE then
         ---@param player EntityPlayer
         Resouled.Iterators:IterateOverPlayers(function(player)
-            Game():Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CRACK_THE_SKY, player.Position, Vector.Zero, npc, 2, player.InitSeed)
+            Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, EffectVariant.CRACK_THE_SKY, player.Position, Vector.Zero, npc, 2, player.InitSeed)
         end)
     end
 end

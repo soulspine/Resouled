@@ -45,7 +45,7 @@ local function onNpcUpdate(_, npc)
         if sprite:IsFinished("Attack") then
             if data.Resouled_Attack.Count >= 2 then
                 sprite:Play("TeleportUp", true)
-                SFXManager():Play(SoundEffect.SOUND_HELL_PORTAL1)
+                Resouled.SfxM:Play(SoundEffect.SOUND_HELL_PORTAL1)
                 npc.EntityCollisionClass = EntityCollisionClass.ENTCOLL_NONE
                 data.Resouled_Attack.Count = 0
             else
@@ -55,7 +55,7 @@ local function onNpcUpdate(_, npc)
 
         if sprite:IsEventTriggered("Teleport") then
             ::RollPos::
-            local newPos = Isaac.GetFreeNearPosition(Game():GetRoom():GetRandomPosition(0), 0)
+            local newPos = Isaac.GetFreeNearPosition(Resouled.Game:GetRoom():GetRandomPosition(0), 0)
             if newPos:Distance(npc:GetPlayerTarget().Position) < 100 then
                 goto RollPos
             end
@@ -63,7 +63,7 @@ local function onNpcUpdate(_, npc)
         end
 
         if sprite:IsFinished("TeleportUp") then
-            SFXManager():Play(SoundEffect.SOUND_HELL_PORTAL2)
+            Resouled.SfxM:Play(SoundEffect.SOUND_HELL_PORTAL2)
             sprite:Play("TeleportDown", true)
         end
 
@@ -81,7 +81,7 @@ local function onNpcUpdate(_, npc)
 
         if sprite:IsEventTriggered("Laser") then
             local toTargetVector = npc:GetPlayerTarget().Position - npc.Position - npc:GetPlayerTarget().Velocity * 10
-            data.Resouled_Laser = Game():Spawn(EntityType.ENTITY_LASER, LaserVariant.LIGHT_BEAM, npc.Position + Vector(0, 1) + toTargetVector:Resized(10), Vector.Zero, npc, 0, npc.InitSeed):ToLaser()
+            data.Resouled_Laser = Resouled.Game:Spawn(EntityType.ENTITY_LASER, LaserVariant.LIGHT_BEAM, npc.Position + Vector(0, 1) + toTargetVector:Resized(10), Vector.Zero, npc, 0, npc.InitSeed):ToLaser()
             data.Resouled_Laser.PositionOffset = Vector(0, -40)
             data.Resouled_Laser.DepthOffset = npc.DepthOffset + 100
             data.Resouled_Laser:SetTimeout(LASER_TIMEOUT)

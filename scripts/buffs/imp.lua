@@ -1,4 +1,3 @@
-local game = Game()
 local itemsList = {}
 
 local collectiblesWhitelist = {
@@ -29,20 +28,28 @@ local collectiblesWhitelist = {
     [Isaac.GetItemIdByName("Blast Miner TNT!")] = true
 }
 
-local itemConfig = Isaac.GetItemConfig()
+local itemConfig = Resouled.ItemConf
 for i = 1, #itemConfig:GetCollectibles() do
     local item = itemConfig:GetCollectible(i)
-    if item and game:GetItemPool():CanSpawnCollectible(i, false) and (item.AddBombs > 0 or collectiblesWhitelist[i] or item.Name:find("Bomb") or item.Name:find("Bombs")) then
+    if item and Resouled.Game:GetItemPool():CanSpawnCollectible(i, false) and (item.AddBombs > 0 or collectiblesWhitelist[i] or item.Name:find("Bomb") or item.Name:find("Bombs")) then
         table.insert(itemsList, i)
     end
 end
 
 ---@param pickup EntityPickup
 local function postPickupIint(_, pickup)
-    if Resouled:ActiveBuffPresent(Resouled.Buffs.IMP) and game:GetRoom():GetType() == RoomType.ROOM_TREASURE then
+    if Resouled.Game:GetRoom():GetType() == RoomType.ROOM_TREASURE then
         local rng = RNG(pickup.InitSeed)
         pickup:AddCollectibleCycle(itemsList[rng:RandomInt(#itemsList)+1])
         Resouled:RemoveActiveBuff(Resouled.Buffs.IMP)
+        Resouled:RemoveCallback(ModCallbacks.MC_POST_PICKUP_INIT, postPickupIint)
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, postPickupIint, PickupVariant.PICKUP_COLLECTIBLE)
+
+Resouled:AddBuffCallbackConfig(Resouled.Buffs.IMP, {
+    {
+        CallbackID = ModCallbacks.MC_POST_PICKUP_INIT,
+        Function = postPickupIint,
+        CallbackParams = PickupVariant.PICKUP_COLLECTIBLE
+    }
+})

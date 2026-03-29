@@ -13,7 +13,7 @@ local function playerTakeDamage(_, entity, amount, flags)
     local player = entity:ToPlayer()
     if player:HasCollectible(PUMPKIN_MASK) then
         ItemOverlay.Show(Isaac.GetGiantBookIdByName("Pumpkin Mask"), 0, player)
-        SFXManager():Play(SOUND_ID)
+        Resouled.SfxM:Play(SOUND_ID)
         player:AddNullCostume(COSTUME_ID)
         Resouled.Iterators:IterateOverRoomNpcs(function(npc)
             if npc:IsEnemy() and npc:IsActiveEnemy() and npc:IsVulnerableEnemy() then

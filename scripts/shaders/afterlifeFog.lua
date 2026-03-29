@@ -1,4 +1,4 @@
-local g = Game()
+local g = Resouled.Game
 
 local config = {
     Name = "ResouledAfterlifeFog",

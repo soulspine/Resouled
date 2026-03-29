@@ -9,10 +9,16 @@ function Resouled:GiveAllPlayersRandomWormTrinkets()
     end)
 end
 
-Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, function()
-    if not Resouled:ActiveBuffPresent(Resouled.Buffs.MAGGOT) then return end
-
+local function postGameStarted()
     Resouled:GiveAllPlayersRandomWormTrinkets()
 
     Resouled:RemoveActiveBuff(Resouled.Buffs.MAGGOT)
-end)
+    Resouled:RemoveCallback(ModCallbacks.MC_POST_GAME_STARTED, postGameStarted)
+end
+
+Resouled:AddBuffCallbackConfig(Resouled.Buffs.MAGGOT, {
+    {
+        CallbackID = ModCallbacks.MC_POST_GAME_STARTED,
+        Function = postGameStarted
+    }
+})

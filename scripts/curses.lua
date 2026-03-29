@@ -58,9 +58,9 @@ include("scripts.curses.curse_of_amnesia")
 
 ---@param curses integer
 local function onCurseEval(_, curses)
-    local level = Game():GetLevel()
+    local level = Resouled.Game:GetLevel()
     local stage = level:GetStage()
-    local stageSeed = Game():GetSeeds():GetStageSeed(stage)
+    local stageSeed = Resouled.Game:GetSeeds():GetStageSeed(stage)
     local rng = RNG()
     rng:SetSeed(stageSeed, 0)
 

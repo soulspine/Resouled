@@ -1,4 +1,4 @@
-local game = Game()
+local game = Resouled.Game
 
 local ID = Isaac.GetEntityTypeByName("Cursed Haunt")
 local VARIANT = Isaac.GetEntityVariantByName("Cursed Haunt")

@@ -20,7 +20,7 @@ local MAMA_MEGA_EXPLOSION_DAMAGE = 200
 
 ---@param pos Vector
 local function spawnMiniNuke(pos)
-    local nuke = Game():Spawn(EntityType.ENTITY_EFFECT, VARIANT, pos, Vector.Zero, nil, SUBTYPE, Random() + 1):ToEffect()
+    local nuke = Resouled.Game:Spawn(EntityType.ENTITY_EFFECT, VARIANT, pos, Vector.Zero, nil, SUBTYPE, Random() + 1):ToEffect()
     if nuke then
         nuke:GetData().Resouled_MiniNuke = FALLING_SPEED
         nuke.SpriteOffset.Y = -STARTING_HEIGHT
@@ -30,7 +30,7 @@ end
 ---@param effect EntityEffect
 local function onEffectRender(_, effect)
     if effect.SubType == SUBTYPE then
-        if not Game():IsPaused() then
+        if not Resouled.Game:IsPaused() then
             local data = effect:GetData()
             
             if not data.Resouled_MiniNuke then
@@ -65,7 +65,7 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_EFFECT_RENDER, onEffectRender, VARIANT)
 local function onEffectUpdate(_, effect)
     if effect.SubType == SUBTYPE then
         if effect:GetData().Resouled_MiniNukeDie then
-            Game():GetRoom():MamaMegaExplosion(effect.Position)
+            Resouled.Game:GetRoom():MamaMegaExplosion(effect.Position)
             ---@param npc EntityNPC
             Resouled.Iterators:IterateOverRoomNpcs(function(npc)
                 if npc:IsEnemy() and npc:IsActiveEnemy() then

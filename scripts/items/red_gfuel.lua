@@ -27,8 +27,8 @@ local function onActveUse(_, item, rng, player)
             laserVariant = STATIC_SHOCK_BRIMSTONE
         end
         data.Resouled_RedGfuel = {
-            UP = Game():Spawn(EntityType.ENTITY_LASER, laserVariant, player.Position, Vector.Zero, player, 0, player.InitSeed):ToLaser(),
-            DOWN = Game():Spawn(EntityType.ENTITY_LASER, laserVariant, player.Position + DOWN_LASER_START_POSITION, Vector.Zero, player, 0, player.InitSeed):ToLaser(),
+            UP = Resouled.Game:Spawn(EntityType.ENTITY_LASER, laserVariant, player.Position, Vector.Zero, player, 0, player.InitSeed):ToLaser(),
+            DOWN = Resouled.Game:Spawn(EntityType.ENTITY_LASER, laserVariant, player.Position + DOWN_LASER_START_POSITION, Vector.Zero, player, 0, player.InitSeed):ToLaser(),
             TIMEOUT = RED_GFUEL_TIMEOUT,
         }
 
@@ -63,7 +63,7 @@ Resouled:AddCallback(ModCallbacks.MC_USE_ITEM, onActveUse, GFUEL)
 local function onPlayerUpdate(_, player)
     local data = player:GetData()
     if player:GetHeldSprite():GetFilename() == GFUEL_SPRITE:GetFilename() and data.Resouled_RedGfuel and data.Resouled_RedGfuel.DOWN:Exists() and data.Resouled_RedGfuel.UP:Exists() then
-        Game():ShakeScreen(3)
+        Resouled.Game:ShakeScreen(3)
         if data.Resouled_RedGfuel.UP then
             data.Resouled_RedGfuel.UP.Position = player.Position + player.SpriteOffset + UP_BRIMSTONE_OFFSET - data.Resouled_RedGfuel.UP.Velocity
             data.Resouled_RedGfuel.UP.Velocity = player.Velocity
@@ -73,8 +73,8 @@ local function onPlayerUpdate(_, player)
             data.Resouled_RedGfuel.DOWN.Velocity = data.Resouled_RedGfuel.DOWN.Velocity + player:GetShootingInput() * 1.5
             data.Resouled_RedGfuel.DOWN.Velocity = data.Resouled_RedGfuel.DOWN.Velocity * 0.85
 
-            local topLeft = Game():GetRoom():GetTopLeftPos()
-            local bottomRight = Game():GetRoom():GetBottomRightPos()
+            local topLeft = Resouled.Game:GetRoom():GetTopLeftPos()
+            local bottomRight = Resouled.Game:GetRoom():GetBottomRightPos()
 
             local laserPos = data.Resouled_RedGfuel.DOWN.Position - DOWN_LASER_START_POSITION
             local laserVelocity = data.Resouled_RedGfuel.DOWN.Velocity

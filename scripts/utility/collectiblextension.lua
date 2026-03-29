@@ -62,7 +62,7 @@ end
 --- @return table
 function collectiblextension:GetPlayerCollectibles(player)
     local items = {}
-    local itemConfig = Isaac.GetItemConfig()
+    local itemConfig = Resouled.ItemConf
     for i = 1, #itemConfig:GetCollectibles() do
         local collectible = itemConfig:GetCollectible(i)
         if collectible and not collectible.Hidden and not collectible:HasTags(ItemConfig.TAG_QUEST) then
@@ -79,7 +79,7 @@ end
 --- @return CollectibleType | nil
 function collectiblextension:ChooseRandomPlayerItemID(player, rng)
     local items = {}
-    local itemConfig = Isaac.GetItemConfig()
+    local itemConfig = Resouled.ItemConf
     for i = 1, #itemConfig:GetCollectibles() do
         local collectible = itemConfig:GetCollectible(i)
         if collectible

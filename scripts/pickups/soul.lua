@@ -198,7 +198,7 @@ local function onPickupUpdate(_, pickup)
             Resouled:SpawnSparkleEffect(pickup.Position, -pickup.Velocity / 5, 60, pickup.SpriteOffset)
         end
 
-        if not Game():GetRoom():IsPositionInRoom(pickup.Position, -75) then
+        if not Resouled.Game:GetRoom():IsPositionInRoom(pickup.Position, -75) then
             pickup.Velocity = pickup.Velocity * 0.95
         end
     end
@@ -218,7 +218,7 @@ Resouled:AddCallback(ModCallbacks.MC_PRE_ROOM_EXIT, preRoomExit)
 local regularRoomSize = Vector(320, 280) * 2
 
 local function postNewRoom()
-    local level = Game():GetLevel()
+    local level = Resouled.Game:GetLevel()
     local currentIndex = Resouled:GetRoomColumnAndRowFromIdx(level:GetCurrentRoomDesc().SafeGridIndex)
     local lastIndex = Resouled:GetRoomColumnAndRowFromIdx(level:GetLastRoomDesc().SafeGridIndex)
 

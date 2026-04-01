@@ -104,8 +104,9 @@ local CONFIG = {
     AuraWalkDistanceMultiplier = 0.25,
 
     Attacks = {
-        [1] = NpcState.STATE_ATTACK, --Spawn Blank Canvas
-        [2] = NpcState.STATE_ATTACK2 --Magic Marker
+        [1] = NpcState.STATE_ATTACK,  --Spawn Blank Canvas
+        [2] = NpcState.STATE_ATTACK2, --Magic Marker
+        [3] = NpcState.STATE_ATTACK3, --Erase grids
     },
 
     AttackChecks = {
@@ -121,7 +122,7 @@ local CONFIG = {
         end,
         [2] = function()
             if Resouled:IsPaperAuraVisible() then return false end
-            
+
             ---@param npc EntityNPC
             Resouled.Iterators:IterateOverRoomNpcs(function(npc)
                 if Resouled:MatchesEntityDesc(npc, CONST.Marker) then
@@ -131,6 +132,19 @@ local CONFIG = {
             end)
 
             return true
+        end,
+        -- erase grid attack
+        [3] = function()
+            -- only happen when there are grids inside of paper aura
+            local ret = false
+            Resouled.Iterators:IterateOverGridEntities(function(ge, i)
+                if ret then return end
+                if Resouled:IsPosInsidePaperAura(ge.Position) then
+                    ret = true
+                end
+            end)
+
+            return ret
         end
     }
 }
@@ -201,7 +215,8 @@ end
 ---@return Vector
 local function chooseTargetPos(pos)
     local auraVisible = Resouled:IsPaperAuraVisible()
-    local distance = math.random(CONST.MinWalkDistance, CONST.MaxWalkDistance) * (auraVisible and CONFIG.AuraWalkDistanceMultiplier or 1)
+    local distance = math.random(CONST.MinWalkDistance, CONST.MaxWalkDistance) *
+        (auraVisible and CONFIG.AuraWalkDistanceMultiplier or 1)
     local room = game:GetRoom()
     local topLeft = room:GetTopLeftPos()
     local bottomRight = room:GetBottomRightPos()
@@ -225,15 +240,15 @@ local function chooseTargetPos(pos)
     ::FindNormalDirection::
     for i = 0, 3 do
         if not blockedDirections[i] then
-            
             if auraVisible then
-                local direction = math.floor(((center - pos):Rotated(-90 * i + 180):GetAngleDegrees()%360)/90 + 0.5) - 1
+                local direction = math.floor(((center - pos):Rotated(-90 * i + 180):GetAngleDegrees() % 360) / 90 + 0.5) -
+                    1
                 local checkedDirections = 0
-                
+
                 ::RollAgain::
                 if not blockedDirections[direction] then
                     checkedDirections = checkedDirections + 1
-                    direction = (direction)%3 + 1
+                    direction = (direction) % 3 + 1
 
                     if checkedDirections < 4 then
                         goto RollAgain
@@ -242,7 +257,7 @@ local function chooseTargetPos(pos)
                         goto FindNormalDirection
                     end
                 end
-                
+
                 table.insert(validDirections, direction)
             else
                 local addChance = false
@@ -255,7 +270,7 @@ local function chooseTargetPos(pos)
                 elseif i == 3 and pos.Y < center.Y then
                     addChance = true
                 end
-                
+
                 table.insert(validDirections, i)
                 if addChance == true then for _ = 1, 2 - i % 2 do table.insert(validDirections, i) end end
             end
@@ -299,7 +314,7 @@ local function onDoodlerUpdate(_, doodler)
             if sprite:GetAnimation() ~= bodyAnim then
                 sprite:Play(bodyAnim, true)
             end
-            
+
             if sprite:GetOverlayAnimation() ~= headAnim then
                 sprite:PlayOverlay(headAnim, true)
             end
@@ -307,25 +322,23 @@ local function onDoodlerUpdate(_, doodler)
             doodler.Pathfinder:FindGridPath(Resouled:GetPaperAuraPosition() or Vector.Zero, 1.1, 0, false)
 
             if data.TargetPos then data.TargetPos = nil end
-
         elseif not auraVisible or Resouled:IsPosInsidePaperAura(doodler.Position) then
             local bodyAnim = getBodyAnimationFromVelocity(doodler.Velocity)
             local headAnim = getHeadAnimation()
             if sprite:GetAnimation() ~= bodyAnim then
                 sprite:Play(bodyAnim, true)
             end
-            
+
             if sprite:GetOverlayAnimation() ~= headAnim then
                 sprite:PlayOverlay(headAnim, true)
             end
-            
+
             if not data.TargetPos then data.TargetPos = chooseTargetPos(doodler.Position) end
-            
+
             doodler.Pathfinder:FindGridPath(data.TargetPos, 0.75, 0, false)
-            
+
             if doodler.Position:Distance(data.TargetPos) < 50 then
                 data.TargetPos = nil
-                
                 if math.random() < CONST.ChanceToAttackWhenNearTargetPos then
                     local attack = math.random(#CONFIG.Attacks)
                     if CONFIG.AttackChecks[attack]() == true then
@@ -361,7 +374,6 @@ local function onDoodlerUpdate(_, doodler)
                 Random()
             )
         end
-
     elseif doodler.State == NpcState.STATE_ATTACK2 then
         local attackAnim = CONST.Anim.MarkerAttack
 
@@ -388,6 +400,40 @@ local function onDoodlerUpdate(_, doodler)
 
 
         doodler.Velocity = doodler.Velocity * 0.9
+    elseif doodler.State == NpcState.STATE_ATTACK3 then
+        -- remove head overlay animation since erase animation has it baked in
+        if sprite:IsOverlayPlaying() then
+            sprite:RemoveOverlay()
+        end
+
+        -- check if animation finished, then erase
+        local triggerNow = sprite:IsFinished(CONST.Anim.Erase)
+
+        -- play animation if not playing
+        if not sprite:IsPlaying(CONST.Anim.Erase) then
+            sprite:Play(CONST.Anim.Erase, true)
+        end
+
+        -- after animation checks so it doesnt get fucked up
+        if triggerNow then
+            local found = false
+            Resouled.Iterators:IterateOverGridEntities(function(gridEntity, index)
+                if found then return end
+                if Resouled:IsPosInsidePaperAura(gridEntity.Position) then
+                    if found then return end
+                    found = true
+                    gridEntity:Destroy(true)
+                end
+            end)
+
+            if found then
+                sprite:Play(CONST.Anim.Erase, true)
+            else
+                doodler.State = NpcState.STATE_MOVE
+                sprite:Play(CONST.Anim.Base.Idle.Name)
+                sprite:PlayOverlay(CONST.Anim.Overlay.HeadDown.Name)
+            end
+        end
     elseif doodler.State == NpcState.STATE_SUICIDE then
         if not sprite:IsPlaying(CONST.Anim.Death) then sprite:Play(CONST.Anim.Death) end
         sprite:RemoveOverlay()
@@ -402,14 +448,14 @@ local function onDoodlerUpdate(_, doodler)
             Resouled:SpawnPaperGore(doodler.Position, 40, 1.5)
             Resouled:SpawnPaperGore(doodler.Position, 40, 1)
 
-            game:Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, doodler.Position, Vector.Zero, nil, Resouled.Enums.Items.PROTOTYPE_DUMMY, Random())
+            game:Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, doodler.Position, Vector.Zero, nil,
+                Resouled.Enums.Items.PROTOTYPE_DUMMY, Random())
 
             doodler:Kill()
         end
 
         doodler.Velocity = doodler.Velocity * 0.9
     elseif doodler.State == NpcState.STATE_SPECIAL then
-
         if sprite:IsEventTriggered("Erase") and not data.EraseCooldown then
             for _, en in ipairs(Isaac.FindInRadius(doodler.Position, CONST.TearEraseArea, EntityPartition.TEAR)) do
                 en:Remove()
@@ -424,7 +470,6 @@ local function onDoodlerUpdate(_, doodler)
         end
 
         doodler.Velocity = doodler.Velocity * 0.9
-
     end
 
     if data.EraseCooldown then
@@ -432,10 +477,10 @@ local function onDoodlerUpdate(_, doodler)
         if data.EraseCooldown < 1 then
             data.EraseCooldown = nil
         end
-        elseif not data.EraseCooldown and doodler.State ~= NpcState.STATE_SPECIAL then
+    elseif not data.EraseCooldown and doodler.State ~= NpcState.STATE_SPECIAL then
         if Resouled:IsPaperAuraVisible() then
             local tears = Isaac.FindInRadius(doodler.Position, CONST.TearEraseArea, EntityPartition.TEAR)
-            
+
             for _, en in ipairs(tears) do
                 if Resouled:IsPosInsidePaperAura(en.Position) then
                     doodler.State = NpcState.STATE_SPECIAL
@@ -446,7 +491,6 @@ local function onDoodlerUpdate(_, doodler)
             end
         end
     end
-
 end
 Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onDoodlerUpdate, CONST.Ent.Type)
 

@@ -6,7 +6,8 @@ Resouled.AfterlifeShop.Goto = {
     ReplaceMusic = false,
     PlayTime = nil,
     Seed = nil,
-    SpecialBuffs = {}
+    SpecialBuffs = {},
+    WasDevil = nil
 }
 
 ---@param buffID ResouledBuff
@@ -37,6 +38,7 @@ local function postGameEnd(_, isGameOver)
         Resouled.AfterlifeShop.Goto.ReplaceMusic = true
         Resouled.AfterlifeShop.Goto.PlayTime = Resouled.Game.TimeCounter
         Resouled.AfterlifeShop.Goto.Seed = Resouled.Game:GetSeeds():GetStartSeed()
+        Resouled.AfterlifeShop.Goto.WasDevil = Resouled.Game:GetDevilRoomDeals() > 0
     else
         Resouled.AfterlifeShop.Goto.SpecialBuffs = {}
     end
@@ -64,6 +66,37 @@ local function postNewLevel()
     end
 end
 Resouled:AddPriorityCallback(ModCallbacks.MC_POST_NEW_LEVEL, CallbackPriority.LATE, postNewLevel)
+
+---@class ResouledAfterlifeShopGotoConfig
+---@field PlayerType PlayerType
+---@field Difficulty Difficulty
+---@field SoulNum integer
+---@field PlayTime integer
+---@field Seed integer
+---@field WasDevil boolean
+
+function Resouled.AfterlifeShop.Goto:InitializeSave()
+    local save = Resouled.SaveManager.GetRunSave()
+    if not save["ResouledAfterlifeShopGotoConfig"] then
+        save["ResouledAfterlifeShopGotoConfig"] = {
+            PlayerType = Resouled.AfterlifeShop.Goto.PlayerType,
+            Difficulty = Resouled.AfterlifeShop.Goto.Difficulty,
+            SoulNum = Resouled.AfterlifeShop.Goto.SoulNum,
+            PlayTime = Resouled.AfterlifeShop.Goto.PlayTime,
+            Seed = Resouled.AfterlifeShop.Goto.Seed,
+            WasDevil = Resouled.AfterlifeShop.Goto.WasDevil
+        }
+    end
+end
+
+---@return ResouledAfterlifeShopGotoConfig
+function Resouled.AfterlifeShop.Goto:GetSave()
+    local save = Resouled.SaveManager.GetRunSave()
+    if not save["ResouledAfterlifeShopGotoConfig"] then
+        Resouled.AfterlifeShop.Goto:InitializeSave()
+    end
+    return save["ResouledAfterlifeShopGotoConfig"]
+end
 
 local function postGameStarted()
     if Resouled.AfterlifeShop.Goto.Activate then
@@ -93,6 +126,8 @@ local function postGameStarted()
 
         local fileSave = Resouled.SaveManager.GetPersistentSave()
         if fileSave then fileSave.FirstAfterlifeVisit = true end
+
+        Isaac.RunCallback(Resouled.Callbacks.PostEnterAfterlife)
     else
         Resouled.AfterlifeShop:SetMapVisibility(true)
         Resouled.AfterlifeShop.Goto.SpecialBuffs = {}

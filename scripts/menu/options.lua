@@ -152,26 +152,32 @@ local OPTION_EFFECTS = {
 }
 
 local function loadOptions()
-    if Resouled.SaveManager.IsLoaded() and not loadedSave then
-        local save = Resouled.SaveManager.GetEntireSave()
+    local save = Resouled.SaveManager.GetEntireSave()
 
-        if not save["ResouledOptions"] then save["ResouledOptions"] = {} end
-        save = save["ResouledOptions"]
+    if not save["ResouledOptions"] then save["ResouledOptions"] = {} end
+    save = save["ResouledOptions"]
 
-
-        for _, config in ipairs(Resouled.Options) do
-            save[config.Name] = save[config.Name] or config.DefaultValue
-        end
-
-        optionsSave = save
-        loadedSave = true
-        Isaac.RunCallback(Resouled.Callbacks.OptionsLoaded)
-        Resouled.Save:AddToAutoSave(Resouled.SaveTypes.EntireSave, "ResouledOptions", function() return optionsSave end)
+    for _, config in ipairs(Resouled.Options) do
+        save[config.Name] = save[config.Name] or config.DefaultValue
     end
+
+    optionsSave = save
+
+    loadedSave = true
+    Isaac.RunCallback(Resouled.Callbacks.OptionsLoaded)
+    Resouled.Save:AddToAutoSave(Resouled.SaveTypes.EntireSave, "ResouledOptions", function() return optionsSave end)
+
+    Resouled:RemoveCallback(ModCallbacks.MC_MAIN_MENU_RENDER, loadOptions)
+    Resouled:RemoveCallback(ModCallbacks.MC_POST_RENDER, loadOptions)
 end
 Resouled:AddPriorityCallback(ModCallbacks.MC_MAIN_MENU_RENDER, CallbackPriority.IMPORTANT, loadOptions)
 Resouled:AddPriorityCallback(ModCallbacks.MC_POST_RENDER, CallbackPriority.IMPORTANT, loadOptions)
 
+local function makeSureSavesExist()
+    if optionsSave == nil then
+        loadOptions()
+    end
+end
 
 --- Modifies the value of given option. Increment `true` will make it go up by value specified in StepValue while increment `false` will make it go down by the same amount
 --- If modyfing a boolean value, inverts it. Ignores increment parameter
@@ -241,6 +247,7 @@ end
 ---@param optionName string
 ---@return any
 function Resouled:GetOptionValue(optionName)
+    makeSureSavesExist()
     if not optionsSave[optionName] then
         for _, container in ipairs(Resouled.Options) do
             if optionName == container.Name then

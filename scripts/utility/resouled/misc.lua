@@ -997,3 +997,7 @@ function Resouled:OverlayScreen(color)
         color, color, y * 2
     )
 end
+
+function Resouled.Screen()
+    return Vector(Isaac.GetScreenWidth(), Isaac.GetScreenHeight())
+end

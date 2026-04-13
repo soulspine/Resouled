@@ -20,7 +20,7 @@ local DecorationConfig = {
     SpriteWidth = 24,
 }
 
----@param position Vector
+---@param position Vector 
 ---@param seed integer
 ---@param blacklist? table
 local function spawnBuffPedestal(position, seed, blacklist)

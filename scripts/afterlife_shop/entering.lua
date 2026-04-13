@@ -10,6 +10,11 @@ Resouled.AfterlifeShop.Goto = {
     WasDevil = nil
 }
 
+---@param shouldEnter boolean
+function Resouled.AfterlifeShop.Goto:SetShouldEnter(shouldEnter)
+    Resouled.AfterlifeShop.Goto.Activate = shouldEnter
+end
+
 ---@param buffID ResouledBuff
 function Resouled.AfterlifeShop:AddSpecialBuffToSpawn(buffID)
     table.insert(Resouled.AfterlifeShop.Goto.SpecialBuffs, buffID)
@@ -21,7 +26,6 @@ black:Play("Idle", true)
 
 ---@param isGameOver boolean
 local function postGameEnd(_, isGameOver)
-    
     local difficulty = Resouled.Game.Difficulty
     
     if difficulty == Difficulty.DIFFICULTY_GREED then
@@ -50,7 +54,7 @@ Resouled:AddCallback(ModCallbacks.MC_MAIN_MENU_RENDER, function()
         local x = Isaac.GetScreenWidth()/2
         local y = Isaac.GetScreenHeight()/2
 
-        black.Scale = Vector(x/8, y/8)
+        black.Scale = Vector(x, y)/8
 
         black:Render(Vector(x, y))
 

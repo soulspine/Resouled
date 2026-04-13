@@ -1,3 +1,4 @@
 <backdrops gfxroot="gfx_resouled/backdrop/" gridgfxroot="gfx_resouled/grid/" effectsgfxroot="gfx_resouled/effects/">
     <backdrop id="1" name="Afterlife Shop" gfx="afterlife_shop.png" props="" walls="1" wallvariants="1" floors="1" floorvariants="1"/>
+    <backdrop id="2" name="Resouled Shadow Fight" gfx="shadow_fight.png" props="" walls="1" wallvariants="1" floors="1" floorvariants="1"/>
 </backdrops>

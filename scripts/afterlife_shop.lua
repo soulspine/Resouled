@@ -51,6 +51,7 @@ end
 
 ---@return boolean
 function Resouled.AfterlifeShop:IsAfterlifeShop()
+    if Resouled.AfterlifeShop.ShadowFight.Active then return false end
     local RunSave = Resouled.SaveManager.GetRunSave()
     return RunSave.AfterlifeShop
 end

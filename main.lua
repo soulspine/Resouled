@@ -9,6 +9,7 @@ if REPENTOGON and MinimapAPI then
     Resouled.SfxM = SFXManager()
     Resouled.MusicM = MusicManager()
     Resouled.ItemConf = Isaac.GetItemConfig()
+    Resouled.Seeds = Resouled.Game:GetSeeds()
 
     local thingsToRunAfterImports = {}
     

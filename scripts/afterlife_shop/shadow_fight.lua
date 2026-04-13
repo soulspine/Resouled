@@ -3,6 +3,9 @@ local g = Resouled.Game
 Resouled.AfterlifeShop.ShadowFight = {
 
     Active = false,
+    Backdrop = Isaac.GetBackdropIdByName("Resouled Shadow Fight"),
+    LevelName = "Purgatory",
+    FootprintColor = KColor(0, 0, 0, 0),
 
     MaxOverlayEndTimout = 200,
     OverlayEndOffset = 550,
@@ -15,7 +18,11 @@ config.RoomTransitionFunctions.Start = {} --Animation before entering the room
 config.RoomTransitionFunctions.Middle = {} --Entering the room
 config.RoomTransitionFunctions.End = {} --Entered the room
 
+
 function config.RoomTransitionFunctions.Start.Begin()
+    local save = Resouled.SaveManager.GetRunSave()
+    save.IsShadowFight = true
+
     Resouled.Iterators:IterateOverPlayers(function(player)
         player:AnimateSad()
     end)
@@ -42,6 +49,8 @@ function config.RoomTransitionFunctions.Start.OverlayScreenRender()
 end
 
 function config.RoomTransitionFunctions.Middle.Enter()
+    Isaac.ExecuteCommand("stage 13")
+
     config.CurrentOverlayTimout = config.MaxOverlayEndTimout
 
     Resouled:RemoveCallback(ModCallbacks.MC_POST_UPDATE, config.RoomTransitionFunctions.Start.OverlayScreenUpdate)
@@ -52,7 +61,7 @@ function config.RoomTransitionFunctions.Middle.Enter()
 
     config.Active = true
 
-    Isaac.ExecuteCommand("goto d.124")
+    Isaac.ExecuteCommand("goto d.1")
 end
 
 local blackColor = KColor(0, 0, 0, 1)
@@ -62,17 +71,31 @@ end
 
 function config.RoomTransitionFunctions.End.Start()
     local room = g:GetRoom()
-    local center = room:GetCenterPos()
+    local level = g:GetLevel()
+    level:SetName(Resouled.AfterlifeShop.ShadowFight.LevelName)
+    room:SetBackdropType(Resouled.AfterlifeShop.ShadowFight.Backdrop, 1)
 
     Resouled.Iterators:IterateOverPlayers(function(player)
-        player.Position = center
         player:AnimateAppear()
+        player:SetFootprintColor(Resouled.AfterlifeShop.ShadowFight.FootprintColor)
+        player.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
     end)
 
     ---@param pickup EntityPickup
     Resouled.Iterators:IterateOverRoomPickups(function(pickup)
         pickup:Remove()
     end)
+
+    ---@param effect EntityEffect
+    Resouled.Iterators:IterateOverRoomEffects(function(effect)
+        effect:Remove()
+    end)
+
+    local camera = room:GetCamera()
+    camera:SetClampEnabled(false)
+
+    local roomDesc = level:GetCurrentRoomDesc()
+    roomDesc.Flags = roomDesc.Flags | RoomDescriptor.FLAG_NO_WALLS
 
     config.CurrentOverlayTimout = config.MaxOverlayEndTimout
 
@@ -106,124 +129,54 @@ function Resouled.AfterlifeShop:TeleportToShadowBossfight()
     config.RoomTransitionFunctions.Start.Begin()
 end
 
+local function removeAllEnterCallbacks()
+    Resouled:RemoveCallback(ModCallbacks.MC_POST_UPDATE, config.RoomTransitionFunctions.Start.OverlayScreenUpdate)
+    Resouled:RemoveCallback(ModCallbacks.MC_POST_RENDER, config.RoomTransitionFunctions.Start.OverlayScreenRender)
+    Resouled:RemoveCallback(ModCallbacks.MC_POST_RENDER, config.RoomTransitionFunctions.Middle.OverlayScreen)
+    Resouled:RemoveCallback(ModCallbacks.MC_POST_UPDATE, config.RoomTransitionFunctions.End.OverlayScreenUpdate)
+    Resouled:RemoveCallback(ModCallbacks.MC_POST_RENDER, config.RoomTransitionFunctions.End.OverlayScreenRender)
+    Resouled:RemoveCallback(ModCallbacks.MC_POST_NEW_ROOM, config.RoomTransitionFunctions.End.Start)
+end
+
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, function()
+    removeAllEnterCallbacks()
+    Resouled.AfterlifeShop.ShadowFight.Active = false
+    local save = Resouled.SaveManager.GetRunSave()
+    if save.IsShadowFight then
+        Resouled.Game:FinishChallenge()
+    end
+end)
+
+Resouled:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, function()
+    if Resouled.AfterlifeShop.ShadowFight.Active then
+        Resouled.Game:GetRoom():GetCamera():SetClampEnabled(true)
+    end
+end)
+
+Resouled:AddCallback(ModCallbacks.MC_POST_GAME_END, function()
     config.CurrentOverlayTimout = 0
     config.Active = false
 end)
 
-
-
-local shadowProjectileConfig = {
-    Scale = 0,
-    Color = Color(0.2, 0.2, 0.2, 0.1, 0.5, 0.5, 0.5),
-    FallingAccel = -0.1,
-    FallingSpeed = 0,
-    
-    Animation = "RegularTear5"
-}
----@return EntityProjectile | nil
-local function spawnShadowProjectile(pos, vel)
-    local p = g:Spawn(EntityType.ENTITY_PROJECTILE, ProjectileVariant.PROJECTILE_TEAR, pos, Vector.Zero, nil, 0, Resouled:NewSeed()):ToProjectile()
-    if not p then return nil end
-    p.Velocity = vel
-    p.Scale = shadowProjectileConfig.Scale
-    p.Color = shadowProjectileConfig.Color
-    p.FallingAccel = shadowProjectileConfig.FallingAccel
-    p.FallingSpeed = shadowProjectileConfig.FallingSpeed
-    p:AddProjectileFlags(ProjectileFlags.NO_WALL_COLLIDE)
-
-    p:GetData().Resouled_AfterlifeShadowProjectile = true
-
-    return p
-end
-
----@param p EntityProjectile
-Resouled:AddCallback(ModCallbacks.MC_POST_PROJECTILE_UPDATE, function(_, p)
-    if not p:GetData().Resouled_AfterlifeShadowProjectile then return end
-
-    if p.FrameCount > 500 then p:Remove() end
-
-    local sprite = p:GetSprite()
-    if not sprite:IsPlaying(shadowProjectileConfig.Animation) then
-        sprite:Play(shadowProjectileConfig.Animation, true)
+Resouled:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, function()
+    local level = Resouled.Game:GetLevel()
+    if level:GetName() == Resouled.AfterlifeShop.ShadowFight.LevelName and not Resouled.AfterlifeShop.ShadowFight.Active then
+        level:SetName("")
     end
 end)
 
---[[
+local z = 0
 Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, function()
-    local frameCount = g:GetFrameCount()
     local room = g:GetRoom()
-    local center = room:GetCenterPos()
-    local vel = Vector(0, 4)
-    local step = 360/16
-    if frameCount % 15 == 0 then
-        for _ = 1, 16 do
-            
-            local p = spawnShadowProjectile(center, vel)
-            if p then
-                p:AddProjectileFlags(
-                    ((frameCount % 30)//15 == 0 and ProjectileFlags.CURVE_LEFT or ProjectileFlags.CURVE_RIGHT)
-                    | ProjectileFlags.ACCELERATE
-                    | ProjectileFlags.CHANGE_FLAGS_AFTER_TIMEOUT
-                )
-                p.ChangeTimeout = 75
-                p:AddChangeFlags(ProjectileFlags.FADEOUT)
-                p.CurvingStrength = 0.0035
-                p.Acceleration = 1.02
-            end
+    local pos = room:GetCenterPos()
+    local playerPos = Isaac.GetPlayer().Position
+    Resouled:SetFogPos(pos + Vector(z, 0))
+    z = z + 1
+    local camera = room:GetCamera()
 
-            vel = vel:Rotated(step)
-        end
-
-    end
-
-    if frameCount % 5 == 0 then
-        
-        vel = Vector(0, 10):Rotated(frameCount / 3)
-        step = 360/6
-        for _ = 1, 6 do
-            
-            local p = spawnShadowProjectile(center, vel)
-            if p then
-                p:AddProjectileFlags(ProjectileFlags.ACCELERATE | ProjectileFlags.CHANGE_FLAGS_AFTER_TIMEOUT)
-                p.ChangeTimeout = 30
-                p:AddChangeFlags(ProjectileFlags.FADEOUT)
-                p.Acceleration = 1.05
-            end
-            
-            vel = vel:Rotated(step)
-        end
-    end
+    local x = (playerPos - pos)
+    --camera:SetFocusPosition(Resouled:GetFogCenterPos() + x * 0.75)
+    --camera:SetClampEnabled(false)
 end)
-]]--
 
---[[
-Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, function()
-    local frameCount = g:GetFrameCount()
-    local room = g:GetRoom()
-    local center = room:GetCenterPos()
-
-    local player = Isaac.GetPlayer()
-    player.MoveSpeed = 1.4
-
-    local vel = Vector(0, 10):Rotated(frameCount * 3)
-    local step = 360/8
-    if frameCount % 3 == 0 then
-        
-        for _ = 1, 8 do
-            local p = spawnShadowProjectile(center, vel)
-            if p then
-                p:AddChangeFlags(ProjectileFlags.FADEOUT)
-                p:AddProjectileFlags(ProjectileFlags.CHANGE_FLAGS_AFTER_TIMEOUT)
-                p.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
-                p.ChangeTimeout = 120
-                p.CurvingStrength = 0.005
-                p:AddProjectileFlags(ProjectileFlags.CURVE_RIGHT)
-            end
-
-            vel = vel:Rotated(step)
-        end
-
-    end
-end)
-]]--
+include("scripts.afterlife_shop.shadow_fight.grass")

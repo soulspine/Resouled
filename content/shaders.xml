@@ -402,11 +402,11 @@
 
 
 
-                float minIntensity = MinIntensityOut + IntensityOut/10;
+                float minIntensity = MinIntensityOut;
                 if (fogFactor < minIntensity) {
                     fogFactor = minIntensity;
                 }
-                fogFactor = min(fogFactor + dist/1000, 1);
+                fogFactor = min(fogFactor + dist/2500, 1);
                 fogFactor *= IntensityOut;
 
                 // Blend scene with fog color using the original fade curve

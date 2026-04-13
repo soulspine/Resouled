@@ -1,13 +1,25 @@
 Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, function()
     if true then return end
-    if Resouled.Game:GetFrameCount() % 10 ~= 0 then return end
+    if Resouled.Game:GetFrameCount() % 60 ~= 0 then return end
 
     Resouled:SpawnShadowProjectile(Resouled.ShadowProjectileTypes.BigHomingBurst,
         Resouled.Game:GetRoom():GetCenterPos(),
         Vector.Zero,
-        30
+        60
     )
 end)
+
+---@param proj ResouledShadowProjectile
+local function init(_, proj)
+    if proj.Type ~= Resouled.ShadowProjectileTypes.BigHomingBurst then return end
+    local sprite = proj.Sprite
+    sprite:Load("gfx_resouled/misc/shadow_projectile.anm2", true)
+    sprite:Play("Idle", true)
+    local scale = proj.Size/32
+    sprite.Scale.X = scale
+    sprite.Scale.Y = scale
+end
+Resouled:AddCallback(Resouled.Callbacks.ShadowProjectileInit, init)
 
 ---@param proj ResouledShadowProjectile
 local function update(_, proj)
@@ -23,7 +35,7 @@ local function update(_, proj)
             Resouled:SpawnShadowProjectile(Resouled.ShadowProjectileTypes.Straight,
                 proj.Position,
                 velocity,
-                10
+                20
             )
 
             velocity = velocity:Rotated(360/8)
@@ -37,6 +49,8 @@ Resouled:AddCallback(Resouled.Callbacks.ShadowProjectileUpdate, update)
 ---@param proj ResouledShadowProjectile
 local function render(_, proj)
     if proj.Type ~= Resouled.ShadowProjectileTypes.BigHomingBurst then return end
+
+    proj.Sprite:Render(Isaac.WorldToScreen(proj.Position))
 
     proj:Move()
 end

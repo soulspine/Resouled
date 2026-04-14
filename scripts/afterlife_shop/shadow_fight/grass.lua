@@ -231,3 +231,115 @@ end)
 Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, function()
     map = {}
 end)
+
+
+
+local MAP_SIZE = 64
+local RENDER_SCALE = 200
+local PIXEL_SIZE = RENDER_SCALE/MAP_SIZE
+local OFFSET = Vector(PIXEL_SIZE/2, 0)
+local TRESHOLD = 0.5
+local RATIO = 5
+
+---@param offset table {X, Y}
+---@param currentIdx table {X, Y}
+---@param gridSize integer
+---@return table {X, Y}
+local function getIdxFromOffset(offset, currentIdx, gridSize)
+    local newIdx = {X = currentIdx.X + offset.X, Y = currentIdx.Y + offset.Y}
+
+    while newIdx.X > gridSize do newIdx.X = newIdx.X - gridSize end
+    while newIdx.X < 1 do newIdx.X = gridSize + newIdx.X end
+    while newIdx.Y > gridSize do newIdx.Y = newIdx.Y - gridSize end
+    while newIdx.Y < 1 do newIdx.Y = gridSize + newIdx.Y end
+
+    return newIdx
+end
+
+local noise = {}
+local noise2 = {}
+Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, function()
+    if true then return end
+    if #noise < MAP_SIZE then
+        
+        for y = 1, MAP_SIZE do for x = 1, MAP_SIZE do
+            
+            if not noise[y] then noise[y] = {} end
+            
+            noise[y][x] = math.random()
+            
+        end end
+    end
+
+    local startPos = Resouled.Screen()/2 - (Vector(1, 1) * RENDER_SCALE/2)
+
+    for y = 1, MAP_SIZE do for x = 1, MAP_SIZE do
+        
+        local idxAround = {
+            getIdxFromOffset({X = 0, Y = -1}, {X = x, Y = y}, MAP_SIZE),
+            getIdxFromOffset({X = -1, Y = 0}, {X = x, Y = y}, MAP_SIZE),
+            getIdxFromOffset({X = 0, Y = 1}, {X = x, Y = y}, MAP_SIZE),
+            getIdxFromOffset({X = 1, Y = 0}, {X = x, Y = y}, MAP_SIZE),
+            getIdxFromOffset({X = 0, Y = 0}, {X = -math.floor((x - 1)/8), Y = -math.floor((y - 1)/8)}, MAP_SIZE)
+        }
+
+        local value =
+            (noise[y][x]
+            + noise[idxAround[1].Y][idxAround[1].X]
+            + noise[idxAround[2].Y][idxAround[2].X]
+            + noise[idxAround[3].Y][idxAround[3].X]
+            + noise[idxAround[4].Y][idxAround[4].X]
+        )/5
+        
+        value = (value * (RATIO - 1) + noise[idxAround[5].Y][idxAround[5].X])/RATIO
+
+        value = -math.log(value, 5)
+
+        value = value < TRESHOLD and 0 or 1
+        
+        if not noise2[y] then noise2[y] = {} end
+        noise2[y][x] = value
+
+    end end
+
+    for y = 1, MAP_SIZE do for x = 1, MAP_SIZE do
+        
+        local idxAround = {
+            getIdxFromOffset({X = 0, Y = -1}, {X = x, Y = y}, MAP_SIZE),
+            getIdxFromOffset({X = -1, Y = 0}, {X = x, Y = y}, MAP_SIZE),
+            getIdxFromOffset({X = 0, Y = 1}, {X = x, Y = y}, MAP_SIZE),
+            getIdxFromOffset({X = 1, Y = 0}, {X = x, Y = y}, MAP_SIZE)
+        }
+        local valuesAround = {
+            noise2[idxAround[1].Y][idxAround[1].X],
+            noise2[idxAround[2].Y][idxAround[2].X],
+            noise2[idxAround[3].Y][idxAround[3].X],
+            noise2[idxAround[4].Y][idxAround[4].X]
+        }
+        local value = noise2[y][x]
+        local differentValues = 0
+
+        for i = 1, 4 do
+            if valuesAround[i] ~= value then differentValues = differentValues + 1 end
+        end
+
+        if differentValues > 2 then noise2[y][x] = -value end
+
+    end end
+
+    for y = 1, MAP_SIZE do for x = 1, MAP_SIZE do
+        
+        local value = noise2[y][x]
+        local pos = startPos + Vector(PIXEL_SIZE * (x - 1), PIXEL_SIZE * (y - 1))
+        local color = KColor(value, value, value, 1)
+
+        Isaac.DrawLine(
+            pos - OFFSET,
+            pos + OFFSET,
+            color,
+            color,
+            PIXEL_SIZE
+        )
+
+    end end
+end)

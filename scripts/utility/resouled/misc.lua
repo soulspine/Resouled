@@ -1001,3 +1001,19 @@ end
 function Resouled.Screen()
     return Vector(Isaac.GetScreenWidth(), Isaac.GetScreenHeight())
 end
+
+---@param sizeX integer
+---@param sizeY integer
+---@param fill? any value to prepopulate each field with; default `0`
+---@return table[]
+function Resouled.Create2DArray(sizeX, sizeY, fill)
+    fill = fill or 0
+    local out = {}
+    for x = 1, sizeX do
+        out[x] = {}
+        for y = 1, sizeY do
+            out[x][y] = fill
+        end
+    end
+    return out
+end

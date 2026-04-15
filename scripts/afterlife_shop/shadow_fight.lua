@@ -180,3 +180,4 @@ Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, function()
 end)
 
 include("scripts.afterlife_shop.shadow_fight.grass")
+include("scripts.afterlife_shop.shadow_fight.grass2")

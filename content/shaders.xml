@@ -224,7 +224,7 @@
 
 
 
-
+    <!--
     <shader name="ResouledAfterlifeFog">
         <parameters>
             <param name = "CenterPos" type="vec2"/>
@@ -419,4 +419,5 @@
             }
         ]]></fragment>
     </shader>
+    -->
 </shaders>

@@ -5,5 +5,8 @@ Resouled.Callbacks = {
     ShadowProjectileUpdate = "MC_RESOULED_SHADOW_PROJECTILE_UPDATE",
     ShadowProjectileRender = "MC_RESOULED_SHADOW_PROJECTILE_RENDER",
     ShadowProjectileInit = "MC_RESOULED_SHADOW_PROJECTILE_INIT",
+    ShadowFightRockUpdate = "MC_RESOULED_SHADOW_FIGHT_ROCK_UPDATE",
+    ShadowFightRockRender = "MC_RESOULED_SHADOW_FIGHT_ROCK_RENDER",
+    ShadowFightRockInit = "MC_RESOULED_SHADOW_FIGHT_ROCK_INIT",
     AutoSave = "MC_RESOULED_AUTO_SAVE"
 }

@@ -1,2 +1,2 @@
 include("scripts.shaders.paperAura")
-include("scripts.shaders.afterlifeFog")
+--include("scripts.shaders.afterlifeFog")

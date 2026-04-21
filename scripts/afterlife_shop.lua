@@ -51,7 +51,7 @@ end
 
 ---@return boolean
 function Resouled.AfterlifeShop:IsAfterlifeShop()
-    if Resouled.AfterlifeShop.ShadowFight.Active then return false end
+    if (Resouled.AfterlifeShop.ShadowFight and Resouled.AfterlifeShop.ShadowFight.Active) then return false end
     local RunSave = Resouled.SaveManager.GetRunSave()
     return RunSave.AfterlifeShop
 end
@@ -154,8 +154,3 @@ include("scripts.afterlife_shop.casket")
 include("scripts.afterlife_shop.wise_skull")
 include("scripts.afterlife_shop.buff_descriptions")
 include("scripts.afterlife_shop.donation_machine")
-include("scripts.afterlife_shop.shadow_fight")
-
-
-
-include("scripts.afterlife_shop.shadow_attacks.projectileBase")

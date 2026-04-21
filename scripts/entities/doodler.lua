@@ -102,6 +102,7 @@ local CONFIG = {
 
     EraseCooldown = 15,
     AuraWalkDistanceMultiplier = 0.25,
+    AuraStayDuration = 120, -- frames to stay in aura before choosing new target
 
     Attacks = {
         [1] = NpcState.STATE_ATTACK,  --Spawn Blank Canvas
@@ -213,6 +214,15 @@ end
 
 ---@param pos Vector
 ---@return Vector
+local function chooseTargetPosInsideAura(pos)
+    local auraCenter = Resouled:GetPaperAuraPosition() or pos
+    local auraSize = 80 -- random value that looked good
+    local targetPos = auraCenter + Vector(math.random(-auraSize, auraSize), math.random(-auraSize, auraSize))
+    return Isaac.GetFreeNearPosition(targetPos, 67)
+end
+
+---@param pos Vector
+---@return Vector
 local function chooseTargetPos(pos)
     local auraVisible = Resouled:IsPaperAuraVisible()
     local distance = math.random(CONST.MinWalkDistance, CONST.MaxWalkDistance) *
@@ -307,6 +317,10 @@ local function onDoodlerUpdate(_, doodler)
     doodler.Velocity = doodler.Velocity * 0.9
 
     if doodler.State == NpcState.STATE_MOVE then
+        if not auraVisible then
+            data.AuraEnterTime = nil
+        end
+
         if data.TargetPos and not doodler.Pathfinder:HasPathToPos(data.TargetPos, false) then data.TargetPos = nil end
         if auraVisible and not Resouled:IsPosInsidePaperAura(doodler.Position) then
             local bodyAnim = getRunBodyAnimationFromVelocity(doodler.Velocity)
@@ -333,16 +347,37 @@ local function onDoodlerUpdate(_, doodler)
                 sprite:PlayOverlay(headAnim, true)
             end
 
-            if not data.TargetPos then data.TargetPos = chooseTargetPos(doodler.Position) end
+            -- track time spent in aura
+            if auraVisible and Resouled:IsPosInsidePaperAura(doodler.Position) then
+                if not data.AuraEnterTime then
+                    data.AuraEnterTime = 0
+                end
+                data.AuraEnterTime = data.AuraEnterTime + 1
+            else
+                data.AuraEnterTime = nil
+            end
 
-            doodler.Pathfinder:FindGridPath(data.TargetPos, 0.75, 0, false)
+            -- pick new target pos if enough time has passed
+            if not data.TargetPos then
+                if not (auraVisible and data.AuraEnterTime and data.AuraEnterTime < CONFIG.AuraStayDuration) then
+                    if auraVisible and Resouled:IsPosInsidePaperAura(doodler.Position) then
+                        data.TargetPos = chooseTargetPosInsideAura(doodler.Position)
+                    else
+                        data.TargetPos = chooseTargetPos(doodler.Position)
+                    end
+                end
+            end
 
-            if doodler.Position:Distance(data.TargetPos) < 50 then
-                data.TargetPos = nil
-                if math.random() < CONST.ChanceToAttackWhenNearTargetPos then
-                    local attack = math.random(#CONFIG.Attacks)
-                    if CONFIG.AttackChecks[attack]() == true then
-                        doodler.State = CONFIG.Attacks[attack]
+            if data.TargetPos then
+                doodler.Pathfinder:FindGridPath(data.TargetPos, 0.75, 0, false)
+
+                if doodler.Position:Distance(data.TargetPos) < 50 then
+                    data.TargetPos = nil
+                    if math.random() < CONST.ChanceToAttackWhenNearTargetPos then
+                        local attack = math.random(#CONFIG.Attacks)
+                        if CONFIG.AttackChecks[attack]() == true then
+                            doodler.State = CONFIG.Attacks[attack]
+                        end
                     end
                 end
             end

@@ -21,6 +21,16 @@ local function getRandomPaperEnemy()
     return paperEnemies[math.random(#paperEnemies)]
 end
 
+local DOODLIFICATION_COSTUME = Isaac.GetCostumeIdByPath("gfx_resouled/characters/doodlification.anm2")
+local DOODLIFICATION = function()
+    ---@param player EntityPlayer
+    Resouled.Iterators:IterateOverPlayers(function(player, ...)
+        if not player:IsNullItemCostumeVisible(DOODLIFICATION_COSTUME, PlayerSpriteLayer.SPRITE_HEAD0) and Resouled:IsPosInsidePaperAura(player.Position) then
+            player:AddNullCostume(DOODLIFICATION_COSTUME)
+        end
+    end)
+end
+
 local CONST = {
     Ent = Resouled:GetEntityByName("Resouled Doodler"),
     Marker = Resouled:GetEntityByName("Resouled Doodler Marker"),
@@ -526,6 +536,9 @@ local function onDoodlerUpdate(_, doodler)
             end
         end
     end
+
+
+    DOODLIFICATION()
 end
 Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onDoodlerUpdate, CONST.Ent.Type)
 

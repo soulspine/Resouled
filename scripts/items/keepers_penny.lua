@@ -39,7 +39,7 @@ end
 Resouled:AddCallback(ModCallbacks.MC_PLAYER_GET_ACTIVE_MAX_CHARGE, playerGetActiveMaxCharge, KEEPERS_PENNY)
 
 local chargebarSprite = Sprite()
-chargebarSprite:Load("gfx_resouled/ui/ui_chargebar.anm2", true)
+chargebarSprite:Load("gfx/ui/ui_chargebar.anm2", true)
 
 local BAR_ANIMATION_EMPTY = "BarEmpty"
 local BAR_ANIMATION_FULL = "BarFull"
@@ -68,11 +68,31 @@ local ITEM_SPRITE_WIDTH_HEIGHT = 32
 ---@param chargebarOffset Vector
 local function preActiveRender(_, player, activeSlot, offset, alpha, scale, chargebarOffset)
     local itemDesc = player:GetActiveItemDesc(activeSlot)
-    if itemDesc and itemDesc.Item == KEEPERS_PENNY then
-
+    if not itemDesc then return end
+    
+    local playerData = player:GetData()
+    if itemDesc.Item == KEEPERS_PENNY then
         local maxCharge = itemDesc.VarData
         local normalCharge = player:GetActiveCharge(activeSlot)
         local batteryCharge = player:GetBatteryCharge(activeSlot)
+
+        playerData.Resouled__KeepersPennyCharges = playerData.Resouled__KeepersPennyCharges or {}
+        playerData.Resouled__KeepersPennyCharges[activeSlot] = playerData.Resouled__KeepersPennyCharges[activeSlot] or {
+            Value = normalCharge + batteryCharge,
+            Timer = 0
+        }
+        
+        --TICK TIMER DOWN IF POSSIBLE
+        playerData.Resouled__KeepersPennyCharges[activeSlot].Timer = math.max(playerData.Resouled__KeepersPennyCharges[activeSlot].Timer - 1, 0)
+
+        local gainedCharge = playerData.Resouled__KeepersPennyCharges[activeSlot].Value < normalCharge + batteryCharge
+
+        if gainedCharge then
+            -- 8 BECAUSE THERE ARE 16 FRAMES TAHT ARE FLASHED BUT WE NEED TO HAVE 2 FRAME INTERVALS WHEN IT FLASHES
+            playerData.Resouled__KeepersPennyCharges[activeSlot].Timer = 8
+        end
+
+        playerData.Resouled__KeepersPennyCharges[activeSlot].Value = normalCharge + batteryCharge
 
         local normalChargeClamp = BAR_DEFAULT_TOP_LEFT_CLAMP + Vector(0, (1 - normalCharge / maxCharge) * BAR_SPRITE_ACTUAL_HEIGHT)
         local batteryChargeClamp = BAR_DEFAULT_TOP_LEFT_CLAMP + Vector(0, (1 - batteryCharge / maxCharge) * BAR_SPRITE_ACTUAL_HEIGHT)
@@ -102,12 +122,17 @@ local function preActiveRender(_, player, activeSlot, offset, alpha, scale, char
 
         itemSprite:Render(Vector.Zero)
 
-        -- RENDERING CHARGEBAR FOR PROCEDURAL MAXCHARGE TO SEPARATORS IN
+        -- RENDERING CHARGEBAR FOR PROCEDURAL MAXCHARGE TO PUT SEPARATORS ON
         if not chargebarSprite:IsPlaying(BAR_ANIMATION_EMPTY) then
             chargebarSprite:Play(BAR_ANIMATION_EMPTY, true)
         end
 
         chargebarSprite:Render(Vector.Zero)
+
+        print(playerData.Resouled__KeepersPennyCharges[activeSlot].Timer)
+        if math.ceil(playerData.Resouled__KeepersPennyCharges[activeSlot].Timer/2) % 2 == 1 then
+            goto flash
+        end
 
         -- RENDERING GREEN CHARGE BAR
         if normalCharge > 0 then
@@ -136,9 +161,25 @@ local function preActiveRender(_, player, activeSlot, offset, alpha, scale, char
             chargebarSprite:Render(Vector.Zero)
         end
 
+        ::flash::
+
         Resouled.ProceduralMaxCharge:InvokeManually(player, activeSlot, offset, alpha, scale, chargebarOffset, maxCharge)
 
         return true
+    
+    else
+        -- CLEAR THE CHARGE CONTAINER IF NOT PICEKD UP ANYMORE
+        if playerData.Resouled__KeepersPennyCharges then
+            playerData.Resouled__KeepersPennyCharges[activeSlot] = nil
+        
+            local tableEmpty = true
+            for _, _ in pairs(playerData.Resouled__KeepersPennyCharges) do
+                tableEmpty = false
+                break
+            end
+            
+            if tableEmpty then playerData.Resouled__KeepersPennyCharges = nil end
+        end
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_PLAYERHUD_RENDER_ACTIVE_ITEM, preActiveRender)

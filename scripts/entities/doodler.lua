@@ -494,7 +494,7 @@ local function onDoodlerUpdate(_, doodler)
             Resouled:SpawnPaperGore(doodler.Position, 40, 1)
 
             game:Spawn(EntityType.ENTITY_PICKUP, PickupVariant.PICKUP_COLLECTIBLE, doodler.Position, Vector.Zero, nil,
-                Resouled.Enums.Items.PROTOTYPE_DUMMY, Random())
+                Resouled.Enums.Items.PROTOTYPE_DUMMY, Resouled:NewSeed())
 
             doodler:Kill()
         end

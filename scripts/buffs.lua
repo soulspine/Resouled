@@ -22,7 +22,7 @@ Resouled.BuffFamilies = {
     SADNESS = 15,
     PESTILENCE = 16,
     FAMINE = 17,
-    PUTRIFIER = 25,
+    PURIFIER = 25,
     CHITIN = 26,
     WRATH = 33,
     GLUTTONY = 34,
@@ -93,7 +93,7 @@ Resouled.Buffs = {
     SADNESS = 32,
     PESTILENCE = 33,
     FAMINE = 34,
-    PUTRIFIER = 46,
+    PURIFIER = 46,
     CHITIN = 47,
     WRATH = 54,
     GLUTTONY = 55,
@@ -154,7 +154,7 @@ Resouled:RegisterBuffFamily(Resouled.BuffFamilies.FORTUNE, "Fortune", "gfx_resou
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.AGILITY, "Agility", "gfx_resouled/buffs/agility.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.STRENGTH, "Strength", "gfx_resouled/buffs/strength.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.SADNESS, "Sadness", "gfx_resouled/buffs/sadness.png")
-Resouled:RegisterBuffFamily(Resouled.BuffFamilies.PUTRIFIER, "Putrifier", "gfx_resouled/buffs/placeholder.png")
+Resouled:RegisterBuffFamily(Resouled.BuffFamilies.PURIFIER, "Purifier", "gfx_resouled/buffs/placeholder.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.CHITIN, "Chitin", "gfx_resouled/buffs/placeholder.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.WRATH, "Wrath", "gfx_resouled/buffs/wrath.png")
 Resouled:RegisterBuffFamily(Resouled.BuffFamilies.GLUTTONY, "Gluttony", "gfx_resouled/buffs/gluttony.png")
@@ -262,7 +262,7 @@ Resouled:RegisterBuff(Resouled.Buffs.LORD_OF_THE_FLIES, "Lord of The Flies", -4,
 Resouled:RegisterBuff(Resouled.Buffs.MASQUERADE, "Masquerade", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.MASQUERADE, false)
 Resouled:RegisterBuff(Resouled.Buffs.DELIRIOUS, "Delirious", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.DELIRIOUS, false)
 Resouled:RegisterBuff(Resouled.Buffs.MOTHERLY_LOVE, "Motherly Love", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.MOTHERLY_LOVE, false)
-Resouled:RegisterBuff(Resouled.Buffs.PUTRIFIER, "Putrifier", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.PUTRIFIER, false)
+Resouled:RegisterBuff(Resouled.Buffs.PURIFIER, "Purifier", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.PURIFIER, false)
 Resouled:RegisterBuff(Resouled.Buffs.CHITIN, "Chitin", 0, Resouled.BuffRarity.SPECIAL, Resouled.BuffFamilies.CHITIN, false)
 Resouled:RegisterBuff(Resouled.Buffs.GREEDS_GAMBLE, "Greed's Gamble", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.GREEDS_GAMBLE, false)
 Resouled:RegisterBuff(Resouled.Buffs.STOMPING_GROUND, "Stomping Ground", -4, Resouled.BuffRarity.CURSED, Resouled.BuffFamilies.STOMPING_GROUND, false)
@@ -359,6 +359,7 @@ include("scripts.special_souls.the_bone")
 include("scripts.buffs.pride")
 include("scripts.buffs.conquest")
 include("scripts.buffs.sloth")
+include("scripts.buffs.greed")
 
 include("scripts.buffs.cursed.lord_of_the_flies")
 include("scripts.buffs.cursed.masquerade")

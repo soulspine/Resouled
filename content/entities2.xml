@@ -147,6 +147,7 @@
     <entity name="Casket" id="5" variant="444" subtype="3" anm2path="misc/casket.anm2" collisionRadius="20" collisionMass="99999" friction="0.1" numGridCollisionPoints="12" shadowSize="0"/>
     <entity name="Light Switch" id="5" variant="444" subtype="4" anm2path="lightswitch.anm2" friction="1"/>
     <entity name="Buff Reroll Machine Altar" id="5" variant="444" subtype="2" anm2path="misc/reroll_machine_altar.anm2" friction="1" shadowSize = "19" collisionMass = "999" collisionRadius = "20"/>
+    <entity name = "Curse of Blood Lust Blood Orb" id = "5" variant = "444" subtype = "5" anm2path = "pickups/blood_orb.anm2" friction = "1" shadowSize = "0" collisionMass = "0" collisionRadius = "10"/>
 
 <!-- Misc-->
     <entity name="ResouledDummy" id="999" variant="0" subtype="0"/>

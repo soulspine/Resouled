@@ -20,8 +20,8 @@ MinimapAPI:AddMapFlag(
 )
 
 local TRAIL = {
-    Color = Color(1, 0, 0, 1),
-    Length = 0.01,
+    Color = Color(0.5, 0, 0, 1),
+    Length = 0.05,
     Scale = Vector.One * 3
 }
 
@@ -40,6 +40,8 @@ local function spawnBloodOrb(pos)
     trail.ParentOffset = Vector.Zero
     trail.DepthOffset = trail.DepthOffset
     trail.RenderZOffset = trail.RenderZOffset
+
+    orb:GetData().Resouled_BloodOrbTrailRef = EntityRef(trail)
 end
 
 ---@return number
@@ -116,9 +118,22 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_INIT, onPickupInit, bloodOrb.Va
 local function onPickupUpdate(_, p)
     if p.SubType ~= bloodOrb.SubType then return end
 
+    
+    local data = p:GetData()
+    ---@type EntityEffect
+    local trail = data.Resouled_BloodOrbTrailRef.Entity:ToEffect()
+
+    local mult = p.Velocity:Length()/2
+    local c = trail:GetColor()
+    c.A = math.max(math.min(mult/5 - 0.75, 1), 0)
+    trail:SetColor(c, 2, 1, false, true)
+    trail.ParentOffset = Vector.Zero
+    trail.SpriteScale = Vector.One * mult/2
+    trail.MinRadius = TRAIL.Length
+
     local pNum = 0
     local vel = Vector.Zero
-    for _, pl in ipairs(Isaac.FindInRadius(p.Position, 250, EntityPartition.PLAYER)) do
+    for _, pl in ipairs(Isaac.FindInRadius(p.Position, 1500, EntityPartition.PLAYER)) do
         vel = vel + (pl.Position - p.Position):Normalized()
         pNum = pNum + 1
     end
@@ -133,7 +148,7 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onPickupUpdate, bloodOr
 ---@param col Entity
 local function onPickupCollision(_, p, col)
     if not Resouled:MatchesEntityDesc(p, bloodOrb) then return end
-    if not col:ToPlayer() then return end
+    if not col:ToPlayer() or true then return end
 
     local save = Resouled.SaveManager.GetFloorSave()
     save.ResouledCurseOfBloodLustTimer = TIME_BEFORE_TAKING_DAMAGE

@@ -994,7 +994,7 @@ function Resouled:OverlayScreen(color)
 
     Isaac.DrawLine(
         Vector(0, y), Vector(Isaac.GetScreenWidth(), y),
-        color, color, y * 2
+        color, color, y * 2.5 --2.5 because 2 didn't cover a single pixel line on the bottom
     )
 end
 
@@ -1016,4 +1016,11 @@ function Resouled.Create2DArray(sizeX, sizeY, fill)
         end
     end
     return out
+end
+
+---@param v1 Vector
+---@param v2 Vector
+---@return boolean
+function Resouled.CompareVectors(v1, v2)
+    return v1.X == v2.X and v1.Y == v2.Y
 end

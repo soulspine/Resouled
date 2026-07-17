@@ -51,6 +51,12 @@ function accurateStatsModule:AddTears(player, amount)
     player.MaxFireDelay = (30 - newfireDelay) / newfireDelay
 end
 
+---@param player EntityPlayer
+---@return number
+function accurateStatsModule:GetTears(player)
+    return 30 / (player.MaxFireDelay + 1)
+end
+
 --- Returns player's theoretical DPS if all tears hit a target
 --- @param player EntityPlayer
 --- @return number

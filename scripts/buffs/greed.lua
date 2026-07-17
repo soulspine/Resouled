@@ -18,12 +18,19 @@ local function prePlaceRoom(_, _, roomConf)
         return RoomConfig.GetRoomByStageTypeAndVariant(StbType.SPECIAL_ROOMS, RoomType.ROOM_SHOP, id, -1)
     end
 end
-Resouled:AddCallback(ModCallbacks.MC_PRE_LEVEL_PLACE_ROOM, prePlaceRoom)
 
-Resouled:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, function()
+Resouled:AddBuffCallbackConfig(Resouled.Buffs.GREED,
+    {
+        CallbackID = ModCallbacks.MC_PRE_LEVEL_PLACE_ROOM, {
+        Function = prePlaceRoom
+    },
+    {
+        CallbackID = ModCallbacks.MC_POST_NEW_ROOM,
+        Function = function()
+            local room = Resouled.Game:GetRoom()
 
-    local room = Resouled.Game:GetRoom()
-
-    if not room:GetType() == RoomType.ROOM_SHOP then return end
-    Resouled.SaveManager.GetFloorSave().Shop_Visited = true
-end)
+            if not room:GetType() == RoomType.ROOM_SHOP then return end
+            Resouled.SaveManager.GetFloorSave().Shop_Visited = true
+        end
+    }
+})

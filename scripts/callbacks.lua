@@ -8,5 +8,6 @@ Resouled.Callbacks = {
     ShadowFightRockUpdate = "MC_RESOULED_SHADOW_FIGHT_ROCK_UPDATE",
     ShadowFightRockRender = "MC_RESOULED_SHADOW_FIGHT_ROCK_RENDER",
     ShadowFightRockInit = "MC_RESOULED_SHADOW_FIGHT_ROCK_INIT",
-    AutoSave = "MC_RESOULED_AUTO_SAVE"
+    AutoSave = "MC_RESOULED_AUTO_SAVE",
+    PostResouledMenuBackgroundRender = "MC_POST_RESOULED_MENU_BACKGROUND_RENDER"
 }

@@ -3,19 +3,25 @@ local SECONDS_OF_DPS_TO_SPAWN_WISP = 10
 
 local mapId = Resouled.CursesMapId[Resouled.Curses.CURSE_OF_BLOOD_LUST]
 
-local cachedTimer = 45
-
 local bloodOrb = Resouled:GetEntityByName("Curse of Blood Lust Blood Orb")
+
+local sprite = Sprite()
+sprite:Load("gfx_resouled/ui/curse_of_blood_lust.anm2")
+sprite:Play("ResouledCurseOfBloodLust")
+local coverLeft = sprite:GetLayer("Cover1")
+local coverRight = sprite:GetLayer("Cover2")
+local coverDark = sprite:GetLayer("Cover3")
+if not coverDark or not coverLeft or not coverRight then return end
 
 MinimapAPI:AddMapFlag(
     mapId,
     function()
         return Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_BLOOD_LUST)
     end,
-    Resouled.CursesSprite,
+    sprite,
     mapId,
     function()
-        return cachedTimer
+        return 1
     end
 )
 
@@ -78,7 +84,6 @@ local function onUpdate()
             end)
             FLOOR_SAVE.ResouledCurseOfBloodLustTimer = TIME_BEFORE_TAKING_DAMAGE / 2
         end
-        cachedTimer = (FLOOR_SAVE.ResouledCurseOfBloodLustTimer + FLOOR_SAVE.ResouledCurseOfBloodLustTimer//30)//30 --not FLOOR_SAVE.ResouledCurseOfBloodLustTimer//30 because frame 46 wouldn't appear
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_UPDATE, onUpdate)
@@ -131,16 +136,21 @@ local function onPickupUpdate(_, p)
     trail.SpriteScale = Vector.One * mult/2
     trail.MinRadius = TRAIL.Length
 
-    local pNum = 0
-    local vel = Vector.Zero
     for _, pl in ipairs(Isaac.FindInRadius(p.Position, 1500, EntityPartition.PLAYER)) do
-        vel = vel + (pl.Position - p.Position):Normalized()
-        pNum = pNum + 1
+
+        if p.Position:Distance(pl.Position) > 75 then
+            
+            p.Velocity = (p.Velocity + (pl.Position - p.Position):Resized(3)) * 0.875
+        else
+
+            p.Velocity = (p.Velocity + (pl.Position - p.Position):Resized(9)) * 0.775
+        end
     end
 
-    if pNum > 0 then
-        p.Velocity = p.Velocity + vel/pNum
-    end
+    p.SpriteRotation = p.Velocity:GetAngleDegrees()
+
+    local scale = math.max((10 + p.Velocity:Length())/15, 1)
+    p.SpriteScale = Vector.One * Vector(scale, math.min(2/scale, 1))
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onPickupUpdate, bloodOrb.Variant)
 
@@ -148,18 +158,44 @@ Resouled:AddCallback(ModCallbacks.MC_POST_PICKUP_UPDATE, onPickupUpdate, bloodOr
 ---@param col Entity
 local function onPickupCollision(_, p, col)
     if not Resouled:MatchesEntityDesc(p, bloodOrb) then return end
-    if not col:ToPlayer() or true then return end
+    local pl = col:ToPlayer()
+    if not pl then return end
 
     local save = Resouled.SaveManager.GetFloorSave()
     save.ResouledCurseOfBloodLustTimer = TIME_BEFORE_TAKING_DAMAGE
+    p.Visible = false
+    p:GetData().Resouled_BloodOrbTrailRef.Entity:Remove()
     p:Remove()
-    cachedTimer = 45
+
+    local c = pl:GetColor()
+    c.G = 0
+    c.B = 0
+    c.RO = 0.25
+    pl:SetColor(c, 20, 1, true, true)
 end
 Resouled:AddCallback(ModCallbacks.MC_PRE_PICKUP_COLLISION, onPickupCollision)
 
-local function postGameStarted()
-    local save = Resouled.SaveManager.GetFloorSave()
+local function postRender()
+    if not Resouled:CustomCursePresent(Resouled.Curses.CURSE_OF_BLOOD_LUST) then return end
 
-    cachedTimer = save.ResouledCurseOfBloodLustTimer and (save.ResouledCurseOfBloodLustTimer + save.ResouledCurseOfBloodLustTimer//30)//30 or 45
+    local save = Resouled.SaveManager.GetFloorSave()
+    if not save.ResouledCurseOfBloodLustTimer then return end
+
+    local x = TIME_BEFORE_TAKING_DAMAGE/2
+    local timer = TIME_BEFORE_TAKING_DAMAGE - save.ResouledCurseOfBloodLustTimer
+    coverDark:SetVisible(not (save.ResouledCurseOfBloodLustTimer > x))
+
+    if not coverDark:IsVisible() then
+            
+        if not coverRight:IsVisible() then coverRight:SetVisible(true) end
+
+        coverRight:SetRotation(timer/x * 180)
+        coverLeft:SetRotation(0)
+    else
+
+        if coverRight:IsVisible() then coverRight:SetVisible(false) end
+
+        coverLeft:SetRotation((timer - x)/x * 180)
+    end
 end
-Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, postGameStarted)
+Resouled:AddCallback(ModCallbacks.MC_POST_RENDER, postRender)

@@ -1,183 +1,177 @@
-local game = Resouled.Game
+local g = Game()
+local sfx = SFXManager()
 
-local paperEnemies = {}
-local paperEnemiesStringLookup = {}
----@param id integer
----@param var integer
----@param sub integer
-function Resouled:RegisterPaperEnemy(id, var, sub)
-    table.insert(paperEnemies,
-        {
-            Id = id,
-            Var = var,
-            Sub = sub
-        }
-    )
-    paperEnemiesStringLookup[id .. "." .. var .. "." .. sub] = true
-end
-
----@return table
-local function getRandomPaperEnemy()
-    return paperEnemies[math.random(#paperEnemies)]
-end
-
-local DOODLIFICATION_COSTUME = Isaac.GetCostumeIdByPath("gfx_resouled/characters/doodlification.anm2")
-local DOODLIFICATION = function()
-    ---@param player EntityPlayer
-    Resouled.Iterators:IterateOverPlayers(function(player, ...)
-        if not player:IsNullItemCostumeVisible(DOODLIFICATION_COSTUME, PlayerSpriteLayer.SPRITE_HEAD0) and Resouled:IsPosInsidePaperAura(player.Position) then
-            player:AddNullCostume(DOODLIFICATION_COSTUME)
-        end
-    end)
-end
-
-local CONST = {
-    Ent = Resouled:GetEntityByName("Resouled Doodler"),
-    Marker = Resouled:GetEntityByName("Resouled Doodler Marker"),
-    Anim = {
-        Base = {
-            Idle = {
-                Name = "Idle",
-                Len = 1,
-            },
-            WalkForward = {
-                Name = "WalkForward",
-                Len = 26,
-            },
-            WalkRight = {
-                Name = "WalkRight",
-                Len = 26,
-            },
-            WalkLeft = {
-                Name = "WalkLeft",
-                Len = 26,
-            },
-            RunForward = {
-                Name = "RunForward",
-                Len = 20,
-            },
-            RunRight = {
-                Name = "RunRight",
-                Len = 20,
-            },
-            RunLeft = {
-                Name = "RunLeft",
-                Len = 20,
-            },
-        },
-        Overlay = {
-            HeadDownOpen = {
-                Name = "HeadDownOpen",
-                Len = 1,
-            },
-            HeadDown = {
-                Name = "HeadDown",
-                Len = 1,
-            },
-            HeadDownLifted = {
-                Name = "HeadDownLifted",
-                Len = 1,
-            },
-        },
-        Death = "Death",
-        Erase = "EraseBlankCanvas",
-        SpawnBlankCanvas = "SpawnBlankCanvas",
-        MarkerAttack = "PullOut",
-        MarkerOnly = "MARKERONLY"
-    },
-
-    MinWalkDistance = 250,
-    MaxWalkDistance = 750,
-    DistanceFromWallsToBlockWalkDir = 150,
-    ChanceToAttackWhenNearTargetPos = 1 / 1,
-    MinPaperEnemySpawnRadius = 20,
-    MaxPaperEnemySpawnRadius = 100,
-    TearEraseArea = 50,
-    MaxSimultaneousPaperEnemies = 3,
-}
-
+-- CONFIG
 local CONFIG = {
-    MarkerMaxSpeedVectorLength = 6.5,
-
-    AuraSizes = {
-        Small = 60,
-        Medium = 80,
-        Big = 100
+    -- sound effect that will play whenever the blank canvas spawning attack is done
+    SpawnAttackSFX = SoundEffect.SOUND_SUMMON_POOF,
+    -- those enemies will have a chance to be spawned when using the blank canvas spawn attack
+    SpawnAttackEnemies = {
+        Resouled.Enums.Enemies.BLANK_CANVAS_MULLIGAN,
+        Resouled.Enums.Enemies.BLANK_CANVAS_GAPER,
+        Resouled.Enums.Enemies.BLANK_CANVAS_FLY,
+        Resouled.Enums.Enemies.BLANK_CANVAS_POOTER,
+        Resouled.Enums.Enemies.BLANK_CANVAS_TEAR,
+        Resouled.Enums.Enemies.BLANK_CANVAS_DIP,
     },
-    AuraTimeouts = {
-        Short = 200,
-        Medium = 350,
-        Long = 500
-    },
-
-    EraseCooldown = 15,
-    AuraWalkDistanceMultiplier = 0.25,
-    AuraStayDuration = 120, -- frames to stay in aura before choosing new target
-
-    Attacks = {
-        [1] = NpcState.STATE_ATTACK,  --Spawn Blank Canvas
-        [2] = NpcState.STATE_ATTACK2, --Magic Marker
-        [3] = NpcState.STATE_ATTACK3, --Erase grids
-    },
-
-    AttackChecks = {
-        [1] = function()
-            local paperEnemyCount = 0
-            ---@param npc EntityNPC
-            Resouled.Iterators:IterateOverRoomNpcs(function(npc)
-                if paperEnemiesStringLookup[npc.Type .. "." .. npc.Variant .. "." .. npc.SubType] then
-                    paperEnemyCount = paperEnemyCount + 1
-                end
-            end)
-            return paperEnemyCount <= CONST.MaxSimultaneousPaperEnemies
-        end,
-        [2] = function()
-            if Resouled:IsPaperAuraVisible() then return false end
-
-            ---@param npc EntityNPC
-            Resouled.Iterators:IterateOverRoomNpcs(function(npc)
-                if Resouled:MatchesEntityDesc(npc, CONST.Marker) then
-                    ---@diagnostic disable-next-line
-                    return false
-                end
-            end)
-
-            return true
-        end,
-        -- erase grid attack
-        [3] = function()
-            -- only happen when there are grids inside of paper aura
-            local ret = false
-            Resouled.Iterators:IterateOverGridEntities(function(ge, i)
-                if ret then return end
-                if Resouled:IsPosInsidePaperAura(ge.Position) then
-                    ret = true
-                end
-            end)
-
-            return ret
-        end
-    }
+    MarkerThrowAttackInitialVelocityLength = 15,
+    MarkerThrowAttackInitialVelocityLoss = 0.03,
+    MarkerThrowAttackAuraSize = 150,
+    MarkerThrowAttackTimeout = 15 * 60, -- *60 because its -1 per frame
 }
 
----@return table
-local function getRandomAuraConfig()
-    local auraSizes = {}
-    for _, size in pairs(CONFIG.AuraSizes) do
-        table.insert(auraSizes, size)
-    end
+-- CONSTANTS
+local DOODLER_ENTITY = Resouled.Enums.Enemies.DOODLER
+local MARKER_ENTITY = Resouled.Enums.Enemies.DOODLER_MARKER
+local PLAYER_COSTUME = Isaac.GetCostumeIdByPath("gfx_resouled/characters/doodlification.anm2")
 
-    local auraTimeouts = {}
-    for _, timeout in pairs(CONFIG.AuraTimeouts) do
-        table.insert(auraTimeouts, timeout)
-    end
+local ANIMATIONS = {
+    Idle = "Idle",
+    WalkForward = "WalkForward",
+    WalkRight = "WalkRight",
+    WalkLeft = "WalkLeft",
+    RunForward = "RunForward",
+    RunRight = "RunRight",
+    RunLeft = "RunLeft",
+    Death = "Death",
+    Erase = "EraseBlankCanvas",
+    SpawnAttack = "SpawnBlankCanvas",
+    MarkerAttack = "PullOut",
+    MarkerIdle = "MARKERONLY"
+}
 
-    return {
-        Size = auraSizes[math.random(#auraSizes)],
-        Timeout = auraTimeouts[math.random(#auraTimeouts)]
-    }
+local OVERLAY_ANIMATIONS = {
+    HeadDown = "HeadDown",
+    HeadDownOpen = "HeadDownOpen",
+    HeadDownLifted = "HeadDownLifted",
+}
+
+local ANIMATION_EVENTS = {
+    MarkerThrow = "MarkerThrow"
+}
+
+---@param entity EntityNPC
+local function isDoodler(entity)
+    return Resouled:MatchesEntityDesc(entity, DOODLER_ENTITY)
 end
 
+---@param entity EntityNPC
+local function isMarker(entity)
+    return Resouled:MatchesEntityDesc(entity, MARKER_ENTITY)
+end
+
+-- STATES DEFINITIONS:
+-- NpcState.STATE_ATTACK - marker throw attack to spawn the paper aura, always the first action
+
+---@param entity EntityNPC
+local function doodlerStateAttackUpdate(_, entity)
+    if not (isDoodler(entity) and entity.State == NpcState.STATE_ATTACK) then return end
+
+    local sprite = entity:GetSprite()
+
+    if sprite:IsOverlayPlaying() then
+        sprite:RemoveOverlay()
+    end
+
+    if not sprite:IsPlaying(ANIMATIONS.MarkerAttack) then
+        sprite:Play(ANIMATIONS.MarkerAttack, true)
+    end
+
+    local markerCount = Isaac.CountEntities(entity, MARKER_ENTITY.Type, MARKER_ENTITY.Variant, MARKER_ENTITY.SubType)
+
+    --if markerCount > 0 then return end
+
+    if sprite:IsEventTriggered(ANIMATION_EVENTS.MarkerThrow) then
+        local target = g:GetNearestPlayer(entity.Position)
+        local deg = (target.Position - entity.Position):GetAngleDegrees()
+        local initialVelocity = Vector.One:Resized(CONFIG.MarkerThrowAttackInitialVelocityLength):Rotated(deg - 45) -- -45 because idk, just happens
+
+        g:Spawn(
+            MARKER_ENTITY.Type,
+            MARKER_ENTITY.Variant,
+            entity.Position + Vector(-12, -14) * entity.Scale, -- magic number offset to account for where the marker is within the animation
+            initialVelocity,
+            entity,
+            MARKER_ENTITY.SubType,
+            Resouled:NewSeed()
+        ).Target = target
+    end
+end
+
+---@param entity EntityNPC
+local function markerInit(_, entity)
+    if not isMarker(entity) then return end
+    entity:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
+    entity:GetSprite():Play(ANIMATIONS.MarkerIdle, true)
+    entity.EntityCollisionClass = EntityCollisionClass.ENTCOLL_PLAYERONLY
+    entity.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_BULLET
+end
+
+---@param entity EntityNPC
+local function markerUpdate(_, entity)
+    if not isMarker(entity) then return end
+
+    entity:GetSprite().Rotation = entity.Velocity:GetAngleDegrees()
+    entity.Velocity:Resize(entity.Velocity:Length() - CONFIG.MarkerThrowAttackInitialVelocityLoss)
+end
+
+---@param entity EntityNPC
+---@param gridIndex integer
+---@param gridEntity? GridEntity
+local function markerGridCollision(_, entity, gridIndex, gridEntity)
+    if not isMarker(entity) then return end
+
+    Resouled:CreatePaperAura(
+        function() return entity.Position end,
+        CONFIG.MarkerThrowAttackTimeout,
+        CONFIG.MarkerThrowAttackAuraSize
+    )
+
+    entity:Remove()
+end
+
+---@param entity EntityNPC
+local function doodlerInit(_, entity)
+    if not isDoodler(entity) then return end
+
+    local sprite = entity:GetSprite()
+
+    -- set head animation and body animation
+    sprite:Play(ANIMATIONS.Idle, true)
+    sprite:PlayOverlay(OVERLAY_ANIMATIONS.HeadDown, true)
+
+    -- set state as attack1 immediately after spawning to spawn the paper aura
+    entity.State = NpcState.STATE_ATTACK
+end
+
+---@param entity EntityNPC
+local function subscribe(_, entity)
+    if not isDoodler(entity) then return end
+
+    print("Subscribe happened")
+    Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, doodlerStateAttackUpdate, DOODLER_ENTITY.Type)
+    Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, doodlerInit, DOODLER_ENTITY.Type)
+
+    Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, markerInit, MARKER_ENTITY.Type)
+    Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, markerUpdate, MARKER_ENTITY.Type)
+    Resouled:AddCallback(ModCallbacks.MC_PRE_NPC_GRID_COLLISION, markerGridCollision, MARKER_ENTITY.Type)
+end
+
+local function unsubscribe()
+    print("Unsubscribe happened")
+    Resouled:RemoveCallback(ModCallbacks.MC_POST_NPC_INIT, doodlerInit)
+    Resouled:RemoveCallback(ModCallbacks.MC_NPC_UPDATE, doodlerStateAttackUpdate)
+
+    Resouled:RemoveCallback(ModCallbacks.MC_POST_NPC_INIT, markerInit)
+    Resouled:RemoveCallback(ModCallbacks.MC_NPC_UPDATE, markerUpdate)
+    Resouled:RemoveCallback(ModCallbacks.MC_PRE_NPC_GRID_COLLISION, markerGridCollision)
+end
+
+Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, subscribe, DOODLER_ENTITY.Type)
+Resouled:AddCallback(ModCallbacks.MC_PRE_ROOM_EXIT, unsubscribe)
+
+
+--[[
 ---@param vel Vector
 ---@return string
 local function getBodyAnimationFromVelocity(vel)
@@ -314,6 +308,8 @@ local function onDooderInit(_, doodler)
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, onDooderInit, CONST.Ent.Type)
 
+local prevState = nil
+
 ---@param doodler EntityNPC
 local function onDoodlerUpdate(_, doodler)
     if not Resouled:MatchesEntityDesc(doodler, CONST.Ent) then return end
@@ -326,15 +322,23 @@ local function onDoodlerUpdate(_, doodler)
 
     doodler.Velocity = doodler.Velocity * 0.9
 
+    if prevState ~= doodler.State then
+        prevState = doodler.State
+        print(prevState)
+    end
+
     if doodler.State == NpcState.STATE_MOVE then
         if not auraVisible then
             data.AuraEnterTime = nil
         end
 
         if data.TargetPos and not doodler.Pathfinder:HasPathToPos(data.TargetPos, false) then data.TargetPos = nil end
+
+        -- prio pathfing inside aura if possible
         if auraVisible and not Resouled:IsPosInsidePaperAura(doodler.Position) then
             local bodyAnim = getRunBodyAnimationFromVelocity(doodler.Velocity)
             local headAnim = getHeadAnimation()
+
             if sprite:GetAnimation() ~= bodyAnim then
                 sprite:Play(bodyAnim, true)
             end
@@ -346,9 +350,11 @@ local function onDoodlerUpdate(_, doodler)
             doodler.Pathfinder:FindGridPath(Resouled:GetPaperAuraPosition() or Vector.Zero, 1.1, 0, false)
 
             if data.TargetPos then data.TargetPos = nil end
+            --
         elseif not auraVisible or Resouled:IsPosInsidePaperAura(doodler.Position) then
             local bodyAnim = getBodyAnimationFromVelocity(doodler.Velocity)
             local headAnim = getHeadAnimation()
+
             if sprite:GetAnimation() ~= bodyAnim then
                 sprite:Play(bodyAnim, true)
             end
@@ -384,8 +390,14 @@ local function onDoodlerUpdate(_, doodler)
                 if doodler.Position:Distance(data.TargetPos) < 50 then
                     data.TargetPos = nil
                     if math.random() < CONST.ChanceToAttackWhenNearTargetPos then
-                        local attack = math.random(#CONFIG.Attacks)
-                        if CONFIG.AttackChecks[attack]() == true then
+                        local attack = nil
+                        if auraVisible then -- choose random next attack when aura present
+                            attack = math.random(#CONFIG.Attacks)
+                        else                -- choose marker attack when aura is not visible
+                            attack = 2
+                        end
+
+                        if attack and CONFIG.AttackChecks[attack](doodler) then
                             doodler.State = CONFIG.Attacks[attack]
                         end
                     end
@@ -407,17 +419,19 @@ local function onDoodlerUpdate(_, doodler)
 
         if sprite:IsEventTriggered("SpawnBlankCanvas") then
             local ids = getRandomPaperEnemy()
-            game:Spawn(
-                ids.Id,
-                ids.Var,
-                doodler.Position +
-                Vector(math.random(CONST.MinPaperEnemySpawnRadius, CONST.MaxPaperEnemySpawnRadius), 0):Rotated(180 *
-                    math.random()),
-                Vector.Zero,
-                doodler,
-                ids.Sub,
-                Random()
-            )
+            if game:Spawn(
+                    ids.Id,
+                    ids.Var,
+                    doodler.Position +
+                    Vector(math.random(CONST.MinPaperEnemySpawnRadius, CONST.MaxPaperEnemySpawnRadius), 0):Rotated(180 *
+                        math.random()),
+                    Vector.Zero,
+                    doodler,
+                    ids.Sub,
+                    Random()
+                ) then
+                sfx:Play(CONFIG.BlankCanvasSpawnSFX)
+            end
         end
     elseif doodler.State == NpcState.STATE_ATTACK2 then
         local attackAnim = CONST.Anim.MarkerAttack
@@ -445,40 +459,42 @@ local function onDoodlerUpdate(_, doodler)
 
 
         doodler.Velocity = doodler.Velocity * 0.9
-    elseif doodler.State == NpcState.STATE_ATTACK3 then
-        -- remove head overlay animation since erase animation has it baked in
+    elseif doodler.State == NpcState.STATE_ATTACK3 then -- walk to the aura and start erasing grids
+        -- remove head overlay animation since erase animation has it already included
         if sprite:IsOverlayPlaying() then
             sprite:RemoveOverlay()
         end
 
-        -- check if animation finished, then erase
         local triggerNow = sprite:IsFinished(CONST.Anim.Erase)
 
-        -- play animation if not playing
+        -- play erase animation if its not played
         if not sprite:IsPlaying(CONST.Anim.Erase) then
             sprite:Play(CONST.Anim.Erase, true)
         end
 
-        -- after animation checks so it doesnt get fucked up
-        if triggerNow then
-            local found = false
-            Resouled.Iterators:IterateOverGridEntities(function(gridEntity, index)
-                if found then return end
-                if Resouled:IsPosInsidePaperAura(gridEntity.Position) then
-                    if found then return end
-                    found = true
-                    gridEntity:Destroy(true)
-                end
-            end)
+        local candidates = {}
 
-            if found then
-                sprite:Play(CONST.Anim.Erase, true)
-            else
-                doodler.State = NpcState.STATE_MOVE
-                sprite:Play(CONST.Anim.Base.Idle.Name)
-                sprite:PlayOverlay(CONST.Anim.Overlay.HeadDown.Name)
+        if not triggerNow then goto return_griderase end
+
+        Resouled.Iterators:IterateOverGridEntities(function(gridEntity, index)
+            if Resouled:IsPosInsidePaperAura(gridEntity.Position) and gridEntity.State ~= 2 then
+                table.insert(candidates, gridEntity)
             end
+        end)
+
+        if #candidates == 0 then
+            doodler.State = NpcState.STATE_MOVE
+            sprite:Play(CONST.Anim.Base.Idle.Name)
+            sprite:PlayOverlay(CONST.Anim.Overlay.HeadDown.Name)
+        else
+            ---@type GridEntity
+            local chosenGrid = candidates[math.random(#candidates)]
+
+            chosenGrid:Destroy()
+            print("DESTROY")
         end
+
+        ::return_griderase::
     elseif doodler.State == NpcState.STATE_SUICIDE then
         if not sprite:IsPlaying(CONST.Anim.Death) then sprite:Play(CONST.Anim.Death) end
         sprite:RemoveOverlay()
@@ -536,11 +552,24 @@ local function onDoodlerUpdate(_, doodler)
             end
         end
     end
-
-
-    DOODLIFICATION()
 end
 Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, onDoodlerUpdate, CONST.Ent.Type)
+
+-- add doodlification if inside paper aura
+local function postPlayerUpdate(_, player)
+    if not player:IsNullItemCostumeVisible(CONST.Costume, PlayerSpriteLayer.SPRITE_HEAD5) and Resouled:IsPosInsidePaperAura(player.Position) then
+        player:AddNullCostume(CONST.Costume)
+    end
+end
+Resouled:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, postPlayerUpdate)
+
+-- remove doodlification upon room leave
+local function onRoomLeave()
+    Resouled.Iterators:IterateOverPlayers(function(player)
+        player:TryRemoveNullCostume(CONST.Costume)
+    end)
+end
+Resouled:AddCallback(ModCallbacks.MC_PRE_NEW_ROOM, onRoomLeave)
 
 ---@param en Entity
 ---@param am number
@@ -598,6 +627,11 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, function(_, npc)
     end, auraConfig.Timeout, auraConfig.Size)
 end, CONST.Marker.Type)
 
-Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, function()
+local function hideAura()
     Resouled:HidePaperAura(false)
-end)
+end
+
+Resouled:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, hideAura)
+Resouled:AddCallback(ModCallbacks.MC_PRE_NEW_ROOM, hideAura)
+
+--]]

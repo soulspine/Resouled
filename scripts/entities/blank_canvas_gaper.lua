@@ -35,7 +35,7 @@ local function postNpcInit(_, npc)
         local sprite = npc:GetSprite()
         sprite:Play(IDLE, true)
         npc:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
-        npc.Scale = BASE_DOODLE_SIZE + RNG(npc.InitSeed):RandomFloat()/3
+        npc.Scale = BASE_DOODLE_SIZE + RNG(npc.InitSeed):RandomFloat() / 3
         npc.Size = npc.Size * npc.Scale
         npc:AddEntityFlags(EntityFlag.FLAG_NO_BLOOD_SPLASH)
     end
@@ -75,7 +75,8 @@ local function npcUpdate(_, npc)
             Resouled.SfxM:Play(FLIP_SFX, SFX_VOLUME)
         end
 
-        npc.Velocity = (npc.Velocity + (npc:GetPlayerTarget().Position - npc.Position):Normalized()) * VELOCITY_MULTIPLIER
+        npc.Velocity = (npc.Velocity + (npc:GetPlayerTarget().Position - npc.Position):Normalized()) *
+            VELOCITY_MULTIPLIER
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, npcUpdate, GAPER_TYPE)
@@ -89,5 +90,3 @@ local function postNpcDeath(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath, GAPER_TYPE)
-
-Resouled:RegisterPaperEnemy(GAPER_TYPE, GAPER_VARIANT, GAPER_SUBTYPE)

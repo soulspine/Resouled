@@ -29,7 +29,7 @@ local function postNpcInit(_, npc)
         sprite:Play(IDLE, true)
         npc.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_WALLS
         npc:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
-        npc.Scale = BASE_DOODLE_SIZE + RNG(npc.InitSeed):RandomFloat()/3
+        npc.Scale = BASE_DOODLE_SIZE + RNG(npc.InitSeed):RandomFloat() / 3
         npc.Size = npc.Size * npc.Scale
         npc:AddEntityFlags(EntityFlag.FLAG_NO_BLOOD_SPLASH)
     end
@@ -40,8 +40,9 @@ Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, postNpcInit, FLY_TYPE)
 local function npcUpdate(_, npc)
     if npc.Variant == FLY_VARIANT and npc.SubType == FLY_SUBTYPE then
         npc.Pathfinder:MoveRandomly(false)
-        
-        npc.Velocity = (npc.Velocity + (npc:GetPlayerTarget().Position - npc.Position):Normalized()) * VELOCITY_MULTIPLIER
+
+        npc.Velocity = (npc.Velocity + (npc:GetPlayerTarget().Position - npc.Position):Normalized()) *
+            VELOCITY_MULTIPLIER
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, npcUpdate, FLY_TYPE)
@@ -55,5 +56,3 @@ local function postNpcDeath(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath, FLY_TYPE)
-
-Resouled:RegisterPaperEnemy(FLY_TYPE, FLY_VARIANT, FLY_SUBTYPE)

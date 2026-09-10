@@ -142,4 +142,15 @@ enums.SoundEffects = {
     SOULBOND3 = Isaac.GetSoundIdByName("Soulbond3"),
 }
 
+enums.Enemies = {
+    DOODLER = Resouled:GetEntityByName("Resouled Doodler"),
+    DOODLER_MARKER = Resouled:GetEntityByName("Resouled Doodler Marker"),
+    BLANK_CANVAS_MULLIGAN = Resouled:GetEntityByName("Blank Canvas Mulligan"),
+    BLANK_CANVAS_GAPER = Resouled:GetEntityByName("Blank Canvas Gaper"),
+    BLANK_CANVAS_FLY = Resouled:GetEntityByName("Blank Canvas Fly"),
+    BLANK_CANVAS_POOTER = Resouled:GetEntityByName("Blank Canvas Pooter"),
+    BLANK_CANVAS_TEAR = Resouled:GetEntityByName("Blank Canvas Tear"),
+    BLANK_CANVAS_DIP = Resouled:GetEntityByName("Blank Canvas Dip"),
+}
+
 return enums

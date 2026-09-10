@@ -35,7 +35,7 @@ local function postNpcInit(_, npc)
         local data = npc:GetData()
         sprite:Play(IDLE, true)
         npc:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
-        npc.Scale = BASE_DOODLE_SIZE + RNG(npc.InitSeed):RandomFloat()/3
+        npc.Scale = BASE_DOODLE_SIZE + RNG(npc.InitSeed):RandomFloat() / 3
         npc.Size = npc.Size * npc.Scale
         data.ResouledAttackCooldown = ATTACK_COOLDOWN
         npc:AddEntityFlags(EntityFlag.FLAG_NO_BLOOD_SPLASH)
@@ -48,8 +48,9 @@ local function npcUpdate(_, npc)
     if npc.Variant == POOTER_VARIANT and npc.SubType == POOTER_SUBTYPE then
         local data = npc:GetData()
         npc.Pathfinder:MoveRandomly(false)
-        
-        npc.Velocity = (npc.Velocity + (npc:GetPlayerTarget().Position - npc.Position):Normalized() * FOLLOW_SPEED) * VELOCITY_MULTIPLIER
+
+        npc.Velocity = (npc.Velocity + (npc:GetPlayerTarget().Position - npc.Position):Normalized() * FOLLOW_SPEED) *
+            VELOCITY_MULTIPLIER
 
         if data.ResouledAttackCooldown then
             if data.ResouledAttackCooldown > 0 then
@@ -57,7 +58,8 @@ local function npcUpdate(_, npc)
             end
 
             if data.ResouledAttackCooldown <= 0 and npc:GetPlayerTarget().Position:Distance(npc.Position) < ATTACK_DISTANCE then
-                Resouled:SpawnPaperTear(npc.Position, (npc:GetPlayerTarget().Position - npc.Position):Normalized() * PROJECTILE_SPEED, Vector(0, -20), npc)
+                Resouled:SpawnPaperTear(npc.Position,
+                    (npc:GetPlayerTarget().Position - npc.Position):Normalized() * PROJECTILE_SPEED, Vector(0, -20), npc)
                 data.ResouledAttackCooldown = ATTACK_COOLDOWN
             end
         end
@@ -74,5 +76,3 @@ local function postNpcDeath(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath, POOTER_TYPE)
-
-Resouled:RegisterPaperEnemy(POOTER_TYPE, POOTER_VARIANT, POOTER_SUBTYPE)

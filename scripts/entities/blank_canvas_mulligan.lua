@@ -41,7 +41,7 @@ local function postNpcInit(_, npc)
         local sprite = npc:GetSprite()
         sprite:Play(IDLE, true)
         npc:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
-        npc.Scale = BASE_DOODLE_SIZE + RNG(npc.InitSeed):RandomFloat()/3
+        npc.Scale = BASE_DOODLE_SIZE + RNG(npc.InitSeed):RandomFloat() / 3
         npc.Size = npc.Size * npc.Scale
         npc:AddEntityFlags(EntityFlag.FLAG_NO_BLOOD_SPLASH)
     end
@@ -81,7 +81,8 @@ local function npcUpdate(_, npc)
             Resouled.SfxM:Play(FLIP_SFX, SFX_VOLUME)
         end
 
-        npc.Velocity = (npc.Velocity + (npc.Position - npc:GetPlayerTarget().Position):Normalized()) * VELOCITY_MULTIPLIER
+        npc.Velocity = (npc.Velocity + (npc.Position - npc:GetPlayerTarget().Position):Normalized()) *
+            VELOCITY_MULTIPLIER
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, npcUpdate, MULLIGAN_TYPE)
@@ -90,7 +91,8 @@ Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, npcUpdate, MULLIGAN_TYPE)
 local function postNpcDeath(_, npc)
     if npc.Variant == MULLIGAN_VARIANT and npc.SubType == MULLIGAN_SUBTYPE then
         for i = 1, DEATH_FLY_COUNT do
-            Resouled.Game:Spawn(FLY_TYPE, FLY_VARIANT, npc.Position + Vector(math.random(-2, 2), math.random(-2, 2)), Vector.Zero, nil, FLY_SUBTYPE, npc.InitSeed)
+            Resouled.Game:Spawn(FLY_TYPE, FLY_VARIANT, npc.Position + Vector(math.random(-2, 2), math.random(-2, 2)),
+                Vector.Zero, nil, FLY_SUBTYPE, npc.InitSeed)
         end
         local randomNum = math.random(1, 3)
         Resouled.SfxM:Play(DEATH_SOUND_TABLE[randomNum], SFX_VOLUME)
@@ -98,5 +100,3 @@ local function postNpcDeath(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath, MULLIGAN_TYPE)
-
-Resouled:RegisterPaperEnemy(MULLIGAN_TYPE, MULLIGAN_VARIANT, MULLIGAN_SUBTYPE)

@@ -38,7 +38,7 @@ local function postNpcInit(_, npc)
         local data = npc:GetData()
         sprite:Play(IDLE, true)
         npc:ClearEntityFlags(EntityFlag.FLAG_APPEAR)
-        npc.Scale = BASE_DOODLE_SIZE + RNG(npc.InitSeed):RandomFloat()/3
+        npc.Scale = BASE_DOODLE_SIZE + RNG(npc.InitSeed):RandomFloat() / 3
         npc.Size = npc.Size * npc.Scale
         data.ResouledDashing = false
         npc:AddEntityFlags(EntityFlag.FLAG_NO_BLOOD_SPLASH)
@@ -53,16 +53,17 @@ local function npcUpdate(_, npc)
         local sprite = npc:GetSprite()
 
         if not data.ResouledDashing then
-            npc.Velocity = (npc.Velocity + (npc:GetPlayerTarget().Position - npc.Position):Normalized():Rotated(math.random(MIN_INNACURACY, MAX_INNACURACY)) * DASH_SPEED) * VELOCITY_MULTIPLIER
+            npc.Velocity = (npc.Velocity + (npc:GetPlayerTarget().Position - npc.Position):Normalized():Rotated(math.random(MIN_INNACURACY, MAX_INNACURACY)) * DASH_SPEED) *
+                VELOCITY_MULTIPLIER
             data.ResouledDashing = true
         end
 
         npc.Velocity = npc.Velocity * VELOCITY_MULTIPLIER
-        
+
         if npc.Velocity:LengthSquared() < 0.01 then
             data.ResouledDashing = false
         end
-                if npc:GetPlayerTarget().Position.X - npc.Position.X > 0 and sprite.FlipX and not sprite:IsPlaying(FLIP) then
+        if npc:GetPlayerTarget().Position.X - npc.Position.X > 0 and sprite.FlipX and not sprite:IsPlaying(FLIP) then
             sprite:Play(FLIP, true)
         elseif npc:GetPlayerTarget().Position.X - npc.Position.X < 0 and not sprite.FlipX and not sprite:IsPlaying(FLIP) then
             sprite:Play(FLIP, true)
@@ -92,5 +93,3 @@ local function postNpcDeath(_, npc)
     end
 end
 Resouled:AddCallback(ModCallbacks.MC_POST_NPC_DEATH, postNpcDeath, DIP_TYPE)
-
-Resouled:RegisterPaperEnemy(DIP_TYPE, DIP_VARIANT, DIP_SUBTYPE)

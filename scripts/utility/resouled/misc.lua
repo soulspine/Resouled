@@ -24,6 +24,11 @@ function Resouled:GetEntityByName(name)
     }
 end
 
+---@param num number
+function Resouled:RoundNum(num)
+    return math.floor(num + 0.5)
+end
+
 --- Constructs a ResouledEntityDesc object from specified parameters.
 --- If name is not specified, it will be set to an empty string.
 --- @param type EntityType
@@ -990,7 +995,7 @@ local defaultScreenOverlayColor = KColor(0, 0, 0, 1)
 ---@param color? KColor
 function Resouled:OverlayScreen(color)
     color = color or defaultScreenOverlayColor
-    local y = Isaac.GetScreenHeight()/2
+    local y = Isaac.GetScreenHeight() / 2
 
     Isaac.DrawLine(
         Vector(0, y), Vector(Isaac.GetScreenWidth(), y),

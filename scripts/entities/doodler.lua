@@ -1,6 +1,6 @@
 local g = Game()
 local sfx = SFXManager()
-
+--HELLO IT ME
 -- CONFIG
 local CONFIG = {
     -- sound effect that will play whenever the blank canvas spawning attack is done
@@ -17,7 +17,11 @@ local CONFIG = {
     MarkerThrowAttackInitialVelocityLength = 15,
     MarkerThrowAttackInitialVelocityLoss = 0.03,
     MarkerThrowAttackAuraSize = 150,
-    MarkerThrowAttackTimeout = 15 * 60, -- *60 because its -1 per frame
+    MarkerThrowAttackTimeout = 5 * 60, -- *60 because its -1 per frame
+
+    -- makrker gets attracted to the player with effectiveness scaling based on how long it has been alive; A - 0 that decreased linearly between 1st and Nth update
+    MarkerThrowAttackPlayerAttractionMod = 1.5,          -- this number is A, non-negative numbers
+    MarkerThrowAttackPlayerAttractionTimeout = 0.9 * 30, -- this number is N, non-negative integers
 }
 
 -- CONSTANTS
@@ -60,8 +64,72 @@ local function isMarker(entity)
     return Resouled:MatchesEntityDesc(entity, MARKER_ENTITY)
 end
 
--- STATES DEFINITIONS:
+---@param doodler EntityNPC
+local function handleWalkingAnimation(doodler)
+    local v = doodler.Velocity:Normalized()
+    local x = Resouled:RoundNum(v.X * 10)
+    local y = Resouled:RoundNum(v.Y * 10)
+
+    local sprite = doodler:GetSprite()
+
+    local threshold = 8
+
+    local anim = ""
+
+    if (x > threshold) then               -- right
+        anim = ANIMATIONS.WalkRight
+    elseif (x < -threshold) then          -- left
+        anim = ANIMATIONS.WalkLeft
+    elseif (math.abs(y) > threshold) then -- up / down
+        anim = ANIMATIONS.WalkForward
+    else                                  -- no movement
+        anim = ANIMATIONS.Idle
+    end
+
+    if not sprite:IsPlaying(anim) then
+        sprite:Play(anim, true)
+    end
+
+    if not sprite:IsOverlayPlaying() then
+        sprite:PlayOverlay(OVERLAY_ANIMATIONS.HeadDown, true)
+    end
+end
+
+-- STATE DEFINITIONS:
 -- NpcState.STATE_ATTACK - marker throw attack to spawn the paper aura, always the first action
+-- NpcState.STATE_SPECIAL - wait for paper aura to be spawned after throwing a marker
+-- NpcState.STATE_MOVE - move towards paper aura until reached
+
+---@param entity EntityNPC
+local function doodlerStateMoveUpdate(_, entity)
+    if not (isDoodler(entity) and entity.State == NpcState.STATE_MOVE) then return end
+
+    handleWalkingAnimation(entity)
+
+    if Resouled:IsPaperAuraVisible() then
+        if not Resouled:IsPosInsidePaperAura(entity.Position) then
+            ---@diagnostic disable-next-line: param-type-mismatch
+            entity.Pathfinder:FindGridPath(Resouled:GetPaperAuraPosition(), 1, 900, true)
+        else
+            entity.Pathfinder:MoveRandomlyBoss(false)
+            entity:MultiplyFriction(0.67)
+        end
+    else
+        entity.State = NpcState.STATE_ATTACK
+    end
+end
+
+---@param entity EntityNPC
+local function doodlerStateSpecialUpdate(_, entity)
+    if not (isDoodler(entity) and entity.State == NpcState.STATE_SPECIAL) then return end
+
+    local markerCount = Isaac.CountEntities(entity, MARKER_ENTITY.Type, MARKER_ENTITY.Variant, MARKER_ENTITY.SubType)
+    if markerCount > 0 then return end
+
+    if Resouled:IsPaperAuraVisible() then
+        entity.State = NpcState.STATE_MOVE
+    end
+end
 
 ---@param entity EntityNPC
 local function doodlerStateAttackUpdate(_, entity)
@@ -77,10 +145,6 @@ local function doodlerStateAttackUpdate(_, entity)
         sprite:Play(ANIMATIONS.MarkerAttack, true)
     end
 
-    local markerCount = Isaac.CountEntities(entity, MARKER_ENTITY.Type, MARKER_ENTITY.Variant, MARKER_ENTITY.SubType)
-
-    --if markerCount > 0 then return end
-
     if sprite:IsEventTriggered(ANIMATION_EVENTS.MarkerThrow) then
         local target = g:GetNearestPlayer(entity.Position)
         local deg = (target.Position - entity.Position):GetAngleDegrees()
@@ -95,6 +159,8 @@ local function doodlerStateAttackUpdate(_, entity)
             MARKER_ENTITY.SubType,
             Resouled:NewSeed()
         ).Target = target
+
+        entity.State = NpcState.STATE_SPECIAL
     end
 end
 
@@ -112,7 +178,24 @@ local function markerUpdate(_, entity)
     if not isMarker(entity) then return end
 
     entity:GetSprite().Rotation = entity.Velocity:GetAngleDegrees()
-    entity.Velocity:Resize(entity.Velocity:Length() - CONFIG.MarkerThrowAttackInitialVelocityLoss)
+
+    local velocityLenPre = entity.Velocity:Length()
+
+    -- apply the player force attraction calculated based on the lifespan
+    if (entity.FrameCount <= CONFIG.MarkerThrowAttackPlayerAttractionTimeout) then
+        local attractionMod = CONFIG.MarkerThrowAttackPlayerAttractionMod * math.max(
+            0,
+            1 - (entity.FrameCount - 1) / CONFIG.MarkerThrowAttackPlayerAttractionTimeout
+        )
+        local posDiff = (entity.Target.Position - entity.Position)
+
+        local attraction = posDiff:Normalized() * attractionMod
+
+        entity.Velocity = entity.Velocity + attraction
+    end
+
+    -- apply linear velocity loss
+    entity.Velocity = entity.Velocity:Resized(velocityLenPre - CONFIG.MarkerThrowAttackInitialVelocityLoss)
 end
 
 ---@param entity EntityNPC
@@ -148,8 +231,9 @@ end
 local function subscribe(_, entity)
     if not isDoodler(entity) then return end
 
-    print("Subscribe happened")
     Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, doodlerStateAttackUpdate, DOODLER_ENTITY.Type)
+    Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, doodlerStateSpecialUpdate, DOODLER_ENTITY.Type)
+    Resouled:AddCallback(ModCallbacks.MC_NPC_UPDATE, doodlerStateMoveUpdate, DOODLER_ENTITY.Type)
     Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, doodlerInit, DOODLER_ENTITY.Type)
 
     Resouled:AddCallback(ModCallbacks.MC_POST_NPC_INIT, markerInit, MARKER_ENTITY.Type)
@@ -158,9 +242,10 @@ local function subscribe(_, entity)
 end
 
 local function unsubscribe()
-    print("Unsubscribe happened")
     Resouled:RemoveCallback(ModCallbacks.MC_POST_NPC_INIT, doodlerInit)
     Resouled:RemoveCallback(ModCallbacks.MC_NPC_UPDATE, doodlerStateAttackUpdate)
+    Resouled:RemoveCallback(ModCallbacks.MC_NPC_UPDATE, doodlerStateSpecialUpdate)
+    Resouled:RemoveCallback(ModCallbacks.MC_NPC_UPDATE, doodlerStateMoveUpdate)
 
     Resouled:RemoveCallback(ModCallbacks.MC_POST_NPC_INIT, markerInit)
     Resouled:RemoveCallback(ModCallbacks.MC_NPC_UPDATE, markerUpdate)
